@@ -15,7 +15,9 @@ from sqlalchemy.orm import Session
 from fastapi import Depends
 from models import models
 from typing import List
-from fastapi.responses import RedirectResponse
+from fastapi.security import OAuth2PasswordRequestForm
+from api.dependencies import auth
+from fastapi import HTTPException, status
 
 
 app = FastAPI()
@@ -61,6 +63,7 @@ models.Base.metadata.create_all(bind=engine)
 
 @app.post('/student/', response_model=StudentModel)
 async def create_student(student: StudentBase, db: db_dependency):
+    student.password = auth.get_password_hash(student.password)
     student = models.Student(**student.model_dump())
     db.add(student)
     db.commit()
@@ -71,6 +74,20 @@ async def create_student(student: StudentBase, db: db_dependency):
 async def create_student(db: db_dependency, skip: int = 0, limit: int = 10):
     students = db.query(models.Student).offset(skip).limit(limit).all()
     return students
+
+@app.post("/token")
+async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
+    user = auth.authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    access_token = auth.create_access_token(data={"sub": user.email})
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 # @app.get("/")
 # async def root():

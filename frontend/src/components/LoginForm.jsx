@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import api from '../api';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Iniciando sesión con:', { email, password });
+
+    setFormData({
+      username: email,
+      password: password
+    });
+
+    await api.post('/token/', formData);
   };
 
   return (

@@ -1,36 +1,42 @@
-from fastapi import Depends, Response, HTTPException, status, Request
+from fastapi import HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 
 import bcrypt
+from passlib.context import CryptContext
 from datetime import timedelta, datetime, timezone
-from crud.crud import get_user
-from db.database import get_db
 from sqlalchemy.orm import Session
+from typing import Annotated
+from fastapi import Depends
+from models import models
+from sqlalchemy.orm import Session
+from jwt.exceptions import InvalidTokenError
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = "dd204e00a3783421a3622d011c7d883bccb911fdf30aae45f1241d05328e5c4b"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1
 ACCESS_TOKEN_EXPIRE_SECONDS = 0
 
-def hash_password(password: str):
-    # Generate a salt and hash the password
-    salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-    return hashed_password.decode('utf-8')
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
 
-def verify_password(password: str, hashed_password: str):
-    # Verify the provided password against the stored hash
-    return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8'))
+def get_password_hash(password):
+    return pwd_context.hash(password)
 
-# Helper function to authenticate user
-def authenticate_user(email: str, password: str, db: Session = Depends(get_db)):
-    user = get_user(db=db, email=email)
-    if not user or not verify_password(password, user.password):
-        return None
+def get_user(db: Session, username: str):
+    user = db.query(models.Student).filter(models.Student.email == username).first()
+    return user
 
+def authenticate_user(db: Session, username: str, password: str):
+    user = get_user(db, username)
+    if not user:
+        return False
+    if not verify_password(password, user.password):
+        return False
     return user
 
 # Helper function to create JWT token
@@ -43,22 +49,31 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-def decode_token(token: str):
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    email: str = payload.get("sub")
-    return email
-
-def get_current_user(token: str):
-    user = decode_token(token)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+async def get_current_user(db: Session, token: Annotated[str, Depends(oauth2_scheme)]):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+    except InvalidTokenError:
+        raise credentials_exception
+    user = get_user(db, username=username)
+    if user is None:
+        raise credentials_exception
     return user
 
-def get_access_token(request: Request):
-    access_token = request.cookies.get("access_token")
-    return access_token
+# def fake_decode_token(token):
+#     # This doesn't provide any security at all
+#     # Check the next version
+#     user = get_user(fake_users_db, token)
+#     return user
+
+# def get_access_token(request: Request):
+#     access_token = request.cookies.get("access_token")
+#     return access_token
   
