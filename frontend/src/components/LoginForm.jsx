@@ -16,7 +16,8 @@ function LoginForm() {
 
     setFormData({
       username: email,
-      password: password
+      password: password,
+      role: "student"
     });
 
     await api.post('/token/', formData);

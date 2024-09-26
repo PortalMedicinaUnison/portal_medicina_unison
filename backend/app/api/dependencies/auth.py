@@ -1,8 +1,6 @@
-from fastapi import HTTPException, status, Request
+from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt
 
-import bcrypt
 from passlib.context import CryptContext
 from datetime import timedelta, datetime, timezone
 from sqlalchemy.orm import Session
@@ -10,7 +8,8 @@ from typing import Annotated
 from fastapi import Depends
 from models import models
 from sqlalchemy.orm import Session
-from jwt.exceptions import InvalidTokenError
+import jwt
+# from jwt.exceptions import InvalidTokenError
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -18,7 +17,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = "dd204e00a3783421a3622d011c7d883bccb911fdf30aae45f1241d05328e5c4b"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 1
+ACCESS_TOKEN_EXPIRE_MINUTES = 2
 ACCESS_TOKEN_EXPIRE_SECONDS = 0
 
 def verify_password(plain_password, hashed_password):
@@ -27,12 +26,15 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-def get_user(db: Session, username: str):
-    user = db.query(models.Student).filter(models.Student.email == username).first()
+def get_user(db: Session, username: str, role: str):
+    if role == "student":
+        user = db.query(models.Student).filter(models.Student.email == username).first()
+    if role == "admin":
+        user = db.query(models.Admin).filter(models.Admin.email == username).first()
     return user
 
-def authenticate_user(db: Session, username: str, password: str):
-    user = get_user(db, username)
+def authenticate_user(db: Session, username: str, password: str, role: str):
+    user = get_user(db, username, role)
     if not user:
         return False
     if not verify_password(password, user.password):
@@ -49,7 +51,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-async def get_current_user(db: Session, token: Annotated[str, Depends(oauth2_scheme)]):
+def get_current_user(db: Session, token: str = None): #Annotated[str, Depends(oauth2_scheme)]
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -58,11 +60,13 @@ async def get_current_user(db: Session, token: Annotated[str, Depends(oauth2_sch
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
+        role: str = payload.get("role")
         if username is None:
             raise credentials_exception
-    except InvalidTokenError:
+    except jwt.exceptions.InvalidTokenError:
         raise credentials_exception
-    user = get_user(db, username=username)
+    
+    user = get_user(db, username, role)
     if user is None:
         raise credentials_exception
     return user

@@ -1,23 +1,17 @@
-# from fastapi.templating import Jinja2Templates
-# from fastapi.staticfiles import StaticFiles
-# import sqlite3
-
-# from api.dependencies.auth import authenticate_user, create_access_token, hash_password, get_current_user, get_access_token
-# from fastapi import Depends, HTTPException, status
-# from jose import exceptions
-
-from fastapi import FastAPI#, Form, Request, Response
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from db.database import SessionLocal, engine, Base
-from pydantic import BaseModel
 from typing import Annotated
 from sqlalchemy.orm import Session
 from fastapi import Depends
 from models import models
+from schemas import schemas
 from typing import List
 from fastapi.security import OAuth2PasswordRequestForm
 from api.dependencies import auth
 from fastapi import HTTPException, status
+from typing import Union
+
 
 
 app = FastAPI()
@@ -34,20 +28,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-class StudentBase(BaseModel):
-    name : str
-    pat_last_name : str
-    mat_last_name : str
-    file_number : int
-    email : str
-    password : str
-
-class StudentModel(StudentBase):
-    id : int
-
-    # class Config:
-    #     orm_mode = True
-
 # Dependency to get the DB session
 def get_db():
     db = SessionLocal()
@@ -58,11 +38,13 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+token_dependency = Annotated[str, Depends()]
+
 # Create the database tables if they don't exist
 models.Base.metadata.create_all(bind=engine)
 
-@app.post('/student/', response_model=StudentModel)
-async def create_student(student: StudentBase, db: db_dependency):
+@app.post('/student/', response_model=schemas.StudentSchema)
+async def create_student(student: schemas.StudentBase, db: db_dependency):
     student.password = auth.get_password_hash(student.password)
     student = models.Student(**student.model_dump())
     db.add(student)
@@ -70,14 +52,28 @@ async def create_student(student: StudentBase, db: db_dependency):
     db.refresh(student)
     return student
 
-@app.get('/student/', response_model=List[StudentModel])
-async def create_student(db: db_dependency, skip: int = 0, limit: int = 10):
+@app.get('/student/', response_model=List[schemas.StudentSchema])
+async def read_students(db: db_dependency, skip: int = 0, limit: int = 10):
     students = db.query(models.Student).offset(skip).limit(limit).all()
     return students
 
-@app.post("/token")
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
-    user = auth.authenticate_user(db, form_data.username, form_data.password)
+@app.post('/admin/', response_model=schemas.AdminSchema)
+async def create_admin(admin: schemas.AdminBase, db: db_dependency):
+    admin.password = auth.get_password_hash(admin.password)
+    admin = models.Admin(**admin.model_dump())
+    db.add(admin)
+    db.commit()
+    db.refresh(admin)
+    return admin
+
+@app.get('/admin/', response_model=List[schemas.AdminSchema])
+async def read_admins(db: db_dependency, skip: int = 0, limit: int = 10):
+    students = db.query(models.Admin).offset(skip).limit(limit).all()
+    return students
+
+@app.post("/token/")
+async def login_for_access_token(form_data: Annotated[schemas.UserForm, Depends()], db: db_dependency):
+    user = auth.authenticate_user(db, form_data.username, form_data.password, form_data.role)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -85,53 +81,18 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    access_token = auth.create_access_token(data={"sub": user.email})
+    access_token = auth.create_access_token(data={"sub": user.email, "role": form_data.role})
 
     return {"access_token": access_token, "token_type": "bearer"}
 
-# @app.get("/")
-# async def root():
-#     return RedirectResponse("/home/", status_code=303)
+@app.get("/get_current_user/", response_model=Union[schemas.StudentSchema, schemas.AdminSchema])
+async def get_user_by_token(db: db_dependency, token: str = None):
+    user = auth.get_current_user(db, token)
+    return user
 
-# @app.get("/home/")
-# async def home(request : Request):
-#     return templates.TemplateResponse("home.html", {"request" : request})
-
-# @app.get("/student/")
-# async def student(request : Request):
-#     return templates.TemplateResponse("student.html", {"request" : request})
-
-# @app.get("/register/")
-# async def register(request : Request):
-#     return templates.TemplateResponse("register_student.html", {"request" : request})
-
-# @app.post("/token/")
-# async def create_token(
-#     response: Response,
-#     email: str = Form(...),
-#     password: str = Form(...),
-#     db: Session = Depends(get_db)
-#     ):
-
-#     user = authenticate_user(email, password, db)
-
-#     if not user:
-#         raise HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED,
-#             detail="Invalid username or password",
-#             headers={"WWW-Authenticate": "Bearer"},
-#         )
-
-#     access_token = create_access_token(data={"sub": user.email})
-
-#     response = RedirectResponse("/info_student/", status_code=status.HTTP_303_SEE_OTHER)
-
-#     response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True, samesite="strict")
-
-#     return response
-#     # return {"access_token": access_token, "token_type": "bearer"}
-
-
+@app.post("/create_medical_record/")
+async def create_medical_record():
+    pass
 # @app.get("/info_student/")
 # async def info(request : Request):
 #     try:
@@ -149,45 +110,3 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
 #         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Unexpected error: {e}")
     
 #     return templates.TemplateResponse("info_student.html", {"request" : request, "user":user})
-
-# @app.post("/create_student/")
-# async def signup(
-#     name : str = Form(...),
-#     pat_last_name : str = Form(...),
-#     mat_last_name : str = Form(...),
-#     file_number : int = Form(...),
-#     email : str = Form(...),
-#     conf_email : str = Form(...),
-#     password : str = Form(...),
-#     conf_password : str = Form(...),
-#     db: Session = Depends(get_db)
-#     ):
-
-#     if(email != conf_email):
-#         return RedirectResponse("/register/")
-#     elif(password != conf_password):
-#         return RedirectResponse("/register/")
-#     else:
-#         student = ItemCreate(
-#             name=name,
-#             pat_last_name=pat_last_name,
-#             mat_last_name=mat_last_name,
-#             file_number=file_number,
-#             email=email,
-#             password=hash_password(password)
-#         )
-#         create_item(db=db, item=student)
-#         return RedirectResponse("/student/", status_code=303)
-
-# @app.get("/admin/")
-# async def admin(request : Request):
-#     context = {
-#         "request" : request
-#     }
-#     return templates.TemplateResponse("admin.html", context)
-
-# @app.get("/delete_token/")
-# async def delete_token(response: Response):
-#     response = RedirectResponse("/student/", status_code=303)
-#     response.delete_cookie("access_token")
-#     return response
