@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../api';
 
 function RegisterForm() {
   const [firstName, setFirstName] = useState('');
@@ -10,9 +11,18 @@ function RegisterForm() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const [formData, setFormData] = useState({
+    name: '',
+    pat_last_name: '',
+    mat_last_name: '',
+    file_number: '',
+    email: '',
+    password: ''
+  });
+
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validación de coincidencia de correos
@@ -31,14 +41,17 @@ function RegisterForm() {
     setError('');
 
     // Aquí puedes añadir la lógica para manejar el registro de los usuarios
-    console.log('Registrando usuario con:', {
-      firstName,
-      lastName,
-      motherLastName,
-      expediente,
-      email,
-      password,
+    setFormData({
+      ...formData,
+      name: firstName,
+      pat_last_name: lastName,
+      mat_last_name: motherLastName,
+      file_number: expediente,
+      email: email,
+      password: password
     });
+    
+    await api.post('/student/', formData);
   };
 
   return (
