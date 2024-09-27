@@ -13,7 +13,6 @@ from fastapi import HTTPException, status
 from typing import Union
 
 
-
 app = FastAPI()
 
 origins = [
@@ -43,8 +42,33 @@ token_dependency = Annotated[str, Depends()]
 # Create the database tables if they don't exist
 models.Base.metadata.create_all(bind=engine)
 
-@app.post('/student/', response_model=schemas.StudentSchema)
+@app.post('/accepted_student/', response_model=schemas.AcceptedStudentSchema)
+async def create_accepted_student(student: schemas.AcceptedStudentBase, db: db_dependency):
+    student = models.AcceptedStudent(**student.model_dump())
+    db.add(student)
+    db.commit()
+    db.refresh(student)
+    return student
+
+@app.get('/accepted_student/', response_model=List[schemas.AcceptedStudentSchema])
+async def read_accepted_students(db: db_dependency, skip: int = 0, limit: int = 10):
+    students = db.query(models.AcceptedStudent).offset(skip).limit(limit).all()
+    return students
+
+# @app.post('/is_student_accepted/')
+# async def is_student_accepted(file_number: int, db: db_dependency):
+#     student = db.query(models.Student).filter(models.Student.file_number == file_number).first()
+#     return 
+
+@app.post('/student/', response_model=schemas.StudentSchema, status_code=401)
 async def create_student(student: schemas.StudentBase, db: db_dependency):
+    if not auth.is_student_accepted(db, student.file_number):
+        return HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User does not found in database",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
     student.password = auth.get_password_hash(student.password)
     student = models.Student(**student.model_dump())
     db.add(student)

@@ -9,6 +9,7 @@ from fastapi import Depends
 from models import models
 from sqlalchemy.orm import Session
 import jwt
+# import jwt
 # from jwt.exceptions import InvalidTokenError
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -40,6 +41,10 @@ def authenticate_user(db: Session, username: str, password: str, role: str):
     if not verify_password(password, user.password):
         return False
     return user
+
+def is_student_accepted(db: Session, file_number: int):
+    student = db.query(models.AcceptedStudent).filter(models.AcceptedStudent.file_number == file_number).first()
+    return student is not None
 
 # Helper function to create JWT token
 def create_access_token(data: dict, expires_delta: timedelta = None):

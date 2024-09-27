@@ -2,23 +2,29 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from db.database import Base
 
-class Form(Base):
-    __tablename__ = "form"
+# class Form(Base):
+#     __tablename__ = "form"
 
-    id = Column(Integer, primary_key=True)
-    title = Column(String)
-    description = Column(String)
-    questions = relationship('Question', back_populates='form')
+#     id = Column(Integer, primary_key=True)
+#     title = Column(String)
+#     description = Column(String)
+#     questions = relationship('Question', back_populates='form')
     
-class Question(Base):
-    __tablename__ = "question"
+# class Question(Base):
+#     __tablename__ = "question"
+
+#     id = Column(Integer, primary_key=True)
+#     title = Column(String)
+#     description = Column(String)
+#     type = Column(String)
+#     form_id = Column(Integer, ForeignKey('form.id'))
+#     form = relationship('Form', back_populates='questions')
+
+class AcceptedStudent(Base):
+    __tablename__ = "accepted_student"
 
     id = Column(Integer, primary_key=True)
-    title = Column(String)
-    description = Column(String)
-    type = Column(String)
-    form_id = Column(Integer, ForeignKey('form.id'))
-    form = relationship('Form', back_populates='questions')
+    file_number = Column(Integer, unique=True)
 
 class Student(Base):
     __tablename__ = "student"

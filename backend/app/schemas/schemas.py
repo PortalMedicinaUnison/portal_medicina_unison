@@ -1,22 +1,28 @@
 from pydantic import BaseModel
 from typing import List
 
-class QuestionBase(BaseModel):
-    title: str
-    description: str
-    type: str
-    form_id: int
-    # form: FormSchema
-class QuestionSchema(QuestionBase):
-    id: str
+class AcceptedStudentBase(BaseModel):
+    file_number: int
 
-class FormBase(BaseModel):
-    title: str
-    description: str
-    questions: List[QuestionSchema] = []
+class AcceptedStudentSchema(AcceptedStudentBase):
+    id: int
 
-class FormSchema(FormBase):
-    id : int
+# class QuestionBase(BaseModel):
+#     title: str
+#     description: str
+#     type: str
+#     form_id: int
+#     # form: FormSchema
+# class QuestionSchema(QuestionBase):
+#     id: str
+
+# class FormBase(BaseModel):
+#     title: str
+#     description: str
+#     questions: List[QuestionSchema] = []
+
+# class FormSchema(FormBase):
+#     id : int
     
 # class Question(Base):
 #     __tablename__ = "question"
