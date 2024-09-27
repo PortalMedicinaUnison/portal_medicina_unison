@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 
 from passlib.context import CryptContext
@@ -55,6 +55,15 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
         expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES, seconds=ACCESS_TOKEN_EXPIRE_SECONDS)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def get_access_token(request: Request):
+    access_token = request.cookies.get("access_token")
+    if access_token is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Access token not found"
+        )
+    return access_token
 
 def get_current_user(db: Session, token: str = None): #Annotated[str, Depends(oauth2_scheme)]
     credentials_exception = HTTPException(
