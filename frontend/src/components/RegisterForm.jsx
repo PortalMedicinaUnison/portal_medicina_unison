@@ -51,7 +51,7 @@ function RegisterForm() {
       password: password
     });
     
-    await api.post('/student/', formData);
+    await api.post('/students/', formData);
   };
 
   return (

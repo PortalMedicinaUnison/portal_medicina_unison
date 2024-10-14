@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-
+  const navigate = useNavigate();
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setFormData({
+    const formData = {
       username: email,
       password: password,
       role: "student"
-    });
+    };
 
-    await api.post('/token/', formData);
+    try {
+      const response = await api.post('/token/', formData);
+      sessionStorage.setItem("access_token", response.data.access_token);
+      navigate('/test');
+    } catch (error) {
+      console.error("Login failed", error);
+    }
   };
 
   return (

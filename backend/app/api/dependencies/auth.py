@@ -12,7 +12,7 @@ import jwt
 # import jwt
 # from jwt.exceptions import InvalidTokenError
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="get_token")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -64,6 +64,18 @@ def get_access_token(request: Request):
             detail="Access token not found"
         )
     return access_token
+
+# def validate_token(token: str):
+#     try:
+#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+#         user_id = payload.get("sub")
+#         # user_id = 1
+#         if user_id is None:
+#             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+#         return {"user_id": user_id}
+#     except jwt.exceptions.PyJWTError:
+#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
 
 def get_current_user(db: Session, token: str = None): #Annotated[str, Depends(oauth2_scheme)]
     credentials_exception = HTTPException(

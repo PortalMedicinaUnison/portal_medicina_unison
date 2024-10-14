@@ -1,5 +1,9 @@
 from pydantic import BaseModel
 from typing import List
+from fastapi import UploadFile
+
+class TokenRequest(BaseModel):
+    token: str
 
 class AcceptedStudentBase(BaseModel):
     file_number: int
@@ -35,12 +39,13 @@ class AcceptedStudentSchema(AcceptedStudentBase):
 #     form = relationship('Form', back_populates='questions')
 
 class StudentBase(BaseModel):
-    name : str
-    pat_last_name : str
-    mat_last_name : str
-    file_number : int
-    email : str
-    password : str
+    name : str = None
+    pat_last_name : str = None
+    mat_last_name : str = None
+    file_number : int = None
+    profile_image_path : str = None
+    email : str = None
+    password : str = None
 
 class StudentSchema(StudentBase):
     id : int
