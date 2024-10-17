@@ -51,7 +51,12 @@ function RegisterForm() {
       password: password
     });
     
-    await api.post('/students/', formData);
+    try {
+      const response = await api.post('/students/', formData);
+      console.log(response);
+    } catch (error) {
+      console.error("Register failed", error);
+    }
   };
 
   return (

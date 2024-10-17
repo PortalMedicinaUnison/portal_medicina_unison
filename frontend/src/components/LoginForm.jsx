@@ -19,7 +19,7 @@ function LoginForm() {
     try {
       const response = await api.post('/token/', formData);
       sessionStorage.setItem("access_token", response.data.access_token);
-      navigate('/test');
+      navigate('/user');
     } catch (error) {
       console.error("Login failed", error);
     }

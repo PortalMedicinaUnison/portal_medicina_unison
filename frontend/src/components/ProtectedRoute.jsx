@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 const ProtectedRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,7 +17,7 @@ const ProtectedRoute = () => {
 
         const response = await api.post('/check_auth/', access_token);
         
-        if (response.data.status === 'valid') {
+        if (response.status === 200) {
           setIsAuthenticated(true);
         }
         console.log(response)

@@ -2,6 +2,9 @@ from pydantic import BaseModel
 from typing import List
 from fastapi import UploadFile
 
+class StudentRequest(BaseModel):
+    student_id: int
+
 class TokenRequest(BaseModel):
     token: str
 

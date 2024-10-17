@@ -80,8 +80,8 @@ async def create_student(student: schemas.StudentBase, db: db_dependency):
     return student
 
 @app.put('/students/', response_model=schemas.StudentSchema)
-async def update_student(student_id: int, student_form: schemas.StudentBase, db: db_dependency):
-    student = db.query(models.Student).filter(models.Student.id == student_id).first()
+async def update_student(student_form: schemas.StudentSchema, db: db_dependency):
+    student = db.query(models.Student).filter(models.Student.id == student_form.id).first()
 
     if student is None:
         raise HTTPException(
@@ -103,10 +103,15 @@ async def read_students(db: db_dependency, skip: int = 0, limit: int = 10):
     students = db.query(models.Student).offset(skip).limit(limit).all()
     return students
 
-@app.get('/student/', response_model=schemas.StudentSchema)
-async def read_student(db: db_dependency, student_id: int = 0):
-    student = db.query(models.Student).filter(models.Student.id == student_id).first()
+@app.post('/student/', response_model=schemas.StudentSchema)
+async def read_student(request: schemas.StudentRequest, db: db_dependency):
+    student = db.query(models.Student).filter(models.Student.id == request.student_id).first()
     return student
+
+@app.post('/get_current_user/', response_model=schemas.StudentSchema)
+async def get_current_user(request: schemas.TokenRequest, db: db_dependency):
+    user = auth.get_current_user(db, request.token)
+    return user
 
 @app.put('/profile_picture/')
 async def upload_profile_picture(db: db_dependency, student_id: int, image: UploadFile = File(...)):
@@ -138,7 +143,7 @@ async def upload_profile_picture(db: db_dependency, student_id: int, image: Uplo
     return students
 
 @app.post("/token/")
-async def login_for_access_token(form_data: schemas.UserForm, response: Response, db: db_dependency):
+async def login_for_access_token(form_data: schemas.UserForm, db: db_dependency):
     user = auth.authenticate_user(db, form_data.username, form_data.password, form_data.role)
     if not user:
         raise HTTPException(
@@ -149,9 +154,6 @@ async def login_for_access_token(form_data: schemas.UserForm, response: Response
     
     access_token = auth.create_access_token(data={"sub": user.email, "role": form_data.role})
 
-    # response.set_cookie(key="access_token", value=access_token, httponly=False, secure=False, samesite="lax")
-    # response.set_cookie(key="cheese", value="cheese")
-
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/check_auth")
@@ -159,45 +161,6 @@ async def check_auth(request: schemas.TokenRequest, db: db_dependency):
     user = auth.get_current_user(db, request.token)
     return {"status": "valid", "user_info": user}
 
-# @app.post("/test/")
-# async def test(request: Request):
-#     # response.set_cookie(key="cheese", value="cheese")
-#     token = request.cookies.get("access_token")
-#     return {"message": "Success", "token": token}
-
-# @app.get("/get_token/")
-# async def get_access_token(request: Request):
-#     access_token = request.cookies.get("access_token")
-#     if access_token is None:
-#         raise HTTPException(
-#             status_code=404,
-#             detail="Access token not found"
-#         )
-#     return {"access_token": access_token, "token_type": "bearer"}
-
-# @app.get("/get_current_user/", response_model=Union[schemas.StudentSchema, schemas.AdminSchema])
-# async def get_user_by_token(request: Request, db: db_dependency):
-#     token = auth.get_access_token(request)
-#     user = auth.get_current_user(db, token)
-#     return user
-
 @app.post("/create_medical_record/")
 async def create_medical_record():
     pass
-# @app.get("/info_student/")
-# async def info(request : Request):
-#     try:
-#         token = get_access_token(request)
-#             # return RedirectResponse("/student/", status_code=status.HTTP_303_SEE_OTHER)
-            
-#         user = get_current_user(token)
-#         if user is None:
-#             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-#     except exceptions.ExpiredSignatureError:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")
-#     except exceptions.JWTError:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate token")
-#     except Exception as e:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Unexpected error: {e}")
-    
-#     return templates.TemplateResponse("info_student.html", {"request" : request, "user":user})

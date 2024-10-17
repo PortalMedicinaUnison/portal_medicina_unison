@@ -114,6 +114,7 @@ class V_B_SexualHistory():
     sexual_orientation = Column(String)
     sexual_partners = Column(String)
 
+#se pueden hacer booleanos
 class VI_CurrentIllness():
     have_poor_health = Column(String)
     bloody_diarrhea = Column(String)

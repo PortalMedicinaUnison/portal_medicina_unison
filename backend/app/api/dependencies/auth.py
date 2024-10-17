@@ -18,7 +18,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = "dd204e00a3783421a3622d011c7d883bccb911fdf30aae45f1241d05328e5c4b"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 2
+ACCESS_TOKEN_EXPIRE_MINUTES = 20
 ACCESS_TOKEN_EXPIRE_SECONDS = 0
 
 def verify_password(plain_password, hashed_password):
@@ -65,18 +65,6 @@ def get_access_token(request: Request):
         )
     return access_token
 
-# def validate_token(token: str):
-#     try:
-#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-#         user_id = payload.get("sub")
-#         # user_id = 1
-#         if user_id is None:
-#             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-#         return {"user_id": user_id}
-#     except jwt.exceptions.PyJWTError:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-
-
 def get_current_user(db: Session, token: str = None): #Annotated[str, Depends(oauth2_scheme)]
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -96,14 +84,4 @@ def get_current_user(db: Session, token: str = None): #Annotated[str, Depends(oa
     if user is None:
         raise credentials_exception
     return user
-
-# def fake_decode_token(token):
-#     # This doesn't provide any security at all
-#     # Check the next version
-#     user = get_user(fake_users_db, token)
-#     return user
-
-# def get_access_token(request: Request):
-#     access_token = request.cookies.get("access_token")
-#     return access_token
   
