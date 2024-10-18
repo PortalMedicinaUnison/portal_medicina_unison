@@ -162,7 +162,7 @@ async def check_auth(request: schemas.TokenRequest, db: db_dependency):
     return {"status": "valid", "user_info": user}
 
 @app.post('/medical_record/')#, response_model=schemas.StudentSchema)
-async def create_student(medical_record: schemas.MedicalRecordSchema, db: db_dependency):
+async def create_medical_record(medical_record: schemas.MedicalRecordSchema, db: db_dependency):
     medical_record = models.MedicalRecord(**medical_record.model_dump())
     db.add(medical_record)
     db.commit()
@@ -170,7 +170,7 @@ async def create_student(medical_record: schemas.MedicalRecordSchema, db: db_dep
     return medical_record
 
 @app.put('/medical_record/', response_model=schemas.MedicalRecordSchema)
-async def update_student(medical_record_form: schemas.MedicalRecordSchema, db: db_dependency):
+async def update_medical_record(medical_record_form: schemas.MedicalRecordSchema, db: db_dependency):
     medical_record = db.query(models.MedicalRecord).filter(models.MedicalRecord.id == medical_record_form.id).first()
 
     if medical_record is None:
@@ -189,6 +189,18 @@ async def update_student(medical_record_form: schemas.MedicalRecordSchema, db: d
     return medical_record
 
 @app.get('/medical_record/', response_model=schemas.MedicalRecordSchema)
-async def read_students(db: db_dependency, skip: int = 0, limit: int = 10):
+async def read_medical_record(db: db_dependency, skip: int = 0, limit: int = 10):
     medical_record = db.query(models.MedicalRecord).offset(skip).limit(limit).all()
     return medical_record
+
+@app.get('academic_history')
+async def read_academic_history():
+    pass
+
+@app.get('activity_log')
+async def read_activity_log():
+    pass
+
+@app.get('psychologic_document')
+async def read_academic_history():
+    pass
