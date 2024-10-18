@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from db.database import Base
 
@@ -116,26 +116,26 @@ class V_B_SexualHistory():
 
 #se pueden hacer booleanos
 class VI_CurrentIllness():
-    have_poor_health = Column(String)
-    bloody_diarrhea = Column(String)
-    weakness = Column(String)
-    pain = Column(String)
-    thristy = Column(String)
-    convulsions = Column(String)
-    fainting = Column(String)
-    stomachache = Column(String)
-    headache = Column(String)
-    hearing_issues = Column(String)
-    genital_issues = Column(String)
-    weird_urine = Column(String)
-    foot_cracks = Column(String)
-    joint_issues = Column(String)
-    nail_issues = Column(String)
-    chest_pain = Column(String)
-    unexplained_discomfort = Column(String)
-    unexplained_fever = Column(String)
-    weight_loss = Column(String)
-    eternal_cough = Column(String)
+    have_poor_health = Column(Boolean)
+    bloody_diarrhea = Column(Boolean)
+    weakness = Column(Boolean)
+    pain = Column(Boolean)
+    thristy = Column(Boolean)
+    convulsions = Column(Boolean)
+    fainting = Column(Boolean)
+    stomachache = Column(Boolean)
+    headache = Column(Boolean)
+    hearing_issues = Column(Boolean)
+    genital_issues = Column(Boolean)
+    weird_urine = Column(Boolean)
+    foot_cracks = Column(Boolean)
+    joint_issues = Column(Boolean)
+    nail_issues = Column(Boolean)
+    chest_pain = Column(Boolean)
+    unexplained_discomfort = Column(Boolean)
+    unexplained_fever = Column(Boolean)
+    weight_loss = Column(Boolean)
+    eternal_cough = Column(Boolean)
 
 class VII_OdontologicalHistory():
     dental_pieces_number = Column(String)
@@ -160,13 +160,60 @@ class IX_OptometricExamination():
     do_you_wear_glasses = Column(String)
 
 class X_SystemsReview():
-    pass
+    digestive_abdomen_shape = Column(Boolean)
+    digestive_hernias = Column(Boolean)
+    digestive_diarreas = Column(Boolean)
+    digestive_other_illnesses = Column(Boolean)
+    respiratory_nose_shape = Column(Boolean)
+    respiratory_clean_fields = Column(Boolean)
+    respiratory_chest_shape = Column(Boolean)
+    respiratory_chronic_cough = Column(Boolean)
+    respiratory_asthma = Column(Boolean)
+    respiratory_other_illnesses = Column(Boolean)
+    cardiovascular_noises = Column(Boolean)
+    cardiovascular_murmurs = Column(Boolean)
+    cardiovascular_arrhythmias = Column(Boolean)
+    cardiovascular_dyspnoea = Column(Boolean)
+    cardiovascular_other_illnesses = Column(Boolean)
+    urinary_urine_smell = Column(Boolean)
+    urinary_urine_appearence = Column(Boolean)
+    urinary_pain = Column(Boolean)
+    urinary_wishes_to_urinate = Column(Boolean)
+    urinary_other_illnesses = Column(Boolean)
+    male_genitals_penis_retraction = Column(Boolean)
+    male_genitals_scrotum_pain = Column(Boolean)
+    male_genitals_testicles_in_scrotum = Column(Boolean)
+    female_genitals_have_you_menstruate = Column(Boolean)
+    female_genitals_regular_menstruation = Column(Boolean)
+    female_genitals_are_genital_and_tits_normal = Column(Boolean)
+    nervous_system_nervous_tics = Column(Boolean)
+    nervous_system_convulsions = Column(Boolean)
+    nervous_system_headache = Column(Boolean)
+    nervous_system_sleep_well = Column(Boolean)
+    nervous_system_other_illnesses = Column(Boolean)
+    skeletal_muscular_normal_posture = Column(Boolean)
+    skeletal_muscular_scoliosis = Column(Boolean)
+    skeletal_muscular_polio_after_effects = Column(Boolean)
+    skeletal_muscular_plane_foot = Column(Boolean)
+    skeletal_muscular_other_illnesses = Column(Boolean)
+    endocrine_normal_weight = Column(Boolean)
+    endocrine_overweight = Column(Boolean)
+    endocrine_underweight = Column(Boolean)
 
 class XI_ExternalAppearance():
-    pass
+    external_appearence = Column(String)
 
 class XII_PhysicalExamination():
-    pass
+    head = Column(String)
+    neck = Column(String)
+    chest = Column(String)
+    abdomen = Column(String)
+    genitals = Column(String)
+    limbs = Column(String)
+    lab_exam = Column(String)
+    therapeutics_used = Column(String)
+    diagnosis = Column(String)
+    treatment = Column(String)
 
 class MedicalRecord(
     I_IdentificationCard,

@@ -161,6 +161,34 @@ async def check_auth(request: schemas.TokenRequest, db: db_dependency):
     user = auth.get_current_user(db, request.token)
     return {"status": "valid", "user_info": user}
 
-@app.post("/create_medical_record/")
-async def create_medical_record():
-    pass
+@app.post('/medical_record/')#, response_model=schemas.StudentSchema)
+async def create_student(medical_record: schemas.MedicalRecordSchema, db: db_dependency):
+    medical_record = models.MedicalRecord(**medical_record.model_dump())
+    db.add(medical_record)
+    db.commit()
+    db.refresh(medical_record)
+    return medical_record
+
+@app.put('/medical_record/', response_model=schemas.MedicalRecordSchema)
+async def update_student(medical_record_form: schemas.MedicalRecordSchema, db: db_dependency):
+    medical_record = db.query(models.MedicalRecord).filter(models.MedicalRecord.id == medical_record_form.id).first()
+
+    if medical_record is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Medical record not found in database."
+        )
+
+    for attr in vars(medical_record):
+        value = getattr(medical_record, attr)
+        if value:
+            setattr(medical_record, attr, value)
+
+    db.commit()
+    db.refresh(medical_record)
+    return medical_record
+
+@app.get('/medical_record/', response_model=schemas.MedicalRecordSchema)
+async def read_students(db: db_dependency, skip: int = 0, limit: int = 10):
+    medical_record = db.query(models.MedicalRecord).offset(skip).limit(limit).all()
+    return medical_record
