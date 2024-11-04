@@ -21,9 +21,43 @@ function RegisterForm() {
   });
 
   const [error, setError] = useState('');
+  
+  // Estado para controlar la visibilidad de las contraseñas
+  const [showPassword, setShowPassword] = useState(false);
+
+  const validatePassword = (password) => {
+    const minLength = /^.{8,}$/;
+    const hasUppercase = /[A-Z]/;
+    const hasLowercase = /[a-z]/;
+    const hasNumber = /\d/;
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+
+    if (!minLength.test(password)) {
+      return 'La contraseña debe tener al menos 8 caracteres.';
+    }
+    if (!hasUppercase.test(password)) {
+      return 'La contraseña debe incluir al menos una letra mayúscula.';
+    }
+    if (!hasLowercase.test(password)) {
+      return 'La contraseña debe incluir al menos una letra minúscula.';
+    }
+    if (!hasNumber.test(password)) {
+      return 'La contraseña debe incluir al menos un número.';
+    }
+    if (!hasSpecialChar.test(password)) {
+      return 'La contraseña debe incluir al menos un símbolo especial.';
+    }
+    return null;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validación de formato del expediente
+    if (!/^\d{9}$/.test(expediente)) {
+      setError('El expediente debe ser un número de exactamente 9 dígitos.');
+      return;
+    }
 
     // Validación de coincidencia de correos
     if (email !== confirmEmail) {
@@ -34,6 +68,13 @@ function RegisterForm() {
     // Validación de coincidencia de contraseñas
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden.');
+      return;
+    }
+
+    // Validación de la contraseña
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      setError(passwordError);
       return;
     }
 
@@ -51,7 +92,25 @@ function RegisterForm() {
       password: password
     });
     
-    await api.post('/student/', formData);
+    try {
+      const response = await api.post('/students/', formData);
+      console.log(response);
+    } catch (error) {
+      console.error("Register failed", error);
+    }
+  };
+
+  // Asegurarse de que solo se ingresen números
+  const handleExpedienteChange = (e) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      setExpediente(value);
+    }
+  };
+
+  // Alternar visibilidad de la contraseña
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -103,9 +162,10 @@ function RegisterForm() {
           <input
             type="text"
             value={expediente}
-            onChange={(e) => setExpediente(e.target.value)}
+            onChange={handleExpedienteChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            maxLength="9"
           />
         </div>
         <div className="mb-4">
@@ -128,25 +188,47 @@ function RegisterForm() {
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
+
+        {/* Campo de contraseña con botón para mostrar/ocultar */}
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Contraseña:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+            >
+              {showPassword ? "Ocultar" : "Mostrar"}
+            </button>
+          </div>
         </div>
+
+        {/* Campo de confirmar contraseña con botón para mostrar/ocultar */}
         <div className="mb-6">
           <label className="block text-gray-700 text-sm font-bold mb-2">Confirmar Contraseña:</label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+            >
+              {showPassword ? "Ocultar" : "Mostrar"}
+            </button>
+          </div>
         </div>
       </div>
 
