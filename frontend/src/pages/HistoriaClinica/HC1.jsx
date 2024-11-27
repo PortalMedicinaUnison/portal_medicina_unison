@@ -48,14 +48,24 @@ function HistoriaClinica1() {
                 />
               </label>
               <label className="block">
-                Edad:
-                <input
-                  type="number"
-                  name="age"
-                  value={formData.age}
-                  onChange={handleChange}
-                  className="mt-1 block w-full p-2 border rounded-md"
-                />
+              Edad:
+              <input
+                type="number"
+                name="age"
+                value={formData.age}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 2) {
+                    handleChange(e);
+                  }
+                }}
+                onInput={(e) => {
+                  if (e.target.value.length > 2) {
+                    e.target.value = e.target.value.slice(0, 2);
+                  }
+                }}
+                className="mt-1 block w-full p-2 border rounded-md"
+              />
               </label>
               <label className="block">
                 Género:
@@ -119,8 +129,19 @@ function HistoriaClinica1() {
                   type="text"
                   name="phone_number"
                   value={formData.phone_number}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Permitir solo números y limitar a 10 dígitos
+                    if (/^\d{0,10}$/.test(value)) {
+                      handleChange(e);
+                    }
+                  }}
+                  onInput={(e) => {
+                    // Cortar cualquier entrada extra después de 10 dígitos
+                    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  }}
                   className="mt-1 block w-full p-2 border rounded-md"
+                  placeholder="Ingresa tu teléfono (10 dígitos)"
                 />
               </label>
             </div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-function HistorialClinico4() {
+function HistoriaClinica4() {
   const [formData, setFormData] = useState({
     enfermedades_eruptivas: {
       sarampion: false,
@@ -66,13 +66,13 @@ function HistorialClinico4() {
     covid19: {
       tuvo_covid: false,
       fecha: '',
-      complicaciones: '',
-      vacunacion: {
-        primera_dosis: '',
-        segunda_dosis: '',
-        refuerzo: '',
-      },
+      complicaciones: ''
     },
+    vacunacion: {
+      primera_dosis: '',
+      segunda_dosis: '',
+      refuerzo: ''
+    }
   });
 
   const handleCheckboxChange = (e, category, subCategory) => {
@@ -98,7 +98,7 @@ function HistorialClinico4() {
 
   const navigate = useNavigate();
   const handleNext = () => {
-    navigate('/historiaclinica5');
+    navigate('/HistoriaClinica5');
   };
 
   return (
@@ -107,6 +107,7 @@ function HistorialClinico4() {
         <h1 className="text-2xl font-bold mb-6 text-center">Historia Clínica</h1>
         <form className="space-y-4">
           <h2 className="text-xl font-semibold mb-4">IV. Antecedentes Personales Patológicos</h2>
+          <h3 className='font-bold text-red-500'>Marca la casilla en caso de que sí</h3>
           {/* Enfermedades Eruptivas */}
           <fieldset className="mb-4">
             <legend className="font-bold">Enfermedades Eruptivas</legend>
@@ -373,7 +374,7 @@ function HistorialClinico4() {
           </fieldset>
 
           {/* COVID-19 */}
-            <fieldset className="mb-4">
+          <fieldset className="mb-4">
             <legend className="font-bold">Enfermedad por Covid-19</legend>
             <label className="block">
               <input
@@ -413,8 +414,8 @@ function HistorialClinico4() {
               Primera dosis:
               <input
                 type="text"
-                value={formData.covid19.vacunacion.primera_dosis}
-                onChange={(e) => handleInputChange(e, 'covid19.vacunacion', 'primera_dosis')}
+                value={formData.vacunacion.primera_dosis}
+                onChange={(e) => handleInputChange(e, 'vacunacion', 'primera_dosis')}
                 className="mt-1 block w-full p-2 border rounded-md"
               />
             </label>
@@ -422,8 +423,8 @@ function HistorialClinico4() {
               Segunda dosis:
               <input
                 type="text"
-                value={formData.covid19.vacunacion.segunda_dosis}
-                onChange={(e) => handleInputChange(e, 'covid19.vacunacion', 'segunda_dosis')}
+                value={formData.vacunacion.segunda_dosis}
+                onChange={(e) => handleInputChange(e, 'vacunacion', 'segunda_dosis')}
                 className="mt-1 block w-full p-2 border rounded-md"
               />
             </label>
@@ -431,8 +432,8 @@ function HistorialClinico4() {
               Refuerzo:
               <input
                 type="text"
-                value={formData.covid19.vacunacion.refuerzo}
-                onChange={(e) => handleInputChange(e, 'covid19.vacunacion', 'refuerzo')}
+                value={formData.vacunacion.refuerzo}
+                onChange={(e) => handleInputChange(e, 'vacunacion', 'refuerzo')}
                 className="mt-1 block w-full p-2 border rounded-md"
               />
             </label>
@@ -456,4 +457,4 @@ function HistorialClinico4() {
   );
 }
 
-export default HistorialClinico4;
+export default HistoriaClinica4;

@@ -53,7 +53,7 @@ function HistoriaClinica2() {
 
   const navigate = useNavigate();
   const handleNext = () => {
-    navigate('/historiaclinica3');
+    navigate('/HistoriaClinica3');
   };
 
   return (
