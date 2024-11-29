@@ -24,4 +24,5 @@ test/
 *.njsproj
 *.sln
 *.sw?
+project.db
 
