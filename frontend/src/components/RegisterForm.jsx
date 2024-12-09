@@ -11,16 +11,7 @@ function RegisterForm() {
     email: '',
     confirmEmail: '',
     password: '',
-    confirmPassword: ''
-  });
-
-  const [studentRecord, setStudentRecord] = useState({
-    name: '',
-    pat_last_name: '',
-    mat_last_name: '',
-    file_number: '',
-    email: '',
-    password: ''
+    confirmPassword: '',
   });
 
   const handleChange = (e) => {
@@ -91,39 +82,27 @@ function RegisterForm() {
     setError('');
 
     // Aquí puedes añadir la lógica para manejar el registro de los usuarios
-    setStudentRecord({
-      ...studentRecord,
+    const student = {
       name: formData.name,
       pat_last_name: formData.patLastName,
       mat_last_name: formData.matLastName,
       file_number: formData.fileNumber,
       email: formData.email,
       password: formData.password
-    });
+    };
 
-    // try {
-    //   const response = await api.post('/students/', formData);
-    //   document.getElementById("password").value = "";
-    //   document.getElementById("firstName").value = "";
-    //   document.getElementById("lastName").value = "";
-    //   document.getElementById("motherLastName").value = "";
-    //   document.getElementById("expediente").value = "";
-    //   document.getElementById("password").value = "";
-    //   document.getElementById("confirmPassword").value = "";
-    //   document.getElementById("email").value = "";
-    //   document.getElementById("confirmEmail").value = "";
-    //   document.getElementById("registro_exitoso").style.display = "block";
-    //   console.log(response);
-    // } catch (error) {
-    //   console.error("Register failed", error);
-    // }
+    try {
+      const response = await api.post('/students/', student);
+      document.getElementById("registro_exitoso").style.display = "block";
+      const elements = document.getElementsByTagName("input");
+      for (const element of elements) {
+        element.value = "";
+      }
+      console.log(response);
+    } catch (error) {
+      console.error("Register failed", error);
+    }
   };
-  
-  useEffect(()=>{
-    console.log("This is the formData: ");
-    console.log(formData);
-    console.log(studentRecord);
-  }, [studentRecord]);
   
   // Asegurarse de que solo se ingresen números
   const handleExpedienteChange = (e) => {
@@ -143,7 +122,7 @@ function RegisterForm() {
       <h2 className="text-2xl font-bold mb-6 text-center">Registro</h2>
 
       {/* Mensaje de registro exitoso */}
-      <div name="registro_exitoso" className='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 text-center' style={{display: 'none'}}>
+      <div id="registro_exitoso" className='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 text-center' style={{display: 'none'}}>
         <span className="block sm:inline"><p>Alumno registrado exitosamente.</p></span>
       </div>
       

@@ -73,7 +73,7 @@ async def create_student(student: schemas.StudentBase, db: db_dependency):
     
     student.password = auth.get_password_hash(student.password)
     student = models.Student(**student.model_dump())
-    student.profile_image_path = PROFILE_PICTURE_LOCATION + "default_picture.jpg"
+    student.profile_image_path = os.path.join("default_picture.jpg")
     db.add(student)
     db.commit()
     db.refresh(student)
