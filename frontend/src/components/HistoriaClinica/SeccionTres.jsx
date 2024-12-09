@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-function HistoriaClinica3() {
+function SeccionTres() {
   const [formData, setFormData] = useState({
     inmunizaciones: '',
     alimentacion: {
@@ -56,7 +56,7 @@ function HistoriaClinica3() {
 
   const navigate = useNavigate();
   const handleNext = () => {
-    navigate('/HistoriaClinica4');
+    navigate('/SeccionCuatro');
   };
 
   const handleSubmit = (e) => {
@@ -472,22 +472,10 @@ function HistoriaClinica3() {
               )}
             </div>
           </div>
-          
-           {/* Botón de Siguiente */}
-
-          <div className="flex justify-center">
-            <button
-              type="button"
-              onClick={handleNext}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            >
-              Siguiente
-            </button>
-          </div>
         </form>
       </div>
     </div>
   );
 }
 
-export default HistoriaClinica3;
+export default SeccionTres;

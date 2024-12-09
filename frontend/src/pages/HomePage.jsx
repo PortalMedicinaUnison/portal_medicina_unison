@@ -1,11 +1,10 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import fetchUser from '../components/utils';
-import Encabezado from '../components/Encabezado';
-import ContenidoPrincipal from '../components/ContenidoPrincipal';
 import BarraNavegacion from '../components/BarraNavegacion';
+import ContenidoPrincipal from '../components/ContenidoPrincipal';
 
-function UserPage() {
+function HomePage() {
   const [user, setUser] = useState({});
 
   useEffect(() => {
@@ -16,12 +15,11 @@ function UserPage() {
     <div>
       <BarraNavegacion/>
       <ContenidoPrincipal user={user}>
-        <h1>{user.name} {user.pat_last_name} {user.mat_last_name}</h1>
-        <a className="boton-editar" href="edit">Editar nombre</a>
-        <a className="boton-historial-clinico" href="medical">Agregar historial clínico</a>
+        <h1>Lorem ipsum dolor sit amet.</h1>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex, deleniti.</p>
       </ContenidoPrincipal>
     </div>
   );
 }
 
-export default UserPage;
+export default HomePage;

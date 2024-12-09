@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
 
 function RegisterForm() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [motherLastName, setMotherLastName] = useState('');
-  const [expediente, setExpediente] = useState('');
-  const [email, setEmail] = useState('');
-  const [confirmEmail, setConfirmEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
   const [formData, setFormData] = useState({
+    name: '',
+    patLastName: '',
+    matLastName: '',
+    fileNumber: '',
+    email: '',
+    confirmEmail: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  const [studentRecord, setStudentRecord] = useState({
     name: '',
     pat_last_name: '',
     mat_last_name: '',
@@ -19,6 +22,15 @@ function RegisterForm() {
     email: '',
     password: ''
   });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    // console.log("name:" + name + ", value: " + value);
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
 
   const [error, setError] = useState('');
   
@@ -54,25 +66,22 @@ function RegisterForm() {
     e.preventDefault();
 
     // Validación de formato del expediente
-    if (!/^\d{9}$/.test(expediente)) {
+    if (!/^\d{9}$/.test(formData.fileNumber)) {
       setError('El expediente debe ser un número de exactamente 9 dígitos.');
       return;
     }
-
     // Validación de coincidencia de correos
-    if (email !== confirmEmail) {
+    if (formData.email !== formData.confirmEmail) {
       setError('Los correos electrónicos no coinciden.');
       return;
     }
-
     // Validación de coincidencia de contraseñas
-    if (password !== confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       setError('Las contraseñas no coinciden.');
       return;
     }
-
     // Validación de la contraseña
-    const passwordError = validatePassword(password);
+    const passwordError = validatePassword(formData.password);
     if (passwordError) {
       setError(passwordError);
       return;
@@ -82,24 +91,40 @@ function RegisterForm() {
     setError('');
 
     // Aquí puedes añadir la lógica para manejar el registro de los usuarios
-    setFormData({
-      ...formData,
-      name: firstName,
-      pat_last_name: lastName,
-      mat_last_name: motherLastName,
-      file_number: expediente,
-      email: email,
-      password: password
+    setStudentRecord({
+      ...studentRecord,
+      name: formData.name,
+      pat_last_name: formData.patLastName,
+      mat_last_name: formData.matLastName,
+      file_number: formData.fileNumber,
+      email: formData.email,
+      password: formData.password
     });
-    
-    try {
-      const response = await api.post('/students/', formData);
-      console.log(response);
-    } catch (error) {
-      console.error("Register failed", error);
-    }
-  };
 
+    // try {
+    //   const response = await api.post('/students/', formData);
+    //   document.getElementById("password").value = "";
+    //   document.getElementById("firstName").value = "";
+    //   document.getElementById("lastName").value = "";
+    //   document.getElementById("motherLastName").value = "";
+    //   document.getElementById("expediente").value = "";
+    //   document.getElementById("password").value = "";
+    //   document.getElementById("confirmPassword").value = "";
+    //   document.getElementById("email").value = "";
+    //   document.getElementById("confirmEmail").value = "";
+    //   document.getElementById("registro_exitoso").style.display = "block";
+    //   console.log(response);
+    // } catch (error) {
+    //   console.error("Register failed", error);
+    // }
+  };
+  
+  useEffect(()=>{
+    console.log("This is the formData: ");
+    console.log(formData);
+    console.log(studentRecord);
+  }, [studentRecord]);
+  
   // Asegurarse de que solo se ingresen números
   const handleExpedienteChange = (e) => {
     const value = e.target.value;
@@ -116,6 +141,11 @@ function RegisterForm() {
   return (
     <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
       <h2 className="text-2xl font-bold mb-6 text-center">Registro</h2>
+
+      {/* Mensaje de registro exitoso */}
+      <div name="registro_exitoso" className='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 text-center' style={{display: 'none'}}>
+        <span className="block sm:inline"><p>Alumno registrado exitosamente.</p></span>
+      </div>
       
       {/* Mensaje de error más visible */}
       {error && (
@@ -130,9 +160,10 @@ function RegisterForm() {
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Nombre(s):</label>
           <input
+            name="name"
             type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            value={formData.name}
+            onChange={handleChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
@@ -140,9 +171,10 @@ function RegisterForm() {
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Apellido Paterno:</label>
           <input
+            name="patLastName"
             type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            value={formData.patLastName}
+            onChange={handleChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
@@ -150,9 +182,10 @@ function RegisterForm() {
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Apellido Materno:</label>
           <input
+            name="matLastName"
             type="text"
-            value={motherLastName}
-            onChange={(e) => setMotherLastName(e.target.value)}
+            value={formData.matLastName}
+            onChange={handleChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
@@ -160,9 +193,10 @@ function RegisterForm() {
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Expediente:</label>
           <input
+            name="fileNumber"
             type="text"
-            value={expediente}
-            onChange={handleExpedienteChange}
+            value={formData.fileNumber}
+            onChange={handleChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             maxLength="9"
@@ -171,9 +205,10 @@ function RegisterForm() {
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Correo:</label>
           <input
+            name="email"
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formData.email}
+            onChange={handleChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
@@ -181,9 +216,10 @@ function RegisterForm() {
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Confirmar Correo:</label>
           <input
+            name="confirmEmail"
             type="email"
-            value={confirmEmail}
-            onChange={(e) => setConfirmEmail(e.target.value)}
+            value={formData.confirmEmail}
+            onChange={handleChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
@@ -194,9 +230,10 @@ function RegisterForm() {
           <label className="block text-gray-700 text-sm font-bold mb-2">Contraseña:</label>
           <div className="relative">
             <input
+              name="password"
               type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               required
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
@@ -215,9 +252,10 @@ function RegisterForm() {
           <label className="block text-gray-700 text-sm font-bold mb-2">Confirmar Contraseña:</label>
           <div className="relative">
             <input
+              name="confirmPassword"
               type={showPassword ? "text" : "password"}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={formData.confirmPassword}
+              onChange={handleChange}
               required
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
@@ -240,6 +278,12 @@ function RegisterForm() {
           Crear cuenta
         </button>
       </div>
+      <p className="text-center text-sm text-gray-600 mt-4">
+        ¿Ya tienes cuenta?{' '}
+        <Link to="/" className="text-blue-500 hover:text-blue-700">
+          Inicia sesión aquí
+        </Link>
+      </p>
     </form>
   );
 }
