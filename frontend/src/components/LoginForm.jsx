@@ -19,7 +19,7 @@ function LoginForm() {
     try {
       const response = await api.post('/token/', formData);
       sessionStorage.setItem("access_token", response.data.access_token);
-      navigate('/home');
+      navigate('/inicio');
     } catch (error) {
       console.error("Login failed", error);
     }
@@ -58,7 +58,7 @@ function LoginForm() {
       </div>
       <p className="text-center text-sm text-gray-600 mt-4">
         ¿No tienes cuenta?{' '}
-        <Link to="/register" className="text-blue-500 hover:text-blue-700">
+        <Link to="/registro" className="text-blue-500 hover:text-blue-700">
           Regístrate aquí
         </Link>
       </p>

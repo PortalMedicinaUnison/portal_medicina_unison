@@ -3,28 +3,16 @@ function BarraNavegacion() {
     return (
         <div className="sidebar">
             <div className="logo">
-                <a href="user">
+                <a href="inicio">
                     <img src="src/components/logo_unison.png" alt="Logo"/>
                 </a>
             </div>
             <aside className="nav">
-                <a href="#" className="nav-item active">
-                Avisos
-                </a>
-                <a href="medical" className="nav-item">
-                Historia Clínica
-                </a>
-                <a href="#" className="nav-item">
-                Reportes
-                </a>
-                <a href="#" className="nav-item">
-                Documentos
-                </a>
-                <div className="settings">
-                    <a href="#" className="nav-item">
-                        Settings
-                    </a>
-                </div>
+                <a href="inicio" className="nav-item">Inicio</a>
+                <a href="avisos" className="nav-item">Avisos</a>
+                <a href="historiaClinica" className="nav-item">Historia Clínica</a>
+                <a href="reportes" className="nav-item">Reportes</a>
+                <a href="documentos" className="nav-item">Documentos</a>
             </aside>
         </div>
     );

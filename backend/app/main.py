@@ -16,6 +16,7 @@ from fastapi import Request
 from fastapi import UploadFile, File
 import os
 from fastapi import Cookie
+from fastapi import Form
 
 
 app = FastAPI()
@@ -48,7 +49,7 @@ token_dependency = Annotated[str, Depends(auth.oauth2_scheme)]
 # Create the database tables if they don't exist
 models.Base.metadata.create_all(bind=engine)
 
-PROFILE_PICTURE_LOCATION = os.path.join("images")
+PROFILE_PICTURE_LOCATION = os.path.join("..","..","frontend","public","profile_images")
 
 @app.post('/accepted_students/', response_model=schemas.AcceptedStudentSchema)
 async def create_accepted_student(student: schemas.AcceptedStudentBase, db: db_dependency):
@@ -114,7 +115,7 @@ async def get_current_user(request: schemas.TokenRequest, db: db_dependency):
     return user
 
 @app.put('/profile_picture/')
-async def upload_profile_picture(db: db_dependency, student_id: int, image: UploadFile = File(...)):
+async def upload_profile_picture(db: db_dependency, student_id: int = Form(...), image: UploadFile = File(...)):
 
     file_location = os.path.join(PROFILE_PICTURE_LOCATION, str(student_id) + ".jpg")
 
@@ -122,7 +123,7 @@ async def upload_profile_picture(db: db_dependency, student_id: int, image: Uplo
         buffer.write(await image.read())
 
     student = db.query(models.Student).filter(models.Student.id == student_id).first()
-    student.profile_image_path = file_location
+    student.profile_image_path = str(student_id) + ".jpg"
     db.commit()
     db.refresh(student)
 

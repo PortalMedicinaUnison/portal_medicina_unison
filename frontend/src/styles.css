@@ -20,6 +20,14 @@ h1 {
     font-size: 40px;
     font-weight: bolder;
 }
+h2 {
+    font-size: 20px;
+    font-weight: bolder;
+}
+h3 {
+    font-size: 14px;
+    font-weight: bolder;
+}
 #root > div {
     display: flex;
     flex-direction: row;
@@ -64,16 +72,15 @@ margin-right: 10px;
 }
 .nav-item.active,
 .nav-item:hover {
-background-color: #f0f4ff;
-color: #3366ff;
+    background-color: #f0f4ff;
+    color: #3366ff;
 }
-/* Settings */
 .settings {
     margin-top: auto;
 }
 /* ------------------------------------------ */
 
-/* BARRA DE USUARIO */
+/* ENCABEZADO */
 .header {
     height: var(--header-height);
     width: 100%;
@@ -83,10 +90,21 @@ color: #3366ff;
     align-items: center;
     background-color: #fff;
     padding: 0 1cm;
-
-    /* position:fixed;
-    top: 0;
-    right: 0; */
+}
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #e6e6e6;
+}
+.user-name {
+    font-size: 16px;
+    font-weight: 500;
 }
 /* ------------------------------------------ */
 
@@ -106,11 +124,54 @@ color: #3366ff;
 
     display: flex;
     flex-direction: column;
+    /* align-items: center; */
+}
+.center {
+    display: flex;
+    flex-direction: column;
     align-items: center;
 }
-/* .content > * {
-    margin: 0.2cm 0;
-} */
+/* ------------------------------------------ */
+
+/* PÁGINA DE PERFIL */
+.user-profile-picture {
+    position: relative;
+    width: 4cm;
+    height: 4cm;
+}
+.user-profile-picture img {
+    width: 4cm;
+    height: 4cm;
+    border-radius: 50%;
+    border: 2px solid #e6e6e6;
+    transition: opacity 0.5s ease;
+}
+.user-profile-picture:hover img {
+    opacity: 1;
+}
+.user-profile-picture:hover .hover-text {
+    opacity: 0.5;
+}
+.user-profile-picture #file-upload {
+    display: none;
+}
+.hover-text {
+    transition: opacity 0.5s ease;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    background-color: black;
+    color: white;
+    font-size: 0.5cm;
+    width: 4cm;
+    height: 4cm;
+    border-radius: 50%;
+}
 /* ------------------------------------------ */
 
 /* BOTON EDITAR */
@@ -148,20 +209,11 @@ color: #3366ff;
 /* ------------------------------------------ */
 
 
-.user-info {
-display: flex;
-align-items: center;
-gap: 10px;
-}
 
-.user-avatar {
-width: 40px;
-height: 40px;
-border-radius: 50%;
-border: 2px solid #e6e6e6;
-}
 
-.user-name {
-font-size: 16px;
-font-weight: 500;
+
+/* PROFILE PAGE */
+.profile-page input{
+    border-style: solid;
 }
+/* ------------------------------------------ */
