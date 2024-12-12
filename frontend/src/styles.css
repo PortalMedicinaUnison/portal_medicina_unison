@@ -201,6 +201,37 @@ margin-right: 10px;
 }
 /* ------------------------------------------ */
 
+/* PÁGINA DE HISTORIAL CLINICO */
+.step-form-buttons{
+    display:flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.prev-button{
+    display: none;
+    border-radius: 5px;
+    border-color: #333;
+    border-width: 1px;
+    padding: 0.2cm 0.3cm;
+    transition: all 0.3s ease;
+}
+.prev-button:hover{
+    background-color: #555;
+    color: white;
+}
+.next-button{
+    border-radius: 5px;
+    border-color: #333;
+    border-width: 1px;
+    padding: 0.2cm 0.3cm;
+    transition: all 0.3s ease;
+}
+.next-button:hover{
+    background-color: #555;
+    color: white;
+}
+/* ------------------------------------------ */
+
 /* BOTON EDITAR */
 .boton-editar {
     background-color: #77d;
