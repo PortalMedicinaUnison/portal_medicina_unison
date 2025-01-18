@@ -6,7 +6,7 @@ from datetime import timedelta, datetime, timezone
 from sqlalchemy.orm import Session
 from typing import Annotated
 from fastapi import Depends
-from models import models
+from models import user_models, medical_record_models
 from sqlalchemy.orm import Session
 import jwt
 # import jwt

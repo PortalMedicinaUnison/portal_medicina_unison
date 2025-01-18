@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, Boolean, String, ForeignKey
 from sqlalchemy.orm import relationship
 from db.database import Base
 
@@ -10,7 +10,7 @@ class MedicalRecord(Base):
     __tablename__ = "medical_records"
 
     id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, ForeignKey("students.id"), nullable=False) #REVISAR
+    student_id = Column(Integer, ForeignKey("student.id"), nullable=False) #REVISAR
 
     student = relationship("Student", back_populates="medical_record")
     identification_card = relationship("IdentificationCard", back_populates="medical_record", uselist=False)
@@ -86,7 +86,7 @@ class NonPathologicalHistory(Base):
     how_many_people = Column(String(10), nullable=False)
     how_many_rooms = Column(String(10), nullable=False)
     work_and_school = Column(Boolean)
-    work_and_school_details = Column(String(30)
+    work_and_school_details = Column(String(30))
 
     medical_record = relationship("MedicalRecord", back_populates="non_pathological_history")
 
@@ -112,7 +112,7 @@ class PathologicalHistory(Base):
     chronic_diseases = Column(String(30), nullable=False)
     chronic_diseases_details = Column(String(30))
     
-    surgeries = Column(Boolean), nullable=False)
+    surgeries = Column(Boolean, nullable=False)
     surgeries_details = Column(String(30))
 
     nervous_breakdown = Column(Boolean, nullable=False)

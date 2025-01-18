@@ -1,0 +1,28 @@
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend_service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/backend
+      - ./project.db:/backend/project.db  # Volumen para persistir SQLite
+    environment:
+      - DATABASE_URL=sqlite:///backend/project.db  # Ruta de la base de datos (ajustada)
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend_service
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/frontend
+    environment:
+      - VITE_API_URL=http://localhost:8000  # URL del backend
+    depends_on:
+      - backend

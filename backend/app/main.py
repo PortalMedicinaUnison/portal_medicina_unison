@@ -4,7 +4,7 @@ from db.database import SessionLocal, engine, Base
 from typing import Annotated
 from sqlalchemy.orm import Session
 from fastapi import Depends
-from models import models
+from models import user_models, medical_record_models
 from schemas import schemas
 from typing import List
 from fastapi.security import OAuth2PasswordRequestForm
@@ -46,8 +46,11 @@ db_dependency = Annotated[Session, Depends(get_db)]
 # request = Request
 token_dependency = Annotated[str, Depends(auth.oauth2_scheme)]
 
+Base.metadata.create_all(bind=engine)
+
+
 # Create the database tables if they don't exist
-models.Base.metadata.create_all(bind=engine)
+# models.Base.metadata.create_all(bind=engine)
 
 PROFILE_PICTURE_LOCATION = os.path.join("..","..","frontend","public","profile_images")
 

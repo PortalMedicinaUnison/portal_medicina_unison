@@ -33,11 +33,12 @@ cd portal_medicina_unison
    ```env
    DATABASE_URL=sqlite:///./project.db
    SECRET_KEY=supersecretkey
-```
+   ```
 
 4. Inicia el servidor de desarrollo:
    ```bash
-   uvicorn app.main:app --reload
+   cd app/
+   uvicorn main:app --reload
    ```
 
 5. Accede a la API en:
@@ -58,7 +59,7 @@ cd portal_medicina_unison
 
 3. Crea un archivo `.env` en la carpeta `frontend/` para configurar la URL del backend:
 
-   ```env
+   ```shell
    REACT_APP_API_URL=http://127.0.0.1:8000
     ```
 
