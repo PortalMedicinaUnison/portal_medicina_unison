@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.user_models import Admin
-from schemas.admin_schemas import AdminBase
+from backend.app.models.user import Admin
+from backend.app.schemas.admin import AdminBase
 from core.auth import get_password_hash
 
 

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.user_models import PreRegisteredStudent
-from backend.app.schemas.medical_record_schemas import PreRegisteredStudentBase
+from backend.app.models.user import PreRegisteredStudent
+from backend.app.schemas.medical_record import PreRegisteredStudentBase
 
 def create_pre_registered_student(student_data: PreRegisteredStudentBase, db: Session):
     student = PreRegisteredStudent(**student_data.model_dump())

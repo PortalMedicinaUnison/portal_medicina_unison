@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.user_models import Student
-from backend.app.schemas.medical_record_schemas import StudentBase, StudentSchema, StudentRequest, AdminSchema
+from backend.app.models.user import Student
+from backend.app.schemas.medical_record import StudentBase, StudentSchema, StudentRequest, AdminSchema
 from core.auth import get_password_hash, is_student_accepted
 import os
 

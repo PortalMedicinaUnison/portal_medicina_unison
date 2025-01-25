@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from schemas.admin_schemas import AdminSchema, AdminBase
-from controllers.admin_controller import create_admin, read_admins
+from backend.app.schemas.admin import AdminSchema, AdminBase
+from backend.app.controllers.admin import create_admin, read_admins
 from core.dependencies import get_db
 
-router = APIRouter(prefix="/admin")
+router = APIRouter(prefix="/admin", tags=["Admin"])
 
 db_dependency = Depends(get_db)
 

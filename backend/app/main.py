@@ -1,13 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from core.settings import ORIGINS
 from db.database import Base, engine
-from routers import students, medical_records, authentication, pre_registered_students, admin
+from routers import students, medical_records, auth, pre_registered_students, admin
 
 app = FastAPI()
-
-origins = [
-    "http://localhost:5173"
-]
 
 app.add_middleware(
     CORSMiddleware,

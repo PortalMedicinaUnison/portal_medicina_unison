@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from backend.app.schemas.medical_record_schemas import medical_record_schemas
+from backend.app.schemas.medical_record import medical_record_schemas
 from controllers.medical_record_controller import (
     create_medical_record, update_medical_record, read_medical_record
 )
 from db.database import get_db
 
-router = APIRouter(prefix="/medical_records", tags=["medical_records"])
+router = APIRouter(prefix="/medical_records", tags=["Medical Records"])
 
 db_dependency = Depends(get_db)
 

@@ -4,17 +4,16 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from datetime import timedelta, datetime, timezone
 from sqlalchemy.orm import Session
-from repos.user_repo import get_user
+from backend.app.repos.user import get_user
 import jwt
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "get_token")
 
 pwd_context = CryptContext(schemes = ["bcrypt"], deprecated = "auto")
 
-SECRET_KEY = "dd204e00a3783421a3622d011c7d883bccb911fdf30aae45f1241d05328e5c4b"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
-ACCESS_TOKEN_EXPIRE_SECONDS = 0
+ACCESS_TOKEN_EXPIRE_SECONDS = 3600
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -33,9 +32,9 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 
     # REMINDER
     if expires_delta:
-        expire = datetime.now(timezone.utc)() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes = ACCESS_TOKEN_EXPIRE_MINUTES, seconds = ACCESS_TOKEN_EXPIRE_SECONDS)
+        expire = datetime.now(timezone.utc) + timedelta(seconds = ACCESS_TOKEN_EXPIRE_SECONDS)
     to_encode.update({"exp": expire})
 
     return jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)

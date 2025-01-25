@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from schemas.auth_schemas import UserForm, TokenRequest
-from controllers.auth_controller import authenticate_user, create_access_token, get_current_user
+from backend.app.controllers.auth import authenticate_user, create_access_token, get_current_user
 from core.dependencies import get_db
 
-router = APIRouter(prefix="/auth")
+router = APIRouter(prefix="/auth", tags=["Auth"])
 
 db_dependency = Depends(get_db)
 

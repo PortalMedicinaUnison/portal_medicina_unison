@@ -1,5 +1,5 @@
-from .pre_registered_students_repo import PreRegisteredStudentsRepo
-from .user_repo import UserRepo
+from .pre_registered_students import PreRegisteredStudentsRepo
+from .user import UserRepo
 
 __all__ = [
     "PreRegisteredStudentsRepo",
