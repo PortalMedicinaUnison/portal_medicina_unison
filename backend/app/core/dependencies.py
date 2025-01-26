@@ -1,15 +1,15 @@
-from contextlib import contextmanager
-from sqlalchemy.orm import Session
-from .session import SessionLocal
 from fastapi import Depends
-from typing_extensions import Annotated
-from .oauth2 import oauth2_scheme
+from sqlalchemy.orm import Session
+from typing import Generator
+from db.database import SessionLocal
 
-token_dependency = Annotated[str, Depends(oauth2_scheme)]
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+# def get_admin_user(auth_user: str = Depends(get_authenticated_user)):
+#     pass

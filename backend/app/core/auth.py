@@ -1,43 +1,33 @@
-from fastapi import HTTPException, status, Request
+from fastapi import HTTPException, status, Depends, Request
 from fastapi.security import OAuth2PasswordBearer
-
-from passlib.context import CryptContext
+frp, sqlalchemy.orm import Session
 from datetime import timedelta, datetime, timezone
-from sqlalchemy.orm import Session
-from backend.app.repos.user import get_user
+from passlib.context import CryptContext
 import jwt
+
+from core.settings import settings
+from core.dependencies import get_db
+from repos.user import get_user
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "get_token")
-
 pwd_context = CryptContext(schemes = ["bcrypt"], deprecated = "auto")
 
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_SECONDS = 3600
-
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-def get_password_hash(password):
-    return pwd_context.hash(password)
-
-def authenticate_user(db: Session, username: str, password: str, role: str):
-    user = get_user(db, username, role)
-    if not user or not verify_password(password, user.password):
-        return False
-    return user
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.JWT_ALGORITHM
+TIME_TO_EXPIRE = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
 
-    # REMINDER
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(seconds = ACCESS_TOKEN_EXPIRE_SECONDS)
+        expire = datetime.now(timezone.utc) + timedelta(minutes = TIME_TO_EXPIRE)
+    
     to_encode.update({"exp": expire})
-
-    return jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
+    return encoded_jwt
 
 def get_access_token(request: Request):
     access_token = request.cookies.get("access_token")
@@ -48,12 +38,16 @@ def get_access_token(request: Request):
         )
     return access_token
 
-def get_current_user(db: Session, token: str = None): #Annotated[str, Depends(oauth2_scheme)]
+def get_current_user(
+        db: Session = Depends(get_db),
+        token: str = Depends(oauth2_scheme)):
+
     credentials_exception = HTTPException(
         status_code = status.HTTP_401_UNAUTHORIZED,
         detail = "Could not validate credentials",
         headers = {"WWW-Authenticate": "Bearer"},
     )
+    
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
