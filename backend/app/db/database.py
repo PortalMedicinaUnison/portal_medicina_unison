@@ -1,15 +1,17 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from core.settings import settings
+from models import Base
 
+print(f"📌 DATABASE_URL en database.py: {settings.DATABASE_URL}")
 
 try:
-    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+    engine = create_engine(settings.DATABASE_URL, connect_args={"check_same_thread": False})
 except Exception as e:
     print(f"Error al conectar con la base de datos: {e}")
 
-Base = declarative_base()
 
 SessionLocal = sessionmaker(bind=engine)
 
-Base.metadata.create_all(bind=engine)
+def initialize_database():
+    models.Base.metadata.create_all(bind=engine)

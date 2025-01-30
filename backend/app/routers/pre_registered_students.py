@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from typing import List
 from sqlalchemy.orm import Session
-from backend.app.schemas.medical_record import PreRegisteredStudentSchema, PreRegisteredStudentBase
-from backend.app.controllers.pre_registered_students import create_pre_registered_student, get_pre_registered_students
+from schemas.student import PreRegisteredStudentSchema, PreRegisteredStudentBase
+from controllers.pre_registered_students import create_pre_registered_student, get_pre_registered_students
 from core.dependencies import get_db
 
 router = APIRouter(prefix = "/pre_registered_students", tags = ["Pre-Registered Students"])

@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Form, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List, Union
-from backend.app.schemas.medical_record import StudentBase, StudentSchema, StudentRequest, AdminSchema
-from controllers.student_controller import (
+from schemas.student import StudentBase, StudentSchema, StudentRequest
+from schemas.admin import AdminSchema
+from core.dependencies import get_db
+from controllers.students import (
     create_student, update_student, read_students, read_student, upload_profile_picture
 )
 
-from core.dependencies import get_db
 
 router = APIRouter(prefix="/students" , tags=["Students"])
 

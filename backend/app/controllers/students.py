@@ -1,41 +1,44 @@
+from fastapi import UploadFile
 from sqlalchemy.orm import Session
-from backend.app.models.user import Student
-from backend.app.schemas.medical_record import StudentBase, StudentSchema, StudentRequest, AdminSchema
-from core.auth import get_password_hash, is_student_accepted
+from models.user import Student
+from schemas.student import StudentBase, StudentSchema, StudentRequest
+from schemas.admin import AdminBase
+from utils.authentication import hash_password
+from repos.pre_registered_students import is_pre_registered_student
 import os
 
-def create_student(student_data: StudentBase, db: Session):
-    if not auth.is_student_accepted(db, student.file_number):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Student not found in database"
-            )
+def create_student(student: StudentBase, db: Session):
+    if not is_pre_registered_student(db, student.file_number):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student not found in database"
+        )
         
-        student.password = auth.get_password_hash(student.password)
-        student = Student(**student.model_dump())
-        student.profile_image_path = os.path.join("default_picture.jpg")
-        db.add(student)
-        db.commit()
-        db.refresh(student)
-        return student
+    student.password = hash_password(student.password)
+    student = Student(**student.model_dump())
+    student.profile_image_path = os.path.join("default_picture.jpg")
+    db.add(student)
+    db.commit()
+    db.refresh(student)
+    return student
 
 def update_student(student_form: StudentSchema, db: Session):
-    student = db.query(models.Student).filter(models.Student.id == student_form.id).first()
+    student = db.query(Student).filter(Student.id == student_form.id).first()
 
-        if student is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Student not found in database"
-            )
+    if student is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student not found in database"
+        )
 
-        for attr in vars(student_form):
-            value = getattr(student_form, attr)
-            if value:
-                setattr(student, attr, value)
+    for attr in vars(student_form):
+        value = getattr(student_form, attr)
+        if value:
+            setattr(student, attr, value)
 
-        db.commit()
-        db.refresh(student)
-        return student
+    db.commit()
+    db.refresh(student)
+    return student
 
 def read_students(db: Session, skip: int, limit: int):
     return db.query(Student).offset(skip).limit(limit).all()

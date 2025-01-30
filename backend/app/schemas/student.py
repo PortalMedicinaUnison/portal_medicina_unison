@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 from typing import List
 
+
 class StudentRequest(BaseModel):
     student_id: int
-
 
 class StudentBase(BaseModel):
     name : str = None

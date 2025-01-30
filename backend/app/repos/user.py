@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from backend.app.models import user
+from models import user
 
 def get_user(db: Session, username: str, role: str):
     if role == "student":
