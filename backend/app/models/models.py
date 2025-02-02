@@ -47,12 +47,15 @@ class Admin(Base):
     password = Column(String)
 
 
-class I_IdentificationCard():
-    file_number = Column(Integer)
+class I_IdentificationCard(Base):
+    __tablename__ = "section_one"
+
+    id = Column(Integer, primary_key=True)
     name = Column(String)
     pat_last_name = Column(String)
     mat_last_name = Column(String)
-    age = Column(Integer)
+    age = Column(String)
+    sex = Column(String)
     gender = Column(String)
     marital_status = Column(String)
     birth_place = Column(String)
@@ -61,19 +64,35 @@ class I_IdentificationCard():
     phone_number = Column(String)
     study_date = Column(String)
 
-class II_HeredetaryHistory():
-    alcoholism = Column(String)
-    arthritis = Column(String)
-    cancer = Column(String)
-    heart_diseases = Column(String)
-    depression = Column(String)
-    diabetes = Column(String)
-    obesity = Column(String)
-    blood_pressure = Column(String)
-    smoking = Column(String)
-    other = Column(String)
+class II_HeredetaryHistory(Base):
+    __tablename__ = "section_two"
 
-class III_NonpathologicalPersonalHistory():
+    id = Column(Integer, primary_key=True)
+    alcoholism = Column(Integer, ForeignKey('health_condition.id'))
+    arthritis = Column(Integer, ForeignKey('health_condition.id'))
+    cancer = Column(Integer, ForeignKey('health_condition.id'))
+    heart_diseases = Column(Integer, ForeignKey('health_condition.id'))
+    depression = Column(Integer, ForeignKey('health_condition.id'))
+    diabetes = Column(Integer, ForeignKey('health_condition.id'))
+    obesity = Column(Integer, ForeignKey('health_condition.id'))
+    blood_pressure = Column(Integer, ForeignKey('health_condition.id'))
+    smoking = Column(Integer, ForeignKey('health_condition.id'))
+    other = Column(Integer, ForeignKey('health_condition.id'))
+
+class HealthCondition(Base):
+    __tablename__ = "health_condition"
+
+    id = Column(Integer, primary_key=True)
+    father = Column(Boolean)
+    mother = Column(Boolean)
+    siblings = Column(Boolean)
+    none = Column(Boolean)
+    unknown = Column(Boolean)
+
+class III_NonpathologicalPersonalHistory(Base):
+    __tablename__ = "section_three"
+
+    id = Column(Integer, primary_key=True)
     immunizations = Column(String)
     feeding = Column(String)
     sports = Column(String)
@@ -215,23 +234,11 @@ class XII_PhysicalExamination():
     diagnosis = Column(String)
     treatment = Column(String)
 
-class MedicalRecord(
-    I_IdentificationCard,
-    II_HeredetaryHistory,
-    III_NonpathologicalPersonalHistory,
-    IV_PathologicalPersonalHistory,
-    V_A_GynecologicalHistory,
-    V_B_SexualHistory,
-    VI_CurrentIllness,
-    VII_OdontologicalHistory,
-    VIII_Somatometry,
-    IX_OptometricExamination,
-    X_SystemsReview,
-    XI_ExternalAppearance,
-    XII_PhysicalExamination
-):
+class MedicalRecord(Base):
     __tablename__ = "medical_record"
 
     id = Column(Integer, primary_key=True)
-    # i_identification_card = ForeignKey()
+    section_one_id = Column(Integer, ForeignKey('section_one.id'))
+    section_two_id = Column(Integer, ForeignKey('section_two.id'))
+    section_three_id = Column(Integer, ForeignKey('section_three.id'))
 

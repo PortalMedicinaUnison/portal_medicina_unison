@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import fetchUser from '../components/utils';
 import BarraNavegacion from '../components/BarraNavegacion';
 import ContenidoPrincipal from '../components/ContenidoPrincipal';
+import ReportsForm from '../components/ReportsForm';
 
 function ReportsPage() {
   const [user, setUser] = useState({});
@@ -15,8 +16,10 @@ function ReportsPage() {
     <div>
       <BarraNavegacion/>
       <ContenidoPrincipal user={user}>
-        <h1>Reportes</h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex, deleniti.</p>
+        <div className='center'>
+          <h1>Reportes</h1>
+          <ReportsForm/>
+        </div>
       </ContenidoPrincipal>
     </div>
   );

@@ -27,7 +27,6 @@ function SeccionOnceYDoce() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-center">Historia Clínica</h1>
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* XI. Hábitos Exterior */}
         <fieldset className="border rounded p-4">

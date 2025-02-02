@@ -14,33 +14,6 @@ class AcceptedStudentBase(BaseModel):
 class AcceptedStudentSchema(AcceptedStudentBase):
     id: int
 
-# class QuestionBase(BaseModel):
-#     title: str
-#     description: str
-#     type: str
-#     form_id: int
-#     # form: FormSchema
-# class QuestionSchema(QuestionBase):
-#     id: str
-
-# class FormBase(BaseModel):
-#     title: str
-#     description: str
-#     questions: List[QuestionSchema] = []
-
-# class FormSchema(FormBase):
-#     id : int
-    
-# class Question(Base):
-#     __tablename__ = "question"
-
-#     id = Column(Integer, primary_key=True)
-#     title: str
-#     description: str
-#     type: str
-#     form_id = Column(Integer, ForeignKey('form.id'))
-#     form = relationship('Form', back_populates='questions')
-
 class StudentBase(BaseModel):
     name : str = None
     pat_last_name : str = None
@@ -66,21 +39,8 @@ class UserForm(BaseModel):
     password: str
     role: str  # Expecting "student" or "admin"
 
-class I_IdentificationCard(BaseModel):
-    file_number: int
-    name: str
-    pat_last_name: str
-    mat_last_name: str
-    age: int
-    gender: str
-    marital_status: str
-    birth_place: str
-    residence_place: str
-    occupation: str
-    phone_number: str
-    study_date: str
-
 class II_HeredetaryHistory(BaseModel):
+    id: int
     alcoholism: str
     arthritis: str
     cancer: str
@@ -93,6 +53,7 @@ class II_HeredetaryHistory(BaseModel):
     other: str
 
 class III_NonpathologicalPersonalHistory(BaseModel):
+    id: int
     immunizations: str
     feeding: str
     sports: str
@@ -234,21 +195,27 @@ class XII_PhysicalExamination(BaseModel):
     diagnosis: str
     treatment: str
 
-class MedicalRecordSchema(
-    I_IdentificationCard,
-    II_HeredetaryHistory,
-    III_NonpathologicalPersonalHistory,
-    IV_PathologicalPersonalHistory,
-    V_A_GynecologicalHistory,
-    V_B_SexualHistory,
-    VI_CurrentIllness,
-    VII_OdontologicalHistory,
-    VIII_Somatometry,
-    IX_OptometricExamination,
-    X_SystemsReview,
-    XI_ExternalAppearance,
-    XII_PhysicalExamination
-):
+class I_IdentificationCard(BaseModel):
+    id: int
+    name: str = None
+    pat_last_name: str = None
+    mat_last_name: str = None
+    age: str = None
+    sex: str = None
+    gender: str = None
+    marital_status: str
+    birth_place: str = None
+    residence_place: str = None
+    occupation: str = None
+    phone_number: str = None
+    study_date: str = None
+
+class MedicalRecordBase(BaseModel):
+    section_one_id : int = None
+    section_two_id : int = None
+    section_three_id : int = None
+
+class MedicalRecordSchema(MedicalRecordBase):
     id : int
 
 

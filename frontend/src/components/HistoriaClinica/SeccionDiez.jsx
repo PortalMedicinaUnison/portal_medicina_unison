@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 function SeccionDiez() {
   const [form, setForm] = useState({
@@ -44,8 +43,6 @@ function SeccionDiez() {
     endocrine_underweight: false,
   });
 
-  const navigate = useNavigate();
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({
@@ -54,13 +51,8 @@ function SeccionDiez() {
     });
   };
 
-  const handleNext = () => {
-    navigate('/SeccionUno1-12'); // Cambia "/next-section" por la ruta correspondiente
-  };
-
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-center">Historia Clínica</h1>
       <h2 className="text-xl font-semibold mb-4">X. Interrogatorio por Aparato y Sistemas</h2>
       <form className="space-y-6">
         {[

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 
 function SeccionSeis() {
   const [form, setForm] = useState({
@@ -26,22 +26,13 @@ function SeccionSeis() {
     observations: '',
   });
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const navigate = useNavigate();
-  const handleNext = () => {
-    navigate('/SeccionSiete');
-  };
-
-  
-
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-center">Historia Clínica</h1>
       <form className="space-y-6">
         {/* Pregunta principal */}
         <h2 className="text-xl font-semibold mb-4">VI. Padecimiento Actual</h2>

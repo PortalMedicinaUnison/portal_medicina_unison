@@ -129,20 +129,6 @@ async def upload_profile_picture(db: db_dependency, student_id: int = Form(...),
 
     return {"info": file_location, "student": student}
 
-# @app.post('/admin/', response_model=schemas.AdminSchema)
-# async def create_admin(admin: schemas.AdminBase, db: db_dependency):
-#     admin.password = auth.get_password_hash(admin.password)
-#     admin = models.Admin(**admin.model_dump())
-#     db.add(admin)
-#     db.commit()
-#     db.refresh(admin)
-#     return admin
-
-# @app.get('/admin/', response_model=List[schemas.AdminSchema])
-# async def read_admins(db: db_dependency, skip: int = 0, limit: int = 10):
-    students = db.query(models.Admin).offset(skip).limit(limit).all()
-    return students
-
 @app.post("/token/")
 async def login_for_access_token(form_data: schemas.UserForm, db: db_dependency):
     user = auth.authenticate_user(db, form_data.username, form_data.password, form_data.role)
@@ -189,7 +175,7 @@ async def update_medical_record(medical_record_form: schemas.MedicalRecordSchema
     db.refresh(medical_record)
     return medical_record
 
-@app.get('/medical_record/', response_model=schemas.MedicalRecordSchema)
+@app.get('/medical_record/', response_model=List[schemas.MedicalRecordSchema])
 async def read_medical_record(db: db_dependency, skip: int = 0, limit: int = 10):
     medical_record = db.query(models.MedicalRecord).offset(skip).limit(limit).all()
     return medical_record

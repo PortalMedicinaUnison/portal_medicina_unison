@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 
 function SeccionCinco() {
   const [formData, setFormData] = useState({
@@ -27,14 +27,8 @@ function SeccionCinco() {
     });
   };
 
-  const navigate = useNavigate();
-  const handleNext = () => {
-    navigate('/SeccionSeis');
-  };
-
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-center">Historia Clínica</h1>
       <form className="space-y-4">
         <div>
           <h2 className="text-xl font-semibold mb-4">V. Antecedentes Ginecológicos</h2>

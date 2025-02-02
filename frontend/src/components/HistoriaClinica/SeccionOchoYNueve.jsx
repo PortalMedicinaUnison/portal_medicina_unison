@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 
 function SeccionOchoYNueve() {
   const [form, setForm] = useState({
@@ -14,20 +14,13 @@ function SeccionOchoYNueve() {
     temperature: '',
   });
 
-  const navigate = useNavigate();
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleNext = () => {
-    navigate('/SeccionDiez'); // Cambia "/next-section" por la ruta deseada
-  };
-
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-center">Historia Clínica</h1>
       <form className="space-y-6">
         {/* Campos del formulario */}
         <h2 className="text-xl font-semibold mb-4">VIII. Signos Vitales y Somatometría</h2>

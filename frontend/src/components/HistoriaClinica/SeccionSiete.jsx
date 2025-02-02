@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 function SeccionSiete() {
   const [form, setForm] = useState({
@@ -13,20 +12,13 @@ function SeccionSiete() {
     current_dental_treatment: '',
   });
 
-  const navigate = useNavigate();
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleNext = () => {
-    navigate('/SeccionOchoYNueve');
-  };
-
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-center">Historia Clínica</h1>
       <form className="space-y-6">
         {/* Preguntas Odontológicas */}
         <h2 className="text-xl font-semibold mb-4">VII. Antecedentes Odontológicos</h2>

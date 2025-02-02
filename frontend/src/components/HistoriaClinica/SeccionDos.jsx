@@ -1,31 +1,41 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 function SeccionDos() {
-  const [formData, setFormData] = useState({
-    
-    antecedentes_hereditarios: {
-      alcoholismo: false,
-      artritis: false,
-      cancer: false,
-      cardiopatias: false,
-      depresion: false,
-      diabetes: false,
-      obesidad: false,
-      presion_arterial: false,
-      tabaquismo: false,
-    }
+  const conditionLabels = [
+    'Alcoholismo',
+    'Artritis',
+    'Cáncer',
+    'Cardiopatías',
+    'Depresión',
+    'Diabetes Mellitus Tipo I, II',
+    'Obesidad',
+    'Presión Arterial Alta',
+    'Tabaquismo'
+  ];
 
-  });
+  const conditions = [
+    "alcoholism",
+    "arthritis",
+    "cancer",
+    "heart_diseases",
+    "depression",
+    "diabetes",
+    "obesity",
+    "blood_pressure",
+    "smoking"
+  ];
 
-  const [selected, setSelected] = useState(
-    ['Alcoholismo', 'Artritis', 'Cáncer', 'Cardiopatías', 'Depresión', 'Diabetes Mellitus Tipo I, II', 'Obesidad', 'Presión Arterial Alta', 'Tabaquismo'].map(() => ({
-      padre: false,
-      madre: false,
-      hermanos: false,
-      ninguno: false,
-      noSe: false,
-    }))
+  const [formData, setFormData] = useState(
+    conditions.reduce((acc, condition) => {
+      acc[condition] = {
+        father: false,
+        mother: false,
+        siblings: false,
+        none: false,
+        unknown: false,
+      };
+      return acc;
+    }, {})
   );
 
   const handleChange = (e) => {
@@ -36,29 +46,57 @@ function SeccionDos() {
     });
   };
 
-  const handleCheckboxChange = (conditionIndex, field) => {
-    setSelected((prevSelected) =>
+  const handleCheckboxChange = (condition, field) => {
+
+    for (const key in formData) {
+      if (key == condition) {
+        if (field === 'none' || field === 'unknown') {
+          setFormData({
+              father: false,
+              mother: false,
+              siblings: false,
+              none: field === 'none',
+              unknown: field === 'unknown'
+            });
+        } else {
+          return { ...item, [field]: !item[field], none: false, unknown: false };
+        }
+      }
+    }
+
+    setFormData((prevSelected) =>
       prevSelected.map((item, index) => {
         if (index === conditionIndex) {
-          if (field === 'ninguno' || field === 'noSe') {
-            return { padre: false, madre: false, hermanos: false, ninguno: field === 'ninguno', noSe: field === 'noSe' };
+          if (field === 'none' || field === 'unknown') {
+            return { father: false, mother: false, siblings: false, none: field === 'none', unknown: field === 'unknown' };
           } else {
-            return { ...item, [field]: !item[field], ninguno: false, noSe: false };
+            return { ...item, [field]: !item[field], none: false, unknown: false };
           }
         }
         return item;
       })
     );
+      // prevSelected.map((item, index) => {
+      //   if (index === conditionIndex) {
+      //     if (field === 'none' || field === 'unknown') {
+      //       return { father: false, mother: false, siblings: false, none: field === 'none', unknown: field === 'unknown' };
+      //     } else {
+      //       return { ...item, [field]: !item[field], none: false, unknown: false };
+      //     }
+      //   }
+      //   return item;
+      // })
   };
 
-  const navigate = useNavigate();
-  const handleNext = () => {
-    navigate('/SeccionTres');
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    console.log(formData);
+  }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-center">Historia Clínica</h1>
+      {/* <button onClick={handleSubmit} className='next-button'>Guardar</button> */}
       <form className="space-y-4">
         {/* Tabla de Antecedentes Hereditarios y Familiares */}
         <div>
@@ -67,7 +105,7 @@ function SeccionDos() {
             <table className="table-auto border-collapse border border-gray-400">
               <thead>
                 <tr>
-                  <th className="border border-gray-300 px-4 py-2">Antecedentes Hereditarios y Familiares</th>
+                  <th className="border border-gray-300 px-4 py-2"></th>
                   <th className="border border-gray-300 px-4 py-2">Padre</th>
                   <th className="border border-gray-300 px-4 py-2">Madre</th>
                   <th className="border border-gray-300 px-4 py-2">Hermanos</th>
@@ -76,48 +114,26 @@ function SeccionDos() {
                 </tr>
               </thead>
               <tbody>
-                {['Alcoholismo', 'Artritis', 'Cáncer', 'Cardiopatías', 'Depresión', 'Diabetes Mellitus Tipo I, II', 'Obesidad', 'Presión Arterial Alta', 'Tabaquismo'].map(
-                  (condition, conditionIndex) => (
-                    <tr key={conditionIndex}>
-                      <td className="border border-gray-300 px-4 py-2">{condition}</td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        <input
-                          type="checkbox"
-                          checked={selected[conditionIndex].padre}
-                          onChange={() => handleCheckboxChange(conditionIndex, 'padre')}
-                        />
-                      </td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        <input
-                          type="checkbox"
-                          checked={selected[conditionIndex].madre}
-                          onChange={() => handleCheckboxChange(conditionIndex, 'madre')}
-                        />
-                      </td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        <input
-                          type="checkbox"
-                          checked={selected[conditionIndex].hermanos}
-                          onChange={() => handleCheckboxChange(conditionIndex, 'hermanos')}
-                        />
-                      </td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        <input
-                          type="checkbox"
-                          checked={selected[conditionIndex].ninguno}
-                          onChange={() => handleCheckboxChange(conditionIndex, 'ninguno')}
-                        />
-                      </td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        <input
-                          type="checkbox"
-                          checked={selected[conditionIndex].noSe}
-                          onChange={() => handleCheckboxChange(conditionIndex, 'noSe')}
-                        />
-                      </td>
-                    </tr>
-                  )
-                )}
+                {conditions.map((condition, conditionIndex) => (
+                  <tr key={conditionIndex}>
+                    <td className="border border-gray-300 px-4 py-2">{conditionLabels[conditionIndex]}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input type="checkbox" checked={formData[condition]['father']} onChange={() => handleCheckboxChange(condition, 'father')}/>
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input type="checkbox" checked={formData[condition]['mother']} onChange={() => handleCheckboxChange(condition, 'mother')}/>
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input type="checkbox" checked={formData[condition]['siblings']} onChange={() => handleCheckboxChange(condition, 'siblings')}/>
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input type="checkbox" checked={formData[condition]['none']} onChange={() => handleCheckboxChange(condition, 'none')}/>
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input type="checkbox" checked={formData[condition]['unknown']} onChange={() => handleCheckboxChange(condition, 'unknown')}/>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
