@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from datetime import timedelta, datetime, timezone
 from passlib.context import CryptContext
+from utils.authentication import verify_password
 import jwt
 
 from core.settings import settings
@@ -60,4 +61,13 @@ def get_current_user(
     user = get_user(db, username, role)
     if user is None:
         raise credentials_exception
+    return user
+
+# REVISAR
+def authenticate_user(db: Session, username: str, password: str, role: str):
+    user = get_user(db, username, role)
+    if not user:
+        return False
+    if not verify_password(password, user.password):
+        return False
     return user

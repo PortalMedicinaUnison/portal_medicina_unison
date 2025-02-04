@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from core.auth import authenticate_user, create_access_token, get_current_user
-from schemas.auth_schemas import UserForm, TokenRequest
+from schemas.user import UserForm, TokenRequest
 
 
 def authenticate_user(form_data: UserForm, db: Session):

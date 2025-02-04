@@ -26,4 +26,3 @@ test/
 *.sw?
 *.db
 __pycache__/
-*.md

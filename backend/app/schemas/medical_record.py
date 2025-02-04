@@ -1,14 +1,16 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from fastapi import UploadFile
 
 
-class I_IdentificationCard(BaseModel):
-    file_number: int
+
+class IdentificationCardSchema(BaseModel):
+    academic_id: int
     name: str
-    pat_last_name: str
-    mat_last_name: str
+    paternal_last_name: str
+    maternal_last_name: Optional[str] = None
     age: int
+    sex: str
     gender: str
     marital_status: str
     birth_place: str
@@ -17,7 +19,7 @@ class I_IdentificationCard(BaseModel):
     phone_number: str
     study_date: str
 
-class II_HeredetaryHistory(BaseModel):
+class HereditaryHistorySchema(BaseModel):
     alcoholism: str
     arthritis: str
     cancer: str
@@ -29,54 +31,69 @@ class II_HeredetaryHistory(BaseModel):
     smoking: str
     other: str
 
-class III_NonpathologicalPersonalHistory(BaseModel):
+class NonpathologicalHistorySchema(BaseModel):
     immunizations: str
     feeding: str
     sports: str
     smoking: str
     alcoholism: str
     drug_addictions: str
+    housing_status: Optional[str] = None
     house_conditions: str
     who_live_with_you: str
     how_many_people: str 
     how_many_rooms: str 
     work_and_school: str
+    work_and_school_details: Optional[str] = None
 
-class IV_PathologicalPersonalHistory(BaseModel):
-    rash_diseases: str
-    infectious_diseases: str
-    traumas: str
-    parasitic_diseases: str
-    venereal_diseases: str
-    chronic_diseases: str
-    surgical_history: str
-    nervous_system: str
+class PathologicalHistorySchema(BaseModel):
+    eruptive_diseases: Optional[str] = None
+    infectious_diseases: Optional[str] = None
+    traumas: Optional[str] = None
+    blood_transfusion: bool
+    blood_transfusion_date: Optional[str] = None
+    parasitic_diseases: bool
+    venereal_diseases: bool
+    venereal_diseases_details: Optional[str] = None
+    chronic_diseases: bool
+    chronic_diseases_details: Optional[str] = None
+    surgeries: bool
+    surgeries_details: Optional[str] = None
+    nervous_breakdown: bool
+    nervous_paralysis: bool
     allergic_history: str
-    psycho_history: str
-    covid_19: str
+    allergic_history_details: Optional[str] = None
+    psychological_treatment: Optional[bool] = None
+    psychiatric_treatment: Optional[bool] = None
+    psychological_treatment_current: Optional[bool] = None
+    psychiatric_treatment_current: Optional[bool] = None
+    suicidal_thoughts: Optional[bool] = None
+    covid: Optional[bool] = None
+    covid_date: Optional[str] = None
+    covid_symptoms: Optional[str] = None
+    covid_vaccine: Optional[bool] = None
 
-class V_A_GynecologicalHistory(BaseModel):
-    menarche: str
-    menstrual_duration: str
-    menstrual_rhythm: str
-    dysmenorrhea: str
-    were_pregnant: str
-    contraceptive_methods: str
-    pap_smear_test: str
+class GynecologicalHistorySchema(BaseModel):
+    menarche: Optional[str] = None
+    menstrual_duration: Optional[str] = None
+    menstrual_rhythm: Optional[str] = None
+    dysmenorrhea: Optional[str] = None
+    were_pregnant: Optional[str] = None
+    contraceptive_methods: Optional[str] = None
+    pap_smear_test: Optional[str] = None
     
-class V_B_SexualHistory(BaseModel):
+class SexualHistorySchema(BaseModel):
     active_sex_life: str
     sexual_partners_number: str
     sexual_orientation: str
     sexual_partners: str
 
-#se pueden hacer booleanos
-class VI_CurrentIllness(BaseModel):
+class CurrentIllnessSchema(BaseModel):
     have_poor_health: bool
     bloody_diarrhea: bool
     weakness: bool
     pain: bool
-    thristy: bool
+    thirsty: bool
     convulsions: bool
     fainting: bool
     stomachache: bool
@@ -93,7 +110,7 @@ class VI_CurrentIllness(BaseModel):
     weight_loss: bool
     eternal_cough: bool
 
-class VII_OdontologicalHistory(BaseModel):
+class OdontologicalHistorySchema(BaseModel):
     dental_pieces_number: str
     dental_cleaning: str
     last_dental_checking: str
@@ -103,7 +120,7 @@ class VII_OdontologicalHistory(BaseModel):
     object_in_mouth: str
     current_dental_treatment: str
 
-class VIII_Somatometry(BaseModel):
+class SomatometrySchema(BaseModel):
     weight: int
     size: int
     bmi: int
@@ -112,10 +129,10 @@ class VIII_Somatometry(BaseModel):
     blood_pressure: int
     temperature: int
 
-class IX_OptometricExamination(BaseModel):
+class OptometricExaminationSchema(BaseModel):
     do_you_wear_glasses: str
 
-class X_SystemsReview(BaseModel):
+class SystemsReviewSchema(BaseModel):
     digestive_abdomen_shape: bool
     digestive_hernias: bool
     digestive_diarreas: bool
@@ -156,10 +173,10 @@ class X_SystemsReview(BaseModel):
     endocrine_overweight: bool
     endocrine_underweight: bool
 
-class XI_ExternalAppearance(BaseModel):
-    external_appearence: str
+class ExternalAppearanceSchema(BaseModel):
+    external_appearance: str
 
-class XII_PhysicalExamination(BaseModel):
+class PhysicalExaminationSchema(BaseModel):
     head: str
     neck: str
     chest: str
@@ -171,22 +188,21 @@ class XII_PhysicalExamination(BaseModel):
     diagnosis: str
     treatment: str
 
-class MedicalRecordSchema(
-    I_IdentificationCard,
-    II_HeredetaryHistory,
-    III_NonpathologicalPersonalHistory,
-    IV_PathologicalPersonalHistory,
-    V_A_GynecologicalHistory,
-    V_B_SexualHistory,
-    VI_CurrentIllness,
-    VII_OdontologicalHistory,
-    VIII_Somatometry,
-    IX_OptometricExamination,
-    X_SystemsReview,
-    XI_ExternalAppearance,
-    XII_PhysicalExamination
-):
-    id : int
+class MedicalRecordSchema(BaseModel):
+    id: int
+    identification_card: IdentificationCardSchema
+    hereditary_history: HereditaryHistorySchema
+    nonpathological_history: NonpathologicalHistorySchema
+    pathological_history: PathologicalHistorySchema
+    gynecological_history: Optional[GynecologicalHistorySchema] = None
+    sexual_history: SexualHistorySchema
+    current_illness: CurrentIllnessSchema
+    odontological_history: OdontologicalHistorySchema
+    somatometry: SomatometrySchema
+    optometric_examination: OptometricExaminationSchema
+    systems_review: SystemsReviewSchema
+    external_appearance: ExternalAppearanceSchema
+    physical_examination: PhysicalExaminationSchema
 
 
 

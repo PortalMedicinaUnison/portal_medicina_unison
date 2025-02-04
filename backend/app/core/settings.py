@@ -1,4 +1,5 @@
 from typing import List
+import os
 from pydantic_settings import BaseSettings
 from pydantic import ValidationError
 
@@ -17,7 +18,7 @@ class Settings(BaseSettings):
     ORIGINS: List[str]
 
     class Config:
-        env_file = "app/.env"
+        env_file = os.path.join(os.path.dirname(__file__), "../../.env")
 
 try:
     settings = Settings()

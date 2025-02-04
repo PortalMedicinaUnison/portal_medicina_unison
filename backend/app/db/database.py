@@ -14,4 +14,4 @@ except Exception as e:
 SessionLocal = sessionmaker(bind=engine)
 
 def initialize_database():
-    models.Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine)

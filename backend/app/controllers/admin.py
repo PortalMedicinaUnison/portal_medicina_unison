@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 from models.user import Admin
 from schemas.admin import AdminBase
-from core.auth import get_password_hash
+from utils.authentication import hash_password
 
 
 def create_admin(admin_data: AdminBase, db: Session):
-    admin.password = get_password_hash(admin.password)
+    admin.password = hash_password(admin.password)
     admin = Admin(**admin.model_dump())
     db.add(admin)
     db.commit()

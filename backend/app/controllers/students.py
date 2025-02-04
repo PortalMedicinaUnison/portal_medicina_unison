@@ -8,11 +8,12 @@ from repos.pre_registered_students import is_pre_registered_student
 import os
 
 def create_student(student: StudentBase, db: Session):
-    if not is_pre_registered_student(db, student.file_number):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Student not found in database"
-        )
+    # REVISAR
+    # if not is_pre_registered_student(db, student.file_number):
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND,
+    #         detail="Student not found in database"
+    #     )
         
     student.password = hash_password(student.password)
     student = Student(**student.model_dump())

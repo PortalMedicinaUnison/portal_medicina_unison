@@ -11,18 +11,17 @@ from controllers.medical_records import (
 
 router = APIRouter(prefix="/medical_records", tags=["Medical Records"])
 
-db_dependency = Depends(get_db)
 
-@router.post('/medical_record/')#, response_model=StudentSchema)
-async def create_medical_record(medical_record: MedicalRecordSchema, db: db_dependency):
+@router.post('/', response_model=MedicalRecordSchema)
+async def create_medical_record_route(medical_record: MedicalRecordSchema, db: Session = Depends(get_db)):
     return create_medical_record(medical_record, db)
 
 
-@router.put('/medical_record/', response_model=MedicalRecordSchema)
-async def update_medical_record(medical_record_form: MedicalRecordSchema, db: db_dependency):
+@router.put('/', response_model=MedicalRecordSchema)
+async def update_medical_record_route(medical_record_form: MedicalRecordSchema, db: Session = Depends(get_db)):
     return update_medical_record(medical_record_form, db)
 
 
-@router.get('/medical_record/', response_model=MedicalRecordSchema)
-async def read_medical_record(db: db_dependency, skip: int = 0, limit: int = 10):
+@router.get('/', response_model=MedicalRecordSchema)
+async def read_medical_record_route(db: Session = Depends(get_db), skip: int = 0, limit: int = 10):
     return read_medical_record(db, skip, limit)
