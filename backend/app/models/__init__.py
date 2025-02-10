@@ -1,4 +1,18 @@
-from sqlalchemy.orm import declarative_base
+from .user import PreRegisteredUser, User
+from .site import Site
+from .medical_record import MedicalRecord
+from .intership import InternshipEnrollment, Internship, InternshipDocument
+from .communications import Announcement, Survey, Report
 
-
-Base = declarative_base()
+__all__ = [
+    'PreRegisteredUser',
+    'User',
+    'Site',
+    'MedicalRecord',
+    'InternshipEnrollment',
+    'Internship',
+    'InternshipDocument',
+    'Announcement',
+    'Survey',
+    'Report'
+]

@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, Boolean, String, ForeignKey
 from sqlalchemy.orm import relationship
-from models import Base
+from .base import Base
+
 
 class MedicalRecord(Base):
     """

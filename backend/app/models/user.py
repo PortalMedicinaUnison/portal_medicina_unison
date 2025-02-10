@@ -1,47 +1,49 @@
-from sqlalchemy import Column, Boolean, Integer, String, ForeignKey
+from sqlalchemy import Column, Boolean, Integer, String, Index, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from models import Base
+from .base import AbstractModel
 
-class PreRegisteredStudent(Base):
+
+class PreRegisteredUser(AbstractModel):
     """
     Estudiantes inscritos por el administrador
     habilitados para registrarse en el portal.
+    De esta manera solo los estudiantes que cumplen
+    con los requisitos pueden registrarse.
+
     """
 
-    __tablename__ = "pre_registered_student"
+    __tablename__ = "pre_registered_user"
 
-    id = Column(Integer, primary_key=True)
-    academic_id = Column(Integer, unique=True, nullable=False, index=True)
+    pre_registered_id = Column(Integer, primary_key=True, autoincrement=True)
+    academic_id = Column(Integer, unique=True, nullable=False)
+    assigned_year = Column(Integer, nullable=False)
+    assigned_period = Column(Integer, nullable=False)
+    
+    __table_args__ = (Index('idx_pre_registered_academic_id', 'academic_id'),)
+    
+    user = relationship("User", back_populates="pre_registered", uselist=False) # cardinality 1:1
 
-class Student(Base):
-    """
-    Modelo para estudiantes registrados.
-    """
-
-    __tablename__ = "student"
-
-    id = Column(Integer, primary_key=True)
-    academic_id = Column(Integer, unique=True, nullable=False, index=True)
-    name = Column(String(100), nullable=False)
-    paternal_last_name = Column(String(100), nullable=False)
-    maternal_last_name = Column(String(100))
-    profile_image_path = Column(String(255), unique=True)
-    email = Column(String(255), unique=True, nullable=False)
-    password = Column(String(255), nullable=False)
-
-    pre_registered_record = relationship("PreRegisteredStudent", back_populates="student")
-
-class Admin(Base):
-    """
-    Modelo para administradores.
-    """
-
-    __tablename__ = "admin"
-
-    id = Column(Integer, primary_key=True)
+class User(AbstractModel):
+    
+    __tablename__ = 'user'
+    
+    user_id = Column(Integer, primary_key=True, autoincrement=True)
+    academic_id = Column(Integer, ForeignKey("pre_registered_user.academic_id"), unique=True, nullable=False)
     name = Column(String(50), nullable=False)
-    paternal_last_name = Column(String(100), nullable=False)
-    maternal_last_name = Column(String(100))
-    profile_image_path = Column(String(255), unique=True)
-    email = Column(String(255), unique=True, nullable=False)
-    password = Column(String(255), nullable=False)
+    paternal_last_name = Column(String(50), nullable=False)
+    maternal_last_name = Column(String(50), nullable=False)
+    email = Column(String(50), nullable=False, unique=True)
+    password = Column(String, nullable=False)
+    profile_photo = Column(String(255), nullable=False)
+    is_admin = Column(Boolean, nullable=False, default=False)
+    super_admin = Column(Boolean, nullable=False, default=False)
+    is_active = Column(Boolean, nullable=False, default=True)
+    
+    pre_registered = relationship("PreRegisteredUser", back_populates="user")
+    announcements = relationship("Announcement", back_populates="admin")
+    surveys = relationship("Survey", back_populates="admin")
+    sites = relationship("Site", back_populates="admin")
+    reports = relationship("Report", back_populates="student")
+    internship_enrollments = relationship("InternshipEnrollment", back_populates="student")
+    internships = relationship("Internship", back_populates="student")
+    pre_registered_record = relationship("PreRegisteredStudent", back_populates="student")
