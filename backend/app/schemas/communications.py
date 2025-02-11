@@ -45,7 +45,8 @@ class ReportCreate(BaseModel):
     description: str
     evidence: Optional[str] = None
     anonymity: bool
-    status: int
+    is_open: bool = True
+    admin_comment: Optional[str] = None
 
     @validator("date")
     def validate_date(cls, date: date) -> date:

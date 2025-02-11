@@ -7,7 +7,6 @@ class PreRegisteredUserCreate(BaseModel):
     academic_id: str
     assigned_year: int
     assigned_period: int
-    is_active: bool = True
 
     @validator("academic_id")
     def validate_academic_id(cls, academic_id):
@@ -24,7 +23,6 @@ class UserCreate(BaseModel):
     profile_photo: str
     is_admin: bool = False
     super_admin: bool = False
-    is_active: bool = True
 
     @validator("academic_id")
     def validate_academic_id(cls, academic_id):

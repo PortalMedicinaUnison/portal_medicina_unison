@@ -14,7 +14,6 @@ class InternshipCreate(BaseModel):
     year: int
     period: int
     status: InternshipStatusEnum
-    is_active: bool
 
     @validator("period")
     def validate_period(cls, period: int) -> int:
@@ -30,4 +29,4 @@ class InternshipDocumentCreate(BaseModel):
     internship_id: int
     document_type: DocumentTypeEnum
     path: str
-    verification_status: bool
+    is_verified: bool

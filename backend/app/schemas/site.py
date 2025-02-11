@@ -16,7 +16,7 @@ class SiteCreate(BaseModel):
     contact_name: str
     contact_email: str
     contact_phone: Optional[str] = None
-    is_active: bool = True
+    is_available: bool = True
 
     @validator("contact_email")
     def validate_email(cls, email):
