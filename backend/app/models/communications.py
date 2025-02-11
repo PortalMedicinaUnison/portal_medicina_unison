@@ -5,9 +5,11 @@ from .base import AbstractModel
 from .types import IntEnumType
 
 
-# -------------------------------------
-# Annoucement models
-# -------------------------------------
+# ---------------  Announcement  ----------------------
+
+class AnnouncementTypeEnum(IntEnum):
+    GENERAL = 1
+    INTERNSHIP = 2
 
 class Announcement(AbstractModel):
     __tablename__ = 'announcement'
@@ -15,14 +17,12 @@ class Announcement(AbstractModel):
     announcement_id = Column(Integer, primary_key=True, autoincrement=True)
     admin_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     title = Column(String(100), nullable=False)
-    announcement_type = Column(Integer, nullable=False)
+    announcement_type = Column(IntEnumType(AnnouncementTypeEnum), nullable=False)
     description = Column(Text)
     
     admin = relationship("User", back_populates="announcements")
 
-# -------------------------------------
-# Survey models
-# -------------------------------------
+# ---------------  Survey  ----------------------
 
 class Survey(AbstractModel):
     __tablename__ = 'survey'
@@ -37,9 +37,7 @@ class Survey(AbstractModel):
     
     admin = relationship("User", back_populates="surveys")
 
-# -------------------------------------
-# Report models
-# -------------------------------------
+# ---------------  Survey  ----------------------
 
 class ReportTypeEnum(IntEnum):
     ACCIDENT = 1

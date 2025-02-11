@@ -55,6 +55,5 @@ class InternshipDocument(AbstractModel):
     document_type = Column(IntEnumType(DocumentTypeEnum), nullable=False)
     path = Column(String(255), nullable=False)
     verification_status = Column(Boolean, nullable=False)
-    submission_date = Column(DateTime, nullable=False)
     
     internship = relationship("Internship", back_populates="documents")
