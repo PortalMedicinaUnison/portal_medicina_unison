@@ -18,13 +18,7 @@ class SiteCreate(BaseModel):
     contact_phone: Optional[str] = None
     is_active: bool = True
 
-    @validator("email")
-    def validate_email(cls, input):
-        is_valid_email(input)
-        return input
-
-    @validator("capacity")
-    def validate_capacity(cls, v: Optional[int]) -> Optional[int]:
-        if v is not None and v < 0:
-            raise ValueError("La capacidad debe ser un número positivo")
-        return v
+    @validator("contact_email")
+    def validate_email(cls, email):
+        is_valid_email(email)
+        return email

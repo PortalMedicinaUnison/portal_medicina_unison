@@ -9,9 +9,9 @@ class PreRegisteredUser(BaseModel):
     assigned_period: int
 
     @validator("academic_id")
-    def validate_academic_id(cls, input):
-        is_valid_academic_id(input)
-        return input
+    def validate_academic_id(cls, academic_id):
+        is_valid_academic_id(academic_id)
+        return academic_id
 
 class User(BaseModel):
     academic_id: str
@@ -26,19 +26,19 @@ class User(BaseModel):
     is_active: bool = True
 
     @validator("academic_id")
-    def validate_academic_id(cls, input):
-        is_valid_academic_id(input)
-        return input
+    def validate_academic_id(cls, academic_id):
+        is_valid_academic_id(academic_id)
+        return academic_id
 
     @validator("password")
-    def validate_password(cls, input):
-        is_valid_password(input)
-        return input
+    def validate_password(cls, password):
+        is_valid_password(password)
+        return password
             
     @validator("email")
-    def validate_email(cls, input):
-        is_valid_email(input)
-        return input
+    def validate_email(cls, email):
+        is_valid_email(email)
+        return email
         
     
 
@@ -48,4 +48,4 @@ class TokenRequest(BaseModel):
 class UserForm(BaseModel):
     username: str
     password: str
-    role: str  # Expecting "student" or "admin"
+    role: str
