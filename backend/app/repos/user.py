@@ -1,3 +1,4 @@
+from fastapi import UploadFile
 from .base import BaseRepo
 from utils.authentication import hash_password
 from models.user import  User, PreRegisteredUser
@@ -76,8 +77,21 @@ class UserRepo(BaseRepo):
     def delete():
         pass
 
-    def upload_profile_picture():
-        pass
+    def upload_profile_picture(self, user_id: str, image: UploadFile):
+        import os
+
+        file_location = os.path.join("profile_images", f"{user_id}.jpg")
+
+        with open(file_location, "wb") as buffer:
+            buffer.write(image.file.read())
+
+        user = self.get_by_user_id(user_id)
+        if user:
+            user.profile_photo = file_location
+            self.session.commit()
+            self.session.refresh(user)
+        
+        return user
 
 class AdminRepo(UserRepo):
     pass

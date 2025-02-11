@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from core.settings import settings
-from backend.app.models.base import Base
+from models.base import Base
 
 print(f"📌 DATABASE_URL en database.py: {settings.DATABASE_URL}")
 
