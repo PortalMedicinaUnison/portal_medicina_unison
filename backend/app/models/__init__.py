@@ -1,7 +1,7 @@
 from .user import PreRegisteredUser, User
 from .site import Site
 from .medical_record import MedicalRecord
-from .intership import InternshipEnrollment, Internship, InternshipDocument
+from .internship import InternshipEnrollment, Internship, InternshipDocument
 from .communications import Announcement, Survey, Report
 
 __all__ = [

@@ -7,6 +7,36 @@ def is_valid_password(password: str) -> bool:
     # Por ejemplo: al menos 8 caracteres, una mayúscula, un número y un carácter especial
     return len(password) >= 8 and any(c.isupper() for c in password) and any(c.isdigit() for c in password)
 
-def is_valid_curp(curp: str) -> bool:
-    curp_regex = r"^[A-Z]{4}\d{6}[HM][A-Z]{5}\d{2}$"
-    return re.match(curp_regex, curp) is not None
+def is_valid_academic_id(id: str) -> None:
+    """    
+    Valida que un ID de estudiante sea una cadena donde:
+    - Todos los caracteres son números enteros.
+    - La longitud de la cadena es exactamente 9.
+    - El primer carácter es '2'.
+    """
+    if not id.isdigit():
+        raise ValueError("El expediente debe contener solo números")
+
+    if len(id) != 9:
+        raise ValueError("El expediente debe tener una longitud de 9 caracteres.")
+    
+    if id[0] != '2':
+        raise ValueError("El expediente esta fuera de rango.")
+
+def is_valid_phone(phone: str) -> None:
+    """
+    Valida que un número de teléfono tenga el formato correcto.
+    """
+    if not phone.isdigit():
+        raise ValueError("El número de teléfono debe contener solo números")
+    if len(phone) != 10:
+        raise ValueError("El número de teléfono debe tener una longitud de 10 caracteres.")
+
+    
+def is_valid_period(period: int) -> None:
+    """
+    Valida que el periodo sea un número 1 o 2, correspondiente 
+    a la primera o segunda promoción del año.
+    """
+    if period not in [1, 2]:
+        raise ValueError("El periodo debe ser 1 o 2.")

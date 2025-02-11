@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Boolean, Integer, String, Index, ForeignKey, DateTime
+from sqlalchemy import Column, Boolean, Integer, String, Index, ForeignKey
 from sqlalchemy.orm import relationship
 from .base import AbstractModel
 
@@ -12,7 +12,7 @@ class PreRegisteredUser(AbstractModel):
 
     """
 
-    __tablename__ = "pre_registered_user"
+    __tablename__ = "pre_registered_users"
 
     pre_registered_id = Column(Integer, primary_key=True, autoincrement=True)
     academic_id = Column(Integer, unique=True, nullable=False)
@@ -23,15 +23,15 @@ class PreRegisteredUser(AbstractModel):
     
     user = relationship("User", back_populates="pre_registered", uselist=False) # cardinality 1:1
 
-class User(AbstractModel):
+class Users(AbstractModel):
     
     __tablename__ = 'user'
     
     user_id = Column(Integer, primary_key=True, autoincrement=True)
-    academic_id = Column(Integer, ForeignKey("pre_registered_user.academic_id"), unique=True, nullable=False)
+    academic_id = Column(Integer, ForeignKey("pre_registered_users.academic_id"), unique=True, nullable=False)
     name = Column(String(50), nullable=False)
     paternal_last_name = Column(String(50), nullable=False)
-    maternal_last_name = Column(String(50), nullable=False)
+    maternal_last_name = Column(String(50), nullable=True)
     email = Column(String(50), nullable=False, unique=True)
     password = Column(String, nullable=False)
     profile_photo = Column(String(255), nullable=False)

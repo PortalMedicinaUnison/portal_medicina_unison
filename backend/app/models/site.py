@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Boolean, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Boolean, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from enum import IntEnum
 from .base import AbstractModel
@@ -12,10 +12,10 @@ class SiteTypeEnum(IntEnum):
     OFFICE = 4
 
 class Site(AbstractModel):
-    __tablename__ = 'site'
+    __tablename__ = 'sites'
     
     site_id = Column(Integer, primary_key=True)
-    admin_id = Column(Integer, ForeignKey("user.user_id"), nullable=False)
+    admin_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     name = Column(String(100), nullable=False, unique=True)
     site_type = Column(IntEnumType(SiteTypeEnum), nullable=False)
     address = Column(String(255))
@@ -26,7 +26,7 @@ class Site(AbstractModel):
     contact_name = Column(String(100), nullable=False)
     contact_email = Column(String(50))
     contact_phone = Column(String(15))
-    is_active = Column(Boolean, nullable=True, default=True)
+    is_active = Column(Boolean, nullable=False, default=True)
     
     admin = relationship("User", back_populates="sites")
     internships = relationship("Internship", back_populates="site")
