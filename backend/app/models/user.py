@@ -18,14 +18,15 @@ class PreRegisteredUser(AbstractModel):
     academic_id = Column(Integer, unique=True, nullable=False)
     assigned_year = Column(Integer, nullable=False)
     assigned_period = Column(Integer, nullable=False)
+    is_active = Column(Boolean, nullable=False, default=True)
     
     __table_args__ = (Index('idx_pre_registered_academic_id', 'academic_id'),)
     
     user = relationship("User", back_populates="pre_registered", uselist=False) # cardinality 1:1
 
-class Users(AbstractModel):
+class User(AbstractModel):
     
-    __tablename__ = 'user'
+    __tablename__ = 'users'
     
     user_id = Column(Integer, primary_key=True, autoincrement=True)
     academic_id = Column(Integer, ForeignKey("pre_registered_users.academic_id"), unique=True, nullable=False)
@@ -39,6 +40,8 @@ class Users(AbstractModel):
     super_admin = Column(Boolean, nullable=False, default=False)
     is_active = Column(Boolean, nullable=False, default=True)
     
+    __table_args__ = (Index('idx_pre_registered_academic_id', 'academic_id'),)
+
     pre_registered = relationship("PreRegisteredUser", back_populates="user")
     announcements = relationship("Announcement", back_populates="admin")
     surveys = relationship("Survey", back_populates="admin")

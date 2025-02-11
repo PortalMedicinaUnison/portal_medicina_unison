@@ -2,7 +2,7 @@ from .user import PreRegisteredUser, User
 from .site import Site
 from .medical_record import MedicalRecord
 from .internship import InternshipEnrollment, Internship, InternshipDocument
-from .communications import Announcement, Survey, Report
+from .communication import Announcement, Survey, Report
 
 __all__ = [
     'PreRegisteredUser',

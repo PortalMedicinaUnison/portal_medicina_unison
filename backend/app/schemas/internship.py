@@ -1,5 +1,5 @@
 from pydantic import BaseModel, validator
-from models.internship import DocumentTypeEnum
+from models.internship import DocumentTypeEnum, InternshipStatusEnum
 from utils.validation import is_valid_period, is_valid_internship_year
 
 
@@ -13,8 +13,8 @@ class InternshipCreate(BaseModel):
     site_id: int
     year: int
     period: int
+    status: InternshipStatusEnum
     is_active: bool
-    is_finished: bool
 
     @validator("period")
     def validate_period(cls, period: int) -> int:

@@ -3,17 +3,18 @@ from typing import Optional
 from utils.validation import is_valid_academic_id, is_valid_password, is_valid_email
 
 
-class PreRegisteredUser(BaseModel):
+class PreRegisteredUserCreate(BaseModel):
     academic_id: str
     assigned_year: int
     assigned_period: int
+    is_active: bool = True
 
     @validator("academic_id")
     def validate_academic_id(cls, academic_id):
         is_valid_academic_id(academic_id)
         return academic_id
 
-class User(BaseModel):
+class UserCreate(BaseModel):
     academic_id: str
     name: str
     paternal_last_name: str
@@ -42,10 +43,10 @@ class User(BaseModel):
         
     
 
-class TokenRequest(BaseModel):
-    token: str
+# class TokenRequest(BaseModel):
+#     token: str
 
-class UserForm(BaseModel):
-    username: str
-    password: str
-    role: str
+# class UserForm(BaseModel):
+#     username: str
+#     password: str
+#     role: str

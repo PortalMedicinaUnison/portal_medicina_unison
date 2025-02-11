@@ -12,6 +12,13 @@ class DocumentTypeEnum(IntEnum):
     CERTIFICATE = 4
     OTHER = 5
 
+class InternshipStatusEnum(IntEnum):
+    PENDING = 1
+    ACCEPTED = 2
+    REJECTED = 3
+    SUSPENDED = 4
+    FINISHED = 5
+
 class InternshipEnrollment(AbstractModel):
     __tablename__ = 'internship_enrollments'
     
@@ -32,8 +39,8 @@ class Internship(AbstractModel):
     site_id = Column(Integer, ForeignKey("sites.site_id"), nullable=False)
     year = Column(Integer, nullable=False)
     period = Column(Integer, nullable=False)
+    status = Column(IntEnumType(InternshipStatusEnum), nullable=False)
     is_active = Column(Boolean, nullable=False)
-    is_finished = Column(Boolean, nullable=False)
     
     __table_args__ = (
         Index('idx_internship_user', 'student_id'),

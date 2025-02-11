@@ -5,8 +5,8 @@ from .communications import AnnouncementCreate, SurveyCreate, ReportCreate
 
 
 __all__ = [
-    "User",
-    "PreRegisteredUser",
+    "UserCreate",
+    "PreRegisteredUserCreate",
     "SiteCreate",
     "InternshipEnrollmentCreate",
     "InternshipCreate",
