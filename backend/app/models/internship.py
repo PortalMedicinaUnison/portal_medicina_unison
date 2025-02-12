@@ -57,7 +57,6 @@ class Internship(BaseModel):
     def __repr__(self):
         return f"<Internship(student_id={self.student_id}, site={self.site_id}, year={self.year}, period={self.period}, status={self.status.name})>"
 
-
 class InternshipDocument(BaseModel):
     __tablename__ = 'internship_documents'
     
@@ -65,9 +64,9 @@ class InternshipDocument(BaseModel):
     internship_id = Column(Integer, ForeignKey("internships.internship_id", ondelete="CASCADE"), nullable=False)
     document_type = Column(IntEnumType(DocumentTypeEnum), nullable=False)
     path = Column(String(255), nullable=False)
-    is_verified = Column(Boolean, nullable=False)
+    is_verified = Column(Boolean, nullable=False, default=False)
     
     internship = relationship("Internship", back_populates="documents")
 
     def __repr__(self):
-        return f"<InternshipDocument(internship_id={self.internship_id}, document_type={self.document_type.name}, verification_status={self.verification_status})>"
+        return f"<InternshipDocument(internship_id={self.internship_id}, document_type={self.document_type.name}, is_verified={self.is_verified})>"

@@ -12,7 +12,7 @@ class AnnouncementTypeEnum(IntEnum):
     INTERNSHIP = 2
 
 class Announcement(BaseModel):
-    __tablename__ = 'announcement'
+    __tablename__ = 'announcements'
     
     announcement_id = Column(Integer, primary_key=True, autoincrement=True)
     admin_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
@@ -29,7 +29,7 @@ class Announcement(BaseModel):
 # ---------------  Survey  ----------------------
 
 class Survey(BaseModel):
-    __tablename__ = 'survey'
+    __tablename__ = 'surveys'
     
     survey_id = Column(Integer, primary_key=True, autoincrement=True)
     admin_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
@@ -52,7 +52,7 @@ class ReportTypeEnum(IntEnum):
     SEXUAL_HARASSMENT = 3
 
 class Report(BaseModel):
-    __tablename__ = 'report'
+    __tablename__ = 'reports'
     
     report_id = Column(Integer, primary_key=True, autoincrement=True)
     student_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)

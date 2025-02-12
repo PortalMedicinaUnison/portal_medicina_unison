@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, HttpUrl
 from typing import Optional
 from datetime import date
 from backend.app.models.communication import ReportTypeEnum, AnnouncementTypeEnum
@@ -18,7 +18,7 @@ class AnnouncementCreate(BaseModel):
 class SurveyCreate(BaseModel):
     admin_id: int
     title: str
-    web_link: str
+    web_link: HttpUrl
     description: Optional[str] = None
     expiration_date: date
     mandatory: bool

@@ -39,7 +39,9 @@ class User(BaseModel):
     password = Column(String, nullable=False)
     profile_photo = Column(String(255), nullable=False)
     is_admin = Column(Boolean, nullable=False, default=False)
-    super_admin = Column(Boolean, nullable=False, default=False)
+    is_super_admin = Column(Boolean, nullable=False, default=False)
+    
+    __table_args__ = (Index('idx_user_email', 'email'),)
     
     pre_registered = relationship("PreRegisteredUser", back_populates="user")
     announcements = relationship("Announcement", back_populates="admin")
@@ -48,7 +50,6 @@ class User(BaseModel):
     reports = relationship("Report", back_populates="student")
     internship_enrollments = relationship("InternshipEnrollment", back_populates="student")
     internships = relationship("Internship", back_populates="student")
-    pre_registered_record = relationship("PreRegisteredStudent", back_populates="student")
 
     def __repr__(self):
         return f"<User(name={self.name}, email={self.email}, is_admin={self.is_admin}, is_active={self.is_active})>"

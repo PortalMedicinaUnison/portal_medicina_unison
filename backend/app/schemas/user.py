@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, EmailStr
 from typing import Optional
 from utils.validation import is_valid_academic_id, is_valid_password, is_valid_email
 
@@ -18,11 +18,11 @@ class UserCreate(BaseModel):
     name: str
     paternal_last_name: str
     maternal_last_name: Optional[str] = None
-    email: str
+    email: EmailStr
     password: str
     profile_photo: str
     is_admin: bool = False
-    super_admin: bool = False
+    is_super_admin: bool = False
 
     @validator("academic_id")
     def validate_academic_id(cls, academic_id):
