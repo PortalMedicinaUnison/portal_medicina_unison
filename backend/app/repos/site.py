@@ -1,5 +1,4 @@
 from .base import BaseRepo
-from schemas.site import SiteInput
 from models.site import Site
 
 class SiteRepo(BaseRepo):
@@ -7,6 +6,9 @@ class SiteRepo(BaseRepo):
         pass
 
     def get_by_id():
+        pass
+
+    def get_all():
         pass
 
     def update():

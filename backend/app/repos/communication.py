@@ -1,6 +1,5 @@
 from .base import BaseRepo
 from models.communication import  Announcement, Survey, Report
-from schemas.communications import AnnouncementInput, SurveyInput, ReportInput
 
 
 class AnnouncementRepo(BaseRepo):

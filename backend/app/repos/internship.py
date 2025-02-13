@@ -1,6 +1,5 @@
 from .base import BaseRepo
 from models.internship import  InternshipEnrollment, Internship, InternshipDocument
-from schemas.internship import InternshipInput, InternshipEnrollmentInput
 
 class InternshipRepo(BaseRepo):
 
@@ -27,13 +26,11 @@ class InternshipEnrollmentRepo(BaseRepo):
     def create():
         pass
 
-    def get_by_id():
-        pass
-
     def get_by_student_id():
         pass
 
     def get_by_status():
         pass
 
+    
 
