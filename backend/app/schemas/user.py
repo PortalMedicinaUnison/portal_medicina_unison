@@ -3,7 +3,7 @@ from typing import Optional
 from utils.validation import is_valid_academic_id, is_valid_password, is_valid_email
 
 
-class PreRegisteredUserCreate(BaseModel):
+class PreRegisteredUserInput(BaseModel):
     academic_id: str
     assigned_year: int
     assigned_period: int
@@ -13,7 +13,7 @@ class PreRegisteredUserCreate(BaseModel):
         is_valid_academic_id(academic_id)
         return academic_id
 
-class UserCreate(BaseModel):
+class UserInput(BaseModel):
     academic_id: str
     name: str
     paternal_last_name: str

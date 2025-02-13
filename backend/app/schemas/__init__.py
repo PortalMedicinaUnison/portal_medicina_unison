@@ -1,17 +1,17 @@
 from .user import PreRegisteredUser, User
-from .site import SiteCreate
-from .internship import InternshipEnrollmentCreate, InternshipCreate, InternshipDocumentCreate
-from .communications import AnnouncementCreate, SurveyCreate, ReportCreate
+from .site import SiteInput
+from .internship import InternshipEnrollmentInput, InternshipInput, InternshipDocumentInput
+from .communications import AnnouncementInput, SurveyInput, ReportInput
 
 
 __all__ = [
     "UserCreate",
     "PreRegisteredUserCreate",
-    "SiteCreate",
-    "InternshipEnrollmentCreate",
-    "InternshipCreate",
-    "InternshipDocumentCreate",
-    "AnnouncementCreate",
-    "SurveyCreate",
-    "ReportCreate",
+    "SiteInput",
+    "InternshipEnrollmentInput",
+    "InternshipInput",
+    "InternshipDocumentInput",
+    "AnnouncementInput",
+    "SurveyInput",
+    "ReportInput",
 ]

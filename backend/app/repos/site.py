@@ -1,5 +1,5 @@
 from .base import BaseRepo
-from schemas.site import SiteCreate
+from schemas.site import SiteInput
 from models.site import Site
 
 class SiteRepo(BaseRepo):

@@ -2,12 +2,11 @@ from fastapi import UploadFile
 from .base import BaseRepo
 from utils.authentication import hash_password
 from models.user import  User, PreRegisteredUser
-from schemas.user import UserCreate, PreRegisteredUserCreate
 
 
 class PreRegisteredUserRepo(BaseRepo):
     
-    def create(self, data: PreRegisteredUserCreate) -> PreRegisteredUser:
+    def create(self, data: PreRegisteredUser) -> PreRegisteredUser:
         user = PreRegisteredUser(
             academic_id = data.academic_id,
             assigned_year = data.assigned_year,
@@ -21,7 +20,7 @@ class PreRegisteredUserRepo(BaseRepo):
     def get_by_academic_id(self, academic_id: str) -> PreRegisteredUser:
         return self.session.query(PreRegisteredUser).filter_by(academic_id=academic_id).first()
 
-    def update(self, academic_id: str, data: PreRegisteredUserCreate) -> PreRegisteredUser:
+    def update(self, academic_id: str, data: PreRegisteredUser) -> PreRegisteredUser:
         user = self.get_by_academic_id(academic_id)
         if not user:
             raise Exception("El usuario no existe") # REVISAR (usar HTTPException o Exception)
@@ -44,7 +43,7 @@ class PreRegisteredUserRepo(BaseRepo):
 
 class UserRepo(BaseRepo):
 
-    def create(self, data: UserCreate) -> User:
+    def create(self, data: User) -> User:
         user = User(
             academic_id = int(data.academic_id),
             name = data.name,

@@ -4,7 +4,7 @@ from typing import Optional
 from utils.validation import is_valid_email
 
 
-class SiteCreate(BaseModel):
+class SiteInput(BaseModel):
     admin_id: int
     name: str
     site_type: SiteTypeEnum

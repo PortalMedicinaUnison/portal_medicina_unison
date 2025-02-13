@@ -7,7 +7,7 @@ from utils.validation import is_valid_future_date, is_valid_web_link, is_valid_p
 
 # ---------------  Announcement  ----------------------
 
-class AnnouncementCreate(BaseModel):
+class AnnouncementInput(BaseModel):
     admin_id: int
     title: str
     announcement_type: AnnouncementTypeEnum
@@ -15,7 +15,7 @@ class AnnouncementCreate(BaseModel):
 
 # ---------------  Survey  ----------------------
 
-class SurveyCreate(BaseModel):
+class SurveyInput(BaseModel):
     admin_id: int
     title: str
     web_link: HttpUrl
@@ -35,7 +35,7 @@ class SurveyCreate(BaseModel):
 
 # ---------------  Report  ----------------------
 
-class ReportCreate(BaseModel):
+class ReportInput(BaseModel):
     student_id: int
     internship_id: int
     date: date

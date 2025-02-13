@@ -3,11 +3,11 @@ from models.internship import DocumentTypeEnum, InternshipStatusEnum
 from utils.validation import is_valid_period, is_valid_internship_year
 
 
-class InternshipEnrollmentCreate(BaseModel):
+class InternshipEnrollmentInput(BaseModel):
     student_id: int
     is_accepted: bool
 
-class InternshipCreate(BaseModel):
+class InternshipInput(BaseModel):
     enrollment_id: int
     student_id: int
     site_id: int
@@ -25,7 +25,7 @@ class InternshipCreate(BaseModel):
         is_valid_internship_year(year)
         return year
 
-class InternshipDocumentCreate(BaseModel):
+class InternshipDocumentInput(BaseModel):
     internship_id: int
     document_type: DocumentTypeEnum
     path: str

@@ -1,6 +1,6 @@
 from .base import BaseRepo
 from models.internship import  InternshipEnrollment, Internship, InternshipDocument
-from schemas.internship import InternshipCreate, InternshipEnrollmentCreate
+from schemas.internship import InternshipInput, InternshipEnrollmentInput
 
 class InternshipRepo(BaseRepo):
 
