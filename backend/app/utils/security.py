@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
 import jwt
-from datetime import datetime, timedelta
+
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -10,4 +10,10 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
-
+def get_user_role(user) -> str:
+    if user.is_super_admin:
+        return "super_admin"
+    elif user.is_admin:
+        return "admin"
+    else:
+        return "student"

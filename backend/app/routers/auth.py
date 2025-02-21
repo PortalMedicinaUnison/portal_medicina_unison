@@ -8,9 +8,10 @@ from core.dependencies import get_db
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/token/")
-async def login_for_access_token_route(form_data: UserForm, db: Session = Depends(get_db)):
+async def login(form_data: UserForm, db: Session):
     return authenticate_user(form_data, db)
 
 @router.post("/check_auth")
-async def check_auth(request: TokenRequest, db: Session = Depends(get_db)):
-    return get_current_user(request, db)
+async def check_auth(request: TokenRequest, db: Session):
+    user = get_current_user(request, db)
+    return {"status": "valid", "user_info": user}

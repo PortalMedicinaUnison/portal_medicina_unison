@@ -1,6 +1,6 @@
 from fastapi import UploadFile
 from .base import BaseRepo
-from utils.authentication import hash_password
+from backend.app.utils.security import hash_password
 from models.user import  User, PreRegisteredUser
 
 
@@ -30,6 +30,9 @@ class UserRepo(BaseRepo):
         pass
     
     def get_by_academic_id(self, academic_id: str) -> User:
+        pass
+
+    def get_by_email(self, email: str) -> User:
         pass
     
     def get_all(self):
