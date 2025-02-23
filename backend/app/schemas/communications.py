@@ -1,7 +1,7 @@
 from pydantic import BaseModel, validator, HttpUrl
 from typing import Optional
 from datetime import date
-from backend.app.models.communication import ReportTypeEnum, AnnouncementTypeEnum
+from models.communication import ReportTypeEnum, AnnouncementTypeEnum
 from utils.validation import is_valid_future_date, is_valid_web_link, is_valid_past_date
 
 
@@ -49,6 +49,7 @@ class ReportInput(BaseModel):
     admin_comment: Optional[str] = None
 
     @validator("date")
-    def validate_date(cls, date: date) -> date:
+    # def validate_date(cls, date: date) -> date:
+    def validate_date(cls, date: int) -> int:
         is_valid_past_date(date)
         return date

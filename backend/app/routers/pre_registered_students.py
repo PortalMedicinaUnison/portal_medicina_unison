@@ -11,7 +11,6 @@ router = APIRouter(prefix = "/pre_registered_students", tags = ["Pre-Registered 
 async def create_pre_registered_student_route(student: PreRegisteredStudentBase, db: Session = Depends(get_db)):
     return create_pre_registered_student(student, db)
     
-
 @router.get("/", response_model=List[PreRegisteredStudentSchema])
 async def get_pre_registered_students_route(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return get_pre_registered_students(skip, limit, db)

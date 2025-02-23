@@ -3,6 +3,8 @@ from .base import BaseRepo
 from utils.authentication import hash_password
 from models.user import  User, PreRegisteredUser
 
+def get_user():
+    pass
 
 class PreRegisteredUserRepo(BaseRepo):
     

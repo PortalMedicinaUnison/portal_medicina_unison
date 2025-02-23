@@ -21,7 +21,8 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_db():
-    initialize_database()
+    pass
+    # initialize_database()
 
 app.include_router(students.router, prefix="/students", tags=["Students"])
 app.include_router(medical_records.router, prefix="/medical-records", tags=["Medical Records"])

@@ -2,6 +2,17 @@ from pydantic import BaseModel, validator, EmailStr
 from typing import Optional
 from utils.validation import is_valid_academic_id, is_valid_password, is_valid_email
 
+class PreRegisteredUser():
+    pass
+
+class User():
+    pass
+
+class UserForm(BaseModel):
+    pass
+
+class TokenRequest(BaseModel):
+    pass
 
 class PreRegisteredUserInput(BaseModel):
     academic_id: str
