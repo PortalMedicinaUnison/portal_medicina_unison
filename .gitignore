@@ -24,4 +24,6 @@ test/
 *.njsproj
 *.sln
 *.sw?
-project.db
+*.db
+__pycache__/
+*.pyc

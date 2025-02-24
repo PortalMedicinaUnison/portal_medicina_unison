@@ -1,0 +1,3 @@
+
+class PreRegisteredStudentsRepo():
+    pass
