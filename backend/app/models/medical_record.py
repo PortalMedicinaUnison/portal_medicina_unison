@@ -11,9 +11,9 @@ class MedicalRecord(Base):
     __tablename__ = "medical_records"
 
     id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, ForeignKey("student.id"), nullable=False) #REVISAR
+    # student_id = Column(Integer, ForeignKey("student.id"), nullable=False) #REVISAR
 
-    student = relationship("Student", back_populates="medical_record")
+    # student = relationship("Student", back_populates="medical_record")
     identification_card = relationship("IdentificationCard", back_populates="medical_record", uselist=False)
     family_medical_history = relationship("FamilyMedicalHistory", back_populates="medical_record", uselist=False)
     non_pathological_history = relationship("NonPathologicalHistory", back_populates="medical_record", uselist=False)

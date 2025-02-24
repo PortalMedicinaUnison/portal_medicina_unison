@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.settings import settings
 from db.database import initialize_database
-from routers import students, medical_records, auth, pre_registered_students, admin
+from routers import routers
 
 
 app = FastAPI(    
@@ -23,8 +23,5 @@ app.add_middleware(
 async def startup_db():
     initialize_database()
 
-app.include_router(students.router, prefix="/students", tags=["Students"])
-app.include_router(medical_records.router, prefix="/medical-records", tags=["Medical Records"])
-app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
-app.include_router(pre_registered_students.router, prefix="/pre-registered-students", tags=["Pre-Registered Students"])
-app.include_router(admin.router, prefix="/admin", tags=["Admin"])
+for router in routers:
+    app.include_router(router)

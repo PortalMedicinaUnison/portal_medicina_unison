@@ -7,8 +7,10 @@ from repos.user import UserRepo
 from schemas.auth import LoginForm, TokenResponse, TokenRequest
 
 
-
-def authenticate_user(form_data: LoginForm, db: Session):
+def authenticate_user(form_data: LoginForm, db: Session) -> TokenResponse:
+    """
+    Autentica al usuario y retorna un TokenResponse con el JWT.
+    """
     user = UserRepo.get_by_email(db, form_data.email)
     
     if not user or not verify_password(form_data.password, user.password):
@@ -22,11 +24,13 @@ def authenticate_user(form_data: LoginForm, db: Session):
         "sub": user.email,
         "role": get_user_role(user)
     })
-
     return TokenResponse(access_token=token, token_type="bearer")
 
 
-def get_current_user(db: Session, token: str):    
+def get_current_user(db: Session, token: str):
+    """
+    Valida el token y retorna el usuario autenticado.
+    """
     payload = decode_access_token(token)
 
     if not payload or payload.get("sub") is None:
@@ -53,17 +57,26 @@ def get_current_user(db: Session, token: str):
             detail="User role mismatch",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
     return user
 
 def refresh_token(token_request: TokenRequest, db: Session = Depends(get_db)):
+    """
+    Renueva el token JWT basado en el token actual.
+    """
     payload = decode_access_token(token_request.token)
+
     if not payload or payload.get("sub") is None:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token")
+    
     email = payload.get("sub")
     user = UserRepo.get_by_email(db, email)
+
     if user is None:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise HTTPException(
+            status_code=401, 
+            detail="User not found")
     
     new_token = create_access_token(data={
         "sub": user.email,
@@ -71,15 +84,9 @@ def refresh_token(token_request: TokenRequest, db: Session = Depends(get_db)):
     })
     return TokenResponse(access_token=new_token, token_type="bearer")
 
-async def get_current_user_from_cookie(request: Request, db: Session = Depends(get_db)):
+def get_current_user_from_cookie(request: Request, db: Session):
+    """
+    Extrae el token desde la cookie, lo valida y retorna el usuario.
+    """
     token = get_access_token(request)
-    payload = decode_access_token(token)
-    if not payload or payload.get("sub") is None:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    email = payload.get("sub")
-    user = UserRepo.get_by_email(db, email)
-    if user is None:
-        raise HTTPException(status_code=401, detail="User not found")
-    if payload.get("role") != get_user_role(user):
-        raise HTTPException(status_code=401, detail="User role mismatch")
-    return user
+    return get_current_user(token, db)
