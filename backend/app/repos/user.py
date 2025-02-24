@@ -1,6 +1,5 @@
 from fastapi import UploadFile
 from .base import BaseRepo
-from backend.app.utils.security import hash_password
 from models.user import  User, PreRegisteredUser
 
 

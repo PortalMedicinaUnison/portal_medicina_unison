@@ -1,7 +1,7 @@
 from pydantic import BaseModel, validator, HttpUrl
 from typing import Optional
 from datetime import date
-from backend.app.models.communication import ReportTypeEnum, AnnouncementTypeEnum
+from models.communication import ReportTypeEnum, AnnouncementTypeEnum
 from utils.validation import is_valid_future_date, is_valid_web_link, is_valid_past_date
 
 

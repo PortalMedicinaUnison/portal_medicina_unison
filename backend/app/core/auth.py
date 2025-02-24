@@ -1,3 +1,4 @@
+from fastapi import Request, Depends, HTTPException
 from datetime import timedelta, datetime, timezone
 import jwt
 from core.settings import settings
@@ -35,6 +36,3 @@ def get_access_token(request: Request):
             detail = "Access token not found"
         )
     return access_token
-
-
-

@@ -1,14 +1,15 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends, Request
 from sqlalchemy.orm import Session
+from core.dependencies import get_db
 from core.auth import create_access_token, decode_access_token, get_access_token
 from utils.security import verify_password, get_user_role
-from repos.user import get_by_email 
+from repos.user import UserRepo 
 from schemas.auth import LoginForm, TokenResponse, TokenRequest
 
 
 
 def authenticate_user(form_data: LoginForm, db: Session):
-    user = get_by_email(db, form_data.email)
+    user = UserRepo.get_by_email(db, form_data.email)
     
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
@@ -22,7 +23,7 @@ def authenticate_user(form_data: LoginForm, db: Session):
         "role": get_user_role(user)
     })
 
-    return TokenResponse("access_token": token, "token_type": "bearer")
+    return TokenResponse(access_token=token, token_type="bearer")
 
 
 def get_current_user(db: Session, token: str):    
@@ -37,7 +38,7 @@ def get_current_user(db: Session, token: str):
 
     email: str = payload.get("sub")
     role: str = payload.get("role")
-    user = get_by_email(db, email)
+    user = UserRepo.get_by_email(db, email)
     
     if user is None:
         raise HTTPException(
@@ -60,7 +61,7 @@ def refresh_token(token_request: TokenRequest, db: Session = Depends(get_db)):
     if not payload or payload.get("sub") is None:
         raise HTTPException(status_code=401, detail="Invalid token")
     email = payload.get("sub")
-    user = get_by_email(db, email)
+    user = UserRepo.get_by_email(db, email)
     if user is None:
         raise HTTPException(status_code=401, detail="User not found")
     
@@ -76,7 +77,7 @@ async def get_current_user_from_cookie(request: Request, db: Session = Depends(g
     if not payload or payload.get("sub") is None:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     email = payload.get("sub")
-    user = get_by_email(db, email)
+    user = UserRepo.get_by_email(db, email)
     if user is None:
         raise HTTPException(status_code=401, detail="User not found")
     if payload.get("role") != get_user_role(user):
