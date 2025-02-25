@@ -19,6 +19,11 @@ app.add_middleware(
     allow_headers=settings.CORS_HEADERS,
 )
 
+
+@app.on_event("startup")
+async def startup_db():
+    # pass
+    initialize_database()
 # # Dependency to get the DB session
 # def get_db():
 #     db = SessionLocal()
@@ -26,8 +31,15 @@ app.add_middleware(
 #         yield db
 #     finally:
 #         db.close()
-
 # db_dependency = Annotated[Session, Depends(get_db)]
+
+app.include_router(students.router, prefix="/students", tags=["Students"])
+app.include_router(medical_records.router, prefix="/medical-records", tags=["Medical Records"])
+app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+app.include_router(pre_registered_students.router, prefix="/pre-registered-students", tags=["Pre-Registered Students"])
+app.include_router(admin.router, prefix="/admin", tags=["Admin"])
+
+
 
 # # request = Request
 # token_dependency = Annotated[str, Depends(auth.oauth2_scheme)]
@@ -49,51 +61,6 @@ app.add_middleware(
 # async def read_accepted_students(db: db_dependency, skip: int = 0, limit: int = 10):
 #     students = db.query(models.AcceptedStudent).offset(skip).limit(limit).all()
 #     return students
-
-# @app.post('/students/', response_model=schemas.StudentSchema)
-# async def create_student(student: schemas.StudentBase, db: db_dependency):
-#     if not auth.is_student_accepted(db, student.file_number):
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail="Student not found in database"
-#         )
-    
-#     student.password = auth.get_password_hash(student.password)
-#     student = models.Student(**student.model_dump())
-#     student.profile_image_path = os.path.join("default_picture.jpg")
-#     db.add(student)
-#     db.commit()
-#     db.refresh(student)
-#     return student
-
-# @app.put('/students/', response_model=schemas.StudentSchema)
-# async def update_student(student_form: schemas.StudentSchema, db: db_dependency):
-#     student = db.query(models.Student).filter(models.Student.id == student_form.id).first()
-
-#     if student is None:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail="Student not found in database"
-#         )
-
-#     for attr in vars(student_form):
-#         value = getattr(student_form, attr)
-#         if value:
-#             setattr(student, attr, value)
-
-#     db.commit()
-#     db.refresh(student)
-#     return student
-
-# @app.get('/students/', response_model=Union[List[schemas.StudentSchema], List[schemas.AdminSchema]])
-# async def read_students(db: db_dependency, skip: int = 0, limit: int = 10):
-#     students = db.query(models.Student).offset(skip).limit(limit).all()
-#     return students
-
-# @app.post('/student/', response_model=schemas.StudentSchema)
-# async def read_student(request: schemas.StudentRequest, db: db_dependency):
-#     student = db.query(models.Student).filter(models.Student.id == request.student_id).first()
-#     return student
 
 # @app.post('/get_current_user/', response_model=schemas.StudentSchema)
 # async def get_current_user(request: schemas.TokenRequest, db: db_dependency):
@@ -173,14 +140,3 @@ app.add_middleware(
 # @app.get('activity_log')
 # async def read_activity_log():
 #     pass
-
-@app.on_event("startup")
-async def startup_db():
-    pass
-    # initialize_database()
-
-app.include_router(students.router, prefix="/students", tags=["Students"])
-app.include_router(medical_records.router, prefix="/medical-records", tags=["Medical Records"])
-app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
-app.include_router(pre_registered_students.router, prefix="/pre-registered-students", tags=["Pre-Registered Students"])
-app.include_router(admin.router, prefix="/admin", tags=["Admin"])

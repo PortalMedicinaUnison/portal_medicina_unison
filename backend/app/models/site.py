@@ -29,7 +29,7 @@ class Site(BaseModel):
     is_available = Column(Boolean, nullable=False, default=True)
     
     admin = relationship("User", back_populates="sites")
-    internships = relationship("Internship", back_populates="site")
+    internship = relationship("Internship", back_populates="site")
 
     def __repr__(self):
         return f"<Site(name={self.name}, site_type={self.site_type.name}, is_available={self.is_available}, is_active={self.is_active})>"

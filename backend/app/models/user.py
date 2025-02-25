@@ -49,7 +49,7 @@ class User(BaseModel):
     sites = relationship("Site", back_populates="admin")
     reports = relationship("Report", back_populates="student")
     internship_enrollments = relationship("InternshipEnrollment", back_populates="student")
-    internships = relationship("Internship", back_populates="student")
+    internship = relationship("Internship", back_populates="student")
 
     def __repr__(self):
         return f"<User(name={self.name}, email={self.email}, is_admin={self.is_admin}, is_active={self.is_active})>"

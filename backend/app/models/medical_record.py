@@ -11,9 +11,20 @@ class MedicalRecord(Base):
     __tablename__ = "medical_records"
 
     id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, ForeignKey("student.id"), nullable=False) #REVISAR
+    student_id = Column(Integer, ForeignKey("student.id"), nullable=False)
+    identification_card_id = Column(Integer, ForeignKey("identification_cards.id"), nullable=False)
+    family_medical_history_id = Column(Integer, ForeignKey("family_medical_history.id"), nullable=False)
+    non_pathological_histories_id = Column(Integer, ForeignKey("non_pathological_histories.id"), nullable=False)
+    pathological_histories_id = Column(Integer, ForeignKey("pathological_histories.id"), nullable=False)
+    gynecological_histories_id = Column(Integer, ForeignKey("gynecological_histories.id"), nullable=False)
+    sexual_histories_id = Column(Integer, ForeignKey("sexual_histories.id"), nullable=False)
+    current_illnesses_id = Column(Integer, ForeignKey("current_illnesses.id"), nullable=False)
+    odontological_histories_id = Column(Integer, ForeignKey("odontological_histories.id"), nullable=False)
+    somatometries_id = Column(Integer, ForeignKey("somatometries.id"), nullable=False)
+    systems_reviews_id = Column(Integer, ForeignKey("systems_reviews.id"), nullable=False)
+    physical_examination_id = Column(Integer, ForeignKey("physical_examination.id"), nullable=False)
 
-    student = relationship("Student", back_populates="medical_record")
+    # student = relationship("Student", back_populates="medical_record")
     identification_card = relationship("IdentificationCard", back_populates="medical_record", uselist=False)
     family_medical_history = relationship("FamilyMedicalHistory", back_populates="medical_record", uselist=False)
     non_pathological_history = relationship("NonPathologicalHistory", back_populates="medical_record", uselist=False)

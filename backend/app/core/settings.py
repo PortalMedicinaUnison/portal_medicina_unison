@@ -7,7 +7,7 @@ from pydantic import ValidationError
 class Settings(BaseSettings):
     ENVIRONMENT: str = "dev"
     SECRET_KEY: str
-    DATABASE_URL: str
+    DATABASE_URL: str = "sqlite:///../../project.db"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     JWT_ALGORITHM: str = "HS256"
 
