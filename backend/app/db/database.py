@@ -10,7 +10,6 @@ try:
 except Exception as e:
     print(f"Error al conectar con la base de datos: {e}")
 
-
 SessionLocal = sessionmaker(bind=engine)
 
 def initialize_database():

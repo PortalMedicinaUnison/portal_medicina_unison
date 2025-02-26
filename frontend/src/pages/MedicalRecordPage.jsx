@@ -18,7 +18,8 @@ function MedicalRecordPage() {
             <BarraNavegacion/>
             <ContenidoPrincipal user={user}>
                 <div className="center">
-                    <FormularioHistorialClinico/>
+                    <h1>Historial clínico</h1>
+                    <FormularioHistorialClinico user={user}/>
                 </div>
             </ContenidoPrincipal>
         </div>

@@ -26,4 +26,4 @@ except ValidationError as e:
     raise ValueError(f"Configuración inválida: {e}")
 
 print("✅ Configuración cargada correctamente")
-print(f"📌 DATABASE_URL: {settings.DATABASE_URL}")  # Verificar que se cargue la variable
+print(f"📌 DATABASE_URL: {settings.DATABASE_URL}")

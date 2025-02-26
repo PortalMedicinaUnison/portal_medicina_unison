@@ -14,5 +14,5 @@ __all__ = [
     'InternshipDocument',
     'Announcement',
     'Survey',
-    'Report'
+    'Report',
 ]

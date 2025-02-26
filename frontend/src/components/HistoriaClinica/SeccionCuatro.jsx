@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 
 
 function SeccionCuatro() {
@@ -95,15 +95,8 @@ function SeccionCuatro() {
     });
   };
 
-
-  const navigate = useNavigate();
-  const handleNext = () => {
-    navigate('/SeccionCinco');
-  };
-
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-center">Historia Clínica</h1>
       <form className="space-y-4">
         <h2 className="text-xl font-semibold mb-4">IV. Antecedentes Personales Patológicos</h2>
         <h3 className='font-bold text-red-500'>Marca la casilla en caso de que sí</h3>
