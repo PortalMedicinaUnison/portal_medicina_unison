@@ -10,14 +10,13 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = {
+    const loginData = {
       username: email,
       password: password,
-      role: "student"
     };
 
     try {
-      const response = await api.post('/token/', formData);
+      const response = await api.post('/token/', loginData);
       sessionStorage.setItem("access_token", response.data.access_token);
       navigate('/inicio');
     } catch (error) {

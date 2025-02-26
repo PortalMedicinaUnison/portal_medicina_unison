@@ -82,7 +82,7 @@ function RegisterForm() {
     setError('');
 
     // Aquí puedes añadir la lógica para manejar el registro de los usuarios
-    const student = {
+    const user = {
       name: formData.name,
       pat_last_name: formData.patLastName,
       mat_last_name: formData.matLastName,
@@ -92,7 +92,7 @@ function RegisterForm() {
     };
 
     try {
-      const response = await api.post('/students/', student);
+      const response = await api.post('/users/', user);
       document.getElementById("registro_exitoso").style.display = "block";
       const elements = document.getElementsByTagName("input");
       for (const element of elements) {
