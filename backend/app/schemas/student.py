@@ -20,4 +20,4 @@ class StudentSchema(StudentBase):
     id : int
 
 class StudentRequest(BaseModel):
-    pass
+    id : int

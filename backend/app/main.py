@@ -22,15 +22,8 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_db():
-    # pass
     initialize_database()
-# # Dependency to get the DB session
-# def get_db():
-#     db = SessionLocal()
-#     try:
-#         yield db
-#     finally:
-#         db.close()
+    
 # db_dependency = Annotated[Session, Depends(get_db)]
 
 app.include_router(students.router, prefix="/students", tags=["Students"])
