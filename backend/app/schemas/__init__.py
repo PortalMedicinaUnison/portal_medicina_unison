@@ -1,7 +1,7 @@
 from .user import PreRegisteredUserInput, UserInput
 from .site import SiteInput
 from .internship import InternshipEnrollmentInput, InternshipInput, InternshipDocumentInput
-from .communications import AnnouncementInput, SurveyInput, ReportInput
+from .communication import AnnouncementInput, SurveyInput, ReportInput
 
 
 __all__ = [

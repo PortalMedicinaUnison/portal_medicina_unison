@@ -12,8 +12,13 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 @pytest.fixture(scope="function")
 def db_session():
     """Crea una sesión de prueba y una base de datos limpia para cada test."""
+    print("Creando tablas de prueba")
     Base.metadata.create_all(bind=engine)  # Crea tablas
+    print("Creando sesión de prueba")
     session = TestingSessionLocal()
+    print("Iniciando transacción")
     yield session  # Devuelve la sesión de prueba
+    print("Limpiando base de datos")
     session.rollback()
+    print("Eliminando tablas de prueba")
     session.close()
