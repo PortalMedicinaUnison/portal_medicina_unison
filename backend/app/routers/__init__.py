@@ -1,7 +1,10 @@
-from .auth import router as auth_router
+from .auth import auth_router
+from .user import user_router, pre_registered_router
 
 routers = [
-    auth_router
+    auth_router,
+    user_router,
+    pre_registered_router
 ]
 
 __all__ = ["routers"]

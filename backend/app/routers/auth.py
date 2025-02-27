@@ -5,16 +5,16 @@ from schemas.auth import LoginForm, TokenRequest, TokenResponse, CheckAuthRespon
 from controllers.auth import authenticate_user, get_current_user
 
 
-router = APIRouter(prefix="/auth", tags=["Auth"])
+auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
-@router.post("/token/", response_model=TokenResponse)
+@auth_router.post("/token/", response_model=TokenResponse)
 async def login(form_data: LoginForm, db: Session = Depends(get_db)):
     """
     Endpoint para iniciar sesión y obtener el token JWT.
     """
     return authenticate_user(form_data, db)
 
-@router.post("/check_auth", response_model=CheckAuthResponse)
+@auth_router.post("/check_auth", response_model=CheckAuthResponse)
 async def check_auth(token_request: TokenRequest, db: Session = Depends(get_db)):
     """
     Endpoint para verificar la autenticación del usuario utilizando el token proporcionado.
