@@ -2,6 +2,12 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean
 # from db.database import Base
 from .base import Base
 
+class PreRegisteredStudent(Base):
+    __tablename__ = "pre_registered_student"
+
+    id = Column(Integer, primary_key=True)
+    file_number = Column(Integer, unique=True)
+
 class Student(Base):
     __tablename__ = "student"
 

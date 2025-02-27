@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.student import Student
-from schemas.student import StudentBase, StudentSchema, StudentRequest
+from schemas.student import StudentBase, StudentSchema
 from fastapi import HTTPException, status
 from utils.authentication import hash_password
 import os

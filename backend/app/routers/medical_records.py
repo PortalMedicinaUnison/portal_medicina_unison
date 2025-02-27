@@ -8,9 +8,8 @@ from controllers.medical_records import (
     create_medical_record, update_medical_record, read_medical_record
 )
 
-
-router = APIRouter(prefix="/medical_records", tags=["Medical Records"])
-
+# router = APIRouter(prefix="/medical_records", tags=["Medical Records"])
+router = APIRouter()
 
 @router.post('/', response_model=MedicalRecordSchema)
 async def create_medical_record_route(medical_record: MedicalRecordSchema, db: Session = Depends(get_db)):

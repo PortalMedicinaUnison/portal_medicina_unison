@@ -6,7 +6,8 @@ from controllers.admin import create_admin, read_admins
 from core.dependencies import get_db
 
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+# router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter()
 
 @router.post('/', response_model = AdminSchema)
 async def create_admin_route(admin: AdminBase, db: Session = Depends(get_db)):
