@@ -4,10 +4,10 @@ import api from '../api';
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
-    name: '',
-    patLastName: '',
-    matLastName: '',
-    fileNumber: '',
+    firstName: '',
+    paternalLastName: '',
+    maternalLastName: '',
+    academicId: '',
     email: '',
     confirmEmail: '',
     password: '',
@@ -57,7 +57,7 @@ function RegisterForm() {
     e.preventDefault();
 
     // Validación de formato del expediente
-    if (!/^\d{9}$/.test(formData.fileNumber)) {
+    if (!/^\d{9}$/.test(formData.academicId)) {
       setError('El expediente debe ser un número de exactamente 9 dígitos.');
       return;
     }
@@ -82,13 +82,17 @@ function RegisterForm() {
     setError('');
 
     // Aquí puedes añadir la lógica para manejar el registro de los usuarios
+
     const user = {
-      name: formData.name,
-      pat_last_name: formData.patLastName,
-      mat_last_name: formData.matLastName,
-      file_number: formData.fileNumber,
+      academic_id: formData.academicId, // Ensure this is a numeric string if that's what's expected.
+      name: formData.firstName,
+      paternal_last_name: formData.paternalLastName,
+      maternal_last_name: formData.maternalLastName,
       email: formData.email,
-      password: formData.password
+      password: formData.password,
+      profile_photo: "https://example.com/default-profile.jpg", // You can set a default value or gather it from your form
+      is_admin: false,
+      is_super_admin: false
     };
 
     try {
@@ -105,12 +109,12 @@ function RegisterForm() {
   };
   
   // Asegurarse de que solo se ingresen números
-  const handleExpedienteChange = (e) => {
-    const value = e.target.value;
-    if (/^\d*$/.test(value)) {
-      setExpediente(value);
-    }
-  };
+  // const handleExpedienteChange = (e) => {
+  //   const value = e.target.value;
+  //   if (/^\d*$/.test(value)) {
+  //     setExpediente(value);
+  //   }
+  // };
 
   // Alternar visibilidad de la contraseña
   const togglePasswordVisibility = () => {
@@ -139,9 +143,9 @@ function RegisterForm() {
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Nombre(s):</label>
           <input
-            name="name"
+            name="firstName"
             type="text"
-            value={formData.name}
+            value={formData.firstName}
             onChange={handleChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -150,9 +154,9 @@ function RegisterForm() {
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Apellido Paterno:</label>
           <input
-            name="patLastName"
+            name="paternalLastName"
             type="text"
-            value={formData.patLastName}
+            value={formData.paternalLastName}
             onChange={handleChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -161,9 +165,9 @@ function RegisterForm() {
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Apellido Materno:</label>
           <input
-            name="matLastName"
+            name="maternalLastName"
             type="text"
-            value={formData.matLastName}
+            value={formData.maternalLastName}
             onChange={handleChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -172,9 +176,9 @@ function RegisterForm() {
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Expediente:</label>
           <input
-            name="fileNumber"
+            name="academicId"
             type="text"
-            value={formData.fileNumber}
+            value={formData.academicId}
             onChange={handleChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

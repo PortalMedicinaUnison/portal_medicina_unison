@@ -11,12 +11,12 @@ function LoginForm() {
     e.preventDefault();
 
     const loginData = {
-      username: email,
+      email: email,
       password: password,
     };
 
     try {
-      const response = await api.post('/token/', loginData);
+      const response = await api.post('/auth/login/', loginData);
       sessionStorage.setItem("access_token", response.data.access_token);
       navigate('/inicio');
     } catch (error) {

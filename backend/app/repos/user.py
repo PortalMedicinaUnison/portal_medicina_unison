@@ -54,6 +54,10 @@ class UserRepo(BaseRepo):
         """ Obtiene un usuario por su ID académico. """
         return self.session.query(User).filter(User.academic_id == academic_id).first()
 
+    def get_by_email(self, email: str) -> User:
+        """ Obtiene un usuario por su correo electrónico. """
+        return self.session.query(User).filter(User.email == email).first()
+
     def get_all(self):
         """ Obtiene todos los usuarios. """
         return self.session.query(User).all()

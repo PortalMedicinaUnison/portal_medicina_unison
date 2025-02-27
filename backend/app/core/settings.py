@@ -12,10 +12,10 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
 
     # CORS settings
+    ORIGINS: List[str]
     CORS_CREDENTIALS: bool = True
     CORS_METHODS: List[str] = ["*"]
     CORS_HEADERS: List[str] = ["*"]
-    ORIGINS: List[str]
 
     class Config:
         env_file = os.path.join(os.path.dirname(__file__), "../../.env")

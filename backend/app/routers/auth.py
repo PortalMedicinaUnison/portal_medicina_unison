@@ -7,15 +7,15 @@ from controllers.auth import authenticate_user, get_current_user
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
-@auth_router.post("/token/", response_model=TokenResponse)
-async def login(form_data: LoginForm, db: Session = Depends(get_db)):
+@auth_router.post("/login/", response_model=TokenResponse)
+async def login_router(form_data: LoginForm, db: Session = Depends(get_db)):
     """
     Endpoint para iniciar sesión y obtener el token JWT.
     """
     return authenticate_user(form_data, db)
 
-@auth_router.post("/check_auth", response_model=CheckAuthResponse)
-async def check_auth(token_request: TokenRequest, db: Session = Depends(get_db)):
+@auth_router.post("/verify", response_model=CheckAuthResponse)
+async def verify_router(token_request: TokenRequest, db: Session = Depends(get_db)):
     """
     Endpoint para verificar la autenticación del usuario utilizando el token proporcionado.
     Retorna información básica del usuario autenticado.
@@ -25,4 +25,4 @@ async def check_auth(token_request: TokenRequest, db: Session = Depends(get_db))
         "email": user.email,
         "role": user.is_super_admin and "super_admin" or (user.is_admin and "admin" or "student")
     }
-    return {"status": "valid", "user_info": user}
+    return {"status": "valid", "user_info": user_info}

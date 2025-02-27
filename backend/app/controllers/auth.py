@@ -11,7 +11,8 @@ def authenticate_user(form_data: LoginForm, db: Session) -> TokenResponse:
     """
     Autentica al usuario y retorna un TokenResponse con el JWT.
     """
-    user = UserRepo.get_by_email(db, form_data.email)
+    user_repo = UserRepo(db)
+    user = user_repo.get_by_email(form_data.email)
     
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
@@ -89,4 +90,4 @@ def get_current_user_from_cookie(request: Request, db: Session):
     Extrae el token desde la cookie, lo valida y retorna el usuario.
     """
     token = get_access_token(request)
-    return get_current_user(token, db)
+    return get_current_user(db, token)
