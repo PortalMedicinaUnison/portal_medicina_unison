@@ -35,9 +35,9 @@ class IdentificationCard(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     academic_id = Column(Integer, unique=True, nullable=False, index=True)
-    name = Column(String(100), nullable=False)
-    paternal_last_name = Column(String(100), nullable=False)
-    maternal_last_name = Column(String(100))
+    first_name = Column(String(100), nullable=False)
+    last_name = Column(String(100), nullable=False)
+    second_last_name = Column(String(100))
     age = Column(Integer, nullable=False)
     sex = Column(String(10), nullable=False)
     gender = Column(String(20), nullable=False)

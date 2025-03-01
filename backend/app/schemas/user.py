@@ -15,9 +15,9 @@ class PreRegisteredUserInput(BaseModel):
 
 class UserInput(BaseModel):
     academic_id: str
-    name: str
-    paternal_last_name: str
-    maternal_last_name: Optional[str] = None
+    first_name: str
+    last_name: str
+    second_last_name: Optional[str] = None
     email: str
     password: str
     profile_photo: str

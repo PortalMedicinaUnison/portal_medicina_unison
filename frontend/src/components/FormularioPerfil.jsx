@@ -3,25 +3,23 @@ import { useEffect, useState } from "react";
 import api from "../api";
 
 function FormularioPerfil({user}) {
-
   const [formData, setFormData] = useState({
-    name: '',
-    patLastName: '',
-    matLastName: '',
-    fileNumber: '',
+    firstName: '',
+    lastName: '',
+    secondLastName: '',
+    academicId: '',
     email: '',
-    phoneNumber: '',
+    phone: '',
   });
 
   useEffect(() => {
     setFormData({
-      ...formData,
-      name: user.name,
-      patLastName: user.pat_last_name,
-      matLastName: user.mat_last_name,
-      fileNumber: user.file_number,
-      email: user.email,
-      // phoneNumber: user.phone_number,
+      firstName: user.first_name ?? "",
+      lastName: user.last_name ?? "",
+      secondLastName: user.second_last_name ?? "",
+      academicId: user.academic_id ?? "",
+      email: user.email ?? "",
+      phone: user.phone ?? "",
     })
   }, [user]);
 
@@ -36,18 +34,18 @@ function FormularioPerfil({user}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const student = {
+    const updatedUser = {
       id: user.id,
-      name: formData.name,
-      pat_last_name: formData.patLastName,
-      mat_last_name: formData.matLastName,
-      file_number: formData.fileNumber,
+      first_name: formData.firstName,
+      paternal_last_name: formData.lastName,
+      second_last_name: formData.secondLastName,
+      academic_id: formData.academicId,
       email: formData.email,
-      // phone_umber: formData.phoneNumber,
+      phone: formData.phone,
     };
 
     try {
-      const response = await api.put("/students/", student);
+      const response = await api.put(`/users/${user.id}`, updatedUser);
       console.log(response);
       window.location.reload();
     } catch (error) {
@@ -59,7 +57,7 @@ function FormularioPerfil({user}) {
     e.preventDefault();
     
     const imageData = {
-      student_id: user.id,
+      user_id: user.id,
       image: e.target.files[0],
     };
 
@@ -92,28 +90,55 @@ function FormularioPerfil({user}) {
         </div>
         <form onSubmit={handleSubmit}>
         <p>
-            <label><h3>Nombre: </h3></label>
-            <input name="name" type="text" value={formData.name} onChange={handleChange}/>
+            <label><span>Nombre: </span></label>
+            <input
+              name="firstName"
+              type="text"
+              value={formData.firstName}
+              onChange={handleChange}/>
         </p>
         <p>
-            <label><h3>Apellido paterno: </h3></label>
-            <input name="patLastName" type="text" value={formData.patLastName} onChange={handleChange}/>
+            <label><span>Apellido paterno: </span></label>
+            <input
+              name="lastName"
+              type="text"
+              value={formData.lastName}
+              onChange={handleChange}/>
         </p>
         <p>
-            <label><h3>Apellido materno: </h3></label>
-            <input name="matLastName" type="text" value={formData.matLastName} onChange={handleChange}/>
+            <label><span>Apellido materno: </span></label>
+            <input
+              name="secondLastName"
+              type="text"
+              value={formData.secondLastName}
+              onChange={handleChange}/>
         </p>
         <p>
-            <label><h3>Expediente: </h3></label>
-            <input name="fileNumber" type="text" value={formData.fileNumber} onChange={handleChange}/>
+            <label><span>Expediente: </span></label>
+            <input
+              name="academicId"
+              type="text"
+              value={formData.academicId}
+              onChange={handleChange}
+            />
         </p>
         <p>
-            <label><h3>Correo: </h3></label>
-            <input name="email" type="text" value={formData.email} onChange={handleChange}/>
+            <label><span>Correo: </span></label>
+            <input 
+              name="email"
+              type="text"
+              value={formData.email}
+              onChange={handleChange}
+            />
         </p>
         {/* <p>
-            <label><h3>Teléfono: </h3></label>
-            <input name="phoneNumber" type="text" value={formData.phoneNumber} onChange={handleChange}/>
+          <label><span>Teléfono: </span></label>
+          <input
+            name="phone"
+            type="text"
+            value={formData.phone}
+            onChange={handleChange}
+          />
         </p> */}
         <button type="submit">Guardar</button>
         </form>

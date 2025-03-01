@@ -5,8 +5,8 @@ import api from '../api';
 function RegisterForm() {
   const [formData, setFormData] = useState({
     firstName: '',
-    paternalLastName: '',
-    maternalLastName: '',
+    lastName: '',
+    secondLastName: '',
     academicId: '',
     email: '',
     confirmEmail: '',
@@ -85,9 +85,9 @@ function RegisterForm() {
 
     const user = {
       academic_id: formData.academicId, // Ensure this is a numeric string if that's what's expected.
-      name: formData.firstName,
-      paternal_last_name: formData.paternalLastName,
-      maternal_last_name: formData.maternalLastName,
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      second_last_name: formData.secondLastName,
       email: formData.email,
       password: formData.password,
       profile_photo: "https://example.com/default-profile.jpg", // You can set a default value or gather it from your form
@@ -154,9 +154,9 @@ function RegisterForm() {
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Apellido Paterno:</label>
           <input
-            name="paternalLastName"
+            name="lastName"
             type="text"
-            value={formData.paternalLastName}
+            value={formData.lastName}
             onChange={handleChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -165,9 +165,9 @@ function RegisterForm() {
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Apellido Materno:</label>
           <input
-            name="maternalLastName"
+            name="secondLastName"
             type="text"
-            value={formData.maternalLastName}
+            value={formData.secondLastName}
             onChange={handleChange}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

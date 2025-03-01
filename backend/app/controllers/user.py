@@ -4,6 +4,7 @@ from core.dependencies import get_db
 from repos.user import UserRepo, PreRegisteredUserRepo
 from models.user import User, PreRegisteredUser
 from schemas.user import UserInput, PreRegisteredUserInput
+from utils.security import hash_password
 
 
 def create_pre_registered_user(user_input: PreRegisteredUserInput, db: Session) -> dict:
@@ -60,14 +61,16 @@ def create_user(user_input: UserInput, db: Session) -> dict:
     """
     # Pydantic --> ORM
     academic_id_int = int(user_input.academic_id)
+    hashed_password = hash_password(user_input.password)
+
     
     new_user = User(
         academic_id=academic_id_int,
-        name=user_input.name,
-        paternal_last_name=user_input.paternal_last_name,
-        maternal_last_name=user_input.maternal_last_name,
+        first_name=user_input.first_name,
+        last_name=user_input.last_name,
+        second_last_name=user_input.second_last_name,
         email=user_input.email,
-        password=user_input.password,
+        password=hashed_password,
         profile_photo=user_input.profile_photo,
         is_admin=user_input.is_admin,
         is_super_admin=user_input.is_super_admin,
@@ -80,9 +83,9 @@ def create_user(user_input: UserInput, db: Session) -> dict:
     return {
         "user_id": new_user.user_id,
         "academic_id": new_user.academic_id,
-        "name": new_user.name,
-        "paternal_last_name": new_user.paternal_last_name,
-        "maternal_last_name": new_user.maternal_last_name,
+        "first_name": new_user.first_name,
+        "last_name": new_user.last_name,
+        "second_last_name": new_user.second_last_name,
         "email": new_user.email,
         "profile_photo": new_user.profile_photo,
         "is_admin": new_user.is_admin,
@@ -91,15 +94,15 @@ def create_user(user_input: UserInput, db: Session) -> dict:
 
 def get_user(user_id: int, db: Session) -> dict:
     user_repo = UserRepo(db)
-    user = user_repo.get_by_user_id(user_id)
+    user = user_repo.get_by_id(user_id)
     if not user:
         return None
     return {
         "user_id": user.user_id,
         "academic_id": user.academic_id,
-        "name": user.name,
-        "paternal_last_name": user.paternal_last_name,
-        "maternal_last_name": user.maternal_last_name,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "second_last_name": user.second_last_name,
         "email": user.email,
         "profile_photo": user.profile_photo,
         "is_admin": user.is_admin,
@@ -115,9 +118,9 @@ def update_user(user_id: int, user_input: UserInput, db: Session) -> dict:
     return {
         "user_id": updated_user.user_id,
         "academic_id": updated_user.academic_id,
-        "name": updated_user.name,
-        "paternal_last_name": updated_user.paternal_last_name,
-        "maternal_last_name": updated_user.maternal_last_name,
+        "first_name": updated_user.first_name,
+        "last_name": updated_user.last_name,
+        "second_last_name": updated_user.second_last_name,
         "email": updated_user.email,
         "profile_photo": updated_user.profile_photo,
         "is_admin": updated_user.is_admin,
