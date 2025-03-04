@@ -1,18 +1,7 @@
-from pydantic import BaseModel, validator, EmailStr
+from pydantic import BaseModel, validator
 from typing import Optional
 from utils.validation import is_valid_academic_id, is_valid_password, is_valid_email
 
-class PreRegisteredUser():
-    pass
-
-class User():
-    pass
-
-class UserForm(BaseModel):
-    pass
-
-class TokenRequest(BaseModel):
-    pass
 
 class PreRegisteredUserInput(BaseModel):
     academic_id: str
@@ -26,10 +15,10 @@ class PreRegisteredUserInput(BaseModel):
 
 class UserInput(BaseModel):
     academic_id: str
-    name: str
-    paternal_last_name: str
-    maternal_last_name: Optional[str] = None
-    email: EmailStr
+    first_name: str
+    last_name: str
+    second_last_name: Optional[str] = None
+    email: str
     password: str
     profile_photo: str
     is_admin: bool = False
@@ -49,13 +38,3 @@ class UserInput(BaseModel):
     def validate_email(cls, email):
         is_valid_email(email)
         return email
-        
-    
-
-# class TokenRequest(BaseModel):
-#     token: str
-
-# class UserForm(BaseModel):
-#     username: str
-#     password: str
-#     role: str

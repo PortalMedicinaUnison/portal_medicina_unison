@@ -1,16 +1,33 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
-from schemas.user import UserForm, TokenRequest
-from controllers.auth import authenticate_user, get_current_user
 from core.dependencies import get_db
+from schemas.auth import LoginForm, TokenRequest, TokenResponse, CheckAuthResponse, UserInfo
+from controllers.auth import authenticate_user, get_current_user, refresh_token
 
-# router = APIRouter(prefix="/auth", tags=["Auth"])
-router = APIRouter()
+auth_router = APIRouter()
 
-@router.post("/token/")
-async def login_for_access_token_route(form_data: UserForm, db: Session = Depends(get_db)):
+@auth_router.post("/login/", response_model=TokenResponse)
+async def login_router(form_data: LoginForm, db: Session = Depends(get_db)):
+    """
+    Endpoint para iniciar sesión y obtener el token JWT.
+    """
     return authenticate_user(form_data, db)
 
-@router.post("/check_auth")
-async def check_auth(request: TokenRequest, db: Session = Depends(get_db)):
-    return get_current_user(request, db)
+@auth_router.post("/verify-token/", response_model=CheckAuthResponse)
+async def verify_token_router(token_request: TokenRequest, db: Session = Depends(get_db)):
+    """
+    Endpoint para verificar la autenticación del usuario utilizando el token proporcionado.
+    Retorna información básica del usuario autenticado.
+    """
+    user = get_current_user(token_request.token, db)
+    user_info = {
+        "user_id": user.user_id,
+    }
+    return {"user_info": user_info}
+
+@auth_router.post("/refresh/", response_model=TokenResponse)
+async def refresh_token_endpoint(token_request: TokenRequest, db: Session = Depends(get_db)):
+    """
+    Endpoint para renovar el token JWT basado en el token actual.
+    """
+    return refresh_token(token_request, db)

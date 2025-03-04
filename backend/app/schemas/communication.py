@@ -49,7 +49,6 @@ class ReportInput(BaseModel):
     admin_comment: Optional[str] = None
 
     @validator("date")
-    # def validate_date(cls, date: date) -> date:
-    def validate_date(cls, date: int) -> int:
+    def validate_date(cls, date: date) -> date:
         is_valid_past_date(date)
         return date

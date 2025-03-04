@@ -11,31 +11,20 @@ class MedicalRecord(Base):
     __tablename__ = "medical_records"
 
     id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, ForeignKey("student.id"), nullable=False)
-    identification_card_id = Column(Integer, ForeignKey("identification_cards.id"), nullable=False)
-    family_medical_history_id = Column(Integer, ForeignKey("family_medical_history.id"), nullable=False)
-    non_pathological_histories_id = Column(Integer, ForeignKey("non_pathological_histories.id"), nullable=False)
-    pathological_histories_id = Column(Integer, ForeignKey("pathological_histories.id"), nullable=False)
-    gynecological_histories_id = Column(Integer, ForeignKey("gynecological_histories.id"), nullable=False)
-    sexual_histories_id = Column(Integer, ForeignKey("sexual_histories.id"), nullable=False)
-    current_illnesses_id = Column(Integer, ForeignKey("current_illnesses.id"), nullable=False)
-    odontological_histories_id = Column(Integer, ForeignKey("odontological_histories.id"), nullable=False)
-    somatometries_id = Column(Integer, ForeignKey("somatometries.id"), nullable=False)
-    systems_reviews_id = Column(Integer, ForeignKey("systems_reviews.id"), nullable=False)
-    physical_examination_id = Column(Integer, ForeignKey("physical_examination.id"), nullable=False)
+    # student_id = Column(Integer, ForeignKey("student.id"), nullable=False) #REVISAR
 
     # student = relationship("Student", back_populates="medical_record")
-    identification_card = relationship("IdentificationCard", back_populates="medical_record", uselist=False)
-    family_medical_history = relationship("FamilyMedicalHistory", back_populates="medical_record", uselist=False)
-    non_pathological_history = relationship("NonPathologicalHistory", back_populates="medical_record", uselist=False)
-    pathological_history = relationship("PathologicalHistory", back_populates="medical_record", uselist=False)
-    gynecological_history = relationship("GynecologicalHistory", back_populates="medical_record", uselist=False)
-    sexual_history = relationship("SexualHistory", back_populates="medical_record", uselist=False)
-    current_illness = relationship("CurrentIllness", back_populates="medical_record", uselist=False)
-    odontological_history = relationship("OdontologicalHistory", back_populates="medical_record", uselist=False)
-    somatometry = relationship("Somatometry", back_populates="medical_record", uselist=False)
-    systems_reviews = relationship("SystemsReview", back_populates="medical_record", uselist=False)
-    physical_examination = relationship("PhysicalExamination", back_populates="medical_record", uselist=False)
+    # identification_card = relationship("IdentificationCard", back_populates="medical_record", uselist=False)
+    # family_medical_history = relationship("FamilyMedicalHistory", back_populates="medical_record", uselist=False)
+    # non_pathological_history = relationship("NonPathologicalHistory", back_populates="medical_record", uselist=False)
+    # pathological_history = relationship("PathologicalHistory", back_populates="medical_record", uselist=False)
+    # gynecological_history = relationship("GynecologicalHistory", back_populates="medical_record", uselist=False)
+    # sexual_history = relationship("SexualHistory", back_populates="medical_record", uselist=False)
+    # current_illness = relationship("CurrentIllness", back_populates="medical_record", uselist=False)
+    # odontological_history = relationship("OdontologicalHistory", back_populates="medical_record", uselist=False)
+    # somatometry = relationship("Somatometry", back_populates="medical_record", uselist=False)
+    # systems_reviews = relationship("SystemsReview", back_populates="medical_record", uselist=False)
+    # physical_examination = relationship("PhysicalExamination", back_populates="medical_record", uselist=False)
 
 class IdentificationCard(Base):
     """
@@ -46,9 +35,9 @@ class IdentificationCard(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     academic_id = Column(Integer, unique=True, nullable=False, index=True)
-    name = Column(String(100), nullable=False)
-    paternal_last_name = Column(String(100), nullable=False)
-    maternal_last_name = Column(String(100))
+    first_name = Column(String(100), nullable=False)
+    last_name = Column(String(100), nullable=False)
+    second_last_name = Column(String(100))
     age = Column(Integer, nullable=False)
     sex = Column(String(10), nullable=False)
     gender = Column(String(20), nullable=False)
@@ -59,7 +48,7 @@ class IdentificationCard(Base):
     phone_number = Column(String(10), nullable=False)
     study_date = Column(String(20), nullable=False)
 
-    medical_record = relationship("MedicalRecord", back_populates="identification_card")
+    # medical_record = relationship("MedicalRecord", back_populates="identification_card")
 
 class FamilyMedicalHistory(Base):
     """
@@ -80,7 +69,7 @@ class FamilyMedicalHistory(Base):
     smoking = Column(String(10))
     other = Column(String(10))
 
-    medical_record = relationship("MedicalRecord", back_populates="family_medical_history")
+    # medical_record = relationship("MedicalRecord", back_populates="family_medical_history")
 
 class NonPathologicalHistory(Base):
     __tablename__ = "non_pathological_histories"
@@ -100,7 +89,7 @@ class NonPathologicalHistory(Base):
     work_and_school = Column(Boolean)
     work_and_school_details = Column(String(30))
 
-    medical_record = relationship("MedicalRecord", back_populates="non_pathological_history")
+    # medical_record = relationship("MedicalRecord", back_populates="non_pathological_history")
 
 class PathologicalHistory(Base):
     __tablename__ = "pathological_histories"
@@ -146,7 +135,7 @@ class PathologicalHistory(Base):
 
 
 
-    medical_record = relationship("MedicalRecord", back_populates="pathological_history")
+    # medical_record = relationship("MedicalRecord", back_populates="pathological_history")
 
 class GynecologicalHistory(Base):
     __tablename__ = "gynecological_histories"
@@ -160,7 +149,7 @@ class GynecologicalHistory(Base):
     contraceptive_methods = Column(String)
     pap_smear_test = Column(String)
 
-    medical_record = relationship("MedicalRecord", back_populates="gynecological_history")
+    # medical_record = relationship("MedicalRecord", back_populates="gynecological_history")
     
 class SexualHistory(Base):
     __tablename__ = "sexual_histories"
@@ -171,7 +160,7 @@ class SexualHistory(Base):
     sexual_orientation = Column(String)
     sexual_partners = Column(String)
 
-    medical_record = relationship("MedicalRecord", back_populates="sexual_history")
+    # medical_record = relationship("MedicalRecord", back_populates="sexual_history")
 
 #se pueden hacer Booleanos
 class CurrentIllness(Base):
@@ -199,7 +188,7 @@ class CurrentIllness(Base):
     weight_loss = Column(Boolean)
     eternal_cough = Column(Boolean)
 
-    medical_record = relationship("MedicalRecord", back_populates="current_illness")
+    # medical_record = relationship("MedicalRecord", back_populates="current_illness")
 
 class OdontologicalHistory(Base):
     __tablename__ = "odontological_histories"
@@ -214,7 +203,7 @@ class OdontologicalHistory(Base):
     object_in_mouth = Column(String)
     current_dental_treatment = Column(String)
 
-    medical_record = relationship("MedicalRecord", back_populates="odontological_history")
+    # medical_record = relationship("MedicalRecord", back_populates="odontological_history")
 
 class Somatometry(Base):
     __tablename__ = "somatometries"
@@ -228,7 +217,7 @@ class Somatometry(Base):
     blood_pressure = Column(Integer)
     temperature = Column(Integer)
 
-    medical_record = relationship("MedicalRecord", back_populates="somatometry")
+    # medical_record = relationship("MedicalRecord", back_populates="somatometry")
 
 class SystemsReview(Base):
     __tablename__ = "systems_reviews"
@@ -274,7 +263,7 @@ class SystemsReview(Base):
     endocrine_overweight = Column(Boolean)
     endocrine_underweight = Column(Boolean)
 
-    medical_record = relationship("MedicalRecord", back_populates="systems_reviews")
+    # medical_record = relationship("MedicalRecord", back_populates="systems_reviews")
 
 class PhysicalExamination(Base):
     __tablename__ = "physical_examination"
@@ -293,5 +282,5 @@ class PhysicalExamination(Base):
     diagnosis = Column(String)
     treatment = Column(String)
 
-    medical_record = relationship("MedicalRecord", back_populates="physical_examination")
+    # medical_record = relationship("MedicalRecord", back_populates="physical_examination")
 

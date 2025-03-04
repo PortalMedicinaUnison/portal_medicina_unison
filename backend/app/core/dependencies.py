@@ -10,6 +10,3 @@ def get_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
-
-# def get_admin_user(auth_user: str = Depends(get_authenticated_user)):
-#     pass

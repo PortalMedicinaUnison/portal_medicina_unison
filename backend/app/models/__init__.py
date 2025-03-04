@@ -3,7 +3,6 @@ from .site import Site
 from .medical_record import MedicalRecord
 from .internship import InternshipEnrollment, Internship, InternshipDocument
 from .communication import Announcement, Survey, Report
-from .student import Student
 
 __all__ = [
     'PreRegisteredUser',
@@ -16,5 +15,4 @@ __all__ = [
     'Announcement',
     'Survey',
     'Report',
-    'Student'
 ]
