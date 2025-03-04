@@ -34,7 +34,7 @@ class PreRegisteredUserRepo(BaseRepo):
 
     def delete(self, user_id: int) -> bool:
         """ Desactiva un usuario por su ID. Retorna True si se desactivó. """
-        user = self.get_by_user_id(user_id)
+        user = self.get_by_academic_id(user_id)
         if user:
             user.is_active = False
             self.session.commit()
@@ -87,7 +87,7 @@ class UserRepo(BaseRepo):
         return False
 
 
-    def upload_profile_picture(self, user_id: str, image: UploadFile) -> User:
+    def upload_profile_picture(self, user_id: int, image: UploadFile) -> User:
         import os
 
         file_location = os.path.join("profile_images", f"{user_id}.jpg")
