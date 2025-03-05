@@ -32,9 +32,9 @@ class User(BaseModel):
     
     user_id = Column(Integer, primary_key=True, autoincrement=True)
     academic_id = Column(Integer, ForeignKey("pre_registered_users.academic_id", ondelete="CASCADE"), unique=True, nullable=False)
-    name = Column(String(50), nullable=False)
-    paternal_last_name = Column(String(50), nullable=False)
-    maternal_last_name = Column(String(50), nullable=True)
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
+    second_last_name = Column(String(50), nullable=True)
     email = Column(String(50), nullable=False, unique=True)
     password = Column(String, nullable=False)
     profile_photo = Column(String(255), nullable=False)
@@ -52,4 +52,4 @@ class User(BaseModel):
     internship = relationship("Internship", back_populates="student")
 
     def __repr__(self):
-        return f"<User(name={self.name}, email={self.email}, is_admin={self.is_admin}, is_active={self.is_active})>"
+        return f"<User(name={self.first_name}, email={self.email}, is_admin={self.is_admin}, is_active={self.is_active})>"

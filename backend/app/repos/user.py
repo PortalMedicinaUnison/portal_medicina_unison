@@ -10,6 +10,10 @@ class PreRegisteredUserRepo(BaseRepo):
         self.session.add(data)
         self.session.commit()
         return data
+    
+    def get_by_id(self, id: int) -> PreRegisteredUser:
+        """ Obtiene un usuario pre-registrado por su ID. """
+        return self.session.query(PreRegisteredUser).filter_by(id=id).first()
 
     def get_by_academic_id(self, academic_id: int) -> PreRegisteredUser:
         """ Obtiene un usuario pre-registrado por su ID académico. """
@@ -46,13 +50,17 @@ class UserRepo(BaseRepo):
         self.session.refresh(data)
         return data
 
-    def get_by_user_id(self, user_id: int) -> User:
+    def get_by_id(self, user_id: int) -> User:
         """ Obtiene un usuario por su ID. """
         return self.session.query(User).filter(User.user_id == user_id).first()
 
     def get_by_academic_id(self, academic_id: int) -> User:
         """ Obtiene un usuario por su ID académico. """
         return self.session.query(User).filter(User.academic_id == academic_id).first()
+
+    def get_by_email(self, email: str) -> User:
+        """ Obtiene un usuario por su correo electrónico. """
+        return self.session.query(User).filter(User.email == email).first()
 
     def get_all(self):
         """ Obtiene todos los usuarios. """

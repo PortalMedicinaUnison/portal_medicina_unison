@@ -13,9 +13,7 @@ class TokenResponse(BaseModel):
     token_type: str
 
 class UserInfo(BaseModel):
-    email: str
-    role: str
+    user_id: int
 
 class CheckAuthResponse(BaseModel):
-    status: str
     user_info: UserInfo

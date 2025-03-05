@@ -12,18 +12,24 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
 
     if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+        expiration = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes = TIME_TO_EXPIRE)
+        expiration = datetime.now(timezone.utc) + timedelta(minutes = TIME_TO_EXPIRE)
     
-    to_encode.update({"exp": expire})
+    to_encode.update({"exp": expiration})
+    if "sub" in to_encode:
+        to_encode["sub"] = str(to_encode["sub"])
+
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
     return encoded_jwt
 
 def decode_access_token(token: str):
+    print("Token", token)
     try:
+        print("Try decode")
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.exceptions.InvalidTokenError:
+        print("Invalid token")
         raise HTTPException(
             status_code = 401,
             detail = "Invalid token"

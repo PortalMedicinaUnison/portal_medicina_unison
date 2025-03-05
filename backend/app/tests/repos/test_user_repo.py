@@ -4,6 +4,57 @@ from models.user import User, PreRegisteredUser
 from fastapi import UploadFile
 from io import BytesIO
 
+def test_create_user(db_session):
+    """Prueba la creación de un usuario en la base de datos."""
+    repo = UserRepo(db_session)
+    
+    new_user = User(
+        user_id=1,
+        academic_id="222203834",
+        first_name="Test User",
+        last_name="Doe",
+        second_last_name=None,
+        email="test@example.com",
+        password="securepassword",
+        profile_photo="default.png",
+        is_admin=False,
+        is_super_admin=False
+    )
+    repo.create(new_user)
+
+    user_from_db = repo.get_by_user_id(1)
+    
+    assert user_from_db is not None
+    assert user_from_db.name == "Test User"
+    assert str(user_from_db.academic_id) == "222203834"
+
+def test_get_by_academic_id(db_session):
+    """Prueba obtener un usuario por academic_id."""
+    repo = UserRepo(db_session)
+
+    user = User(
+        user_id=2,
+        academic_id="222203833",
+        first_name="Another User",
+        last_name="Smith",
+        second_last_name=None,
+        email="another@example.com",
+        password="anotherpassword",
+        profile_photo="default.png",
+        is_admin=False,
+        is_super_admin=False
+    )
+
+    repo.create(user)
+
+    updated_data = {"name": "Updated Name", "email": "updated@example.com"}
+    repo.update(user.user_id, updated_data)
+
+    updated_user = repo.get_by_user_id(3)
+
+    assert updated_user.name == "Updated Name"
+    assert updated_user.email == "updated@example.com"
+
 def test_update_user(db_session):
     """Prueba actualizar los datos de un usuario."""
     repo = UserRepo(db_session)
@@ -11,9 +62,9 @@ def test_update_user(db_session):
     user = User(
         user_id=3,
         academic_id="222203832",
-        name="Update User",
-        paternal_last_name="Brown",
-        maternal_last_name="Johnson",
+        first_name="Update User",
+        second_name="Brown",
+        second_last_name="Johnson",
         email="update@example.com",
         password="updatepassword",
         profile_photo="default.png",
@@ -38,9 +89,9 @@ def test_delete_user(db_session):
     user = User(
         user_id=4,
         academic_id="222203831",
-        name="Delete User",
-        paternal_last_name="Lee",
-        maternal_last_name="Kim",
+        first_name="Delete User",
+        second_name="Lee",
+        second_last_name="Kim",
         email="delete@example.com",
         password="deletepassword",
         profile_photo="default.png",
@@ -58,8 +109,8 @@ def test_get_all_users(db_session):
     repo = UserRepo(db_session)
 
     users = [
-        User(user_id=5, academic_id="222203830", name="User One", paternal_last_name="Smith", maternal_last_name=None,  email="one@example.com", password="pass1", profile_photo="default.png", is_admin=False, is_super_admin=False),
-        User(user_id=6, academic_id="222203829", name="User Two", paternal_last_name="Doe", maternal_last_name=None, email="two@example.com", password="pass2", profile_photo="default.png", is_admin=False, is_super_admin=False)
+        User(user_id=5, academic_id="222203830",first_name="User One", second_name="Smith", second_last_name=None,  email="one@example.com", password="pass1", profile_photo="default.png", is_admin=False, is_super_admin=False),
+        User(user_id=6, academic_id="222203829",first_name="User Two", second_name="Doe", second_last_name=None, email="two@example.com", password="pass2", profile_photo="default.png", is_admin=False, is_super_admin=False)
     ]
 
 
@@ -79,9 +130,9 @@ def test_upload_profile_picture(db_session, tmpdir):
     user = User(
         user_id=7,
         academic_id="222203828",
-        name="Profile User",
-        paternal_last_name = "Dow",
-        maternal_last_name=None,
+        first_name="Profile User",
+        second_name = "Dow",
+        second_last_name=None,
         email="profile@example.com",
         password="profilepassword",
         profile_photo="default.png",

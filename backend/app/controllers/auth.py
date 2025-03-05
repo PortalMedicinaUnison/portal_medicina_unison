@@ -4,6 +4,7 @@ from core.dependencies import get_db
 from core.auth import create_access_token, decode_access_token, get_access_token
 from utils.security import verify_password, get_user_role
 from repos.user import UserRepo 
+from models.user import User
 from schemas.auth import LoginForm, TokenResponse, TokenRequest
 
 
@@ -11,7 +12,8 @@ def authenticate_user(form_data: LoginForm, db: Session) -> TokenResponse:
     """
     Autentica al usuario y retorna un TokenResponse con el JWT.
     """
-    user = UserRepo.get_by_email(db, form_data.email)
+    user_repo = UserRepo(db)
+    user = user_repo.get_by_email(form_data.email)
     
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
@@ -21,17 +23,19 @@ def authenticate_user(form_data: LoginForm, db: Session) -> TokenResponse:
         )
     
     token = create_access_token(data={
-        "sub": user.email,
-        "role": get_user_role(user)
+        "sub": user.user_id,
     })
     return TokenResponse(access_token=token, token_type="bearer")
 
 
-def get_current_user(db: Session, token: str):
+def get_current_user(token: str, db: Session) -> User:
     """
     Valida el token y retorna el usuario autenticado.
     """
+    print("current user Token", token)
     payload = decode_access_token(token)
+
+    print("Payload", payload)
 
     if not payload or payload.get("sub") is None:
         raise HTTPException(
@@ -40,9 +44,10 @@ def get_current_user(db: Session, token: str):
             headers = {"WWW-Authenticate": "Bearer"},
         )
 
-    email: str = payload.get("sub")
-    role: str = payload.get("role")
-    user = UserRepo.get_by_email(db, email)
+    user_id = int(payload["sub"])
+    
+    user_repo = UserRepo(db)
+    user = user_repo.get_by_id(user_id)
     
     if user is None:
         raise HTTPException(
@@ -50,14 +55,20 @@ def get_current_user(db: Session, token: str):
             detail="User not found",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    if role != get_user_role(user):
+    print("Al final de get_current_user")
+    return user
+
+def autorize_user(user: User, role: str):
+    """
+    Verifica si el usuario tiene el rol necesario para acceder a un recurso.
+    """
+    user_role = get_user_role(user)
+    if user_role != role:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User role mismatch",
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User does not have enough privileges",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return user
 
 def refresh_token(token_request: TokenRequest, db: Session = Depends(get_db)):
     """
@@ -70,8 +81,9 @@ def refresh_token(token_request: TokenRequest, db: Session = Depends(get_db)):
             status_code=401,
             detail="Invalid token")
     
-    email = payload.get("sub")
-    user = UserRepo.get_by_email(db, email)
+    user_id: str = payload.get("sub")
+    user_repo = UserRepo(db)
+    user = user_repo.get_by_id(user_id)
 
     if user is None:
         raise HTTPException(
@@ -79,8 +91,7 @@ def refresh_token(token_request: TokenRequest, db: Session = Depends(get_db)):
             detail="User not found")
     
     new_token = create_access_token(data={
-        "sub": user.email,
-        "role": get_user_role(user)
+        "sub": user.user_id,
     })
     return TokenResponse(access_token=new_token, token_type="bearer")
 
