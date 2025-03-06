@@ -4,8 +4,7 @@ from core.dependencies import get_db
 from schemas.auth import LoginForm, TokenRequest, TokenResponse, CheckAuthResponse, UserInfo
 from controllers.auth import authenticate_user, get_current_user, refresh_token
 
-
-auth_router = APIRouter(prefix="/auth", tags=["Auth"])
+auth_router = APIRouter()
 
 @auth_router.post("/login/", response_model=TokenResponse)
 async def login_router(form_data: LoginForm, db: Session = Depends(get_db)):

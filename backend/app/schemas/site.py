@@ -22,3 +22,22 @@ class SiteInput(BaseModel):
     def validate_email(cls, email):
         is_valid_email(email)
         return email
+
+class SitePartialInput(BaseModel):
+    admin_id: Optional[int] = None
+    name: Optional[str] = None
+    site_type: Optional[SiteTypeEnum] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    country: Optional[str] = None
+    capacity: Optional[int] = None
+    contact_name: Optional[str] = None
+    contact_email: Optional[str] = None
+    contact_phone: Optional[str] = None
+    is_available: Optional[bool] = True
+
+    @validator("contact_email")
+    def validate_email(cls, email):
+        is_valid_email(email)
+        return email
