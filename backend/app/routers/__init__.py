@@ -5,13 +5,13 @@ from .internship import internship_router
 from .site import site_router
 
 routers = [
-    auth_router,
-    user_router,
-    pre_registered_router,
-    announcement_router, 
-    survey_router, 
-    report_router,
-    internship_router,
+    # auth_router,
+    # user_router,
+    # pre_registered_router,
+    # announcement_router, 
+    # survey_router, 
+    # report_router,
+    # internship_router,
     site_router
 ]
 
