@@ -19,7 +19,7 @@ def test_create_user(db_session):
     )
     repo.create(new_user)
 
-    user_from_db = repo.get_by_user_id(1)
+    user_from_db = repo.get_by_id(1)
     
     assert user_from_db is not None
     assert user_from_db.name == "Test User"
