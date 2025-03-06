@@ -68,7 +68,7 @@ class UserRepo(BaseRepo):
 
     def update(self, user_id: int, data: dict) -> User:
         """ Actualiza los datos de un usuario. """
-        user = self.get_by_user_id(user_id)
+        user = self.get_by_id(user_id)
         if user:
             for key, value in data.items():
                 if hasattr(user, key): 
@@ -79,7 +79,7 @@ class UserRepo(BaseRepo):
 
     def delete(self, user_id: int) -> bool:
         """ Desactiva un usuario por su ID. Retorna True si se desactivó. """
-        user = self.get_by_user_id(user_id)
+        user = self.get_by_id(user_id)
         if user:
             user.is_active = False
             self.session.commit()
@@ -95,7 +95,7 @@ class UserRepo(BaseRepo):
         with open(file_location, "wb") as buffer:
             buffer.write(image.file.read())
 
-        user = self.get_by_user_id(user_id)
+        user = self.get_by_id(user_id)
         if user:
             user.profile_photo = file_location
             self.session.commit()
