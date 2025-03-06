@@ -32,10 +32,7 @@ def get_current_user(token: str, db: Session) -> User:
     """
     Valida el token y retorna el usuario autenticado.
     """
-    print("current user Token", token)
     payload = decode_access_token(token)
-
-    print("Payload", payload)
 
     if not payload or payload.get("sub") is None:
         raise HTTPException(
@@ -55,7 +52,6 @@ def get_current_user(token: str, db: Session) -> User:
             detail="User not found",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    print("Al final de get_current_user")
     return user
 
 def autorize_user(user: User, role: str):
