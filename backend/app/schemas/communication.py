@@ -34,15 +34,14 @@ class SurveyInput(BaseModel):
         return web_link
 
 # ---------------  Report  ----------------------
-
 class ReportInput(BaseModel):
     student_id: int
     internship_id: int
     date: date
-    site: str
+    site: Optional[str] = None
     report_type: ReportTypeEnum
     other_type: Optional[str] = None
-    description: str
+    description: Optional[str] = None
     evidence: Optional[str] = None
     anonymity: bool
     is_open: bool = True

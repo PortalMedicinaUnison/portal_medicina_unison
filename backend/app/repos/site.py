@@ -22,7 +22,6 @@ class SiteRepo(BaseRepo):
         """Actualiza los datos de un sitio."""
         site = self.get_by_id(site_id)
         if site:
-            data = data.dict(exclude_unset=True)
             for key, value in data.items():
                 if hasattr(site, key):
                     setattr(site, key, value)
