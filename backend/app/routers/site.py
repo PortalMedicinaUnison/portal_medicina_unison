@@ -20,12 +20,12 @@ async def create_site_route(site: SiteInput, db: Session = Depends(get_db)):
 
 @site_router.get('/', response_model=List[SiteInput])
 async def read_sites_route(db: Session = Depends(get_db)):
-    site =  read_all_sites(db)
-    if not site:
+    sites =  read_all_sites(db)
+    if not sites:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Sitio no encontrado")
-    return site
+    return sites
 
 @site_router.get('/{site_id}', response_model=SiteInput)
 async def read_site_route(site_id: int, db: Session = Depends(get_db)):

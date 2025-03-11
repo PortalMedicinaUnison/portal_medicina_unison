@@ -26,7 +26,6 @@ class InternshipRepo(BaseRepo):
         """ Actualiza los datos de una pasantía. """
         internship = self.get_by_id(internship_id)
         if internship:
-            data = data.dict(exclude_unset=True)
             for key, value in data.items():
                 if hasattr(internship, key):
                     setattr(internship, key, value)

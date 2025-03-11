@@ -61,8 +61,9 @@ def is_valid_web_link(link: str) -> None:
     """
     Valida que una cadena tenga el formato correcto de un enlace web con regex
     """
+    print(link)
     import re
-    link_regex = r"^(http|https)://[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    link_regex = r"^(http|https)://[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/$"
     if re.match(link_regex, link) is None:
         raise ValueError("El enlace web no tiene un formato válido.")
     

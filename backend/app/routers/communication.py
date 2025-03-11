@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Form, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List, Union
-from schemas.communication import AnnouncementInput, SurveyInput, ReportInput
+from schemas.communication import AnnouncementInput, SurveyInput, ReportInput, AnnouncementTypeEnum
 from core.dependencies import get_db
 from controllers.communication import (
     create_announcement, update_announcement, read_announcements_by_type, read_single_announcement, delete_announcement,
@@ -24,13 +24,13 @@ async def create_announcement_route(announcement: AnnouncementInput, db: Session
     return announcement
 
 @announcement_router.get('/', response_model=List[AnnouncementInput])
-async def read_announcements_route(db: Session = Depends(get_db)):
-    announcement = read_announcements_by_type(db)
-    if not announcement:
+async def read_announcements_route(announcement_type: AnnouncementTypeEnum, db: Session = Depends(get_db)):
+    announcements = read_announcements_by_type(announcement_type, db)
+    if not announcements:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Aviso no encontrado")
-    return announcement
+    return announcements
 
 @announcement_router.get('/{announcement_id}', response_model=AnnouncementInput)
 async def read_announcement_route(announcement_id: int, db: Session = Depends(get_db)):
@@ -74,13 +74,13 @@ async def create_survey_route(survey: SurveyInput, db: Session = Depends(get_db)
     return survey
 
 @survey_router.get('/', response_model=List[SurveyInput])
-async def read_surveys_route(db: Session = Depends(get_db)):
-    survey = read_surveys_by_mandatory(db)
-    if not survey:
+async def read_surveys_route(mandatory: bool, db: Session = Depends(get_db)):
+    surveys = read_surveys_by_mandatory(mandatory, db)
+    if not surveys:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Encuesta no encontrada")
-    return survey
+    return surveys
 
 @survey_router.get('/{survey_id}', response_model=SurveyInput)
 async def read_survey_route(survey_id: int, db: Session = Depends(get_db)):
@@ -124,13 +124,13 @@ async def create_report_route(report: ReportInput, db: Session = Depends(get_db)
     return report
 
 @report_router.get('/', response_model=List[ReportInput])
-async def read_reports_route(db: Session = Depends(get_db)):
-    report = read_reports_by_mandatory(db)
-    if not report:
+async def read_reports_route(mandatory: bool, db: Session = Depends(get_db)):
+    reports = read_reports_by_mandatory(mandatory, db)
+    if not reports:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Reporte no encontrado")
-    return report
+    return reports
 
 @report_router.get('/{report_id}', response_model=ReportInput)
 async def read_report_route(report_id: int, db: Session = Depends(get_db)):

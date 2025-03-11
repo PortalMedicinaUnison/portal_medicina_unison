@@ -29,8 +29,8 @@ class SurveyInput(BaseModel):
         return input_date
 
     @validator("web_link")
-    def validate_web_link(cls, web_link: str) -> str:
-        is_valid_web_link(web_link)
+    def validate_web_link(cls, web_link: HttpUrl) -> HttpUrl:
+        is_valid_web_link(str(web_link))
         return web_link
 
 # ---------------  Report  ----------------------
@@ -38,10 +38,10 @@ class ReportInput(BaseModel):
     student_id: int
     internship_id: int
     date: date
-    site: Optional[str] = None
+    site: str
     report_type: ReportTypeEnum
     other_type: Optional[str] = None
-    description: Optional[str] = None
+    description: str
     evidence: Optional[str] = None
     anonymity: bool
     is_open: bool = True
