@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import api from "../api";
+import api from "../../../api";
 
 function FormularioPerfil({user}) {
   const [formData, setFormData] = useState({

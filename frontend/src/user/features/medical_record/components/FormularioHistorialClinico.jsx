@@ -1,6 +1,6 @@
 // import MultiStep from 'react-multistep';
 import { useState, useEffect } from "react";
-import api from "../api";
+import api from "../../../../api";
 import SeccionUno from "./HistoriaClinica/SeccionUno";
 import SeccionDos from "./HistoriaClinica/SeccionDos";
 import SeccionTres from "./HistoriaClinica/SeccionTres";
