@@ -1,9 +1,8 @@
 import React from "react";
 import { useEffect, useState } from 'react';
-import fetchUser from '../components/utils';
-
-import ContenidoPrincipal from '../components/ContenidoPrincipal';
-import BarraNavegacion from '../components/BarraNavegacion';
+import fetchUser from '../../../../utils/utils';
+import ContenidoPrincipal from '../../../../components/ContenidoPrincipal';
+import BarraNavegacion from '../../../../components/BarraNavegacion';
 import FormularioHistorialClinico from "../components/FormularioHistorialClinico";
 
 function MedicalRecordPage() {

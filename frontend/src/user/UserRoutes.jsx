@@ -7,7 +7,8 @@ import RegisterPage from '../features/auth/pages/RegisterPage';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 import HomePage from '../pages/HomePage';
 import ProfilePage from '../features/profile/pages/ProfilePage';
-import MedicalRecordPage from '../features/medical_record/pages/MedicalRecordPage';
+import MedicalRecordPage from "./features/medical_record/pages/MedicalRecordPage";
+
 
 function UserRoutes() {
   return (

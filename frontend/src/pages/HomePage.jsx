@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import fetchUser from '../components/utils';
+import fetchUser from '../utils/utils';
 import BarraNavegacion from '../components/BarraNavegacion';
 import ContenidoPrincipal from '../components/ContenidoPrincipal';
 
