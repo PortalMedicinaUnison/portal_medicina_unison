@@ -73,8 +73,8 @@ class UserRepo(BaseRepo):
             for key, value in data.items():
                 if hasattr(user, key): 
                     setattr(user, key, value)
-            self.session.commit()
-            self.session.refresh(user)
+                    self.session.commit()
+                    self.session.refresh(user)
         return user
 
     def delete(self, user_id: int) -> bool:
@@ -85,6 +85,7 @@ class UserRepo(BaseRepo):
             self.session.commit()
             return True
         return False
+
 
     def upload_profile_picture(self, user_id: int, image: UploadFile) -> User:
         import os
