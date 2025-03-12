@@ -26,8 +26,8 @@ class SiteRepo(BaseRepo):
             for key, value in data.items():
                 if hasattr(site, key):
                     setattr(site, key, value)
-                    self.session.commit()
-                    self.session.refresh(site)
+            self.session.commit()
+            self.session.refresh(site)
         return site
     
     def delete(self, site_id: int) -> bool:

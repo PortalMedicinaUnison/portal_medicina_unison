@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from typing import Optional
 from utils.validation import is_valid_academic_id, is_valid_password, is_valid_email
 
@@ -8,7 +8,7 @@ class PreRegisteredUserInput(BaseModel):
     assigned_year: int
     assigned_period: int
 
-    @validator("academic_id")
+    @field_validator("academic_id")
     def validate_academic_id(cls, academic_id):
         is_valid_academic_id(academic_id)
         return academic_id
@@ -24,17 +24,17 @@ class UserInput(BaseModel):
     is_admin: bool = False
     is_super_admin: bool = False
 
-    @validator("academic_id")
+    @field_validator("academic_id")
     def validate_academic_id(cls, academic_id):
         is_valid_academic_id(academic_id)
         return academic_id
 
-    @validator("password")
+    @field_validator("password")
     def validate_password(cls, password):
         is_valid_password(password)
         return password
             
-    @validator("email")
+    @field_validator("email")
     def validate_email(cls, email):
         is_valid_email(email)
         return email

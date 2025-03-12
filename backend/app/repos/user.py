@@ -73,8 +73,8 @@ class UserRepo(BaseRepo):
             for key, value in data.items():
                 if hasattr(user, key): 
                     setattr(user, key, value)
-                    self.session.commit()
-                    self.session.refresh(user)
+            self.session.commit()
+            self.session.refresh(user)
         return user
 
     def delete(self, user_id: int) -> bool:

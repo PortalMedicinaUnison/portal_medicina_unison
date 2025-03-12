@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator, HttpUrl
+from pydantic import BaseModel, field_validator, HttpUrl
 from typing import Optional
 from datetime import date
 from models.communication import ReportTypeEnum, AnnouncementTypeEnum
@@ -23,12 +23,12 @@ class SurveyInput(BaseModel):
     expiration_date: date
     mandatory: bool
 
-    @validator("expiration_date")
+    @field_validator("expiration_date")
     def validate_expiration_date(cls, input_date: date) -> date:
         is_valid_future_date(input_date)
         return input_date
 
-    @validator("web_link")
+    @field_validator("web_link")
     def validate_web_link(cls, web_link: str) -> str:
         is_valid_web_link(web_link)
         return web_link
@@ -48,7 +48,7 @@ class ReportInput(BaseModel):
     is_open: bool = True
     admin_comment: Optional[str] = None
 
-    @validator("date")
+    @field_validator("date")
     def validate_date(cls, date: date) -> date:
         is_valid_past_date(date)
         return date

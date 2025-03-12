@@ -25,8 +25,8 @@ class AnnouncementRepo(BaseRepo):
             for key, value in data.items():
                 if hasattr(announcement, key):
                     setattr(announcement, key, value)
-                    self.session.commit()
-                    self.session.refresh(announcement)
+            self.session.commit()
+            self.session.refresh(announcement)
         return announcement
     
     def delete(self, announcement_id: int) -> bool:
@@ -63,8 +63,8 @@ class SurveyRepo(BaseRepo):
             for key, value in data.items():
                 if hasattr(survey, key):
                     setattr(survey, key, value)
-                    self.session.commit()
-                    self.session.refresh(survey)
+            self.session.commit()
+            self.session.refresh(survey)
         return survey
     
     def delete(self, survey_id: int) -> bool:
@@ -101,8 +101,8 @@ class ReportRepo(BaseRepo):
             for key, value in data.items():
                 if hasattr(report, key):
                     setattr(report, key, value)
-                    self.session.commit()
-                    self.session.refresh(report)
+            self.session.commit()
+            self.session.refresh(report)
         return report
     
     def delete(self, report_id: int) -> bool:
