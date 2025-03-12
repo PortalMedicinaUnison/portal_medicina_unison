@@ -24,12 +24,9 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     return encoded_jwt
 
 def decode_access_token(token: str):
-    print("Token", token)
     try:
-        print("Try decode")
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.exceptions.InvalidTokenError:
-        print("Invalid token")
         raise HTTPException(
             status_code = 401,
             detail = "Invalid token"
