@@ -34,7 +34,6 @@ class SurveyInput(BaseModel):
         return web_link
 
 # ---------------  Report  ----------------------
-
 class ReportInput(BaseModel):
     student_id: int
     internship_id: int

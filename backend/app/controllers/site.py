@@ -2,28 +2,44 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from repos.site import SiteRepo
 from models.site import Site
-from schemas.site import SiteInput, SitePartialInput
+from schemas.site import SiteInput
 
 def create_site(site: SiteInput, db: Session):
     site_repo = SiteRepo(db)
-    new_site = Site(**site.model_dump())
+    new_site = Site(
+        admin_id = site.admin_id,
+        name = site.name,
+        site_type = site.site_type,
+        address = site.address,
+        city = site.city,
+        state = site.state,
+        country = site.country,
+        capacity = site.capacity,
+        contact_name = site.contact_name,
+        contact_email = site.contact_email,
+        contact_phone = site.contact_phone,
+        is_available = site.is_available
+    )
     created_site = site_repo.create(new_site)
-    return created_site
+    return created_site.__dict__
 
-def read_all_sites(skip: int, limit: int, db: Session):
+def read_all_sites(db: Session):
     site_repo = SiteRepo(db)
     read_sites = site_repo.get_all()
-    return read_sites
+    return [model.__dict__ for model in read_sites]
 
 def read_single_site(site_id: int, db: Session):
     site_repo = SiteRepo(db)
     read_site = site_repo.get_by_id(site_id)
-    return read_site
+    if read_site is None:
+        return None
+    return read_site.__dict__
 
 def update_site(site_id: int, site: SiteInput, db: Session):
-    site_repo = SiteRepo(db)
-    updated_site = site_repo.update(site_id, site)
-    return updated_site
+    pass
+    # site_repo = SiteRepo(db)
+    # updated_site = site_repo.update(site_id, site)
+    # return updated_site.__dict__
 
 def delete_site(site_id: int, db: Session):
     site_repo = SiteRepo(db)
