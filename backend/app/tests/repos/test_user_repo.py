@@ -4,9 +4,10 @@ from models.user import User, PreRegisteredUser
 from fastapi import UploadFile
 from io import BytesIO
 
+
 def test_create_user(db_session):
     """Prueba la creación de un usuario en la base de datos."""
-    repo = UserRepo(db_session)
+    user_repo = UserRepo(db_session)
     
     new_user = User(
         user_id=1,
@@ -20,9 +21,9 @@ def test_create_user(db_session):
         is_admin=False,
         is_super_admin=False
     )
-    repo.create(new_user)
+    user_repo.create(new_user)
 
-    user_from_db = repo.get_by_id(1)
+    user_from_db = user_repo.get_by_id(1)
     
     assert user_from_db is not None
     assert user_from_db.first_name == "Test User"
@@ -30,7 +31,7 @@ def test_create_user(db_session):
 
 def test_get_by_academic_id(db_session):
     """Prueba obtener un usuario por academic_id."""
-    repo = UserRepo(db_session)
+    user_repo = UserRepo(db_session)
 
     user = User(
         user_id=2,
@@ -45,16 +46,16 @@ def test_get_by_academic_id(db_session):
         is_super_admin=False
     )
 
-    repo.create(user)
+    user_repo.create(user)
 
-    user_from_db = repo.get_by_academic_id("222203833")
+    user_from_db = user_repo.get_by_academic_id("222203833")
     
     assert user_from_db is not None
     assert user_from_db.first_name == "Another User"
 
 def test_update_user(db_session):
     """Prueba obtener un usuario por academic_id."""
-    repo = UserRepo(db_session)
+    user_repo = UserRepo(db_session)
 
     user = User(
         user_id=3,
@@ -69,19 +70,19 @@ def test_update_user(db_session):
         is_super_admin=False
     )
 
-    repo.create(user)
+    user_repo.create(user)
 
     updated_data = {"first_name": "Updated Name", "email": "updated@example.com"}
-    repo.update(user.user_id, updated_data)
+    user_repo.update(user.user_id, updated_data)
 
-    updated_user = repo.get_by_id(3)
+    updated_user = user_repo.get_by_id(3)
 
     assert updated_user.first_name == "Updated Name"
     assert updated_user.email == "updated@example.com"
 
 def test_delete_user(db_session):
     """Prueba desactivar un usuario."""
-    repo = UserRepo(db_session)
+    user_repo = UserRepo(db_session)
 
     user = User(
         user_id=4,
@@ -96,14 +97,14 @@ def test_delete_user(db_session):
         is_super_admin=False
     )
 
-    repo.create(user)
+    user_repo.create(user)
 
-    assert repo.delete(user.user_id) is True
-    assert repo.get_by_id(4).is_active is False
+    assert user_repo.delete(user.user_id) is True
+    assert user_repo.get_by_id(4).is_active is False
 
 def test_get_all_users(db_session):
     """Prueba obtener todos los usuarios."""
-    repo = UserRepo(db_session)
+    user_repo = UserRepo(db_session)
 
     users = [
         User(user_id=5, academic_id="222203830",first_name="User One", last_name="Smith", second_last_name=None,  email="one@example.com", password="pass1", profile_photo="default.png", is_admin=False, is_super_admin=False),
@@ -112,9 +113,9 @@ def test_get_all_users(db_session):
 
 
     for user in users:
-        repo.create(user)
+        user_repo.create(user)
 
-    all_users = repo.get_all()
+    all_users = user_repo.get_all()
 
     assert len(all_users) >= 2
     assert any(user.first_name == "User One" for user in all_users)
@@ -122,7 +123,7 @@ def test_get_all_users(db_session):
 
 def test_upload_profile_picture(db_session, tmpdir):
     """Prueba la subida de una imagen de perfil."""
-    repo = UserRepo(db_session)
+    user_repo = UserRepo(db_session)
 
     user = User(
         user_id=7,
@@ -137,7 +138,7 @@ def test_upload_profile_picture(db_session, tmpdir):
         is_super_admin=False
     )
 
-    repo.create(user)
+    user_repo.create(user)
 
     # Simulamos un archivo de imagen
     # image_content = b"FakeImageData"
@@ -150,7 +151,7 @@ def test_upload_profile_picture(db_session, tmpdir):
 
 def test_create_pre_registered_user(db_session):
     """Prueba la creación de un usuario pre-registrado."""
-    repo = PreRegisteredUserRepo(db_session)
+    user_repo = PreRegisteredUserRepo(db_session)
 
     pre_user = PreRegisteredUser(
         academic_id="222203827",
@@ -158,15 +159,15 @@ def test_create_pre_registered_user(db_session):
         assigned_period = 2025,
     )
 
-    repo.create(pre_user)
+    user_repo.create(pre_user)
 
-    user_from_db = repo.get_by_academic_id("222203827")
+    user_from_db = user_repo.get_by_academic_id("222203827")
 
     assert user_from_db is not None     
 
 def test_update_pre_registered_user(db_session):
     """Prueba actualizar un usuario pre-registrado."""
-    repo = PreRegisteredUserRepo(db_session)
+    user_repo = PreRegisteredUserRepo(db_session)
 
     pre_user = PreRegisteredUser(
         academic_id="222203826",
@@ -174,19 +175,19 @@ def test_update_pre_registered_user(db_session):
         assigned_period = 2025,
     )
 
-    repo.create(pre_user)
+    user_repo.create(pre_user)
 
     updated_data = {"first_name": "New Name", "email": "new@example.com"}
-    repo.update(pre_user.academic_id, updated_data)
+    user_repo.update(pre_user.academic_id, updated_data)
 
-    updated_user = repo.get_by_academic_id("222203826")
+    updated_user = user_repo.get_by_academic_id("222203826")
 
     assert updated_user.first_name == "New Name"
     assert updated_user.email == "new@example.com"
 
 def test_delete_pre_registered_user(db_session):
     """Prueba la desactivación de un usuario pre-registrado."""
-    repo = PreRegisteredUserRepo(db_session)
+    user_repo = PreRegisteredUserRepo(db_session)
 
     pre_user = PreRegisteredUser(
         academic_id="222203825",
@@ -194,7 +195,7 @@ def test_delete_pre_registered_user(db_session):
         assigned_period = 2025,
     )
 
-    repo.create(pre_user)
+    user_repo.create(pre_user)
 
-    assert repo.delete(pre_user.academic_id) is True
-    assert repo.get_by_academic_id("222203825").is_active is False
+    assert user_repo.delete(pre_user.academic_id) is True
+    assert user_repo.get_by_academic_id("222203825").is_active is False

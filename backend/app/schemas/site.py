@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from models.site import SiteTypeEnum
 from typing import Optional
 from utils.validation import is_valid_email
@@ -18,7 +18,7 @@ class SiteInput(BaseModel):
     contact_phone: Optional[str] = None
     is_available: bool = True
 
-    @validator("contact_email")
+    @field_validator("contact_email")
     def validate_email(cls, email):
         is_valid_email(email)
         return email
