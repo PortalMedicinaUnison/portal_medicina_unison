@@ -3,86 +3,84 @@ from fastapi import HTTPException, status
 from repos.communication import AnnouncementRepo, SurveyRepo, ReportRepo
 from models.communication import Announcement, Survey, Report, AnnouncementTypeEnum
 from schemas.communication import AnnouncementInput, SurveyInput, ReportInput
+from utils.utils import orm_to_dict
 
 # ---------------  Announcement  ----------------------
 
 def create_announcement(announcement: AnnouncementInput, db: Session):
-    announcement_repo = AnnouncementRepo(db)
     new_announcement = Announcement(
         admin_id = announcement.admin_id,
         title = announcement.title,
         announcement_type = announcement.announcement_type,
         description = announcement.description
     )
+    announcement_repo = AnnouncementRepo(db)
     created_announcement = announcement_repo.create(new_announcement)
-    return created_announcement.__dict__
+    announcement_response = orm_to_dict(created_announcement)
+    return announcement_response
 
-def read_announcements_by_type(announcement_type: AnnouncementTypeEnum, db: Session):
+def get_announcement(announcement_id: int, db: Session):
     announcement_repo = AnnouncementRepo(db)
-    read_announcements = announcement_repo.get_by_type(announcement_type)
-    return [model.__dict__ for model in read_announcements]
-
-def read_single_announcement(announcement_id: int, db: Session):
-    announcement_repo = AnnouncementRepo(db)
-    read_announcement = announcement_repo.get_by_id(announcement_id)
-    if read_announcement is None:
+    announcement = announcement_repo.get_by_id(announcement_id)
+    if announcement is None:
         return None
-    return read_announcement.__dict__
+    announcement_response = orm_to_dict(announcement)
+    return announcement_response
+
+def get_announcements_by_type(announcement_type: AnnouncementTypeEnum, db: Session):
+    announcement_repo = AnnouncementRepo(db)
+    announcements = announcement_repo.get_by_type(announcement_type)
+    announcements_response = [orm_to_dict(announcement) for announcement in announcements]
+    return announcements_response
 
 def update_announcement(announcement_id: int, announcement: AnnouncementInput, db: Session):
     pass
-    # announcement_repo = AnnouncementRepo(db)
-    # updated_announcement = announcement_repo.update(announcement_id, announcement)
-    # return updated_announcement.__dict__
-
+    
 def delete_announcement(announcement_id: int, db: Session):
     announcement_repo = AnnouncementRepo(db)
-    deleted_announcement = announcement_repo.delete(announcement_id)
-    return deleted_announcement
+    return announcement_repo.delete(announcement_id)
 
 # ---------------  Survey  ----------------------
 
 def create_survey(survey: SurveyInput, db: Session):
-    survey_repo = SurveyRepo(db)
     new_survey = Survey(
         admin_id = survey.admin_id,
         title = survey.title,
-        web_link = str(survey.web_link),
+        web_link = survey.web_link,
         description = survey.description,
         expiration_date = survey.expiration_date,
         mandatory = survey.mandatory
     )
+    survey_repo = SurveyRepo(db)
     created_survey = survey_repo.create(new_survey)
-    return created_survey.__dict__
+    survey_response = orm_to_dict(created_survey)
+    return survey_response
 
-def read_surveys_by_mandatory(mandatory: bool, db: Session):
+def get_survey(survey_id: int, db: Session):
     survey_repo = SurveyRepo(db)
-    read_surveys = survey_repo.get_by_mandatory(mandatory)
-    return [model.__dict__ for model in read_surveys]
-
-def read_single_survey(survey_id: int, db: Session):
-    survey_repo = SurveyRepo(db)
-    read_survey = survey_repo.get_by_id(survey_id)
-    if read_survey is None:
+    survey = survey_repo.get_by_id(survey_id)
+    if survey is None:
         return None
-    return read_survey.__dict__
+    survey_response = orm_to_dict(survey)
+    return survey_response
+
+def get_surveys_by_mandatory(mandatory: bool, db: Session):
+    survey_repo = SurveyRepo(db)
+    surveys = survey_repo.get_by_mandatory(mandatory)
+    surveys_response = [orm_to_dict(survey) for survey in surveys]
+    return surveys_response
 
 def update_survey(survey_id: int, survey: SurveyInput, db: Session):
     pass
-    # survey_repo = SurveyRepo(db)
-    # updated_survey = survey_repo.update(survey_id, survey)
-    # return updated_survey.__dict__
-
+    
 def delete_survey(survey_id: int, db: Session):
     survey_repo = SurveyRepo(db)
-    deleted_survey = survey_repo.delete(survey_id)
-    return deleted_survey
+    return survey_repo.delete(survey_id)
 
 
 # ---------------  Report  ----------------------
 
 def create_report(report: ReportInput, db: Session):
-    report_repo = ReportRepo(db)
     new_report = Report(
         student_id = report.student_id,
         internship_id = report.internship_id,
@@ -96,28 +94,28 @@ def create_report(report: ReportInput, db: Session):
         is_open = report.is_open,
         admin_comment = report.admin_comment
     )
+    report_repo = ReportRepo(db)
     created_report = report_repo.create(new_report)
-    return created_report.__dict__
+    report_response = orm_to_dict(created_report)
+    return report_response
 
-def read_reports_by_mandatory(mandatory: bool, db: Session):
+def get_report(report_id: int, db: Session):
     report_repo = ReportRepo(db)
-    read_reports = report_repo.get_by_mandatory(mandatory)
-    return [model.__dict__ for model in read_reports]
-
-def read_single_report(report_id: int, db: Session):
-    report_repo = ReportRepo(db)
-    read_report = report_repo.get_by_id(report_id)
-    if read_report is None:
+    report = report_repo.get_by_id(report_id)
+    if report is None:
         return None
-    return read_report.__dict__
+    report_response = orm_to_dict(report)
+    return report_response
+
+def get_reports_by_mandatory(mandatory: bool, db: Session):
+    report_repo = ReportRepo(db)
+    reports = report_repo.get_by_mandatory(mandatory)
+    reports_response = [orm_to_dict(report) for report in reports]
+    return reports_response
 
 def update_report(report_id: int, report: ReportInput, db: Session):
     pass
-    # report_repo = ReportRepo(db)
-    # updated_report = report_repo.update(report_id, report)
-    # return updated_report.__dict__
-
+    
 def delete_report(report_id: int, db: Session):
     report_repo = ReportRepo(db)
-    deleted_report = report_repo.delete(report_id)
-    return deleted_report
+    return report_repo.delete(report_id)

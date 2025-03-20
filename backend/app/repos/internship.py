@@ -1,5 +1,6 @@
 from .base import BaseRepo
 from models.internship import  InternshipEnrollment, Internship, InternshipDocument
+from typing import List
 
 class InternshipRepo(BaseRepo):
 
@@ -14,11 +15,11 @@ class InternshipRepo(BaseRepo):
         """ Obtiene una pasantía por su ID. """
         return self.session.query(Internship).filter(Internship.internship_id == internship_id).first()
 
-    def get_by_student_id(self, student_id: int):
+    def get_by_student_id(self, student_id: int) -> List[Internship]:
         """ Obtiene todas las pasantías asociadas a un estudiante. """
         return self.session.query(Internship).filter(Internship.student_id == student_id).all()
 
-    def get_by_site_id(self, site_id: int):
+    def get_by_site_id(self, site_id: int) -> List[Internship]:
         """ Obtiene todas las pasantías asociadas a un sitio. """
         return self.session.query(Internship).filter(Internship.site_id == site_id).all()
 
@@ -42,8 +43,8 @@ class InternshipEnrollmentRepo(BaseRepo):
         self.session.refresh(data)
         return data
 
-    def get_by_student_id(self, student_id: int):
+    def get_by_student_id(self, student_id: int) -> List[InternshipEnrollment]:
         return self.session.query(InternshipEnrollment).filter_by(student_id=student_id).all()
 
-    def get_by_status(self, is_accepted: bool):
+    def get_by_status(self, is_accepted: bool) -> List[InternshipEnrollment]:
         return self.session.query(InternshipEnrollment).filter_by(is_accepted=is_accepted).all()
