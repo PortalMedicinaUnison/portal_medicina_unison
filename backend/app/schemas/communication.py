@@ -2,7 +2,7 @@ from pydantic import BaseModel, field_validator, HttpUrl
 from typing import Optional
 from datetime import date
 from models.communication import ReportTypeEnum, AnnouncementTypeEnum
-from utils.validation import is_valid_future_date, is_valid_web_link, is_valid_past_date
+from utils.validation import is_valid_future_date, is_valid_past_date
 
 
 # ---------------  Announcement  ----------------------
@@ -27,11 +27,6 @@ class SurveyInput(BaseModel):
     def validate_expiration_date(cls, input_date: date) -> date:
         is_valid_future_date(input_date)
         return input_date
-
-    @field_validator("web_link")
-    def validate_web_link(cls, web_link: str) -> str:
-        is_valid_web_link(web_link)
-        return web_link
 
 # ---------------  Report  ----------------------
 class ReportInput(BaseModel):
