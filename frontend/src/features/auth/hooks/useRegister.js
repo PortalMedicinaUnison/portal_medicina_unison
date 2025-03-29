@@ -9,24 +9,27 @@ export default function useRegister() {
   const [success, setSuccess] = useState(false);
 
   const registerUser = async (formData) => {  
-    if (!isValidAcademicId(formData.academicId)) {
+
+    const cleanedData = cleanFormData(formData);
+
+    if (!isValidAcademicId(cleanedData.academicId)) {
       setError('El expediente debe ser un número de exactamente 9 dígitos.');
       return false;
     }
-    if (formData.email !== formData.confirmEmail) {
+    if (cleanedData.email !== cleanedData.confirmEmail) {
       setError('Los correos electrónicos no coinciden.');
       return false;
     }
-    if (!isValidEmail(formData.email)) {
+    if (!isValidEmail(cleanedData.email)) {
       setError('El formato del correo es inválido.');
       return false;
     }
-    if (formData.password !== formData.confirmPassword) {
+    if (cleanedData.password !== cleanedData.confirmPassword) {
       setError('Las contraseñas no coinciden.');
       return false;
     }
 
-    const { valid, error: passwordError } = validatePassword(formData.password);
+    const { valid, error: passwordError } = validatePassword(cleanedData.password);
     if (!valid) {
       setError(passwordError);
       return false;
@@ -35,12 +38,12 @@ export default function useRegister() {
     setError('');
     
     const user = {
-      academic_id: formData.academicId,
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      second_last_name: formData.secondLastName,
-      email: formData.email,
-      password: formData.password,
+      academic_id: cleanedData.academicId,
+      first_name: cleanedData.firstName,
+      last_name: cleanedData.lastName,
+      second_last_name: cleanedData.secondLastName,
+      email: cleanedData.email,
+      password: cleanedData.password,
       profile_photo: DEFAULT_PROFILE_IMAGE,
       is_admin: false,
       is_super_admin: false,
