@@ -3,10 +3,12 @@ import LoginForm from '../components/LoginForm';
 
 function LoginPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md">
-        <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">Portal de Servicio Social</h1>
-        <LoginForm />
+    <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className='sm:mx-auto sm:w-full sm:max-w-sm'>
+          <h2 className="login-title">Portal de Servicio Social</h2>
+            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+              <LoginForm />
+          </div>
       </div>
     </div>
   );

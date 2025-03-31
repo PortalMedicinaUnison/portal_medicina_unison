@@ -3,275 +3,250 @@
 @tailwind utilities;
 
 
-/* GLOBAL VARIABLES */
-:root {
-    --sidebar-width: 7cm;
-    --header-height: 2cm;
-    --content-width: calc(100vw - var(--sidebar-width));
-    --content-height: calc(100vh - var(--header-height));
-}
-/* ------------------------------------------ */
+@layer components {
 
-/* REESTABLECER ELEMENTOS */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    .form-label { @apply 
+        block
+        text-base
+        font-semibold
+        text-gray-900;
+      }
+    
+    .form-input { @apply 
+        block
+        min-w-0
+        grow
+        py-3
+        pr-3
+        pl-1
+        text-gray-900
+        placeholder:text-gray-400
+        focus:outline-none
+        text-base
+        border
+        rounded-md
+        shadow-sm
+        focus:ring-1
+        focus:border-blue-500;
     }
-h1 {
-    font-size: 40px;
-    font-weight: bolder;
-}
-h2 {
-    font-size: 20px;
-    font-weight: bolder;
-}
-h3 {
-    font-size: 14px;
-    font-weight: bolder;
-}
-#root > div {
-    display: flex;
-    flex-direction: row;
-    background-color: #eee;
-    overflow: hidden;
-}
-/* ------------------------------------------ */
 
-/* CLASES GENERALES */
-/* ------------------------------------------ */
+    .form-input_full { @apply 
+        form-input
+        w-full
+    }
 
-/* ENCABEZADO */
-.header {
-    height: var(--header-height);
-    width: 100%;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    background-color: #fff;
-    padding: 0 1cm;
-    transform: width 0.7s ease;
-}
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid #e6e6e6;
-}
-.user-name {
-    font-size: 16px;
-    font-weight: 500;
-}
-/* ------------------------------------------ */
+    /* Botón de envío */
+    .btn-primary { @apply 
+        flex
+        min-w-0
+        rounded-md
+        bg-indigo-600
+        px-3
+        py-1.5
+        text-sm/6
+        font-semibold
+        text-base
+        text-white
+        hover:bg-indigo-500
+        focus-visible:outline-2
+        focus-visible:outline-offset-2
+        focus-visible:outline-indigo-600;
+    }
 
-/* BARRA DE NAVEGACION */
-.sidebar {
-    width: var(--sidebar-width);
-    height: 100vh;
-    overflow: hidden;
-    background-color: #fff;
-    border-right: 1px solid #eee;
-    /* z-index: -1; */
-    position: relative;
-    transition: all 0.7s ease;
-}
-.logo {
-    text-align: center;
-    margin: 1cm;
-}
-.nav {
-    display: flex;
-    flex-direction: column;
-}
-.nav-item {
-    display: flex;
-    align-items: center;
-    padding: 0.3cm 0.6cm;
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-}
-.nav-item .icon {
-margin-right: 10px;
-}
-.nav-item.active,
-.nav-item:hover {
-    background-color: #f0f4ff;
-    color: #3366ff;
-}
-.hide-button-section {
-    display: flex;
-    align-items: center;
-    padding-left: 1cm;
-    /* background-color: #77d; */
-    width: var(--sidebar-width);
-    height: 2cm;
-}
-.hide-sidebar-button {
-    padding: 0.3cm 0.6cm;
-    position: absolute;
-    transition: all 0.3s ease;
-}
-.hide-sidebar-button:hover {
-    background-color: #f0f4ff;
-    color: #3366ff;
-}
-.show-sidebar-button {
-    display: none;
-    padding: 0.3cm 0.6cm;
-}
-.show-sidebar-button:hover {
-    background-color: #f0f4ff;
-    color: #3366ff;
-}
-/* ------------------------------------------ */
+    .btn-primary_full { @apply 
+        btn-primary
+        w-full
+        justify-center
+    }
 
-/* CONTENIDO */
-.main-content {
-    width: var(--content-width);
-    display: flex;
-    flex-direction: column;
-    z-index: 1;
-}
-.content {
-    width: 100%;
-    background-color: #efefef;
-    height: var(--content-height);
-    overflow-y: scroll;
+    /* Contenedor del símbolo de la moneda */
+    .form-label-preline { @apply 
+        shrink-0
+        text-base
+        text-gray-500
+        select-none
+        sm:text-sm/6;
+    }
 
-    padding: 1cm;
+    /* Título principal */
+    .login-title { @apply 
+        text-center
+        text-3xl
+        font-bold
+        tracking-tight
+        text-gray-900;
+    }
 
-    display: flex;
-    flex-direction: column;
-    /* align-items: center; */
-}
-.center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-/* ------------------------------------------ */
+    /* Enlaces del formulario */
+    .form-link { @apply 
+        text-indigo-500
+        hover:text-indigo-500;
+    }
 
-/* PÁGINA DE PERFIL */
-.user-profile-picture {
-    position: relative;
-    width: 4cm;
-    height: 4cm;
-}
-.user-profile-picture img {
-    width: 4cm;
-    height: 4cm;
-    border-radius: 50%;
-    border: 2px solid #e6e6e6;
-    transition: opacity 0.5s ease;
-}
-.user-profile-picture:hover img {
-    opacity: 1;
-}
-.user-profile-picture:hover .hover-text {
-    opacity: 0.5;
-}
-.user-profile-picture #file-upload {
-    display: none;
-}
-.hover-text {
-    transition: opacity 0.5s ease;
-    opacity: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
+    /* Texto del pie de formulario */
+    .login-footer-text { @apply 
+        mt-6
+        text-center
+        text-sm
+        text-gray-500;
+    }
 
-    top: 0;
-    left: 0;
-    background-color: black;
-    color: white;
-    font-size: 0.5cm;
-    width: 4cm;
-    height: 4cm;
-    border-radius: 50%;
-}
-/* ------------------------------------------ */
+    .alert-footer-text { @apply 
+        text-sm
+        text-red-500;
+    }
 
-/* PÁGINA DE HISTORIAL CLINICO */
-.step-form-buttons{
-    display:flex;
-    align-items: center;
-    justify-content: flex-end;
-}
-.prev-button{
-    display: none;
-    border-radius: 5px;
-    border-color: #333;
-    border-width: 1px;
-    padding: 0.2cm 0.3cm;
-    transition: all 0.3s ease;
-}
-.prev-button:hover{
-    background-color: #555;
-    color: white;
-}
-.next-button{
-    border-radius: 5px;
-    border-color: #333;
-    border-width: 1px;
-    padding: 0.2cm 0.3cm;
-    transition: all 0.3s ease;
-}
-.next-button:hover{
-    background-color: #555;
-    color: white;
-}
-/* ------------------------------------------ */
+    .alert-success-text { @apply 
+        bg-green-100
+        border
+        border-green-400
+        text-green-700
+        px-4
+        py-3
+        rounded
+        relative
+        mb-4
+        text-center;
+    }
 
-/* BOTON EDITAR */
-.boton-editar {
-    background-color: #77d;
-    height: 1cm;
-    width: max-content;
-    text-align: center;
-    padding: 0.2cm 0.3cm 0 0.3cm;
-    border-radius: 0.2cm;
-    color: white;
-    font-size: 0.4cm;
-}
-.boton-editar:hover {
-    background-color: #66c;
-    color: white;
-}
-/* ------------------------------------------ */
+    /* ------------- NAVBAR ------------- */
 
-/* BOTON HISTORIAL CLINICO */
-.boton-historial-clinico{
-    background-color: #77d;
-    height: 1cm;
-    width: max-content;
-    text-align: center;
-    padding: 0.2cm 0.3cm 0 0.3cm;
-    border-radius: 0.2cm;
-    color: white;
-    font-size: 0.4cm;
-}
-.boton-historial-clinico:hover{
-    background-color: #66c;
-    color: white;
-}
-/* ------------------------------------------ */
+    .navbar { @apply 
+        sticky
+        top-0
+        z-10
+        w-full
+        bg-white
+        border-b
+        border-gray-200
+    }
+
+    .nav-menu { @apply 
+        absolute
+        right-0
+        z-10
+        mt-2
+        w-48
+        origin-top-right
+        rounded-md
+        bg-white
+        py-1
+        ring-1
+        shadow-lg
+        ring-black/5
+        transition
+        focus:outline-hidden
+        data-closed:scale-95
+        data-closed:transform
+        data-closed:opacity-0
+        data-enter:duration-100
+        data-enter:ease-out
+        data-leave:duration-75
+        data-leave:ease-in
+    }
+
+    .nav-menu-item { @apply 
+        block
+        px-4
+        py-2
+        text-sm
+        text-gray-700
+        data-focus:bg-gray-100
+        data-focus:outline-hidden
+    }
+
+    .sidebar-notification-label { @apply 
+        inline-flex
+        items-center
+        justify-center
+        w-3
+        h-3
+        p-3
+        ms-3
+        text-sm
+        font-medium
+        text-blue-800
+        bg-blue-100
+        rounded-full
+    }
+
+    .sidebar-container { @apply 
+        fixed
+        w-64
+        h-screen
+        pt-20
+        bg-white
+        border-r
+        border-gray-200
+        sm:translate-x-0
+
+        top-0
+        left-0        
+        z-0
+        transition-transform
+        -translate-x-full        
+    }
+
+    .sidebar { @apply 
+        h-full
+        px-3
+        pb-4
+        overflow-y-auto
+        bg-white
+    }
+
+    .sidebar-item-group { @apply 
+        flex
+        items-center
+        p-2
+        text-gray-900
+        rounded-lg
+        hover:bg-gray-100
+        /* group */
+    }
+
+    .group-icon { @apply 
+        flex
+        items-center
+        rounded-lg
+        text-gray-900
+        hover:bg-gray-100
+        p-2
+        
+        w-full
+        text-base
+        font-normal
+        transition
+        duration-75
+        border
+    }
+
+    .sidebar-item-text { @apply 
+        flex-1
+        ms-3
+        whitespace-nowrap
+    }
+
+    .sidebar-item-icon { @apply 
+        shrink-0
+        w-7
+        h-7
+        text-gray-500
+        transition 
+        duration-75
+        group-hover:text-indigo-600
+        border
+    }
+
+    .main-container { @apply 
+        flex
+        flex-col
+        sm:ml-64
+        p-4
+        pt-16
+        bg-gray-50
+    }
 
 
 
-
-
-/* PROFILE PAGE */
-.profile-page input{
-    border-style: solid;
 }
-/* ------------------------------------------ */
