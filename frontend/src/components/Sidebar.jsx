@@ -1,4 +1,4 @@
-function BarraNavegacion({ toggleSidebar }) {
+function Sidebar({ toggleSidebar }) {
     return (
         <div>
             <aside 
@@ -101,4 +101,4 @@ function BarraNavegacion({ toggleSidebar }) {
     );
 }
 
-export default BarraNavegacion;
+export default Sidebar;

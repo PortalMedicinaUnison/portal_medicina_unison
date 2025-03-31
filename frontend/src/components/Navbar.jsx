@@ -1,7 +1,7 @@
 import '../styles.css';
 
 
-function Encabezado({children, image}) {
+function Navbar({children, image}) {
 
     function showSidebar(){
         const sidebar = document.getElementById("sidebar");
@@ -42,4 +42,4 @@ function Encabezado({children, image}) {
     );
 }
 
-export default Encabezado;
+export default Navbar;
