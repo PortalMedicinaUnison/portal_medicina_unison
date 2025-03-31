@@ -1,26 +1,12 @@
-
-function BarraNavegacion() {
-
-    function hideSidebar(){
-        const sidebar = document.getElementById("sidebar");
-        // sidebar.style.transform = 'translateX(-100%)';
-        sidebar.style.width = '0cm';
-        const showButton = document.getElementById("show-sidebar-button");
-        showButton.style.display = 'block';
-        const header = document.getElementById("header");
-        header.style.justifyContent = 'space-between';
-        const mainContent = document.getElementById("main-content");
-        mainContent.style.width = '100vw';
-    }
-
+function BarraNavegacion({ toggleSidebar }) {
     return (
-        <div id="sidebar" className="sidebar">
+        <div className="sidebar">
             <div className="hide-button-section">
-                <button className="hide-sidebar-button" onClick={hideSidebar}>Ocultar</button>
+                <button className="hide-sidebar-button" onClick={toggleSidebar}>Ocultar</button>
             </div>
             <div className="logo">
                 <a href="inicio">
-                    <img src="logo_unison.png" alt="Logo"/>
+                    <img src="logo_unison.png" alt="Logo" />
                 </a>
             </div>
             <aside className="nav">

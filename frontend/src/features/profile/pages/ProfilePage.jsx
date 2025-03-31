@@ -4,7 +4,7 @@ import fetchUser from "../../../utils/utils";
 import ContenidoPrincipal from "../../../components/ContenidoPrincipal";
 import BarraNavegacion from "../../../components/BarraNavegacion";
 import FormularioPerfil from "../components/FormularioPerfil";
-
+import Layout from "../../../Layout";
 
 function ProfilePage() {
   const [user, setUser] = useState({});
@@ -15,10 +15,9 @@ function ProfilePage() {
 
   return (
     <div>
-      <BarraNavegacion/>
-      <ContenidoPrincipal user={user}>
+      <Layout user={user}>
         <FormularioPerfil user={user}/>
-      </ContenidoPrincipal>
+      </Layout>
     </div>
   );
 }
