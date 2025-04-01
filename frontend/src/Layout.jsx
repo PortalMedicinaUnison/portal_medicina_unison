@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
+import fetchUser from './utils/utils';
 
-function Layout({ user, children }) {
+
+function Layout() {
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    fetchUser(setUser);
+  }, []);
+
   const [sidebarVisible, setSidebarVisible] = useState(true);
 
   const toggleSidebar = () => {
@@ -12,11 +21,7 @@ function Layout({ user, children }) {
 
   return (
     <div>
-      <Navbar 
-        image={user.profile_photo} 
-        user={user}>
-        {user.first_name} {user.last_name} {user.second_last_name}
-      </Navbar>
+      <Navbar user={user}></Navbar>
     
     <div className="layout flex">
       {sidebarVisible && (
@@ -26,8 +31,8 @@ function Layout({ user, children }) {
       )}
     </div>
 
-      <div className="p-4 sm:ml-64">
-        <div className="p-1 border-2 h-screen border-gray-200 border-dashed rounded-lg dark:border-gray-700 p-4">
+      <div className="p-2 sm:ml-64">
+        <div className="border h-screen border-gray-300 border-dashed rounded-lg">
         </div>
       </div>      
     </div>

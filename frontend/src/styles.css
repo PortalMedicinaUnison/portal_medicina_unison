@@ -5,70 +5,15 @@
 
 @layer components {
 
-    .form-label { @apply 
-        block
-        text-base
-        font-semibold
-        text-gray-900;
-      }
-    
-    .form-input { @apply 
-        block
-        min-w-0
-        grow
-        py-3
-        pr-3
-        pl-1
-        text-gray-900
-        placeholder:text-gray-400
-        focus:outline-none
-        text-base
-        border
-        rounded-md
-        shadow-sm
-        focus:ring-1
-        focus:border-blue-500;
-    }
-
-    .form-input_full { @apply 
-        form-input
-        w-full
-    }
-
-    /* Botón de envío */
-    .btn-primary { @apply 
+    .main-container { @apply 
         flex
-        min-w-0
-        rounded-md
-        bg-indigo-600
-        px-3
-        py-1.5
-        text-sm/6
-        font-semibold
-        text-base
-        text-white
-        hover:bg-indigo-500
-        focus-visible:outline-2
-        focus-visible:outline-offset-2
-        focus-visible:outline-indigo-600;
+        flex-col
+        sm:ml-64
+        p-4
+        pt-16
+        bg-gray-50
     }
 
-    .btn-primary_full { @apply 
-        btn-primary
-        w-full
-        justify-center
-    }
-
-    /* Contenedor del símbolo de la moneda */
-    .form-label-preline { @apply 
-        shrink-0
-        text-base
-        text-gray-500
-        select-none
-        sm:text-sm/6;
-    }
-
-    /* Título principal */
     .login-title { @apply 
         text-center
         text-3xl
@@ -109,6 +54,71 @@
         text-center;
     }
 
+    /* ------------- FORMS ------------- */
+
+    .form-label { @apply 
+        block
+        text-base
+        font-semibold
+        text-gray-900;
+      }
+    
+    .form-input { @apply 
+        block
+        min-w-0
+        grow
+        py-3
+        pr-3
+        pl-1
+        text-gray-900
+        placeholder:text-gray-400
+        focus:outline-none
+        text-base
+        border
+        rounded-md
+        shadow-sm
+        focus:ring-1
+        focus:border-blue-500;
+    }
+
+    .form-input_full { @apply 
+        form-input
+        w-full
+    }
+
+    .form-label-preline { @apply 
+        shrink-0
+        text-base
+        text-gray-500
+        select-none
+        sm:text-sm/6;
+    }
+
+    /* ------------ BUTTONS ------------- */
+
+    .btn-primary { @apply 
+        flex
+        min-w-0
+        rounded-md
+        bg-indigo-600
+        px-3
+        py-1.5
+        text-sm/6
+        font-semibold
+        text-base
+        text-white
+        hover:bg-indigo-500
+        focus-visible:outline-2
+        focus-visible:outline-offset-2
+        focus-visible:outline-indigo-600;
+    }
+
+    .btn-primary_full { @apply 
+        btn-primary
+        w-full
+        justify-center
+    }
+
     /* ------------- NAVBAR ------------- */
 
     .navbar { @apply 
@@ -118,7 +128,11 @@
         w-full
         bg-white
         border-b
-        border-gray-200
+
+        px-4
+        py-2
+        lg:px-5
+        lg:pl-3
     }
 
     .nav-menu { @apply 
@@ -155,20 +169,7 @@
         data-focus:outline-hidden
     }
 
-    .sidebar-notification-label { @apply 
-        inline-flex
-        items-center
-        justify-center
-        w-3
-        h-3
-        p-3
-        ms-3
-        text-sm
-        font-medium
-        text-blue-800
-        bg-blue-100
-        rounded-full
-    }
+    /* ------------- SIDEBAR ------------- */
 
     .sidebar-container { @apply 
         fixed
@@ -189,7 +190,7 @@
 
     .sidebar { @apply 
         h-full
-        px-3
+        px-4
         pb-4
         overflow-y-auto
         bg-white
@@ -201,52 +202,72 @@
         p-2
         text-gray-900
         rounded-lg
-        hover:bg-gray-100
-        /* group */
-    }
-
-    .group-icon { @apply 
-        flex
-        items-center
-        rounded-lg
-        text-gray-900
-        hover:bg-gray-100
-        p-2
-        
         w-full
-        text-base
-        font-normal
+        hover:bg-gray-100
+
         transition
         duration-75
-        border
     }
 
     .sidebar-item-text { @apply 
         flex-1
+        text-sm
+        font-semibold
         ms-3
         whitespace-nowrap
+        text-gray-700
+        text-left
+        transition 
+        duration-75
+        group-hover:text-indigo-700
     }
 
     .sidebar-item-icon { @apply 
         shrink-0
         w-7
         h-7
-        text-gray-500
+        text-gray-400
         transition 
         duration-75
         group-hover:text-indigo-600
-        border
     }
 
-    .main-container { @apply 
-        flex
-        flex-col
-        sm:ml-64
-        p-4
-        pt-16
-        bg-gray-50
+    .sidebar-toggle-icon { @apply 
+        w-6
+        h-6
+        text-gray-400
+        transition 
+        duration-75
+        group-hover:text-indigo-600
+    }
+
+    .sidebar-notification-label { @apply 
+        inline-flex
+        items-center
+        justify-center
+        w-3
+        h-3
+        p-3
+        ms-3
+        text-sm
+        font-medium
+        text-blue-800
+        bg-blue-100
+        rounded-full
     }
 
 
+
+    .btn-secondary { @apply 
+        bg-indigo-500 text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-indigo-500
+    }
+
+    .btn-secondary2 { @apply 
+        text-indigo-600 ring-1 ring-indigo-200 ring-inset hover:ring-indigo-300 focus-visible:outline-indigo-600
+    }
+
+    .btn-secondary3 { @apply 
+        mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10
+    }
 
 }
