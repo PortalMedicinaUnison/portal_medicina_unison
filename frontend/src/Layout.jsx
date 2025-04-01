@@ -2,21 +2,23 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
+import PageHeadings from './components/PageHeadings';
 import fetchUser from './utils/utils';
 
 
-function Layout() {
+function Layout({ children }) {
   const [user, setUser] = useState({});
+  const [sidebarVisible, setSidebarVisible] = useState(true);
 
   useEffect(() => {
     fetchUser(setUser);
   }, []);
 
-  const [sidebarVisible, setSidebarVisible] = useState(true);
+  useEffect(() => {
+  }, [sidebarVisible]);
 
   const toggleSidebar = () => {
     setSidebarVisible(prev => !prev);
-    console.log("Sidebar Visible:", !sidebarVisible); // Verificar si cambia
   };
 
   return (
@@ -31,8 +33,9 @@ function Layout() {
       )}
     </div>
 
-      <div className="p-2 sm:ml-64">
-        <div className="border h-screen border-gray-300 border-dashed rounded-lg">
+      <div className="main-container">
+        <div className="main-content">
+          {children}
         </div>
       </div>      
     </div>

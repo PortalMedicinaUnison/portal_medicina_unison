@@ -6,12 +6,27 @@
 @layer components {
 
     .main-container { @apply 
-        flex
-        flex-col
+        p-2
         sm:ml-64
+    }
+
+    .main-content { @apply 
+        border
+        h-screen 
+        border-gray-300 
+        border-dashed 
+        rounded-lg
+    }
+
+    .main-content-header { @apply 
+        p-4 
+        border-b
+    }
+
+    .main-content-body { @apply 
         p-4
-        pt-16
-        bg-gray-50
+        h-screen
+        overflow-y-auto
     }
 
     .login-title { @apply 
@@ -53,6 +68,15 @@
         relative
         mb-4
         text-center;
+    }
+
+    .page-title { @apply 
+        text-2xl
+        font-semibold
+        text-gray-900
+        sm:truncate
+        sm:text-2xl
+        sm:tracking-tight
     }
 
     /* ------------- FORMS ------------- */
@@ -128,6 +152,23 @@
         btn-primary
         w-full
         justify-center
+    }
+
+    .btn-secondary { @apply 
+        inline-flex 
+        min-w-0
+        rounded-md
+        bg-white
+        px-3
+        py-1.5
+        text-sm
+        font-semibold
+        text-sm
+        text-gray-900 
+        ring-1 
+        ring-gray-300 
+        ring-inset 
+        hover:bg-gray-50
     }
 
     /* ------------- NAVBAR ------------- */
@@ -267,17 +308,5 @@
     }
 
 
-
-    .btn-secondary { @apply 
-        bg-indigo-500 text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-indigo-500
-    }
-
-    .btn-secondary2 { @apply 
-        text-indigo-600 ring-1 ring-indigo-200 ring-inset hover:ring-indigo-300 focus-visible:outline-indigo-600
-    }
-
-    .btn-secondary3 { @apply 
-        mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10
-    }
 
 }
