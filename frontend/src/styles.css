@@ -213,7 +213,7 @@
         text-gray-900
         rounded-lg
         w-full
-        hover:bg-gray-200
+        hover:bg-gray-100
 
         transition
         duration-75
@@ -225,7 +225,7 @@
         font-semibold
         ms-3
         whitespace-nowrap
-        text-gray-700
+        text-gray-900
         text-left
         transition 
         duration-75
@@ -236,7 +236,7 @@
         shrink-0
         w-7
         h-7
-        text-gray-400
+        text-gray-500
         transition 
         duration-75
         group-hover:text-indigo-600

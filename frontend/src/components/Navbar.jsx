@@ -29,8 +29,8 @@ function Navbar({ user }) {
                     </div>
 
                 <div className="flex items-center justify-end">
-                    <button type="button" className="flex px-2" aria-expanded="false">
-                        <span className="text-sm font-semibold text-gray-800">{user.first_name} {user.last_name}</span>
+                    <button type="button" className="flex px-3" aria-expanded="false">
+                        <span className="text-xs font-semibold text-gray-900">{user.first_name} {user.last_name}</span>
                     </button>
 
                     <button type="button" className="rounded-full focus:ring-0 focus:ring-gray-200 focus:ring-offset-1 focus:ring-offset-gray-200" aria-expanded="false">
