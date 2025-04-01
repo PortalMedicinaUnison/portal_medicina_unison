@@ -23,7 +23,8 @@ function Navbar({ user }) {
                             </svg>
                         </button>
                         <a href="/inicio" className="ms-5 md:me-15">
-                            <span className="self-center font-semibold sm:text-xl  whitespace-nowrap">Portal de Medina Unison</span>
+                            {/* <span className="self-center font-semibold sm:text-xl  whitespace-nowrap">Portal de Medina Unison</span> */}
+                            <img src="unison-letters.svg" class="h-8 me-3" alt="unison logo" />
                         </a>
                     </div>
 

@@ -95,7 +95,7 @@ function RegisterForm() {
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+              className="form-inlabel_right"
             >
               {showPassword ? "Ocultar" : "Mostrar"}
             </button>
@@ -116,14 +116,14 @@ function RegisterForm() {
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+              className="form-inlabel_right"
             >
               {showPassword ? "Ocultar" : "Mostrar"}
             </button>
           </div>
         </div>
 
-      <div className="grid sm:grid-cols-2 gap-x-12 gap-y-4">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-4">
         <div className="mb-4">
           <label className="form-label">Nombre(s):</label>
           <input
@@ -132,7 +132,7 @@ function RegisterForm() {
             value={formData.firstName}
             onChange={handleChange}
             required
-            className="form-input"
+            className="form-input_full"
           />
         </div>
 
@@ -144,7 +144,7 @@ function RegisterForm() {
             value={formData.lastName}
             onChange={handleChange}
             required
-            className="form-input"
+            className="form-input_full"
           />
         </div>
 
@@ -155,7 +155,7 @@ function RegisterForm() {
             type="text"
             value={formData.secondLastName || ''}
             onChange={handleChange}
-            className="form-input"
+            className="form-input_full"
           />
         </div>
 
@@ -167,7 +167,7 @@ function RegisterForm() {
             value={formData.academicId}
             onChange={handleChange}
             required
-            className="form-input"
+            className="form-input_full"
             maxLength="9"
           />
         </div>
