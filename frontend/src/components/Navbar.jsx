@@ -16,28 +16,33 @@ function Navbar({ user }) {
     return (        
         <nav className="navbar">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center px-1.5 justify-start rtl:justify-end">
-                        <button id="show-sidebar-button" className="show-sidebar-button" onClick={showSidebar}>
-                            <svg className="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
-                            </svg>
+                    <div className="flex items-center justify-start rtl:justify-end">
+                        <button id="show-sidebar-button" onClick={showSidebar}>
+                        <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="sidebar-item-icon"
+                                    viewBox="-1 -1 23 23"
+                                    aria-hidden="true"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M4.5 6.5h12m-12.002 4h11.997M4.5 14.5h11.995"/>
+                                    
+                                </svg>
                         </button>
-                        <a href="/inicio" className="ms-5 md:me-15">
-                            {/* <span className="self-center font-semibold sm:text-xl  whitespace-nowrap">Portal de Medina Unison</span> */}
-                            <img src="unison-letters.svg" class="h-8 me-3" alt="unison logo" />
-                        </a>
                     </div>
-
-                <div className="flex items-center justify-end">
-                    <button type="button" className="flex px-3" aria-expanded="false">
-                        <span className="text-xs font-semibold text-gray-900">{user.first_name} {user.last_name}</span>
-                    </button>
-
-                    <button type="button" className="rounded-full focus:ring-0 focus:ring-gray-200 focus:ring-offset-1 focus:ring-offset-gray-200" aria-expanded="false">
-                        <img src={`/default-avatar.png`} alt="User Photo" className="size-10 rounded-full"/>
-                        {/* <img src={user.profile_photo || `/default-avatar.png`} alt="User Photo" className="size-12 rounded-full"/> */}
-                    </button>
-                </div>
+                    <div className="flex items-center justify-end">
+                        <button type="button" className="flex flex-col px-3 text-right" aria-expanded="false">
+                            <span className="text-xs font-semibold text-gray-900">{user.first_name} {user.last_name}</span>
+                            <span className="text-[10px] text-gray-900">{user.email}</span>
+                        </button>
+                        <button type="button" className="rounded-full focus:ring-0 focus:ring-gray-200 focus:ring-offset-1 focus:ring-offset-gray-200" aria-expanded="false">
+                            <img src={`/default-avatar.png`} alt="User Photo" className="size-10 rounded-full"/>
+                            {/* <img src={user.profile_photo || `/default-avatar.png`} alt="User Photo" className="size-12 rounded-full"/> */}
+                        </button>
+                    </div>
                 </div>
         </nav>
     );
