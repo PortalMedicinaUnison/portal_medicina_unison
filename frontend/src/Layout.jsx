@@ -1,36 +1,45 @@
-import React, { useState } from 'react';
-import BarraNavegacion from './components/BarraNavegacion';
-import Encabezado from './components/Encabezado';
-import ContenidoPrincipal from './components/ContenidoPrincipal';
+import React from 'react';
+import { useEffect, useState } from 'react';
+import Sidebar from './components/Sidebar';
+import Navbar from './components/Navbar';
+import PageHeadings from './components/PageHeadings';
+import fetchUser from './utils/utils';
 
-function Layout({ user, children }) {
+
+function Layout({ children }) {
+  const [user, setUser] = useState({});
   const [sidebarVisible, setSidebarVisible] = useState(true);
+
+  useEffect(() => {
+    fetchUser(setUser);
+  }, []);
+
+  useEffect(() => {
+  }, [sidebarVisible]);
 
   const toggleSidebar = () => {
     setSidebarVisible(prev => !prev);
-    console.log("Sidebar Visible:", !sidebarVisible); // Verificar si cambia
   };
 
   return (
+    <div>
+      <Navbar user={user}></Navbar>
+    
     <div className="layout flex">
       {sidebarVisible && (
         <div className="sidebar-container">
-          <BarraNavegacion toggleSidebar={toggleSidebar} />
+          <Sidebar toggleSidebar={toggleSidebar} />
         </div>
       )}
-      <div className="main-section flex flex-col w-full">
-        <Encabezado 
-          image={user.profile_photo} 
-          toggleSidebar={toggleSidebar} 
-          sidebarVisible={sidebarVisible}
-        >
-          {user.first_name} {user.last_name} {user.second_last_name}
-        </Encabezado>
-        <ContenidoPrincipal user={user}>
-          {children}
-        </ContenidoPrincipal>
-      </div>
     </div>
+
+      <div className="main-container">
+        <div className="main-content">
+          {children}
+        </div>
+      </div>      
+    </div>
+
   );
 }
 

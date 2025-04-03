@@ -50,97 +50,39 @@ function RegisterForm() {
   };
   
   return (
-    <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <h2 className="text-2xl font-bold mb-6 text-center">Registro</h2>
-
+    <form onSubmit={handleSubmit}>
       {success && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 text-center">
+        <div className="alert-success-text">
           Alumno registrado exitosamente.
         </div>
       )}
-      
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center">
-          <strong className="font-bold">Error: </strong>
-          <span className="block sm:inline">{error}</span>
-        </div>
-      )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Nombre(s):</label>
-          <input
-            name="firstName"
-            type="text"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Apellido Paterno:</label>
-          <input
-            name="lastName"
-            type="text"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Apellido Materno:</label>
-          <input
-            name="secondLastName"
-            type="text"
-            value={formData.secondLastName || ''}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Expediente:</label>
-          <input
-            name="academicId"
-            type="text"
-            value={formData.academicId}
-            onChange={handleChange}
-            required
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            maxLength="9"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Correo:</label>
+      <div className="mb-4">
+          <label className="form-label">Correo:</label>
           <input
             name="email"
             type="email"
             value={formData.email}
             onChange={handleChange}
             required
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="form-input_full"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Confirmar Correo:</label>
+          <label className="form-label">Confirmar correo:</label>
           <input
             name="confirmEmail"
             type="email"
             value={formData.confirmEmail}
             onChange={handleChange}
             required
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="form-input_full"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Contraseña:</label>
+          <label className="form-label">Contraseña:</label>
           <div className="relative">
             <input
               name="password"
@@ -148,12 +90,12 @@ function RegisterForm() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="form-input_full"
             />
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+              className="form-inlabel_right"
             >
               {showPassword ? "Ocultar" : "Mostrar"}
             </button>
@@ -161,7 +103,7 @@ function RegisterForm() {
         </div>
 
         <div className="mb-6">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Confirmar Contraseña:</label>
+          <label className="form-label">Confirmar contraseña:</label>
           <div className="relative">
             <input
               name="confirmPassword"
@@ -169,31 +111,87 @@ function RegisterForm() {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="form-input_full"
             />
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+              className="form-inlabel_right"
             >
               {showPassword ? "Ocultar" : "Mostrar"}
             </button>
           </div>
         </div>
+
+      <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+        <div className="mb-4">
+          <label className="form-label">Nombre(s):</label>
+          <input
+            name="firstName"
+            type="text"
+            value={formData.firstName}
+            onChange={handleChange}
+            required
+            className="form-input_full"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="form-label">Apellido paterno:</label>
+          <input
+            name="lastName"
+            type="text"
+            value={formData.lastName}
+            onChange={handleChange}
+            required
+            className="form-input_full"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="form-label">Apellido materno:</label>
+          <input
+            name="secondLastName"
+            type="text"
+            value={formData.secondLastName || ''}
+            onChange={handleChange}
+            className="form-input_full"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="form-label">Expediente:</label>
+          <input
+            name="academicId"
+            type="text"
+            value={formData.academicId}
+            onChange={handleChange}
+            required
+            className="form-input_full"
+            maxLength="9"
+          />
+        </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="mb-6">
+        {error && (
+          <div className="alert-footer-text">
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+      </div>
+
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="btn-primary_full"
         >
           Crear cuenta
         </button>
-      </div>
       
-      <p className="text-center text-sm text-gray-600 mt-4">
+      <p className="login-footer-text">
         ¿Ya tienes cuenta?{' '}
-        <Link to="/" className="text-blue-500 hover:text-blue-700">
+        <Link to="/" className="form-link">
           Inicia sesión aquí
         </Link>
       </p>

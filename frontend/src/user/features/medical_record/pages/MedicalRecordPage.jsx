@@ -1,8 +1,7 @@
 import React from "react";
 import { useEffect, useState } from 'react';
 import fetchUser from '../../../../utils/utils';
-import ContenidoPrincipal from '../../../../components/ContenidoPrincipal';
-import BarraNavegacion from '../../../../components/BarraNavegacion';
+import Navbar from '../../../../components/Navbar';
 import FormularioHistorialClinico from "../components/FormularioHistorialClinico";
 
 function MedicalRecordPage() {
@@ -14,13 +13,11 @@ function MedicalRecordPage() {
 
     return (
         <div>
-            <BarraNavegacion/>
-            <ContenidoPrincipal user={user}>
+            <Navbar/>
                 <div className="center">
                     <h1>Historial clínico</h1>
                     <FormularioHistorialClinico user={user}/>
                 </div>
-            </ContenidoPrincipal>
         </div>
     );
 }
