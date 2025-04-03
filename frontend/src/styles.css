@@ -261,11 +261,15 @@
     }
 
     .sidebar { @apply 
-        h-full
+        flex
+        flex-col
+        h-[calc(100%-4rem)]
         py-6
         px-4
         pb-4
         overflow-y-auto
+
+        justify-between
     }
 
     .sidebar-item-group { @apply 
