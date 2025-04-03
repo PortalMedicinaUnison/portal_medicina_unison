@@ -36,7 +36,7 @@ function Navbar({ user }) {
                     <div className="flex items-center justify-end">
                         <button type="button" className="flex flex-col px-3 text-right" aria-expanded="false">
                             <span className="text-xs font-semibold text-gray-900">{user.first_name} {user.last_name}</span>
-                            <span className="text-[0.65rem] text-gray-900">{user.email}</span>
+                            <span className="text-[10px] text-gray-900">{user.email}</span>
                         </button>
                         <button type="button" className="rounded-full focus:ring-0 focus:ring-gray-200 focus:ring-offset-1 focus:ring-offset-gray-200" aria-expanded="false">
                             <img src={`/default-avatar.png`} alt="User Photo" className="size-10 rounded-full"/>

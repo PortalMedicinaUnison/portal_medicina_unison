@@ -5,12 +5,12 @@
 
 @layer components {
 
-    .bg-primary { 
-        background-color: #e1b73d; 
+    .color-primary { 
+        background-color: #24398a; 
     }
 
-    .bg-secondary { 
-        background-color: #24398a; 
+    .color-secondary { 
+        background-color: #e1b73d; 
     }
 
     .main-container { @apply 
@@ -190,8 +190,6 @@
         h-16
         ml-56
         w-[calc(100%-14rem)]
-        /* bg-primary */
-        /* bg-secondary */
         bg-white
         border-b
 
@@ -292,7 +290,7 @@
         ms-3
         whitespace-nowrap
         /* text-white */
-        text-gray-800
+        text-gray-700
         text-left
         transition 
         duration-75
