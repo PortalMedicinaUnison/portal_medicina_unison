@@ -7,6 +7,15 @@ function Sidebar({ toggleSidebar }) {
                 className="sidebar-container" 
                 aria-label="Sidebar"
             >
+
+                <div className="sidebar-header">
+                    <div className="flex w-full items-center justify-between">
+                        <a href="/inicio" className="ms-5 md:me-15">
+                            {/* <span className="self-center font-semibold sm:text-xl  whitespace-nowrap">Portal de Medina Unison</span> */}
+                            <img src="unison-letters.svg" class="h-8 me-3" alt="unison logo" />
+                        </a>
+                    </div>
+                </div>
                 <div className="sidebar">
                     <ul className="space-y-1 font-medium">
                         <li>
@@ -14,7 +23,7 @@ function Sidebar({ toggleSidebar }) {
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
-                                    viewBox="0 0 23 23"
+                                    viewBox="-1 -1 23 23"
                                     aria-hidden="true"
                                     fill="none"
                                     stroke="currentColor"
@@ -33,7 +42,7 @@ function Sidebar({ toggleSidebar }) {
                             <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
-                                    viewBox="1 1 20 20"
+                                    viewBox="0 0 20 20"
                                     aria-hidden="true"
                                     fill="none"
                                     stroke="currentColor"
@@ -66,7 +75,7 @@ function Sidebar({ toggleSidebar }) {
                             <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
-                                    viewBox="1 1 20 20"
+                                    viewBox="0 0 20 20"
                                     aria-hidden="true"
                                     fill="none"
                                     stroke="currentColor"
@@ -98,7 +107,7 @@ function Sidebar({ toggleSidebar }) {
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
-                                    viewBox="0 0 23 23"
+                                    viewBox="-1 -1 23 23"
                                     aria-hidden="true"
                                     stroke="currentColor"
                                     stroke-linecap="round"
