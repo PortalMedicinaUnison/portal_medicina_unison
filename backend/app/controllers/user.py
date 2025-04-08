@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from core.dependencies import get_db
 from repos.user import UserRepo, PreRegisteredUserRepo
 from models.user import User, PreRegisteredUser
-from schemas.user import UserInput, PreRegisteredUserInput
+from schemas.user import UserInput, PreRegisteredUserInput, UserInputUpdate, PreRegisteredUserInputUpdate
 from utils.security import hash_password
 from utils.utils import orm_to_dict
 
@@ -28,8 +28,20 @@ def get_pre_registered_user(academic_id: int, db: Session) -> dict:
     pre_user_response = orm_to_dict(pre_user)
     return pre_user_response
 
-def update_pre_registered_user(academic_id: int, user_input: PreRegisteredUserInput, db: Session) -> dict:
-    pass
+def update_pre_registered_user(academic_id: int, user_input: PreRegisteredUserInputUpdate, db: Session) -> dict:
+    all_data = user_input.dict()
+    update_data = {key: value for key, value in all_data.items() if value is not None}
+
+    pre_registered_repo = PreRegisteredUserRepo(db)
+    updated_user = pre_registered_repo.update(academic_id, update_data)
+    if not updated_user:
+        return None
+    return {
+        "pre_registered_id": updated_user.pre_registered_id,
+        "academic_id": updated_user.academic_id,
+        "assigned_year": updated_user.assigned_year,
+        "assigned_period": updated_user.assigned_period,
+    }
 
 def delete_pre_registered_user(academic_id: int, db: Session) -> bool:
     pre_registered_repo = PreRegisteredUserRepo(db)
@@ -69,8 +81,23 @@ def get_user(user_id: int, db: Session) -> dict:
     user_response = orm_to_dict(user)
     return user_response
 
-def update_user(user_id: int, user_input: UserInput, db: Session) -> dict:
-    pass
+def update_user(user_id: int, user_input: UserInputUpdate, db: Session) -> dict:
+    update_data = user_input.dict(exclude_unset=True)
+    user_repo = UserRepo(db)
+    updated_user = user_repo.update(user_id, update_data)
+    if not updated_user:
+        return None
+    return {
+        "user_id": updated_user.user_id,
+        "academic_id": updated_user.academic_id,
+        "first_name": updated_user.first_name,
+        "last_name": updated_user.last_name,
+        "second_last_name": updated_user.second_last_name,
+        "email": updated_user.email,
+        "profile_photo": updated_user.profile_photo,
+        "is_admin": updated_user.is_admin,
+        "is_super_admin": updated_user.is_super_admin,
+    }
 
 def delete_user(user_id: int, db: Session) -> bool:
     user_repo = UserRepo(db)
