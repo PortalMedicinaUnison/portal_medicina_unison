@@ -22,7 +22,6 @@ class SiteRepo(BaseRepo):
         """Actualiza los datos de un sitio."""
         site = self.get_by_id(site_id)
         if site:
-            data = data.dict(exclude_unset=True)
             for key, value in data.items():
                 if hasattr(site, key):
                     setattr(site, key, value)
@@ -34,7 +33,7 @@ class SiteRepo(BaseRepo):
         """Elimina un sitio por su ID."""
         site = self.get_by_id(site_id)
         if site:
-            self.session.delete(site)
+            site.is_active = False
             self.session.commit()
             return True
         return False

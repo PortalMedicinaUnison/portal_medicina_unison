@@ -10,8 +10,8 @@ def test_create_user(db_session):
     user_repo = UserRepo(db_session)
     
     new_user = User(
-        user_id=1,
-        academic_id="222203834",
+        user_id=2,
+        academic_id="222203848",
         first_name="Test User",
         last_name="Doe",
         second_last_name=None,
@@ -23,18 +23,18 @@ def test_create_user(db_session):
     )
     user_repo.create(new_user)
 
-    user_from_db = user_repo.get_by_id(1)
+    user_from_db = user_repo.get_by_id(2)
     
     assert user_from_db is not None
     assert user_from_db.first_name == "Test User"
-    assert str(user_from_db.academic_id) == "222203834"
+    assert str(user_from_db.academic_id) == "222203848"
 
 def test_get_by_academic_id(db_session):
     """Prueba obtener un usuario por academic_id."""
     user_repo = UserRepo(db_session)
 
     user = User(
-        user_id=2,
+        user_id=3,
         academic_id="222203833",
         first_name="Another User",
         last_name="Smith",
@@ -58,7 +58,7 @@ def test_update_user(db_session):
     user_repo = UserRepo(db_session)
 
     user = User(
-        user_id=3,
+        user_id=4,
         academic_id="222203832",
         first_name="Update User",
         last_name="Brown",
@@ -75,7 +75,7 @@ def test_update_user(db_session):
     updated_data = {"first_name": "Updated Name", "email": "updated@example.com"}
     user_repo.update(user.user_id, updated_data)
 
-    updated_user = user_repo.get_by_id(3)
+    updated_user = user_repo.get_by_id(4)
 
     assert updated_user.first_name == "Updated Name"
     assert updated_user.email == "updated@example.com"
@@ -85,7 +85,7 @@ def test_delete_user(db_session):
     user_repo = UserRepo(db_session)
 
     user = User(
-        user_id=4,
+        user_id=5,
         academic_id="222203831",
         first_name="Delete User",
         last_name="Lee",
@@ -100,15 +100,15 @@ def test_delete_user(db_session):
     user_repo.create(user)
 
     assert user_repo.delete(user.user_id) is True
-    assert user_repo.get_by_id(4).is_active is False
+    assert user_repo.get_by_id(5).is_active is False
 
 def test_get_all_users(db_session):
     """Prueba obtener todos los usuarios."""
     user_repo = UserRepo(db_session)
 
     users = [
-        User(user_id=5, academic_id="222203830",first_name="User One", last_name="Smith", second_last_name=None,  email="one@example.com", password="pass1", profile_photo="default.png", is_admin=False, is_super_admin=False),
-        User(user_id=6, academic_id="222203829",first_name="User Two", last_name="Doe", second_last_name=None, email="two@example.com", password="pass2", profile_photo="default.png", is_admin=False, is_super_admin=False)
+        User(user_id=6, academic_id="222203830",first_name="User One", last_name="Smith", second_last_name=None,  email="one@example.com", password="pass1", profile_photo="default.png", is_admin=False, is_super_admin=False),
+        User(user_id=7, academic_id="222203829",first_name="User Two", last_name="Doe", second_last_name=None, email="two@example.com", password="pass2", profile_photo="default.png", is_admin=False, is_super_admin=False)
     ]
 
 
@@ -126,7 +126,7 @@ def test_upload_profile_picture(db_session, tmpdir):
     user_repo = UserRepo(db_session)
 
     user = User(
-        user_id=7,
+        user_id=8,
         academic_id="222203828",
         first_name="Profile User",
         last_name = "Dow",

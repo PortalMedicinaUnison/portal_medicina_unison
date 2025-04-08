@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from core.dependencies import get_db
 from repos.user import UserRepo, PreRegisteredUserRepo
 from models.user import User, PreRegisteredUser
-from schemas.user import UserInput, PreRegisteredUserInput
+from schemas.user import UserInput, PreRegisteredUserInput, UserInputUpdate, PreRegisteredUserInputUpdate
 from utils.security import hash_password
 
 
@@ -35,8 +35,10 @@ def get_pre_registered_user(academic_id: int, db: Session) -> dict:
         "assigned_period": pre_user.assigned_period,
     }
 
-def update_pre_registered_user(academic_id: int, user_input: PreRegisteredUserInput, db: Session) -> dict:
-    update_data = user_input.dict(exclude_unset=True)
+def update_pre_registered_user(academic_id: int, user_input: PreRegisteredUserInputUpdate, db: Session) -> dict:
+    all_data = user_input.dict()
+    update_data = {key: value for key, value in all_data.items() if value is not None}
+
     pre_registered_repo = PreRegisteredUserRepo(db)
     updated_user = pre_registered_repo.update(academic_id, update_data)
     if not updated_user:
@@ -109,7 +111,7 @@ def get_user(user_id: int, db: Session) -> dict:
         "is_super_admin": user.is_super_admin,
     }
 
-def update_user(user_id: int, user_input: UserInput, db: Session) -> dict:
+def update_user(user_id: int, user_input: UserInputUpdate, db: Session) -> dict:
     update_data = user_input.dict(exclude_unset=True)
     user_repo = UserRepo(db)
     updated_user = user_repo.update(user_id, update_data)
