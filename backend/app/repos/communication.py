@@ -25,15 +25,15 @@ class AnnouncementRepo(BaseRepo):
             for key, value in data.items():
                 if hasattr(announcement, key):
                     setattr(announcement, key, value)
-                    self.session.commit()
-                    self.session.refresh(announcement)
+            self.session.commit()
+            self.session.refresh(announcement)
         return announcement
     
     def delete(self, announcement_id: int) -> bool:
         """Elimina un anuncio por su ID."""
         announcement = self.get_by_id(announcement_id)
         if announcement:
-            self.session.delete(announcement)
+            announcement.is_active = False
             self.session.commit()
             return True
         return False
@@ -63,8 +63,8 @@ class SurveyRepo(BaseRepo):
             for key, value in data.items():
                 if hasattr(survey, key):
                     setattr(survey, key, value)
-                    self.session.commit()
-                    self.session.refresh(survey)
+            self.session.commit()
+            self.session.refresh(survey)
         return survey
     
     def delete(self, survey_id: int) -> bool:
@@ -101,15 +101,15 @@ class ReportRepo(BaseRepo):
             for key, value in data.items():
                 if hasattr(report, key):
                     setattr(report, key, value)
-                    self.session.commit()
-                    self.session.refresh(report)
+            self.session.commit()
+            self.session.refresh(report)
         return report
     
     def delete(self, report_id: int) -> bool:
         """Elimina un reporte por su ID."""
         report = self.get_by_id(report_id)
         if report:
-            self.session.delete(report)
+            report.is_active = False
             self.session.commit()
             return True
         return False
