@@ -29,7 +29,7 @@ class UserInput(BaseModel):
     last_name: str
     second_last_name: Optional[str] = None
     email: str
-    password: str
+    password: Optional[str] = None
     profile_photo: str
     is_admin: bool = False
     is_super_admin: bool = False

@@ -22,6 +22,7 @@ class AnnouncementRepo(BaseRepo):
         """Actualiza los datos de un anuncio."""
         announcement = self.get_by_id(announcement_id)
         if announcement:
+            data = data.dict(exclude_unset=True)
             for key, value in data.items():
                 if hasattr(announcement, key):
                     setattr(announcement, key, value)
@@ -98,6 +99,7 @@ class ReportRepo(BaseRepo):
         """Actualiza los datos de un reporte."""
         report = self.get_by_id(report_id)
         if report:
+            data = data.dict(exclude_unset=True)
             for key, value in data.items():
                 if hasattr(report, key):
                     setattr(report, key, value)
