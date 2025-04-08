@@ -11,9 +11,9 @@ class PreRegisteredUserRepo(BaseRepo):
         self.session.commit()
         return data
     
-    def get_by_id(self, pre_registered_id: int) -> PreRegisteredUser:
+    def get_by_id(self, id: int) -> PreRegisteredUser:
         """ Obtiene un usuario pre-registrado por su ID. """
-        return self.session.query(PreRegisteredUser).filter_by(pre_registered_id=pre_registered_id).first()
+        return self.session.query(PreRegisteredUser).filter_by(id=id).first()
 
     def get_by_academic_id(self, academic_id: int) -> PreRegisteredUser:
         """ Obtiene un usuario pre-registrado por su ID académico. """

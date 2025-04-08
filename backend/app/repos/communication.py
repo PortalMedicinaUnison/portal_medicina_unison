@@ -33,7 +33,7 @@ class AnnouncementRepo(BaseRepo):
         """Elimina un anuncio por su ID."""
         announcement = self.get_by_id(announcement_id)
         if announcement:
-            announcement.is_active = False
+            self.session.delete(announcement)
             self.session.commit()
             return True
         return False
@@ -109,7 +109,7 @@ class ReportRepo(BaseRepo):
         """Elimina un reporte por su ID."""
         report = self.get_by_id(report_id)
         if report:
-            report.is_active = False
+            self.session.delete(report)
             self.session.commit()
             return True
         return False
