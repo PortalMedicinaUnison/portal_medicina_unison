@@ -3,9 +3,9 @@
 Este proyecto es una plataforma en desarrollo para la gestión y administración de programas de internado médico de pregrado. Utiliza **FastAPI** para el backend, **React** para el frontend y **SQLite** como base de datos.
 
 
-## Requirements
+## Requirimientos
 - Python 3.9+
-- Requirements listed on requirements.txt
+- Dependencias listadas en requirements.txt
 
 ## Inicialización del Proyecto
 
