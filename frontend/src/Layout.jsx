@@ -3,16 +3,12 @@ import { useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import PageHeadings from './components/PageHeadings';
-import fetchUser from './utils/utils';
+import { useUser } from './contexts/UserContext';
 
 
 function Layout({ children }) {
-  const [user, setUser] = useState({});
+  const { user } = useUser();
   const [sidebarVisible, setSidebarVisible] = useState(true);
-
-  useEffect(() => {
-    fetchUser(setUser);
-  }, []);
 
   useEffect(() => {
   }, [sidebarVisible]);
@@ -39,7 +35,6 @@ function Layout({ children }) {
         </div>
       </div>      
     </div>
-
   );
 }
 
