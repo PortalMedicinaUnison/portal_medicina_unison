@@ -1,11 +1,16 @@
 import { useState } from 'react';
 import api from '../../../api';
+import { useNavigate } from 'react-router-dom';
 import { setToken, removeToken, isAuthenticated } from '../../../utils/auth';
+import { useUser } from '../../../contexts/UserContext';
 
 
 export default function useAuth() {
   const [error, setError] = useState(null);
   const [authenticated, setAuthenticated] = useState(isAuthenticated());
+  const { clearUser } = useUser();
+  const navigate = useNavigate();
+
 
   const login = async (email, password) => {
     setError(null);
@@ -24,7 +29,9 @@ export default function useAuth() {
 
   const logout = () => {
     removeToken();
+    clearUser();
     setAuthenticated(false);
+    navigate("/login");
   };
   
   return { login, logout, error, authenticated };
