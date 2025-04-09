@@ -4,20 +4,15 @@ import useUserProfile from "../../../hooks/useUserProfile";
 
 function FormularioPerfil({ user }) {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    secondLastName: '',
-    email: '',
-    password: '',
+    firstName: "",
+    lastName: "",
+    secondLastName: "",
+    email: "",
   });
 
   const [userMetaData, setUserMetaData] = useState({
-    profile_photo: '',
-    is_admin: false,
-    is_super_admin: false,
+    profile_photo: "",
   });
-
-  const [uploadStatus, setUploadStatus] = useState(null);
 
   const userData = useUserProfile(user.user_id);
   useEffect(() => {
@@ -27,12 +22,9 @@ function FormularioPerfil({ user }) {
         lastName: userData.last_name ?? "",
         secondLastName: userData.second_last_name ?? "",
         email: userData.email ?? "",
-        password: userData.password ?? "",
       });
       setUserMetaData({
         profile_photo: userData.profile_photo ?? "",
-        is_admin: userData.is_admin ?? false,
-        is_super_admin: userData.is_super_admin ?? false,
       });
     }
   }, [userData]);
@@ -42,7 +34,6 @@ function FormularioPerfil({ user }) {
       alert("Por favor completa todos los campos requeridos.");
       return false;
     }
-    // Validar correo electrónico simple
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(formData.email)) {
       alert("Por favor ingresa un correo electrónico válido.");
@@ -53,106 +44,86 @@ function FormularioPerfil({ user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
-
-    const updatedUser = {
-      user_id: user.user_id,
-      academic_id: String(user.academic_id),
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      second_last_name: formData.secondLastName,
-      email: formData.email,
-      profile_photo: userMetaData.profile_photo,
-      is_admin: userMetaData.is_admin,
-      is_super_admin: userMetaData.is_super_admin,
-    };
-
     try {
-      const response = await api.put(`/users/${user.user_id}`, updatedUser);
-      console.log(response);
-    } catch (error) {
-      console.error("Edit failed", error);
-    }
-  };
-
-  const handleImageChange = async (e) => {
-    e.preventDefault();
-    const imageData = {
-      user_id: user.id,
-      image: e.target.files[0],
-    };
-
-    setUploadStatus("Cargando...");
-
-    try {
-      const response = await api.put("/profile_picture/", imageData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      await api.put(`/users/${user.user_id}`, {
+        user_id: user.user_id,
+        academic_id: String(user.academic_id),
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        second_last_name: formData.secondLastName,
+        email: formData.email,
+        profile_photo: userMetaData.profile_photo,
       });
-      console.log(response);
-      setUploadStatus("Imagen cargada con éxito.");
-      // Actualiza el estado global si es necesario
     } catch (error) {
-      console.error("Edit failed", error);
-      setUploadStatus("Error al cargar la imagen.");
+      console.error("Error al actualizar el perfil", error);
     }
   };
 
   return (
-    <div className="profile-page">
-      <h1>Perfil</h1>
-      <div className="user-profile-picture">
-        <label htmlFor="file-upload">
-          <div className="hover-text">
-            <p>Editar</p>
-          </div>
-          <img src={`/profile_images/${userMetaData.profile_photo}`} alt="User Photo" />
-          <input id="file-upload" type="file" onChange={handleImageChange} />
+    <form className="form-container" onSubmit={handleSubmit}>
+      <div className="profile-section">
+        <label htmlFor="file-upload" className="profile-label">
+          <img
+            src={`/default-avatar.png`} // Cambiar después que tengamos el endpoint
+            alt="User Profile"
+            className="profile-image"
+          />
         </label>
       </div>
-
-      {uploadStatus && <div>{uploadStatus}</div>}
-
-      <form onSubmit={handleSubmit}>
-        <p>
-          <label><span>Nombre: </span></label>
+      
+      <div className="form-grid single-column">
+        <div className="input-group">
+          <label className="form-label">Nombre</label>
           <input
+            className="form-input"
             name="firstName"
             type="text"
             value={formData.firstName}
             onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
           />
-        </p>
-        <p>
-          <label><span>Apellido paterno: </span></label>
+        </div>
+
+        <div className="input-group">
+          <label className="form-label">Apellido Paterno</label>
           <input
+            className="form-input"
             name="lastName"
             type="text"
             value={formData.lastName}
             onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
           />
-        </p>
-        <p>
-          <label><span>Apellido materno: </span></label>
+        </div>
+
+        <div className="input-group">
+          <label className="form-label">Apellido Materno</label>
           <input
+            className="form-input"
             name="secondLastName"
             type="text"
             value={formData.secondLastName}
             onChange={(e) => setFormData({ ...formData, secondLastName: e.target.value })}
           />
-        </p>
-        <p>
-          <label><span>Correo: </span></label>
+        </div>
+
+        <div className="input-group">
+          <label className="form-label">Correo Electrónico</label>
           <input
+            className="form-input"
             name="email"
             type="text"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           />
-        </p>
-        <button type="submit">Guardar</button>
-      </form>
-    </div>
+        </div>
+
+        {/* Mueve los botones aquí */}
+        <div className="button-group">
+          <button type="button" className="btn-secondary">Cancelar</button>
+          <button type="submit" className="btn-primary">Guardar</button>
+        </div>
+      </div>
+    </form>
   );
 }
 
