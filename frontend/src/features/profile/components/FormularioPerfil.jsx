@@ -1,32 +1,49 @@
 import React, { useState, useEffect } from "react";
 import api from "../../../api";
+import { useUser } from "../../../contexts/UserContext";
+import useUserUpdate from '../hooks/useUserUpdate';
 
-function FormularioPerfil({ user }) {
+function FormularioPerfil() {
+  const { user } = useUser();
+  
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    secondLastName: "",
-    email: "",
+    firstName: '',
+    lastName: '',
+    secondLastName: '',
+    email: '',
+    password: '',
+    profile_photo: '',
+    is_admin: false,
+    is_super_admin: false,
   });
 
-  const [userMetaData, setUserMetaData] = useState({
-    profile_photo: "",
-  });
+  const { updateUser, error, success } = useUserUpdate();
 
-  const userData = useUserProfile(user.user_id);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  // Populate form with user data from context
   useEffect(() => {
-    if (userData) {
+    if (user) {
       setFormData({
-        firstName: userData.first_name ?? "",
-        lastName: userData.last_name ?? "",
-        secondLastName: userData.second_last_name ?? "",
-        email: userData.email ?? "",
-      });
-      setUserMetaData({
-        profile_photo: userData.profile_photo ?? "",
+        firstName: user.first_name ?? "",
+        lastName: user.last_name ?? "",
+        secondLastName: user.second_last_name ?? "",
+        email: user.email ?? "",
+        password: user.password ?? "",
+        profile_photo: user.profile_photo ?? "",
+        is_admin: user.is_admin ?? false,
+        is_super_admin: user.is_super_admin ?? false,
       });
     }
-  }, [userData]);
+  }, [user]);
+
+  // The rest of your component's logic...
 
   const validateForm = () => {
     if (!formData.firstName || !formData.lastName || !formData.email) {
@@ -43,21 +60,25 @@ function FormularioPerfil({ user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
-    try {
-      await api.put(`/users/${user.user_id}`, {
-        user_id: user.user_id,
-        academic_id: String(user.academic_id),
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        second_last_name: formData.secondLastName,
-        email: formData.email,
-        profile_photo: userMetaData.profile_photo,
+
+    const isUpdated = await updateUser(formData);
+    if (isUpdated) {
+      console.log('Actualización exitosa');
+
+      setFormData({
+        firstName: '',
+        lastName: '',
+        secondLastName: '',
+        email: '',
+        password: '',
+        profile_photo: '',
+        is_admin: false,
+        is_super_admin: false
       });
-    } catch (error) {
-      console.error("Error al actualizar el perfil", error);
     }
   };
+
+  
 
   return (
     <form className="form-container" onSubmit={handleSubmit}>

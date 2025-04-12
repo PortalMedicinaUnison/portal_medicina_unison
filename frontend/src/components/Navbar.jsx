@@ -35,7 +35,9 @@ function Navbar() {
                         </button>
                     </div>
                     <div className="flex items-center justify-end">
-                        <button type="button" className="flex flex-col px-3 text-right" aria-expanded="false">
+                        {user ? (
+                            <>
+                         <button type="button" className="flex flex-col px-3 text-right" aria-expanded="false">
                             <span className="text-xs font-semibold text-gray-900">{user.first_name} {user.last_name}</span>
                             <span className="text-[10px] text-gray-900">{user.email}</span>
                         </button>
@@ -43,6 +45,10 @@ function Navbar() {
                             <img src={`/default-avatar.png`} alt="User Photo" className="size-10 rounded-full"/>
                             {/* <img src={user.profile_photo || `/default-avatar.png`} alt="User Photo" className="size-12 rounded-full"/> */}
                         </button>
+                        </>
+                        ) : (
+                            <span className="text-xs text-gray-500">Cargando usuario...</span>
+                        )}
                     </div>
                 </div>
         </nav>
