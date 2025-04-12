@@ -1,40 +1,32 @@
 import React, { useState, useEffect } from "react";
 import api from "../../../api";
-import { useUser } from "../../../contexts/UserContext";
 
-function FormularioPerfil() {
-  const { user } = useUser();
-  
+function FormularioPerfil({ user }) {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    secondLastName: '',
-    email: '',
-    password: '',
-    profile_photo: '',
-    is_admin: false,
-    is_super_admin: false,
+    firstName: "",
+    lastName: "",
+    secondLastName: "",
+    email: "",
   });
 
-  const [uploadStatus, setUploadStatus] = useState(null);
+  const [userMetaData, setUserMetaData] = useState({
+    profile_photo: "",
+  });
 
-  // Populate form with user data from context
+  const userData = useUserProfile(user.user_id);
   useEffect(() => {
-    if (user) {
+    if (userData) {
       setFormData({
-        firstName: user.first_name ?? "",
-        lastName: user.last_name ?? "",
-        secondLastName: user.second_last_name ?? "",
-        email: user.email ?? "",
-        password: user.password ?? "",
-        profile_photo: user.profile_photo ?? "",
-        is_admin: user.is_admin ?? false,
-        is_super_admin: user.is_super_admin ?? false,
+        firstName: userData.first_name ?? "",
+        lastName: userData.last_name ?? "",
+        secondLastName: userData.second_last_name ?? "",
+        email: userData.email ?? "",
+      });
+      setUserMetaData({
+        profile_photo: userData.profile_photo ?? "",
       });
     }
-  }, [user]);
-
-  // The rest of your component's logic...
+  }, [userData]);
 
   const validateForm = () => {
     if (!formData.firstName || !formData.lastName || !formData.email) {

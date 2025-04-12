@@ -9,8 +9,8 @@ function ProfilePage() {
 
   return (
     <div>
-      <Layout>
-        <FormularioPerfil/>
+      <Layout user={user}>
+        <FormularioPerfil user={user}/>
       </Layout>
     </div>
   );
