@@ -1,15 +1,11 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import fetchUser from "../../../utils/utils";
+import { useUser } from "../../../contexts/UserContext";
 import FormularioPerfil from "../components/FormularioPerfil";
 import Layout from "../../../Layout";
 
 function ProfilePage() {
-  const [user, setUser] = useState({});
-
-  useEffect(() => {
-    fetchUser(setUser);
-  }, []);
+  const { user } = useUser();
 
   return (
     <div>

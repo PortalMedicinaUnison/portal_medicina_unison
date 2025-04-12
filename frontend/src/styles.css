@@ -5,24 +5,26 @@
 
 @layer components {
 
-    .bg-primary { 
-        background-color: #e1b73d; 
-    }
-
-    .bg-secondary { 
+    .color-primary { 
         background-color: #24398a; 
     }
 
+    .color-secondary { 
+        background-color: #e1b73d; 
+    }
+
     .main-container { @apply 
-        p-2
-        sm:ml-64
+        px-10
+        py-6
+        mt-16
+        sm:ml-56
     }
 
     .main-content { @apply 
         border
         h-screen 
         border-gray-300 
-        border-dashed 
+        border-dashed
         rounded-lg
     }
 
@@ -182,12 +184,12 @@
     /* ------------- NAVBAR ------------- */
 
     .navbar { @apply 
-        sticky
+        fixed
         top-0
         z-10
-        w-full
-        /* bg-primary */
-        /* bg-secondary */
+        h-16
+        ml-56
+        w-[calc(100%-14rem)]
         bg-white
         border-b
 
@@ -235,11 +237,10 @@
 
     .sidebar-container { @apply 
         fixed
-        w-64
+        w-56
         h-screen
-        pt-20
+        pt-0
         bg-white
-        /* bg-secondary */
         border-r
         border-gray-200
         sm:translate-x-0
@@ -251,19 +252,29 @@
         -translate-x-full        
     }
 
+    .sidebar-header { @apply 
+        flex
+        w-full
+        h-16
+    }
+
     .sidebar { @apply 
-        h-full
+        flex
+        flex-col
+        h-[calc(100%-4rem)]
+        py-6
         px-4
         pb-4
         overflow-y-auto
+
+        justify-between
     }
 
     .sidebar-item-group { @apply 
         flex
         items-center
-        p-2
+        p-1
         /* text-white */
-        text-gray-900
         rounded-lg
         w-full
         hover:bg-gray-100
@@ -274,12 +285,12 @@
 
     .sidebar-item-text { @apply 
         flex-1
-        text-sm
-        font-semibold
+        text-xs
+        font-medium
         ms-3
         whitespace-nowrap
         /* text-white */
-        text-gray-900
+        text-gray-700
         text-left
         transition 
         duration-75
@@ -298,10 +309,10 @@
     }
 
     .sidebar-toggle-icon { @apply 
-        w-6
-        h-6
+        w-5
+        h-5
         /* text-white */
-        text-gray-400
+        text-gray-500
         transition 
         duration-75
         group-hover:text-indigo-600

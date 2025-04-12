@@ -33,7 +33,7 @@ class SiteRepo(BaseRepo):
         """Elimina un sitio por su ID."""
         site = self.get_by_id(site_id)
         if site:
-            self.session.delete(site)
+            site.is_active = False
             self.session.commit()
             return True
         return False
