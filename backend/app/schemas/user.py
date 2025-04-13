@@ -50,20 +50,14 @@ class UserInput(BaseModel):
         return email
 
 class UserInputUpdate(BaseModel):
-    academic_id: Optional[str]
     first_name: Optional[str]
     last_name: Optional[str]
     second_last_name: Optional[str] = None
     email: Optional[str]
     password: Optional[str]
     profile_photo: Optional[str]
-    is_admin: Optional[bool] = False
-    is_super_admin: Optional[bool] = False
-
-    @field_validator("academic_id")
-    def validate_academic_id(cls, academic_id):
-        is_valid_academic_id(academic_id)
-        return academic_id
+    is_admin: Optional[bool]
+    is_super_admin: Optional[bool]
 
     @field_validator("password")
     def validate_password(cls, password):
@@ -74,3 +68,9 @@ class UserInputUpdate(BaseModel):
     def validate_email(cls, email):
         is_valid_email(email)
         return email
+
+class UserAdminInputUpdate(UserInputUpdate):
+    is_admin: Optional[bool]
+
+class UserSuperAdminInputUpdate(UserInputUpdate):
+    is_super_admin: Optional[bool]

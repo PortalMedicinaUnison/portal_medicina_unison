@@ -65,10 +65,9 @@ def create_user(user_input: UserInput, db: Session) -> dict:
     el usuario y luego transforma el objeto ORM resultante en un diccionario para la respuesta.
     """
     # Pydantic --> ORM
-    academic_id_int = int(user_input.academic_id)
     hashed_password = hash_password(user_input.password)
     new_user = User(
-        academic_id=academic_id_int,
+        academic_id=user_input.academic_id,
         first_name=user_input.first_name,
         last_name=user_input.last_name,
         second_last_name=user_input.second_last_name,
