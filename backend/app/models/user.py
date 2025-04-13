@@ -15,7 +15,7 @@ class PreRegisteredUser(BaseModel):
     __tablename__ = "pre_registered_users"
 
     pre_registered_id = Column(Integer, primary_key=True, autoincrement=True)
-    academic_id = Column(Integer, unique=True, nullable=False)
+    academic_id = Column(String(9), unique=True, nullable=False)
     assigned_year = Column(Integer, nullable=False)
     assigned_period = Column(Integer, nullable=False)
     
@@ -31,7 +31,7 @@ class User(BaseModel):
     __tablename__ = 'users'
     
     user_id = Column(Integer, primary_key=True, autoincrement=True)
-    academic_id = Column(Integer, ForeignKey("pre_registered_users.academic_id", ondelete="CASCADE"), unique=True, nullable=False)
+    academic_id = Column(String(9), ForeignKey("pre_registered_users.academic_id", ondelete="CASCADE"), unique=True, nullable=False)
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
     second_last_name = Column(String(50), nullable=True)

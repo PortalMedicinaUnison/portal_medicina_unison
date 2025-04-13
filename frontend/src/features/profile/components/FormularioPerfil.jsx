@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import api from "../../../api";
 import { useUser } from "../../../contexts/UserContext";
 import useUserUpdate from '../hooks/useUserUpdate';
 
 function FormularioPerfil() {
   const { user } = useUser();
-  
+  const { updateUser, error, success } = useUserUpdate();
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -17,17 +17,6 @@ function FormularioPerfil() {
     is_super_admin: false,
   });
 
-  const { updateUser, error, success } = useUserUpdate();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
-  };
-
-  // Populate form with user data from context
   useEffect(() => {
     if (user) {
       setFormData({
@@ -43,25 +32,19 @@ function FormularioPerfil() {
     }
   }, [user]);
 
-  // The rest of your component's logic...
 
-  const validateForm = () => {
-    if (!formData.firstName || !formData.lastName || !formData.email) {
-      alert("Por favor completa todos los campos requeridos.");
-      return false;
-    }
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(formData.email)) {
-      alert("Por favor ingresa un correo electrónico válido.");
-      return false;
-    }
-    return true;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const isUpdated = await updateUser(formData);
+    const isUpdated = await updateUser(formData, user.user_id);
     if (isUpdated) {
       console.log('Actualización exitosa');
 
@@ -77,8 +60,6 @@ function FormularioPerfil() {
       });
     }
   };
-
-  
 
   return (
     <form className="form-container" onSubmit={handleSubmit}>
@@ -100,7 +81,7 @@ function FormularioPerfil() {
             name="firstName"
             type="text"
             value={formData.firstName}
-            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+            onChange={handleChange}
           />
         </div>
 
@@ -111,7 +92,7 @@ function FormularioPerfil() {
             name="lastName"
             type="text"
             value={formData.lastName}
-            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+            onChange={handleChange}
           />
         </div>
 
@@ -122,7 +103,7 @@ function FormularioPerfil() {
             name="secondLastName"
             type="text"
             value={formData.secondLastName}
-            onChange={(e) => setFormData({ ...formData, secondLastName: e.target.value })}
+            onChange={handleChange}
           />
         </div>
 
@@ -133,11 +114,10 @@ function FormularioPerfil() {
             name="email"
             type="text"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={handleChange}
           />
         </div>
 
-        {/* Mueve los botones aquí */}
         <div className="button-group">
           <button type="button" className="btn-secondary">Cancelar</button>
           <button type="submit" className="btn-primary">Guardar</button>

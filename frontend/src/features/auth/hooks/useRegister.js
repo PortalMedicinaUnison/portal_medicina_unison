@@ -9,7 +9,6 @@ export default function useRegister() {
   const [success, setSuccess] = useState(false);
 
   const registerUser = async (formData) => {  
-
     const cleanedData = cleanFormData(formData);
 
     if (!isValidAcademicId(cleanedData.academicId)) {
