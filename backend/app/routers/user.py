@@ -55,7 +55,14 @@ def delete_user_router(user_id: int, db: Session = Depends(get_db)):
 def upload_profile_picture_router(user_id: int, image: UploadFile = File(...), db: Session = Depends(get_db)):
     pass
 
-
+@user_router.get('/', response_model=List[UserInput])
+async def get_users_route(db: Session = Depends(get_db)):
+    users =  get_all_users(db)
+    if not users:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuarios no encontrados")
+    return users
 # ********************************************************************************************************************
 
 pre_registered_router = APIRouter(prefix="/pre-registered", tags=["Pre-Registrados"])
@@ -94,3 +101,12 @@ def delete_pre_registered_user_router(academic_id: int, db: Session = Depends(ge
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Usuario pre-registrado no encontrado")
     return
+
+@pre_registered_router.get('/', response_model=List[PreRegisteredUserInput])
+async def get_pre_registered_users_route(db: Session = Depends(get_db)):
+    pre_registered_users =  get_all_pre_registered_users(db)
+    if not pre_registered_users:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuarios pre-registrados no encontrado")
+    return pre_registered_users
