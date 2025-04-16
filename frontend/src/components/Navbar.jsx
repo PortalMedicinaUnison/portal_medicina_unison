@@ -1,8 +1,9 @@
 import '../styles.css';
+import { useUser } from '../contexts/UserContext';
 
-
-function Navbar({ user }) {
-
+function Navbar() {
+    const { user } = useUser();
+    
     function showSidebar(){
         const sidebar = document.getElementById("sidebar");
         sidebar.style.width = 'var(--sidebar-width)';

@@ -1,4 +1,11 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import useAuth from '../features/auth/hooks/useAuth'; // Adjust the import path if necessary
+
+
 function Sidebar({ toggleSidebar }) {
+    const { logout, authenticated } = useAuth();
+
     return (
         <div>
             <aside 
@@ -102,7 +109,7 @@ function Sidebar({ toggleSidebar }) {
                             </ul>
                         </li>
                         <li>
-                                <a href="https://medicina.unison.mx/internado-de-pregrado/" className="sidebar-item-group group">
+                                <a href="https://medicina.unison.mx/internado-de-pregrado/" target="_blank" rel="noopener noreferrer" className="sidebar-item-group group">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="sidebar-item-icon"
@@ -161,7 +168,7 @@ function Sidebar({ toggleSidebar }) {
                             </ul>
                         </li>
                         <li>
-                                <a href="https://medicina.unison.mx/servicio-social/" className="sidebar-item-group group">
+                                <a href="https://medicina.unison.mx/servicio-social/" target="_blank" rel="noopener noreferrer" className="sidebar-item-group group">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="sidebar-item-icon"
@@ -242,7 +249,7 @@ function Sidebar({ toggleSidebar }) {
                                 </a>
                             </li>
                             <li>
-                                <a href="/" className="sidebar-item-group group">
+                                <Link to="/" className="sidebar-item-group group">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="sidebar-item-icon group-hover:text-red-700"
@@ -256,7 +263,7 @@ function Sidebar({ toggleSidebar }) {
                                         <path d="m7.405 13.5l-2.905-3l2.905-3m-2.905 3h9m-6-7l8 .002c1.104.001 2 .896 2 2v9.995a2 2 0 0 1-2 2l-8 .003"/>
                                     </svg>
                                     <span className="sidebar-item-text group-hover:text-red-700">Cerrar sesión</span>
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </div>         
