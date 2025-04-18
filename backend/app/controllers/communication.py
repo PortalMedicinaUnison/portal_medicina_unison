@@ -5,7 +5,7 @@ from models.communication import Announcement, Survey, Report, AnnouncementTypeE
 from schemas.communication import AnnouncementInput, SurveyInput, ReportInput
 from utils.utils import orm_to_dict
 
-# ---------------  Announcement  ----------------------
+# ----------------------  Announcement  ----------------------
 
 def create_announcement(announcement: AnnouncementInput, db: Session):
     new_announcement = Announcement(
@@ -40,7 +40,7 @@ def delete_announcement(announcement_id: int, db: Session):
     announcement_repo = AnnouncementRepo(db)
     return announcement_repo.delete(announcement_id)
 
-# ---------------  Survey  ----------------------
+# ----------------------  Survey  ----------------------
 
 def create_survey(survey: SurveyInput, db: Session):
     new_survey = Survey(
@@ -78,7 +78,7 @@ def delete_survey(survey_id: int, db: Session):
     return survey_repo.delete(survey_id)
 
 
-# ---------------  Report  ----------------------
+# ----------------------  Report  ----------------------
 
 def create_report(report: ReportInput, db: Session):
     new_report = Report(
