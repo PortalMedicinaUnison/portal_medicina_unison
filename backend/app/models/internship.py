@@ -40,7 +40,7 @@ class Internship(BaseModel):
     year: Mapped[int] = mapped_column(Integer, nullable=False)
     period: Mapped[int] = mapped_column(Integer, nullable=False)
     status: Mapped[InternshipStatusEnum] = mapped_column(IntEnumType(InternshipStatusEnum), nullable=False)
-    enrollment_id: Mapped[int] = mapped_column(Integer, ForeignKey("internship_enrollments.enrollment_id", ondelete="RESTRICT"), nullable=False)
+    enrollment_id: Mapped[int] = mapped_column(Integer, ForeignKey("internship_enrollments.enrollment_id", ondelete="RESTRICT"), unique=True, nullable=False)
     student_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
     site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id", ondelete="RESTRICT"), nullable=False)
 
