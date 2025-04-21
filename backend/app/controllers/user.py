@@ -119,7 +119,7 @@ def get_all_users(db: Session):
     if not users:
         return None
 
-    users_reponse = [orm_to_dict(user) for user in users]
+    users_response = [orm_to_dict(user) for user in users]
 
-    return user_reponse
+    return users_response
     
