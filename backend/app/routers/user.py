@@ -1,5 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from typing import List
 from sqlalchemy.orm import Session
 from schemas.user import UserInput, PreRegisteredUserInput
 from core.dependencies import get_db
@@ -59,7 +60,7 @@ def delete_user_router(user_id: int, db: Session = Depends(get_db)):
 def upload_profile_picture_router(user_id: int, image: UploadFile = File(...), db: Session = Depends(get_db)):
     pass
 
-@user_router.get('/', response_model=List[UserInput])
+@user_router.get('/')#, response_model=List[UserInput])
 async def get_users_route(db: Session = Depends(get_db)):
     users =  get_all_users(db)
     if not users:
