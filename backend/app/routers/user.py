@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from typing import List
 from sqlalchemy.orm import Session
@@ -11,10 +12,12 @@ from controllers.user import (
     delete_user,
     create_pre_registered_user,
     get_pre_registered_user,
+    get_all_pre_registered_users,
     update_pre_registered_user,
     delete_pre_registered_user,
 )
 
+# ----------------------  Users  ----------------------
 
 user_router = APIRouter(prefix="/users", tags=["Usuarios"])
 
@@ -65,7 +68,8 @@ async def get_users_route(db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Usuarios no encontrados")
     return users
-# ********************************************************************************************************************
+
+# ----------------------  Pre-Registered Users  ----------------------
 
 pre_registered_router = APIRouter(prefix="/pre-registered", tags=["Pre-Registrados"])
 
