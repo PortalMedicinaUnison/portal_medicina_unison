@@ -22,7 +22,7 @@ from controllers.communication import (
     delete_report
 )
 
-# ---------------  Announcement  ----------------------
+# ----------------------  Announcement  ----------------------
 
 announcement_router = APIRouter(prefix="/announcements", tags=["Avisos"])
 
@@ -72,7 +72,7 @@ async def delete_announcement_route(announcement_id: int, db: Session = Depends(
     return announcement
 
 
-# ---------------  Survey  ----------------------
+# ----------------------  Survey  ----------------------
 
 survey_router = APIRouter(prefix="/surveys", tags=["Encuestas"])
 
@@ -122,7 +122,7 @@ async def delete_survey_route(survey_id: int, db: Session = Depends(get_db)):
     return survey
 
 
-# ---------------  Report  ----------------------
+# ----------------------  Report  ----------------------
 
 report_router = APIRouter(prefix="/reports", tags=["Reportes"])
 

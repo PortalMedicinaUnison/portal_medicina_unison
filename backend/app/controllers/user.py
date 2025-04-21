@@ -8,6 +8,8 @@ from utils.security import hash_password
 from utils.utils import orm_to_dict
 
 
+# ----------------------  Pre-Registered Users  ----------------------
+
 def create_pre_registered_user(user_input: PreRegisteredUserInput, db: Session) -> dict:
     academic_id_int = int(user_input.academic_id)
     new_pre_user = PreRegisteredUser(
@@ -55,9 +57,9 @@ def get_all_pre_registered_users(db: Session):
         return None
 
     pre_registered_users_reponse = [orm_to_dict(user) for user in pre_registered_users]
-
     return pre_registered_users_reponse
-# *********************************************************************************************************************
+
+# ----------------------  Users  ----------------------
 
 def create_user(user_input: UserInput, db: Session) -> dict:
     """
@@ -119,7 +121,6 @@ def get_all_users(db: Session):
     if not users:
         return None
 
-    users_reponse = [orm_to_dict(user) for user in users]
-
+    user_reponse = [orm_to_dict(user) for user in users]
     return user_reponse
     
