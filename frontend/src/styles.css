@@ -378,51 +378,80 @@
     }
 
     /* ------------- PROFILE EDIT------------- */
-    .form-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 40px;
-    }
     
 
       
-    .profile-section {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    
+    .user-info-form {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
       
-    .profile-image {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
+      .page-title {
+        font-size: 1.75rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
       
-    .form-grid {
+      .user-info-list {
         display: flex;
         flex-direction: column;
-        width: 100%;
-        max-width: 400px;
-        gap: 15px;
-    }
-    
+        gap: 1rem;
+      }
       
-    .input-group {
+      .user-info-row {
         display: flex;
         flex-direction: column;
-    }
+      }
       
-    .button-group {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 20px;
-    }
-    
+      .form-label {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+      
+      .user-info-input {
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+      
+      .user-info-actions {
+        margin-top: 1rem;
+        text-align: right;
+      }
+      
+      .submit-button {
+        background-color: #2563eb;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+      }
+      
+
+
+    @layer components {
+
+        .user-info-card {
+          @apply bg-white shadow rounded-lg p-6;
+        }
+      
+        .user-info-list {
+          @apply divide-y divide-gray-100;
+        }
+      
+        .user-info-row {
+          @apply px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0;
+        }
+
+      
+      }
+      
+
+
+
+
       
 
 }

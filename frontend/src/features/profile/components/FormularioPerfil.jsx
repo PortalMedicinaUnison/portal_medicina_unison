@@ -1,129 +1,96 @@
-import React, { useState, useEffect } from "react";
-import { useUser } from "../../../contexts/UserContext";
-import useUserUpdate from '../hooks/useUserUpdate';
+import React, { useState } from 'react';
+import { useUser } from '../../../contexts/UserContext';
 
 function FormularioPerfil() {
   const { user } = useUser();
-  const { updateUser, error, success } = useUserUpdate();
-
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    secondLastName: '',
-    email: '',
-    phone_number: '',
-    password: '',
-    profile_photo: '',
-    is_admin: false,
-    is_super_admin: false,
+    first_name: user?.first_name || '',
+    last_name: user?.last_name || '',
+    second_last_name: user?.second_last_name || '',
+    email: user?.email || '',
+    academic_id: user?.academic_id || '',
   });
-
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        firstName: user.first_name ?? "",
-        lastName: user.last_name ?? "",
-        secondLastName: user.second_last_name ?? "",
-        email: user.email ?? "",
-        phone_number: user.phone_number ?? "",
-        password: user.password ?? "",
-        profile_photo: user.profile_photo ?? "",
-        is_admin: user.is_admin ?? false,
-        is_super_admin: user.is_super_admin ?? false,
-      });
-    }
-  }, [user]);
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    const isUpdated = await updateUser(formData, user.user_id);
-    if (isUpdated) {
-      console.log('Actualización exitosa');
-
-      setFormData({
-        firstName: '',
-        lastName: '',
-        secondLastName: '',
-        email: '',
-        phone_number: '',
-        password: '',
-        profile_photo: '',
-        is_admin: false,
-        is_super_admin: false
-      });
-    }
+    // Aquí iría la lógica para guardar los datos
+    console.log("Datos actualizados:", formData);
   };
 
   return (
-    <form className="form-container" onSubmit={handleSubmit}>
-      <div className="profile-section">
-        <label htmlFor="file-upload" className="profile-label">
-          <img
-            src={`/default-avatar.png`} // Cambiar después que tengamos el endpoint
-            alt="User Profile"
-            className="profile-image"
-          />
-        </label>
-      </div>
-      
-      <div className="form-grid single-column">
-        <div className="input-group">
-          <label className="form-label">Nombre</label>
+    <form className="user-info-list" onSubmit={handleSubmit}>
+      <h1 className="page-title">Editar Perfil del Solicitante</h1>
+      <div className="user-info-list">
+        <div className="user-info-row">
+          <label className="form-label" htmlFor="first_name">Nombre(s)</label>
           <input
-            className="form-input"
-            name="firstName"
             type="text"
-            value={formData.firstName}
+            id="first_name"
+            name="first_name"
+            className="user-info-input"
+            value={formData.first_name}
             onChange={handleChange}
           />
         </div>
 
-        <div className="input-group">
-          <label className="form-label">Apellido Paterno</label>
+        <div className="user-info-row">
+          <label className="form-label" htmlFor="last_name">Apellido paterno</label>
           <input
-            className="form-input"
-            name="lastName"
             type="text"
-            value={formData.lastName}
+            id="last_name"
+            name="last_name"
+            className="user-info-input"
+            value={formData.last_name}
             onChange={handleChange}
           />
         </div>
 
-        <div className="input-group">
-          <label className="form-label">Apellido Materno</label>
+        <div className="user-info-row">
+          <label className="form-label" htmlFor="second_last_name">Apellido materno</label>
           <input
-            className="form-input"
-            name="secondLastName"
             type="text"
-            value={formData.secondLastName}
+            id="second_last_name"
+            name="second_last_name"
+            className="user-info-input"
+            value={formData.second_last_name}
             onChange={handleChange}
           />
         </div>
 
-        <div className="input-group">
-          <label className="form-label">Correo Electrónico</label>
+        <div className="user-info-row">
+          <label className="form-label" htmlFor="email">Correo electrónico</label>
           <input
-            className="form-input"
+            type="email"
+            id="email"
             name="email"
-            type="text"
+            className="user-info-input"
             value={formData.email}
             onChange={handleChange}
           />
         </div>
 
-        <div className="button-group">
-          <button type="button" className="btn-secondary">Cancelar</button>
-          <button type="submit" className="btn-primary">Guardar</button>
+        <div className="user-info-row">
+          <label className="form-label" htmlFor="academic_id">Número de expediente</label>
+          <input
+            type="text"
+            id="academic_id"
+            name="academic_id"
+            className="user-info-input"
+            value={formData.academic_id}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="user-info-actions">
+          <button type="submit" className="submit-button">Guardar cambios</button>
         </div>
       </div>
     </form>
