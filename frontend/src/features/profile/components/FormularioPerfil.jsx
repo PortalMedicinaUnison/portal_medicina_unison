@@ -6,6 +6,7 @@ function FormularioPerfil() {
   const { user } = useUser();
   const { updateUser, error, success } = useUserUpdate();
 
+function FormularioPerfil({ user }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
