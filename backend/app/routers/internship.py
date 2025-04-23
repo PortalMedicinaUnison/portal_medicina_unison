@@ -14,7 +14,7 @@ from controllers.internship import (
     get_internship_enrollments_by_status
 )
 
-# ---------------  Internship  ----------------------
+# ----------------------  Internship  ----------------------
 
 internship_router = APIRouter(prefix="/internships", tags=["Internados"])
 
@@ -63,7 +63,7 @@ async def update_internship_route(internship_id: int, internship: InternshipInpu
             detail="Internado no encontrado")
     return internship
 
-# ---------------  Internship enrollments  ----------------------
+# ----------------------  Internship enrollments  ----------------------
 
 internship_enrollment_router = APIRouter(prefix="/internship_enrollments", tags=["Inscripciones"])
 

@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Boolean, Integer, String, ForeignKey, Text, Date
-from sqlalchemy.orm import relationship
+from datetime import datetime, date
+from sqlalchemy import Boolean, Integer, String, ForeignKey, Text, DateTime, Date
+from sqlalchemy.orm import Mapped, mapped_column
 from enum import IntEnum
 from .base import BaseModel
 from .types import IntEnumType
@@ -14,16 +15,14 @@ class AnnouncementTypeEnum(IntEnum):
 class Announcement(BaseModel):
     __tablename__ = 'announcements'
     
-    announcement_id = Column(Integer, primary_key=True, autoincrement=True)
-    admin_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
-    title = Column(String(100), nullable=False)
-    announcement_type = Column(IntEnumType(AnnouncementTypeEnum), nullable=False)
-    description = Column(Text)
+    announcement_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column(String(100), nullable=False)
+    announcement_type: Mapped[AnnouncementTypeEnum] = mapped_column(IntEnumType(AnnouncementTypeEnum), nullable=False)
+    description: Mapped[str] = mapped_column(Text)
+    created_by: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="SET NULL"), nullable=False)
     
-    admin = relationship("User", back_populates="announcements")
-
     def __repr__(self):
-        return f"<Announcement(admin_id={self.admin_id}, title={self.title}, announcement_type={self.announcement_type.name})>"
+        return f"<Announcement(created_by={self.created_by}, title={self.title}, announcement_type={self.announcement_type.name})>"
 
 
 # ---------------  Survey  ----------------------
@@ -31,18 +30,16 @@ class Announcement(BaseModel):
 class Survey(BaseModel):
     __tablename__ = 'surveys'
     
-    survey_id = Column(Integer, primary_key=True, autoincrement=True)
-    admin_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
-    title = Column(String(100), nullable=False)
-    web_link = Column(String(200), nullable=False)
-    description = Column(Text)
-    expiration_date = Column(Date, nullable=False)
-    mandatory = Column(Boolean, nullable=False)
-    
-    admin = relationship("User", back_populates="surveys")
+    survey_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column(String(100), nullable=False)
+    web_link: Mapped[str] = mapped_column(String(200), nullable=False)
+    description: Mapped[str] = mapped_column(Text)
+    expiration_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    mandatory: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    created_by: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="SET NULL"), nullable=False)
 
     def __repr__(self):
-        return f"<Survey(admin_id={self.admin_id}, title={self.title}, mandatory={self.mandatory})>"
+        return f"<Survey(created_by={self.created_by}, title={self.title}, mandatory={self.mandatory})>"
 
 # ---------------  Survey  ----------------------
 
@@ -54,21 +51,18 @@ class ReportTypeEnum(IntEnum):
 class Report(BaseModel):
     __tablename__ = 'reports'
     
-    report_id = Column(Integer, primary_key=True, autoincrement=True)
-    student_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
-    internship_id = Column(Integer, ForeignKey("internships.internship_id", ondelete="CASCADE"), nullable=False)
-    date = Column(Date, nullable=False)
-    site = Column(String(50), nullable=False)
-    report_type = Column(IntEnumType(ReportTypeEnum), nullable=False)
-    other_type = Column(String(50))
-    description = Column(Text, nullable=False)
-    evidence = Column(String(255))
-    anonymity = Column(Boolean, nullable=False)
-    is_open = Column(Boolean, nullable=False, default=True)
-    admin_comment = Column(Text)
+    report_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    student_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    internship_id: Mapped[int] = mapped_column(Integer, ForeignKey("internships.internship_id", ondelete="CASCADE"), nullable=False)
+    site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id", ondelete="RESTRICT"), nullable=False)
+    date_report: Mapped[date] = mapped_column(Date, nullable=False)
+    report_type: Mapped[ReportTypeEnum] = mapped_column(IntEnumType(ReportTypeEnum), nullable=False)
+    other_type: Mapped[str] = mapped_column(String(50))
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    evidence: Mapped[str] = mapped_column(String(255))
+    anonymity: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    is_open: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    admin_comment: Mapped[str] = mapped_column(Text)
     
-    student = relationship("User", back_populates="reports")
-    internship = relationship("Internship", back_populates="reports")
-
     def __repr__(self):
         return f"<Report(student_id={self.student_id}, type={self.report_type.name}, is_open={self.is_open})>"

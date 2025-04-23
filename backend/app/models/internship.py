@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Boolean, Integer, String,Index, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy import Boolean, Integer, String,Index, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 from enum import IntEnum
 from .base import BaseModel
 from .types import IntEnumType
@@ -22,37 +22,27 @@ class InternshipStatusEnum(IntEnum):
 class InternshipEnrollment(BaseModel):
     __tablename__ = 'internship_enrollments'
     
-    enrollment_id = Column(Integer, primary_key=True)
-    student_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
-    is_accepted = Column(Boolean, nullable=False)
-    
-    student = relationship("User", back_populates="internship_enrollments")
-    internship = relationship("Internship", back_populates="enrollment", uselist=False)
+    enrollment_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    student_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    is_accepted: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     def __repr__(self):
         return f"<InternshipEnrollment(student_id={self.student_id}, is_accepted={self.is_accepted})>"
 
 class Internship(BaseModel):
     __tablename__ = 'internships'
-    
-    internship_id = Column(Integer, primary_key=True, autoincrement=True)
-    enrollment_id = Column(Integer, ForeignKey("internship_enrollments.enrollment_id", ondelete="CASCADE"), nullable=False)
-    student_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
-    site_id = Column(Integer, ForeignKey("sites.site_id"), nullable=False)
-    year = Column(Integer, nullable=False)
-    period = Column(Integer, nullable=False)
-    status = Column(IntEnumType(InternshipStatusEnum), nullable=False)
-    
     __table_args__ = (
         Index('idx_internship_user', 'student_id'),
         Index('idx_internship_site', 'site_id'),
     )
 
-    enrollment = relationship("InternshipEnrollment", back_populates="internship")
-    student = relationship("User", back_populates="internship")
-    site = relationship("Site", back_populates="internship")
-    documents = relationship("InternshipDocument", back_populates="internship")
-    reports = relationship("Report", back_populates="internship")
+    internship_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    year: Mapped[int] = mapped_column(Integer, nullable=False)
+    period: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[InternshipStatusEnum] = mapped_column(IntEnumType(InternshipStatusEnum), nullable=False)
+    enrollment_id: Mapped[int] = mapped_column(Integer, ForeignKey("internship_enrollments.enrollment_id", ondelete="RESTRICT"), unique=True, nullable=False)
+    student_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id", ondelete="RESTRICT"), nullable=False)
 
     def __repr__(self):
         return f"<Internship(student_id={self.student_id}, site={self.site_id}, year={self.year}, period={self.period}, status={self.status.name})>"
@@ -60,13 +50,11 @@ class Internship(BaseModel):
 class InternshipDocument(BaseModel):
     __tablename__ = 'internship_documents'
     
-    document_id = Column(Integer, primary_key=True, autoincrement=True)
-    internship_id = Column(Integer, ForeignKey("internships.internship_id", ondelete="CASCADE"), nullable=False)
-    document_type = Column(IntEnumType(DocumentTypeEnum), nullable=False)
-    path = Column(String(255), nullable=False)
-    is_verified = Column(Boolean, nullable=False, default=False)
+    document_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    internship_id: Mapped[int] = mapped_column(Integer, ForeignKey("internships.internship_id", ondelete="CASCADE"), nullable=False)
+    document_type: Mapped[DocumentTypeEnum] = mapped_column(IntEnumType(DocumentTypeEnum), nullable=False)
+    path: Mapped[str] = mapped_column(String(255), nullable=False)
+    is_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     
-    internship = relationship("Internship", back_populates="documents")
-
     def __repr__(self):
         return f"<InternshipDocument(internship_id={self.internship_id}, document_type={self.document_type.name}, is_verified={self.is_verified})>"

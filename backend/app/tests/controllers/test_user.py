@@ -68,7 +68,7 @@ def test_delete_pre_registered_user(db_session: Session):
 
 def test_create_user(db_session: Session):
     user_input = UserInput(
-        academic_id="222203834",
+        academic_id="222203869",
         first_name="John",
         last_name="Doe",
         second_last_name="Smith",
@@ -79,55 +79,55 @@ def test_create_user(db_session: Session):
         is_super_admin=False
     )
     result = create_user(user_input, db_session)
-    assert result["academic_id"] == 222203834
+    assert result["academic_id"] == 222203869
     assert result["email"] == "john.doe@example.com"
     assert result["is_admin"] is False
     
-# def test_get_user(db_session: Session):
-#     user_repo = UserRepo(db_session)
-#     user = user_repo.create(User(
-#         academic_id=987654321,
-#         first_name="Alice",
-#         last_name="Brown",
-#         second_last_name="Johnson",
-#         email="alice.brown@example.com",
-#         password="hashedpass",
-#         # profile_photo=None,
-#         is_admin=True,
-#         is_super_admin=False
-#     ))
-#     result = get_user(user.user_id, db_session)
-#     assert result is not None
-#     assert result["email"] == "alice.brown@example.com"
+def test_get_user(db_session: Session):
+    user_repo = UserRepo(db_session)
+    user = user_repo.create(User(
+        academic_id="228203830",
+        first_name="Alice",
+        last_name="Brown",
+        second_last_name="Johnson",
+        email="alice.brown@example.com",
+        password="hashedpass",
+        profile_photo="None",
+        is_admin=True,
+        is_super_admin=False
+    ))
+    result = get_user(user.user_id, db_session)
+    assert result is not None
+    assert result["email"] == "alice.brown@example.com"
 
-# def test_update_user(db_session: Session):
-#     user_repo = UserRepo(db_session)
-#     user = user_repo.create(User(
-#         academic_id=555555555,
-#         first_name="Bob",
-#         last_name="Marley",
-#         second_last_name="King",
-#         email="bob.marley@example.com",
-#         password="hashedpass",
-#         # profile_photo=None,
-#         is_admin=False,
-#         is_super_admin=False
-#     ))
-#     user_input = UserInputUpdate(email="bob.new@example.com")
-#     result = update_user(user.user_id, user_input, db_session)
-#     assert result["email"] == "bob.new@example.com"
+def test_update_user(db_session: Session):
+    user_repo = UserRepo(db_session)
+    user = user_repo.create(User(
+        academic_id=221203840,
+        first_name="Bob",
+        last_name="Marley",
+        second_last_name="King",
+        email="bob.marley@example.com",
+        password="hashedpass",
+        profile_photo="None",
+        is_admin=False,
+        is_super_admin=False
+    ))
+    user_input = UserInputUpdate(email="bob.new@example.com")
+    result = update_user(user.user_id, user_input, db_session)
+    assert result["email"] == "bob.new@example.com"
 
-# def test_delete_user(db_session: Session):
-#     user_repo = UserRepo(db_session)
-#     user = user_repo.create(User(
-#         academic_id=666666666,
-#         first_name="Charlie",
-#         last_name="Chaplin",
-#         second_last_name="Comedian",
-#         email="charlie@example.com",
-#         password="hashedpass",
-#         # profile_photo=None,
-#         is_admin=False,
-#         is_super_admin=False
-#     ))
-#     assert delete_user(user.user_id, db_session) is True
+def test_delete_user(db_session: Session):
+    user_repo = UserRepo(db_session)
+    user = user_repo.create(User(
+        academic_id="224203890",
+        first_name="Charlie",
+        last_name="Chaplin",
+        second_last_name="Comedian",
+        email="charlie@example.com",
+        password="hashedpass",
+        profile_photo="None",
+        is_admin=False,
+        is_super_admin=False
+    ))
+    assert delete_user(user.user_id, db_session) is True

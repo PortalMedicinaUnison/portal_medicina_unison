@@ -6,7 +6,7 @@ from schemas.internship import InternshipInput, InternshipEnrollmentInput
 from utils.utils import orm_to_dict
 
 
-# ---------------  Internship  ----------------------
+# ----------------------  Internship  ----------------------
 
 def create_internship(internship: InternshipInput, db: Session):
     new_internship = Internship(
@@ -45,8 +45,7 @@ def get_internships_by_site(site_id: int, db: Session):
 def update_internship(internship_id: int, internship: InternshipInput, db: Session):
     pass
 
-
-# ---------------  Internship enrollments  ----------------------
+# ----------------------  Internship enrollments  ----------------------
 
 def create_internship_enrollment(internship_enrollment: InternshipEnrollmentInput, db: Session):
     new_internship_enrollment = InternshipEnrollment(
