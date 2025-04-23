@@ -6,7 +6,7 @@ export function cleanFormData(data = {}, fields = null) {
     if (fields != null && !fields.includes(key)) {
       return;
     }
-    if (typeof data[key] != 'string') {
+    if (typeof data[key] === 'string') {
         cleanedData[key] = data[key].trim();
     } else {
       cleanedData[key] = data[key];
