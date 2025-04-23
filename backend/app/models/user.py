@@ -32,6 +32,7 @@ class User(BaseModel):
     last_name: Mapped[str] = mapped_column(String(50), nullable=False)
     second_last_name: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     email: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
+    phone_number: Mapped[Optional[str]] = mapped_column(String(15), nullable=True)
     password: Mapped[str] = mapped_column(String, nullable=False)
     profile_photo: Mapped[str] = mapped_column(String(255), nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)

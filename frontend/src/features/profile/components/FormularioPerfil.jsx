@@ -6,12 +6,12 @@ function FormularioPerfil() {
   const { user } = useUser();
   const { updateUser, error, success } = useUserUpdate();
 
-function FormularioPerfil({ user }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     secondLastName: '',
     email: '',
+    phone_number: '',
     password: '',
     profile_photo: '',
     is_admin: false,
@@ -25,6 +25,7 @@ function FormularioPerfil({ user }) {
         lastName: user.last_name ?? "",
         secondLastName: user.second_last_name ?? "",
         email: user.email ?? "",
+        phone_number: user.phone_number ?? "",
         password: user.password ?? "",
         profile_photo: user.profile_photo ?? "",
         is_admin: user.is_admin ?? false,
@@ -54,6 +55,7 @@ function FormularioPerfil({ user }) {
         lastName: '',
         secondLastName: '',
         email: '',
+        phone_number: '',
         password: '',
         profile_photo: '',
         is_admin: false,

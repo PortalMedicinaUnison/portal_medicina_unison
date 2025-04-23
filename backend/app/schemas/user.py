@@ -29,6 +29,7 @@ class UserInput(BaseModel):
     last_name: str
     second_last_name: Optional[str] = None
     email: str
+    phone_number: Optional[str] = None
     password: Optional[str] = None
     profile_photo: str
     is_admin: bool = False
@@ -54,6 +55,7 @@ class UserInputUpdate(BaseModel):
     last_name: Optional[str]
     second_last_name: Optional[str] = None
     email: Optional[str]
+    phone_number: Optional[str]
     profile_photo: Optional[str]
     is_admin: Optional[bool]
     is_super_admin: Optional[bool]
