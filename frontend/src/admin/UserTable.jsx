@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import api from '../api';
-import { users } from '../../data';
 
 function UserTable() {
     const [search, setSearch] = useState('');
