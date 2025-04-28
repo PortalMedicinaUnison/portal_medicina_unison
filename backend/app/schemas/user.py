@@ -65,6 +65,15 @@ class UserInputUpdate(BaseModel):
         is_valid_email(email)
         return email
 
+class UserOutput(BaseModel):
+    academic_id: str
+    first_name: str
+    last_name: str
+    second_last_name: Optional[str] = None
+    email: str
+    profile_photo: str
+    is_active: bool = False
+    
 class UserAdminInputUpdate(UserInputUpdate):
     is_admin: Optional[bool]
 
@@ -85,3 +94,4 @@ class UserPasswordInput(BaseModel):
     def validate_new_password(cls, new_password):
         is_valid_password(new_password)
         return new_password
+
