@@ -186,6 +186,24 @@ function Sidebar({ toggleSidebar }) {
                                     <span className="sidebar-item-text">Pagina Servicio Social</span>
                                 </a>
                             </li>
+                        <li>
+                            <a href="/applicants" className="sidebar-item-group group">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="sidebar-item-icon"
+                                    viewBox="0 0 20 20"
+                                    aria-hidden="true"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 14a6 6 0 1 1 0-12 6 6 0 0 1 0 12Z"/>
+                                    <path d="M10 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z"/>
+                                </svg>                        
+                                <span className="sidebar-item-text">Información del Aplicante</span>
+                            </a>
+                        </li>
                     </ul>
                     
                     

@@ -1,4 +1,3 @@
-// contexts/UserContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import api from '../api';
 
@@ -8,6 +7,7 @@ const UserContext = createContext();
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -15,6 +15,7 @@ export function UserProvider({ children }) {
 
       if (!access_token.token) {
         setError("No access token found");
+        setLoading(false);
         return;
       }
         
@@ -31,6 +32,8 @@ export function UserProvider({ children }) {
       } catch (error) {
         console.error("User not found", error);
         setError("User not found");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -40,10 +43,11 @@ export function UserProvider({ children }) {
   const clearUser = () => {
     setUser(null);
     setError(null);
+    setLoading(false);
   };
 
   return (
-    <UserContext.Provider value={{ user, clearUser, error }}>
+    <UserContext.Provider value={{ user, clearUser, error, loading }}>
       {children}
     </UserContext.Provider>
   );

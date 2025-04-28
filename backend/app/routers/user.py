@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from typing import List
 from sqlalchemy.orm import Session
-from schemas.user import UserInput, PreRegisteredUserInput, UserOutput
+from schemas.user import UserInput, PreRegisteredUserInput, UserInputUpdate, PreRegisteredUserInputUpdate, UserOutput
 from core.dependencies import get_db
 from controllers.user import (
     create_user,
@@ -40,7 +40,7 @@ def get_user_router(user_id: int, db: Session = Depends(get_db)):
     return user
 
 @user_router.put("/{user_id}")
-def update_user_router(user_id: int, user_input: UserInput, db: Session = Depends(get_db)):
+def update_user_router(user_id: int, user_input: UserInputUpdate, db: Session = Depends(get_db)):
     user = update_user(user_id, user_input, db)
     if not user:
         raise HTTPException(

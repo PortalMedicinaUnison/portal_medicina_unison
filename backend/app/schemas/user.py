@@ -29,6 +29,7 @@ class UserInput(BaseModel):
     last_name: str
     second_last_name: Optional[str] = None
     email: str
+    phone_number: Optional[str] = None
     password: Optional[str] = None
     profile_photo: str
     is_admin: bool = False
@@ -54,16 +55,11 @@ class UserInputUpdate(BaseModel):
     last_name: Optional[str]
     second_last_name: Optional[str] = None
     email: Optional[str]
-    password: Optional[str]
+    phone_number: Optional[str]
     profile_photo: Optional[str]
     is_admin: Optional[bool]
     is_super_admin: Optional[bool]
 
-    @field_validator("password")
-    def validate_password(cls, password):
-        is_valid_password(password)
-        return password
-            
     @field_validator("email")
     def validate_email(cls, email):
         is_valid_email(email)
@@ -83,3 +79,19 @@ class UserAdminInputUpdate(UserInputUpdate):
 
 class UserSuperAdminInputUpdate(UserInputUpdate):
     is_super_admin: Optional[bool]
+
+class UserPasswordInput(BaseModel):
+    current_password: str
+    new_password: str
+    confirm_password: str
+
+    @field_validator("current_password")
+    def validate_password(cls, password):
+        is_valid_password(password)
+        return password
+
+    @field_validator("new_password")
+    def validate_new_password(cls, new_password):
+        is_valid_password(new_password)
+        return new_password
+

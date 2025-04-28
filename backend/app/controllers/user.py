@@ -100,7 +100,6 @@ def update_user(user_id: int, user_input: UserInputUpdate, db: Session) -> dict:
         return None
     return {
         "user_id": updated_user.user_id,
-        "academic_id": updated_user.academic_id,
         "first_name": updated_user.first_name,
         "last_name": updated_user.last_name,
         "second_last_name": updated_user.second_last_name,
