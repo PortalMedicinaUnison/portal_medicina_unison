@@ -398,11 +398,11 @@
         }
     
         .user-info-row {
-            @apply px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0;
+            @apply px-4 py-6 sm:grid sm:grid-cols-2 sm:gap-10 sm:px-10;
         }
     
         .user-info-container {
-            @apply flex items-center gap-6;
+            @apply flex items-center gap-20;
         }
     
         .user-info-photo {

@@ -90,63 +90,78 @@ function FormularioPerfil() {
         </div>
       )}
 
-      <dl className="user-info-list">
-        <div className="user-info-row">
-          <dt className="form-label">Nombre</dt>
-          <dd className="user-info-data">
-            <input
-              className="form-input_full"
-              name="firstName"
-              type="text"
-              value={formData.firstName}
-              onChange={handleChange}
-              placeholder="Nombre"
-            />
-          </dd>
+      <div className="user-info-container">
+        <div className="user-info-photo">
+          <img 
+            src={user?.profile_photo || "/default-avatar.png"} 
+            alt="Foto de perfil" 
+            className="user-profile-photo"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/default-avatar.png";
+            }}
+          />
         </div>
+        <div className="user-info-details">
+          <dl className="user-info-list">
+            <div className="user-info-row">
+              <dt className="form-label">Nombre</dt>
+              <dd className="user-info-data">
+                <input
+                  className="form-input_full"
+                  name="firstName"
+                  type="text"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  placeholder="Nombre"
+                />
+              </dd>
+            </div>
 
-        <div className="user-info-row">
-          <dt className="form-label">Apellido Paterno</dt>
-          <dd className="user-info-data">
-            <input
-              className="form-input_full"
-              name="lastName"
-              type="text"
-              value={formData.lastName}
-              onChange={handleChange}
-              placeholder="Apellido Paterno"
-            />
-          </dd>
-        </div>
+            <div className="user-info-row">
+              <dt className="form-label">Apellido Paterno</dt>
+              <dd className="user-info-data">
+                <input
+                  className="form-input_full"
+                  name="lastName"
+                  type="text"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  placeholder="Apellido Paterno"
+                />
+              </dd>
+            </div>
 
-        <div className="user-info-row">
-          <dt className="form-label">Apellido Materno</dt>
-          <dd className="user-info-data">
-            <input
-              className="form-input_full"
-              name="secondLastName"
-              type="text"
-              value={formData.secondLastName}
-              onChange={handleChange}
-              placeholder="Apellido Materno"
-            />
-          </dd>
-        </div>
+            <div className="user-info-row">
+              <dt className="form-label">Apellido Materno</dt>
+              <dd className="user-info-data">
+                <input
+                  className="form-input_full"
+                  name="secondLastName"
+                  type="text"
+                  value={formData.secondLastName}
+                  onChange={handleChange}
+                  placeholder="Apellido Materno"
+                />
+              </dd>
+            </div>
 
-        <div className="user-info-row">
-          <dt className="form-label">Correo Electrónico</dt>
-          <dd className="user-info-data">
-            <input
-              className="form-input_full"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Correo Electrónico"
-            />
-          </dd>
+            <div className="user-info-row">
+              <dt className="form-label">Correo Electrónico</dt>
+              <dd className="user-info-data">
+                <input
+                  className="form-input_full"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Correo Electrónico"
+                />
+              </dd>
+            </div>
+          </dl>
         </div>
-      </dl>
+      </div>
 
       <div className="button-group">
         <button type="button" className="btn-secondary">Cancelar</button>
