@@ -1,8 +1,10 @@
 import React from 'react';
 import { useUser } from "../../../contexts/UserContext";
+import { useNavigate } from "react-router-dom"; // Importa useNavigate
 
 function UserInfo() {
-  const { user } = useUser(); 
+  const { user } = useUser();
+  const navigate = useNavigate(); // Inicializa useNavigate
 
   return (
     <div className="user-info-card">
@@ -43,6 +45,17 @@ function UserInfo() {
       ) : (
         <span className="text-xs text-gray-500">Cargando usuario...</span>
       )}
+
+      {/* Botón Editar */}
+      <div className="button-group">
+        <button
+          type="button"
+          className="btn-primary"
+          onClick={() => navigate("/editar-perfil")} // Redirige a editar-perfil
+        >
+          Editar
+        </button>
+      </div>
     </div>
   );
 }

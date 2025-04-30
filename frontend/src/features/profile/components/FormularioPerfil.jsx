@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../../../contexts/UserContext";
+import { useNavigate } from "react-router-dom"; // Importa useNavigate
 import useUserUpdate from '../hooks/useUserUpdate';
 
 function FormularioPerfil() {
   const { user } = useUser();
   const { updateUser, error: updateError, success } = useUserUpdate();
+  const navigate = useNavigate(); // Inicializa useNavigate
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -164,7 +166,13 @@ function FormularioPerfil() {
       </div>
 
       <div className="button-group">
-        <button type="button" className="btn-secondary">Cancelar</button>
+        <button 
+          type="button" 
+          className="btn-secondary" 
+          onClick={() => navigate("/perfil")} // Redirige a la página de perfil
+        >
+          Cancelar
+        </button>
         <button type="submit" className="btn-primary">Guardar</button>
       </div>
     </form>
