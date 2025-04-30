@@ -381,54 +381,7 @@
     
 
       
-    .user-info-form {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 1rem;
-      }
-      
-      .page-title {
-        font-size: 1.75rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
-      }
-      
-      .user-info-list {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      
-      .user-info-row {
-        display: flex;
-        flex-direction: column;
-      }
-      
-      .form-label {
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-      }
-      
-      .user-info-input {
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-      }
-      
-      .user-info-actions {
-        margin-top: 1rem;
-        text-align: right;
-      }
-      
-      .submit-button {
-        background-color: #2563eb;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-      }
-      
+    
 
 
     @layer components {
@@ -445,6 +398,12 @@
           @apply px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0;
         }
 
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem; /* Espaciado entre los botones */
+            margin-top: 2rem; /* Separación del contenido superior */
+          }
       
       }
       
