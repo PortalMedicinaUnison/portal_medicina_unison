@@ -20,8 +20,8 @@ function UserRoutes() {
       {/* Rutas protegidas (requieren autenticación) */}
       {/* <Route element={<ProtectedRoute />}> */}
       <Route path="/inicio" element={<HomePage />} />
-      <Route path="/perfil" element={<ProfilePage />} />
-      <Route path="/user" element={<UserPage />} />
+      <Route path="/perfil" element={<UserPage />} />
+      <Route path="/editar-perfil" element={<ProfilePage />} />
       <Route path="/historiaClinica" element={<MedicalRecordPage />} />
     </Routes>
   );

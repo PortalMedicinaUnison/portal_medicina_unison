@@ -225,6 +225,14 @@
         hover:bg-gray-50
     }
 
+    .button-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem; /* Espaciado entre los botones */
+        margin-top: 2rem; /* Separación del contenido superior */
+    }
+    
+
     /* ------------- NAVBAR ------------- */
 
     .navbar { @apply 
@@ -377,40 +385,44 @@
         rounded-full
     }
 
-    /* ------------- PROFILE EDIT------------- */
+        /* ------------- PROFILE EDIT------------- */
     
-
-      
-    
-
-
     @layer components {
-
+    
         .user-info-card {
-          @apply bg-white shadow rounded-lg p-6;
+            @apply bg-white shadow rounded-lg p-6;
         }
-      
+    
         .user-info-list {
-          @apply divide-y divide-gray-100;
+            @apply divide-y divide-gray-100;
         }
-      
+    
         .user-info-row {
-          @apply px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0;
+            @apply px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0;
         }
-
-        .button-group {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem; /* Espaciado entre los botones */
-            margin-top: 2rem; /* Separación del contenido superior */
-          }
+    
+        .user-info-container {
+            @apply flex items-center gap-6;
+        }
+    
+        .user-info-photo {
+            @apply flex-shrink-0;
+        }
+    
+        .user-info-details {
+            @apply flex-grow;
+        }
+    
+        .user-profile-photo {
+            @apply w-32 h-32 rounded-full object-cover border-2 border-gray-300;
+        }
+    }
       
-      }
-      
-
+    
 
 
 
       
 
 }
+
