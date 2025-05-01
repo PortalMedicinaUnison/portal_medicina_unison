@@ -1,13 +1,36 @@
 import React from 'react';
 import { useUser } from "../../../contexts/UserContext";
-import { useNavigate } from "react-router-dom"; // Importa useNavigate
+import { useNavigate } from "react-router-dom";
 
 function UserInfo() {
   const { user } = useUser();
-  const navigate = useNavigate(); // Inicializa useNavigate
+  const navigate = useNavigate();
 
   return (
-    <div>
+    <div className="component-container">
+      <div className="component-container_header">
+        <div className="component-container_header-content">
+          <div className="component-container_pretitle">
+            <p>Inicio</p>
+          </div>
+          <h2 className="page-title-1">
+            Perfil
+          </h2>
+        </div>
+        
+        <div className="component-container_actions"> 
+          <span className="show-on-sm">
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => navigate("/editar-perfil")}
+            >
+              Editar
+            </button>
+          </span>
+        </div>
+      </div>
+  
       {user ? (
         <div className="info-container">
           <div className="user-info-photo">
@@ -20,13 +43,7 @@ function UserInfo() {
                 e.target.src = "/default-avatar.png";
               }}
             />
-
-            <div>
-              <p className='item-link'>Cambiar foto</p>
-              <p className='item-text'>Esto ayudará a tu administrador a identificarte</p>
-            </div>
           </div>
-        
         
           <div className="item-container">
             <dl className="item-list">
@@ -46,14 +63,21 @@ function UserInfo() {
                 <dt className="item-header">Expediente</dt>
                 <dd className="item-text">{user.academic_id}</dd>
               </div>
+
+              <div className="item-row">
+                <dt className="item-header">Teléfono</dt>
+                <dd className="item-text">{user.phone_number}</dd>
+              </div>
+
+              <div className="item-row">
+                <dt className="item-header">Internado</dt>
+                <dd className="item-text">{user.internship_id}</dd>
+              </div>
             </dl>
           </div>
 
           <div class="info-actions">
             <button type="button" className='item-link'>Reset Password</button>
-          </div>
-
-          <div class="info-actions">
             <button type="button" className='item-link'>Remove account</button>
           </div>
 
@@ -61,17 +85,6 @@ function UserInfo() {
       ) : (
         <span className="text-xs text-gray-500">Cargando usuario...</span>
       )}
-
-      {/* Botón Editar */}
-      <div className="button-group">
-        <button
-          type="button"
-          className="btn-primary"
-          onClick={() => navigate("/editar-perfil")} // Redirige a editar-perfil
-        >
-          Editar
-        </button>
-      </div>
     </div>
   );
 }
