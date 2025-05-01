@@ -7,9 +7,9 @@ function UserInfo() {
   const navigate = useNavigate(); // Inicializa useNavigate
 
   return (
-    <div className="user-info-card">
+    <div>
       {user ? (
-        <div className="user-info-container">
+        <div className="info-container">
           <div className="user-info-photo">
             <img 
               src={user.profile_photo || "/default-avatar.png"} 
@@ -20,27 +20,43 @@ function UserInfo() {
                 e.target.src = "/default-avatar.png";
               }}
             />
+
+            <div>
+              <p className='item-link'>Cambiar foto</p>
+              <p className='item-text'>Esto ayudará a tu administrador a identificarte</p>
+            </div>
           </div>
-          <div className="user-info-details">
-            <dl className="user-info-list">
-              <div className="user-info-row">
-                <dt className="form-label">Nombre completo</dt>
-                <dd className="user-info-data">
+        
+        
+          <div className="item-container">
+            <dl className="item-list">
+              <div className="item-row">
+                <dt className="item-header">Nombre completo</dt>
+                <dd className="item-text">
                   {user.first_name} {user.last_name} {user.second_last_name}
                 </dd>
               </div>
 
-              <div className="user-info-row">
-                <dt className="form-label">Correo electrónico</dt>
-                <dd className="user-info-data">{user.email}</dd>
+              <div className="item-row">
+                <dt className="item-header">Correo electrónico</dt>
+                <dd className="item-text">{user.email}</dd>
               </div>
 
-              <div className="user-info-row">
-                <dt className="form-label">Expediente</dt>
-                <dd className="user-info-data">{user.academic_id}</dd>
+              <div className="item-row">
+                <dt className="item-header">Expediente</dt>
+                <dd className="item-text">{user.academic_id}</dd>
               </div>
             </dl>
           </div>
+
+          <div class="info-actions">
+            <button type="button" className='item-link'>Reset Password</button>
+          </div>
+
+          <div class="info-actions">
+            <button type="button" className='item-link'>Remove account</button>
+          </div>
+
         </div>
       ) : (
         <span className="text-xs text-gray-500">Cargando usuario...</span>
@@ -61,3 +77,4 @@ function UserInfo() {
 }
 
 export default UserInfo;
+

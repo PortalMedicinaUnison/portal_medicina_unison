@@ -386,43 +386,106 @@
     }
 
         /* ------------- PROFILE EDIT------------- */
-    
-    @layer components {
-    
-        .user-info-card {
-            @apply bg-white shadow rounded-lg p-6;
-        }
-    
-        .user-info-list {
-            @apply divide-y divide-gray-100;
-        }
-    
-        .user-info-row {
-            @apply px-4 py-6 sm:grid sm:grid-cols-2 sm:gap-10 sm:px-10;
-        }
-    
-        .user-info-container {
-            @apply flex items-center gap-20;
-        }
-    
-        .user-info-photo {
-            @apply flex-shrink-0;
-        }
-    
-        .user-info-details {
-            @apply flex-grow;
-        }
-    
-        .user-profile-photo {
-            @apply w-32 h-32 rounded-full object-cover border-2 border-gray-300;
-        }
+
+    .item-container { @apply 
+        mt-8
+        border-t 
+        border-gray-100
     }
-      
-    
 
+    .info-container { @apply 
+        flex-col
+    }
 
+    .user-info-photo { @apply 
+        flex
+        items-center
+        gap-8
+    }
 
-      
+    .user-profile-photo { @apply 
+        w-24
+        h-24 
+        rounded-full 
+        object-cover 
+        border-2 
+        border-gray-300
+        cursor-pointer
+    }
 
+    .item-list { @apply 
+        divide-y
+        divide-gray-100
+    }
+
+    .item-row { @apply 
+        py-6 
+        md:grid 
+        md:grid-cols-4 
+        md:gap-4
+        col-span-3
+    }
+
+    .item-header { @apply 
+        text-sm/6
+        font-medium 
+        text-gray-900
+    }
+
+    .item-text { @apply 
+        mt-1 
+        text-sm/6 
+        text-gray-700 
+        sm:col-span-2 
+        sm:mt-0
+    }
+
+    .info-actions { @apply 
+        flex
+        gap-4
+        mt-8
+    }
+
+    .item-link { @apply 
+        item-header
+        cursor-pointer
+        hover:underline
+    }
+
+    .attachments-list { @apply 
+        divide-y divide-gray-100 rounded-md border border-gray-200
+    }
+
+    .attachment-item { @apply 
+        flex items-center justify-between py-4 pr-5 pl-4 text-sm/6
+    }
+
+    .attachment-info { @apply 
+        flex w-0 flex-1 items-center
+    }
+
+    .attachment-file { @apply 
+        ml-4 flex min-w-0 flex-1 gap-2
+    }
+
+    .attachment-file-name { @apply 
+        truncate font-medium
+    }
+
+    .attachment-file-size { @apply 
+        shrink-0 text-gray-400
+    }
+
+    .attachment-download { @apply 
+        ml-4 shrink-0
+    }
+
+    .attachment-link { @apply 
+        font-medium text-indigo-600 hover:text-indigo-500
+    }
+
+    /* Icon and other elements */
+    .icon-size { @apply 
+        size-5 shrink-0
+    }
 }
-
