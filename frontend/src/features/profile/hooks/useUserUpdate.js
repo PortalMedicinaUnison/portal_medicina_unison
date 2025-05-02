@@ -29,6 +29,7 @@ export default function useUserUpdate() {
       last_name: cleanedData.lastName,
       second_last_name: cleanedData.secondLastName,
       email: cleanedData.email,
+      phone_number: cleanedData.phoneNumber,
       profile_photo: DEFAULT_PROFILE_IMAGE,
       is_admin: false,
       is_super_admin: false,

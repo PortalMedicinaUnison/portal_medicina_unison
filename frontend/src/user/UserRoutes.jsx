@@ -6,23 +6,21 @@ import LoginPage from '../features/auth/pages/LoginPage';
 import RegisterPage from '../features/auth/pages/RegisterPage';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 import HomePage from '../pages/HomePage';
-import ProfilePage from '../features/profile/pages/ProfilePage';
-import MedicalRecordPage from "./features/medical_record/pages/MedicalRecordPage";
-import UserPage from '../features/profile/pages/UserInfo';
+import UserFormPage from '../features/profile/pages/UserFormPage';
+import UserInfoPage from '../features/profile/pages/UserInfoPage';
 
 function UserRoutes() {
   return (
     <Routes>
       {/* Rutas públicas */}
-      <Route path="/" element={<LoginPage />} />
-      <Route path="/registro" element={<RegisterPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<RegisterPage />} />
 
       {/* Rutas protegidas (requieren autenticación) */}
       {/* <Route element={<ProtectedRoute />}> */}
-      <Route path="/inicio" element={<HomePage />} />
-      <Route path="/perfil" element={<ProfilePage />} />
-      <Route path="/user" element={<UserPage />} />
-      <Route path="/historiaClinica" element={<MedicalRecordPage />} />
+      <Route path="/" element={<HomePage />} />
+      <Route path="/profile" element={<UserInfoPage />} />
+      <Route path="/edit-profile" element={<UserFormPage />} />
     </Routes>
   );
 }

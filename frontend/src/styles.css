@@ -49,6 +49,11 @@
 
 @layer components {
 
+    .show-on-sm { @apply 
+        hidden 
+        sm:block;
+    }
+
     .color-primary { 
         background-color: #24398a; 
     }
@@ -65,22 +70,59 @@
     }
 
     .main-content { @apply 
-        border
+        /* border */
         h-screen 
-        border-gray-300 
         border-dashed
         rounded-lg
+        text-sm/6
+        /* text-[13px] */
+        font-light
     }
 
     .main-content-header { @apply 
         p-4 
         border-b
+        bg-black
     }
 
     .main-content-body { @apply 
         p-4
         h-screen
         overflow-y-auto
+        bg-black
+    }
+
+    .component-container { @apply 
+        flex
+        flex-col
+        gap-8;
+    }
+
+    .component-container_header {
+        @apply lg:flex lg:justify-between;
+    }
+      
+    .component-container_header-content { @apply 
+        min-w-0 
+        flex-1
+    }
+      
+
+    .component-container-pretitle { @apply 
+        mt-1 
+        flex 
+        flex-col 
+        sm:mt-0 
+        sm:flex-row 
+        sm:flex-wrap 
+        sm:space-x-6
+    }
+
+    .component-container_actions { @apply 
+        flex
+        lg:mt-0 
+        lg:ml-4
+        items-end
     }
 
     .login-title { @apply 
@@ -124,7 +166,7 @@
         text-center;
     }
 
-    .page-title { @apply 
+    .page-title-2 { @apply 
         text-2xl
         font-semibold
         text-gray-900
@@ -132,6 +174,17 @@
         sm:text-2xl
         sm:tracking-tight
     }
+
+    .page-title-1 { @apply 
+        text-2xl/7 
+        font-bold 
+        text-gray-900 
+        sm:truncate 
+        sm:text-3xl 
+        sm:tracking-tight
+    }
+
+    
 
     /* ------------- FORMS ------------- */
 
@@ -148,16 +201,21 @@
         grow
         py-2
         pr-2
-        pl-1
+        pl-2
         text-gray-900
         placeholder:text-gray-400
         focus:outline-none
-        text-base
+        text-sm/6
         border
         rounded-md
         shadow-sm
         focus:ring-1
         focus:border-blue-500;
+    }
+
+    .form-input--half { @apply 
+        form-input
+        w-1/2
     }
 
     .form-input_full { @apply 
@@ -224,6 +282,13 @@
         ring-inset 
         hover:bg-gray-50
     }
+
+    .button-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem; 
+    }
+    
 
     /* ------------- NAVBAR ------------- */
 
@@ -377,52 +442,109 @@
         rounded-full
     }
 
-    /* ------------- PROFILE EDIT------------- */
-    .form-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 40px;
-    }
-    
+        /* ------------- SINGULAR READ & UPDATE ------------- */
 
-      
-    .profile-section {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 20px;
+    .item-container { @apply 
+        border-t 
+        border-b
+        border-gray-100
     }
-    
-      
-    .profile-image {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-      
-    .form-grid {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        max-width: 400px;
-        gap: 15px;
-    }
-    
-      
-    .input-group {
-        display: flex;
-        flex-direction: column;
-    }
-      
-    .button-group {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 20px;
-    }
-    
-      
 
+    .info-container { @apply 
+        flex
+        flex-col
+    }
+
+    .user-info-photo { @apply 
+        flex
+        items-center
+        gap-8
+        mb-16
+    }
+
+    .user-profile-photo { @apply 
+        w-24
+        h-24 
+        rounded-full 
+        object-cover 
+    }
+
+    .item-list { @apply 
+        divide-y
+        divide-gray-100
+    }
+
+    .item-row { @apply 
+        py-5
+        md:grid 
+        md:grid-cols-4
+        md:items-center
+        md:gap-4
+        col-span-3
+    }
+
+    .item-header { @apply 
+        font-medium
+        text-gray-900
+    }
+
+    .item-text { @apply 
+        text-gray-700 
+        sm:col-span-3 
+        sm:mt-0
+    }
+
+    .info-actions { @apply 
+        flex
+        flex-col
+        gap-2
+        items-start
+        underline
+        underline-offset-4
+        decoration-dashed
+        decoration-1
+    }
+
+    .item-link { @apply 
+        item-header
+        cursor-pointer
+        hover:underline
+    }
+
+    .attachments-list { @apply 
+        divide-y divide-gray-100 rounded-md border border-gray-200
+    }
+
+    .attachment-item { @apply 
+        flex items-center justify-between py-4 pr-5 pl-4
+    }
+
+    .attachment-info { @apply 
+        flex w-0 flex-1 items-center
+    }
+
+    .attachment-file { @apply 
+        ml-4 flex min-w-0 flex-1 gap-2
+    }
+
+    .attachment-file-name { @apply 
+        truncate font-medium
+    }
+
+    .attachment-file-size { @apply 
+        shrink-0 text-gray-400
+    }
+
+    .attachment-download { @apply 
+        ml-4 shrink-0
+    }
+
+    .attachment-link { @apply 
+        font-medium text-indigo-600 hover:text-indigo-500
+    }
+
+    /* Icon and other elements */
+    .icon-size { @apply 
+        size-5 shrink-0
+    }
 }
