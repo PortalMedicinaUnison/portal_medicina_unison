@@ -3,6 +3,7 @@ import api from '../../../api';
 import { useNavigate } from 'react-router-dom';
 import { setToken, removeToken, isAuthenticated } from '../../../utils/auth';
 import { useUser } from '../../../contexts/UserContext';
+import { ROUTES } from '../../../config';
 
 
 export default function useAuth() {
@@ -31,7 +32,7 @@ export default function useAuth() {
     removeToken();
     clearUser();
     setAuthenticated(false);
-    navigate("/");
+    navigate(ROUTES.LOGIN);
   };
   
   return { login, logout, error, authenticated };

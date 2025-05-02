@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { ROUTES  } from '../config';
 
-// Ajusta los imports según la ubicación real de tus componentes/páginas
 import LoginPage from '../features/auth/pages/LoginPage';
 import RegisterPage from '../features/auth/pages/RegisterPage';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
@@ -11,16 +11,15 @@ import UserInfoPage from '../features/profile/pages/UserInfoPage';
 
 function UserRoutes() {
   return (
+
     <Routes>
       {/* Rutas públicas */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<RegisterPage />} />
+      <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+      <Route path={ROUTES.SIGNUP} element={<RegisterPage />} />
 
-      {/* Rutas protegidas (requieren autenticación) */}
-      {/* <Route element={<ProtectedRoute />}> */}
-      <Route path="/" element={<HomePage />} />
-      <Route path="/profile" element={<UserInfoPage />} />
-      <Route path="/edit-profile" element={<UserFormPage />} />
+      <Route path={ROUTES.HOME} element={<HomePage />} />
+      <Route path={ROUTES.PROFILE} element={<UserInfoPage />} />
+      <Route path={ROUTES.EDIT_PROFILE} element={<UserFormPage />} />
     </Routes>
   );
 }

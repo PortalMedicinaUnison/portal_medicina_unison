@@ -1,6 +1,8 @@
 import React from 'react';
 import { useUser } from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../../config";
+
 
 function UserInfo() {
   const { user } = useUser();
@@ -23,7 +25,7 @@ function UserInfo() {
             <button
               type="button"
               className="btn-primary"
-              onClick={() => navigate("/edit-profile")}
+              onClick={() => navigate(ROUTES.EDIT_PROFILE)}
             >
               Editar
             </button>

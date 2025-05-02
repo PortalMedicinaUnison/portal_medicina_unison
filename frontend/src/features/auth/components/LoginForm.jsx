@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../../config';
 import useAuth from '../hooks/useAuth';
 import { isValidEmail } from '../../../utils/validations';
 import '../../../styles.css';
@@ -22,7 +23,7 @@ function LoginForm() {
     const isLoggedIn = await login(cleanedEmail, password);
     console.log(isLoggedIn);
     if (isLoggedIn) {
-      navigate('/');
+      navigate(ROUTES.HOME);
     }
   };
 
