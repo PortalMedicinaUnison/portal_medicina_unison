@@ -22,7 +22,7 @@ function LoginForm() {
     const isLoggedIn = await login(cleanedEmail, password);
     console.log(isLoggedIn);
     if (isLoggedIn) {
-      navigate('/inicio');
+      navigate('/');
     }
   };
 

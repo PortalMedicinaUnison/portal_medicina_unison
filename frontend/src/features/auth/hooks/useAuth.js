@@ -31,7 +31,7 @@ export default function useAuth() {
     removeToken();
     clearUser();
     setAuthenticated(false);
-    navigate("/login");
+    navigate("/");
   };
   
   return { login, logout, error, authenticated };

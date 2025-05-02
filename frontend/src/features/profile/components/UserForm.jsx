@@ -3,7 +3,7 @@ import { useUser } from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import useUserUpdate from '../hooks/useUserUpdate';
 
-function FormularioPerfil() {
+function UserForm() {
   const { user } = useUser();
   const { updateUser, error: updateError, success } = useUserUpdate();
   const navigate = useNavigate();
@@ -189,7 +189,7 @@ function FormularioPerfil() {
           <button 
             type="button" 
             className="btn-secondary" 
-            onClick={() => navigate("/perfil")} // Redirige a la página de perfil
+            onClick={() => navigate("/profile")} // Redirige a la página de perfil
           >
             Cancelar
           </button>
@@ -200,4 +200,4 @@ function FormularioPerfil() {
   );
 }
 
-export default FormularioPerfil;
+export default UserForm;

@@ -23,7 +23,7 @@ function UserInfo() {
             <button
               type="button"
               className="btn-primary"
-              onClick={() => navigate("/editar-perfil")}
+              onClick={() => navigate("/edit-profile")}
             >
               Editar
             </button>

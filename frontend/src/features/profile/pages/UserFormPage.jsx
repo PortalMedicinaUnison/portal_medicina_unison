@@ -1,5 +1,5 @@
 import React from "react";
-import FormularioPerfil from "../components/FormularioPerfil";
+import UserForm from "../components/UserForm";
 import Layout from "../../../Layout";
 import PageHeadings from '../../../components/PageHeadings';
 
@@ -8,7 +8,7 @@ function ProfilePage() {
 
   return ( 
     <Layout>
-      <FormularioPerfil/>
+      <UserForm/>
     </Layout>
   );
 }
