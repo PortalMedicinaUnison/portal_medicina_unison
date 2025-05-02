@@ -57,15 +57,6 @@ def is_valid_past_date(date: date) -> None:
     if date > date.today():
         raise ValueError("La fecha debe ser igual o anterior a la actual.")
     
-def is_valid_web_link(link: str) -> None:
-    """
-    Valida que una cadena tenga el formato correcto de un enlace web con regex
-    """
-    import re
-    link_regex = r"^(http|https)://[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    if re.match(link_regex, link) is None:
-        raise ValueError("El enlace web no tiene un formato válido.")
-    
 def is_valid_internship_year(year: int) -> None:
     """
     Valida que el año de la pasantía no pueda ser menor al actual.

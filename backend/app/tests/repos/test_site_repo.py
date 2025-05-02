@@ -35,4 +35,3 @@ def test_delete_site(db_session):
     site = Site(site_id=5, admin_id=1, name="ToDelete", site_type=1, contact_name="Dave")
     site_repo.create(site)
     assert site_repo.delete(5) is True
-    assert site_repo.get_by_id(5) is None

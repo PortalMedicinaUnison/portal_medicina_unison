@@ -29,7 +29,8 @@ class UserInput(BaseModel):
     last_name: str
     second_last_name: Optional[str] = None
     email: str
-    password: str
+    phone_number: Optional[str] = None
+    password: Optional[str] = None
     profile_photo: str
     is_admin: bool = False
     is_super_admin: bool = False
@@ -50,27 +51,47 @@ class UserInput(BaseModel):
         return email
 
 class UserInputUpdate(BaseModel):
-    academic_id: Optional[str]
     first_name: Optional[str]
     last_name: Optional[str]
     second_last_name: Optional[str] = None
     email: Optional[str]
-    password: Optional[str]
+    phone_number: Optional[str]
     profile_photo: Optional[str]
-    is_admin: Optional[bool] = False
-    is_super_admin: Optional[bool] = False
+    is_admin: Optional[bool]
+    is_super_admin: Optional[bool]
 
-    @field_validator("academic_id")
-    def validate_academic_id(cls, academic_id):
-        is_valid_academic_id(academic_id)
-        return academic_id
-
-    @field_validator("password")
-    def validate_password(cls, password):
-        is_valid_password(password)
-        return password
-            
     @field_validator("email")
     def validate_email(cls, email):
         is_valid_email(email)
         return email
+
+class UserOutput(BaseModel):
+    academic_id: str
+    first_name: str
+    last_name: str
+    second_last_name: Optional[str] = None
+    email: str
+    profile_photo: str
+    is_active: bool = False
+    
+class UserAdminInputUpdate(UserInputUpdate):
+    is_admin: Optional[bool]
+
+class UserSuperAdminInputUpdate(UserInputUpdate):
+    is_super_admin: Optional[bool]
+
+class UserPasswordInput(BaseModel):
+    current_password: str
+    new_password: str
+    confirm_password: str
+
+    @field_validator("current_password")
+    def validate_password(cls, password):
+        is_valid_password(password)
+        return password
+
+    @field_validator("new_password")
+    def validate_new_password(cls, new_password):
+        is_valid_password(new_password)
+        return new_password
+

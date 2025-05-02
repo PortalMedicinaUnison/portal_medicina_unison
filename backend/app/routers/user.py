@@ -1,18 +1,23 @@
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from typing import List
 from sqlalchemy.orm import Session
-from schemas.user import UserInput, PreRegisteredUserInput
+from schemas.user import UserInput, PreRegisteredUserInput, UserInputUpdate, PreRegisteredUserInputUpdate, UserOutput
 from core.dependencies import get_db
 from controllers.user import (
     create_user,
     get_user,
+    get_all_users,
     update_user,
     delete_user,
     create_pre_registered_user,
     get_pre_registered_user,
+    get_all_pre_registered_users,
     update_pre_registered_user,
     delete_pre_registered_user,
 )
 
+# ----------------------  Users  ----------------------
 
 user_router = APIRouter(prefix="/users", tags=["Usuarios"])
 
@@ -35,7 +40,7 @@ def get_user_router(user_id: int, db: Session = Depends(get_db)):
     return user
 
 @user_router.put("/{user_id}")
-def update_user_router(user_id: int, user_input: UserInput, db: Session = Depends(get_db)):
+def update_user_router(user_id: int, user_input: UserInputUpdate, db: Session = Depends(get_db)):
     user = update_user(user_id, user_input, db)
     if not user:
         raise HTTPException(
@@ -55,8 +60,16 @@ def delete_user_router(user_id: int, db: Session = Depends(get_db)):
 def upload_profile_picture_router(user_id: int, image: UploadFile = File(...), db: Session = Depends(get_db)):
     pass
 
+@user_router.get('/', response_model=List[UserOutput])
+async def get_users_route(db: Session = Depends(get_db)):
+    users =  get_all_users(db)
+    if not users:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuarios no encontrados")
+    return users
 
-# ********************************************************************************************************************
+# ----------------------  Pre-Registered Users  ----------------------
 
 pre_registered_router = APIRouter(prefix="/pre-registered", tags=["Pre-Registrados"])
 
@@ -94,3 +107,12 @@ def delete_pre_registered_user_router(academic_id: int, db: Session = Depends(ge
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Usuario pre-registrado no encontrado")
     return
+
+@pre_registered_router.get('/', response_model=List[PreRegisteredUserInput])
+async def get_pre_registered_users_route(db: Session = Depends(get_db)):
+    pre_registered_users =  get_all_pre_registered_users(db)
+    if not pre_registered_users:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuarios pre-registrados no encontrado")
+    return pre_registered_users
