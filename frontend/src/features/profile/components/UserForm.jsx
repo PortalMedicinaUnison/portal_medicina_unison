@@ -180,7 +180,7 @@ function UserForm() {
           </dl>
         </div>
 
-        <div class="info-actions">
+        <div class="info-actions mt-16">
           <button type="button" className='item-link'>Reset Password</button>
           <button type="button" className='item-link'>Remove account</button>
         </div>

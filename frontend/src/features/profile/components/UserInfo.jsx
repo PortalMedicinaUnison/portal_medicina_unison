@@ -45,6 +45,16 @@ function UserInfo() {
             />
           </div>
         
+          {/* <div className="button-group my-4">
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => navigate("/edit-profile")}
+            >
+              Editar
+            </button>
+          </div> */}
+
           <div className="item-container">
             <dl className="item-list">
               <div className="item-row">
@@ -76,10 +86,20 @@ function UserInfo() {
             </dl>
           </div>
 
-          <div class="info-actions">
+          <div class="info-actions mt-16">
             <button type="button" className='item-link'>Reset Password</button>
             <button type="button" className='item-link'>Remove account</button>
           </div>
+          
+          {/* <div className="button-group">
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => navigate("/edit-profile")}
+            >
+              Editar
+            </button>
+          </div> */}
 
         </div>
       ) : (

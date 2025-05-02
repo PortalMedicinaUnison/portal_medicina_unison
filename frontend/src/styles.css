@@ -99,12 +99,12 @@
     }
 
     .component-container_header {
-        @apply lg:flex lg:items-center lg:justify-between;
+        @apply lg:flex lg:justify-between;
     }
       
     .component-container_header-content { @apply 
         min-w-0 
-        flex-1;
+        flex-1
     }
       
 
@@ -119,10 +119,10 @@
     }
 
     .component-container_actions { @apply 
-        mt-5 
-        flex 
+        flex
         lg:mt-0 
-        lg:ml-4;
+        lg:ml-4
+        items-end
     }
 
     .login-title { @apply 
@@ -286,8 +286,7 @@
     .button-group {
         display: flex;
         justify-content: flex-end;
-        gap: 1rem; /* Espaciado entre los botones */
-        margin-top: 2rem; /* Separación del contenido superior */
+        gap: 1rem; 
     }
     
 
@@ -454,13 +453,13 @@
     .info-container { @apply 
         flex
         flex-col
-        gap-16
     }
 
     .user-info-photo { @apply 
         flex
         items-center
         gap-8
+        mb-16
     }
 
     .user-profile-photo { @apply 
