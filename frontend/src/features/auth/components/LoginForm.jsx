@@ -68,7 +68,7 @@ function LoginForm() {
 
       <p className="login-footer-text">
         ¿No tienes cuenta?{' '}
-        <Link to="/registro" className="form-link">
+        <Link to={ROUTES.AUTH.SIGNUP} className="form-link">
           Regístrate aquí
         </Link>
       </p>

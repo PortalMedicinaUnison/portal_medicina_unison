@@ -193,7 +193,7 @@ function RegisterForm() {
       
       <p className="login-footer-text">
         ¿Ya tienes cuenta?{' '}
-        <Link to={ROUTES.HOME} className="form-link">
+        <Link to={ROUTES.AUTH.LOGIN} className="form-link">
           Inicia sesión aquí
         </Link>
       </p>

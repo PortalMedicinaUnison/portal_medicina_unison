@@ -32,7 +32,7 @@ export default function useAuth() {
     removeToken();
     clearUser();
     setAuthenticated(false);
-    navigate(ROUTES.LOGIN);
+    navigate(ROUTES.AUTH.LOGIN);
   };
   
   return { login, logout, error, authenticated };

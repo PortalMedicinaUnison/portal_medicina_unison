@@ -13,10 +13,10 @@ function UserRoutes() {
   return (
 
     <Routes>
-      {/* Rutas públicas */}
-      <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-      <Route path={ROUTES.SIGNUP} element={<RegisterPage />} />
       <Route path={ROUTES.HOME} element={<HomePage />} />
+
+      <Route path={ROUTES.AUTH.LOGIN} element={<LoginPage />} />
+      <Route path={ROUTES.AUTH.SIGNUP} element={<RegisterPage />} />
       
       <Route path={ROUTES.USER.PROFILE} element={<UserInfoPage />} />
       <Route path={ROUTES.USER.EDIT_PROFILE} element={<UserFormPage />} />

@@ -9,9 +9,9 @@ export const API_ENDPOINTS = {
     USERS: {
       CREATE:  '/users/',
       GET:     (id) => `/users/${id}/`,
+      GET_ALL:    '/users/',
       UPDATE:  (id) => `/users/${id}/`,
       DELETE:  (id) => `/users/${id}/`,
-      LIST:    '/users/',
     },
 };
   

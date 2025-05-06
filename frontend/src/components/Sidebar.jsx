@@ -231,7 +231,7 @@ function Sidebar({ toggleSidebar }) {
                                 </a>
                             </li>
                             <li>
-                                <Link to={ROUTES.LOGOUT} className="sidebar-item-group group">
+                                <Link to={ROUTES.AUTH.LOGOUT} className="sidebar-item-group group">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="sidebar-item-icon group-hover:text-red-700"
