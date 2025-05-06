@@ -35,7 +35,7 @@ function Navbar() {
                         </svg>
                     </button>
                 </div>
-                <Link to={ROUTES.PROFILE} className="flex items-center justify-end">
+                <Link to={ROUTES.USER.PROFILE} className="flex items-center justify-end">
                     {user ? (
                         <>
                             <button 

@@ -190,7 +190,7 @@ function UserForm() {
           <button 
             type="button" 
             className="btn-secondary" 
-            onClick={() => navigate(ROUTES.PROFILE)} // Redirige a la página de perfil
+            onClick={() => navigate(ROUTES.USER.PROFILE)}
           >
             Cancelar
           </button>

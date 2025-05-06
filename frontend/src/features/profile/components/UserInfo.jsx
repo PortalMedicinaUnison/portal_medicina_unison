@@ -25,7 +25,7 @@ function UserInfo() {
             <button
               type="button"
               className="btn-primary"
-              onClick={() => navigate(ROUTES.EDIT_PROFILE)}
+              onClick={() => navigate(ROUTES.USER.EDIT_PROFILE)}
             >
               Editar
             </button>

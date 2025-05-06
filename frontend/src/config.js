@@ -5,9 +5,11 @@ export const ROUTES = {
     LOGIN: '/login',
     SIGNUP: '/signup',
     LOGOUT: '/logout',
-    PROFILE: '/profile',
-    EDIT_PROFILE: '/edit-profile',
-    USER: '/user/:id',
+
+    USER: {
+        PROFILE: '/profile',
+        EDIT_PROFILE: '/edit-profile',
+    },
 
     ADMIN: {
         USER_LIST: '/users',
