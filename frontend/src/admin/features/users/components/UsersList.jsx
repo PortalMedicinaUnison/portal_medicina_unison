@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import api from '../api';
-import { users } from '../../data';
+import api from '../../../../api';
 
 function UsersList() {
     const [search, setSearch] = useState('');
