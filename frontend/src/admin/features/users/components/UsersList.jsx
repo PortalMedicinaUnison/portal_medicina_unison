@@ -1,8 +1,8 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import api from '../api';
+import api from '../../../../api';
 
-function UserTable() {
+function UsersList() {
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('active');
     const [users, setUsers] = useState([]);
@@ -90,4 +90,4 @@ function UserTable() {
     );
 }
 
-export default UserTable;
+export default UsersList;

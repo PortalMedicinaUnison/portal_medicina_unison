@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../../config';
 import useAuth from '../hooks/useAuth';
 import { isValidEmail } from '../../../utils/validations';
 import '../../../styles.css';
@@ -19,10 +20,13 @@ function LoginForm() {
       alert("Por favor, ingresa un correo electrónico válido.");
       return;
     }
-    const isLoggedIn = await login(cleanedEmail, password);
+
+    const credentials = { email: cleanedEmail, password };
+
+    const isLoggedIn = await login(credentials);
     console.log(isLoggedIn);
     if (isLoggedIn) {
-      navigate('/');
+      navigate(ROUTES.HOME);
     }
   };
 
@@ -67,7 +71,7 @@ function LoginForm() {
 
       <p className="login-footer-text">
         ¿No tienes cuenta?{' '}
-        <Link to="/registro" className="form-link">
+        <Link to={ROUTES.AUTH.SIGNUP} className="form-link">
           Regístrate aquí
         </Link>
       </p>

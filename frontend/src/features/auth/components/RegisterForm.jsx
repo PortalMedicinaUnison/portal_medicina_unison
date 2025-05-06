@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import useRegister from '../hooks/useRegister';
+import { ROUTES } from '../../../config';
+
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -191,7 +193,7 @@ function RegisterForm() {
       
       <p className="login-footer-text">
         ¿Ya tienes cuenta?{' '}
-        <Link to="/" className="form-link">
+        <Link to={ROUTES.AUTH.LOGIN} className="form-link">
           Inicia sesión aquí
         </Link>
       </p>
