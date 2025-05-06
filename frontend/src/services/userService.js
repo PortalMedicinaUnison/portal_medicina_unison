@@ -1,25 +1,17 @@
 import api from '../api';
 import { API_ENDPOINTS } from '../config/apiEndpoints';
 
-export const createUser = (userData) =>
+export const createUserRequest = (userData) =>
   api.post(API_ENDPOINTS.USERS.CREATE, userData);
 
-export const getUserById = (id, token) =>
-  api.get(API_ENDPOINTS.USERS.GET(id), {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+export const getUserByIdRequest = (id) =>
+  api.get(API_ENDPOINTS.USERS.GET(id));
 
-export const updateUser = (id, data, token) =>
-  api.put(API_ENDPOINTS.USERS.UPDATE(id), data, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+export const updateUserRequest = (id, data) =>
+  api.put(API_ENDPOINTS.USERS.UPDATE(id), data);
 
-export const deleteUser = (id, token) =>
-  api.delete(API_ENDPOINTS.USERS.DELETE(id), {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+export const deleteUserRequest = (id) =>
+  api.delete(API_ENDPOINTS.USERS.DELETE(id));
 
-export const getAllUsers = (token) =>
-  api.get(API_ENDPOINTS.USERS.LIST, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+export const getAllUsersRequest = () =>
+  api.get(API_ENDPOINTS.USERS.LIST);

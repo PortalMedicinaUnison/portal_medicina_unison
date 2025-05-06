@@ -3,6 +3,7 @@ import api from '../../../api';
 import { isValidEmail, validatePassword } from '../../../utils/validations';
 import { cleanFormData } from '../../../utils/utils';
 import { DEFAULT_PROFILE_IMAGE } from '../../../config';
+import { updateUserRequest } from '../../../services/userService';
 
 export default function useUserUpdate() {
   const [error, setError] = useState('');
@@ -36,7 +37,7 @@ export default function useUserUpdate() {
     };
 
     try {
-      await api.put(`/users/${userId}/`, user);
+      await updateUserRequest(userId, user);
       console.log('User updated successfully');
       setSuccess(true);
       return true;

@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import api from '../api';
-import { verifyToken } from '../services/authService';
-import { getUserById } from '../services/userService';
+import { verifyTokenRequest } from '../services/authService';
+import { getUserByIdRequest } from '../services/userService';
 
 
 const UserContext = createContext();
@@ -22,9 +21,9 @@ export function UserProvider({ children }) {
       }
         
       try {
-        const verifyResponse = await verifyToken(token);
+        const verifyResponse = await verifyTokenRequest(token);
         const userId = verifyResponse.data.user_info.user_id;
-        const userResponse = await getUserById(userId, token);
+        const userResponse = await getUserByIdRequest(userId);
         setUser(userResponse.data);
       } catch (error) {
         console.error("User not found", error);
