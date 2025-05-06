@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { setToken, removeToken, isAuthenticated } from '../../../utils/auth';
 import { useUser } from '../../../contexts/UserContext';
 import { ROUTES } from '../../../config';
+import { loginRequest } from '../../../services/authService';
+
 
 
 export default function useAuth() {
@@ -13,10 +15,11 @@ export default function useAuth() {
   const navigate = useNavigate();
 
 
-  const login = async (email, password) => {
+  const login = async (credentials) => {
     setError(null);
+    
     try {
-      const response = await api.post('/auth/login/', { email, password });
+      const response = await loginRequest(credentials);
       setToken(response.data.access_token);
       setAuthenticated(true);
       return true;

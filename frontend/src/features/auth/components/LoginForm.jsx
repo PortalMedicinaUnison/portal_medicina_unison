@@ -20,7 +20,10 @@ function LoginForm() {
       alert("Por favor, ingresa un correo electrónico válido.");
       return;
     }
-    const isLoggedIn = await login(cleanedEmail, password);
+
+    const credentials = { email: cleanedEmail, password };
+
+    const isLoggedIn = await login(credentials);
     console.log(isLoggedIn);
     if (isLoggedIn) {
       navigate(ROUTES.HOME);

@@ -19,7 +19,7 @@ export const deleteUser = (id, token) =>
     headers: { Authorization: `Bearer ${token}` }
   });
 
-export const listUsers = (token) =>
+export const getAllUsers = (token) =>
   api.get(API_ENDPOINTS.USERS.LIST, {
     headers: { Authorization: `Bearer ${token}` }
   });

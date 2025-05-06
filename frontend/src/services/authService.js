@@ -1,10 +1,10 @@
 import api from '../api';
 import { API_ENDPOINTS } from '../config/apiEndpoints';
 
-export const login = (credentials) =>
+export const loginRequest = (credentials) =>
   api.post(API_ENDPOINTS.AUTH.LOGIN, credentials);
 
-export const signUp = (data) =>
+export const signUpRequet = (data) =>
   api.post(API_ENDPOINTS.AUTH.SIGNUP, data);
 
 export const verifyToken = (token) =>
