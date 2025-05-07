@@ -11,8 +11,8 @@ export const ROUTES = {
 
     USER: {
         PROFILE: '/profile',
-        EDIT_PROFILE: '/edit-profile',
-    },
+        EDIT_PROFILE: '/profile/edit',
+    },  
 
     ADMIN: {
         USER_LIST: '/users',
