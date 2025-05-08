@@ -1,13 +1,18 @@
 import React from 'react';
 
-function PageLayout({ title, actions, pretitle = "Inicio", children }) {
+function PageLayout({ title, actions, pretitle = "Ir atrás", children }) {
   return (
     <div className="component-container">
       <div className="component-container_header">
         <div className="component-container_header-content">
           {pretitle && (
             <div className="component-container_pretitle">
-              <p>{pretitle}</p>
+              <button
+                onClick={() => window.history.back()}
+                className="btn-tertiary--light text-xs"
+              >
+                {pretitle}
+              </button>
             </div>
           )}
           <h2 className="page-title-1">

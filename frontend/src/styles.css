@@ -251,7 +251,7 @@
         px-3
         py-1.5
         text-sm/6
-        font-semibold
+        font-normal
         text-sm
         text-white
         hover:bg-indigo-500
@@ -274,13 +274,33 @@
         px-3
         py-1.5
         text-sm
-        font-semibold
+        font-normal
         text-sm
         text-gray-900 
         ring-1 
         ring-gray-300 
         ring-inset 
         hover:bg-gray-50
+    }
+
+    .btn-secondary_full { @apply 
+        btn-secondary
+        w-full
+        justify-center
+    }
+
+    .btn-tertiary { @apply 
+        text-sm
+        font-semibold
+        text-gray-900
+    }
+
+    .btn-tertiary--light { @apply 
+        btn-tertiary
+        font-normal
+        text-gray-700
+        px-0
+
     }
 
     .button-group {
@@ -379,6 +399,12 @@
         justify-between
     }
 
+    .sidebar-label { @apply 
+        text-gray-500
+        text-xs 
+        px-1
+    }
+
     .sidebar-item-group { @apply 
         flex
         items-center
@@ -399,7 +425,8 @@
         ms-3
         whitespace-nowrap
         /* text-white */
-        text-gray-700
+        /* text-gray-700 */
+        text-gray-900
         text-left
         transition 
         duration-75
@@ -411,7 +438,8 @@
         w-7
         h-7
         /* text-white */
-        text-gray-500
+        /* text-gray-500 */
+        text-gray-700
         transition 
         duration-75
         group-hover:text-indigo-600
@@ -421,7 +449,7 @@
         w-5
         h-5
         /* text-white */
-        text-gray-500
+        text-gray-700
         transition 
         duration-75
         group-hover:text-indigo-600
