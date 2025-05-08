@@ -1,51 +1,51 @@
-import React from 'react';
-import api from '../../api';
-import { Navigate, Outlet, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { getToken } from '../../utils/auth';
+import { ROUTES } from '../../config';
+import { verifyTokenRequest } from '../../services/authService';
 
 const ProtectedRoute = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [authStatus, setAuthStatus] = useState({
+    isAuthenticated: false,
+    loading: true
+  });
+  const location = useLocation();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const access_token = {
-          token: sessionStorage.getItem("access_token")
-        };
-
-        console.log("access_token", access_token);
-        console.log("antes de verificar token")
-        const response = await api.post('/auth/verify-token/', access_token);
-        console.log("despues de verificar token")
-        console.log("response", response);
-        
-        if (response.status === 200) {
-          setIsAuthenticated(true);
-        }
-        console.log("ya autenticado")
-
-      } catch (error) {
-        console.log("Dentro del catch");
-        setIsAuthenticated(false);
-        setLoading(false);
-        navigate('/'); 
+    const verifyToken = async () => {
+      const token = getToken();
+      
+      if (!token) {
+        setAuthStatus({ isAuthenticated: false, loading: false });
+        console.error("No token found");
+        return;
       }
 
-      setLoading(false);
+      try {
+        const response = await verifyTokenRequest(token);
+        setAuthStatus({ 
+          isAuthenticated: response.status === 200, 
+          loading: false 
+        });
+      } catch (error) {
+        console.error("Token verification failed:", error);
+        removeToken();
+        setAuthStatus({ isAuthenticated: false, loading: false });
+      }
     };
 
-    checkAuth();
-  }, [navigate]);
+    verifyToken();
+  }, []);
 
-  if (loading) {
+  if (authStatus.loading) {
     return <div>Loading...</div>;
   }
 
-  console.log("isAuthenticated", isAuthenticated);
-  return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
+  if (!authStatus.isAuthenticated) {
+    return <Navigate to={ROUTES.AUTH.LOGIN} replace state={{ from: location }} />;
+  }
+
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
-
