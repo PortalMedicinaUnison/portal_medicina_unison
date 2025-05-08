@@ -19,7 +19,7 @@ function Sidebar({ toggleSidebar }) {
                     <div className="flex w-full items-center justify-between">
                         <a href={ROUTES.HOME} className="ms-5 md:me-15">
                             {/* <span className="self-center font-semibold sm:text-xl  whitespace-nowrap">Portal de Medina Unison</span> */}
-                            <img src="unison-letters.svg" class="h-8 me-3" alt="unison logo" />
+                            <img src="unison-letters.svg" className="h-8 me-3" alt="unison logo" />
                         </a>
                     </div>
                 </div>
@@ -37,8 +37,8 @@ function Sidebar({ toggleSidebar }) {
                                     aria-hidden="true"
                                     fill="none"
                                     stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
                                 >
                                     <path d="m1.5 10.5l9-9l9 9"/>
                                     <path d="M3.5 8.5v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>
@@ -55,8 +55,8 @@ function Sidebar({ toggleSidebar }) {
                                     aria-hidden="true"
                                     fill="none"
                                     stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
                                 >
                                     <circle cx="10.5" cy="10.5" r="8"/>
                                     <path d="M10.5 11.5v-5"/>
@@ -71,7 +71,7 @@ function Sidebar({ toggleSidebar }) {
                             Internado
                         </p> */}
 
-                        <li mb-2>
+                        <li>
                             <p className="text-gray-400 text-xs px-1 mt-4 py-2 border-t">
                                 Internado
                             </p>
@@ -86,13 +86,13 @@ function Sidebar({ toggleSidebar }) {
                                     aria-hidden="true"
                                     fill="none"
                                     stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
                                 >
                                     <path d="M3.5 5.5v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.497a2 2 0 0 0-1.85-1.994l-.15-.005l-5 .002l-2-2h-4a1 1 0 0 0-1 1m0 1h7"/>
                                 </svg>                        
                                 <span className="sidebar-item-text">Internado</span>
-                            <svg sidebar-toggle-item className="sidebar-toggle-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            <svg className="sidebar-toggle-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
                             </button>
                             <ul id="dropdown-example" className="hidden py-2 space-y-2">
                                 <li>
@@ -118,8 +118,8 @@ function Sidebar({ toggleSidebar }) {
                                         aria-hidden="true"
                                         fill="none"
                                         stroke="currentColor"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
                                     >
                                         <circle cx="8.5" cy="8.5" r="8" fill="none"/>
                                         <path d="M8.5 12.5v-4h-1m0 4h2"/>
@@ -130,7 +130,7 @@ function Sidebar({ toggleSidebar }) {
                             </li>
                         
 
-                        <li mb-2>
+                        <li>
                             <p className="text-gray-400 text-xs px-1 mt-4 py-2 border-t">
                                 Servicio social
                             </p>
@@ -145,13 +145,13 @@ function Sidebar({ toggleSidebar }) {
                                     aria-hidden="true"
                                     fill="none"
                                     stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
                                 >
                                     <path d="M3.5 5.5v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.497a2 2 0 0 0-1.85-1.994l-.15-.005l-5 .002l-2-2h-4a1 1 0 0 0-1 1m0 1h7"/>
                                 </svg>                        
                                 <span className="sidebar-item-text">Servicio social</span>
-                            <svg sidebar-toggle-item className="sidebar-toggle-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            <svg className="sidebar-toggle-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
                             </button>
                             <ul id="dropdown-example" className="hidden py-2 space-y-2">
                                 <li>
@@ -177,8 +177,8 @@ function Sidebar({ toggleSidebar }) {
                                     aria-hidden="true"
                                     fill="none"
                                     stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
                                 >
                                     <circle cx="8.5" cy="8.5" r="8" fill="none"/>
                                     <path d="M8.5 12.5v-4h-1m0 4h2"/>
@@ -201,8 +201,8 @@ function Sidebar({ toggleSidebar }) {
                                         aria-hidden="true"
                                         fill="none"
                                         stroke="currentColor"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
                                     >
                                         <circle cx="8.5" cy="8.5" r="8"/>
                                         <path d="M8.5 9.5v-1l1.414-1.414a2 2 0 0 0 .586-1.414V5.5c0-.613-.346-1.173-.894-1.447l-.212-.106a2 2 0 0 0-1.788 0L7.5 4c-.613.306-1 .933-1 1.618V6.5"/>
@@ -220,8 +220,8 @@ function Sidebar({ toggleSidebar }) {
                                         aria-hidden="true"
                                         fill="none"
                                         stroke="currentColor"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
                                     >
                                         <circle cx="8.5" cy="8.5" r="8" fill="none"/>
                                         <path d="M8.5 12.5v-4h-1m0 4h2"/>
@@ -239,8 +239,8 @@ function Sidebar({ toggleSidebar }) {
                                         aria-hidden="true"
                                         fill="none"
                                         stroke="currentColor"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
                                     >
                                         <path d="m7.405 13.5l-2.905-3l2.905-3m-2.905 3h9m-6-7l8 .002c1.104.001 2 .896 2 2v9.995a2 2 0 0 1-2 2l-8 .003"/>
                                     </svg>
