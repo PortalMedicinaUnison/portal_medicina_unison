@@ -2,48 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Tabla de usuarios*/
-.center {
-    padding: 1cm;
-}
-.search-bar{
-    border: 2px solid;
-    border-color: #999;
-    border-radius: 8px;
-    width: 10cm;
-    padding: 5px;
-}
-.search-filter {
-    margin: 0.1cm 0;
-}
-.search-filter select{
-    border: 2px solid;
-    border-color: #999;
-    border-radius: 8px;
-}
-.user-table {
-    padding: 0;
-    border: 0px solid;
-    border-spacing: 0;
-    border-radius: 20px;
-}
-.user-table td {
-    font-size: 14px;
-    padding: 15px 10px;
-    justify-content:left;
-}
-.user-table tr:not(:first-child){
-    font-size: 14px;
-    border-style: solid;
-    border-width: 2px 0 0 0;
-    border-color: #999;
-    padding: 15px 10px;
-    justify-content:left;
-}
-.header-row td{
-    font-weight: bold;
-    padding: 15px 10px;
-}
+
 /* ------------------------------------------ */
 
 
@@ -208,15 +167,25 @@
         text-sm/6
         border
         rounded-md
-        shadow-sm
         focus:ring-1
         focus:border-blue-500;
     }
 
+    .form-input--sm { @apply 
+        form-input
+        max-w-xs
+        lg:max-w-sm
+        w-full
+    }
+
     .form-input--half { @apply 
         form-input
-        w-1/2
+        max-w-xs
+        lg:max-w-xl
+        w-full
     }
+
+
 
     .form-input_full { @apply 
         form-input
@@ -442,7 +411,7 @@
         rounded-full
     }
 
-        /* ------------- SINGULAR READ & UPDATE ------------- */
+    /* ------------- SINGULAR READ & UPDATE ------------- */
 
     .item-container { @apply 
         border-t 
@@ -546,5 +515,71 @@
     /* Icon and other elements */
     .icon-size { @apply 
         size-5 shrink-0
+    }
+
+    /* ------------- TABLES ------------- */
+
+
+    .table-container { @apply 
+        flex
+        flex-col
+        gap-4
+        overflow-x-auto 
+        sm:rounded-lg
+    }
+
+    .table-container-actions { @apply 
+        lg:flex 
+        lg:justify-between
+    }
+
+    .table-container-body { @apply 
+        text-sm
+        text-gray-900
+    }
+
+    .table { @apply 
+        w-full 
+        text-sm 
+        text-left
+        rtl:text-right
+        border-collapse
+    }
+
+    .table tr { @apply
+        border-b
+        border-gray-100
+    }
+
+    .table th, .table td { @apply 
+        px-6
+        py-2
+        text-gray-900
+        whitespace-nowrap
+
+
+    }
+
+    .table th { @apply 
+        font-semibold
+    }
+
+    .table-action { @apply 
+        font-medium
+        text-blue-600 
+        dark:text-blue-500 
+        hover:underline
+    }
+
+    .dropdown-menu { @apply 
+        absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden
+    }
+
+    .dropdown-item { @apply 
+        block
+        px-4 
+        py-2 
+        text-sm 
+        text-gray-700
     }
 }
