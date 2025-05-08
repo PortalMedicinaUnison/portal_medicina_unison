@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ROUTES } from '../../../config';
 import useAuth from '../hooks/useAuth';
 import { isValidEmail } from '../../../utils/validations';
@@ -10,7 +10,6 @@ function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login, error } = useAuth();
-  const navigate = useNavigate();
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,12 +21,7 @@ function LoginForm() {
     }
 
     const credentials = { email: cleanedEmail, password };
-
-    const isLoggedIn = await login(credentials);
-    console.log(isLoggedIn);
-    if (isLoggedIn) {
-      navigate(ROUTES.HOME);
-    }
+    await login(credentials);
   };
 
   return (

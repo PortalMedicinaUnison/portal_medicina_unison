@@ -2,13 +2,16 @@ import { useState } from 'react';
 import { setToken, removeToken, isAuthenticated } from '../../../utils/auth';
 import { useUser } from '../../../contexts/UserContext';
 import { loginRequest } from '../../../services/authService';
-
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../../config';
 
 export default function useAuth() {
   const [error, setError] = useState(null);
   const [authenticated, setAuthenticated] = useState(isAuthenticated());
   const { clearUser } = useUser();
+  const navigate = useNavigate();
 
+  
   const login = async (credentials) => {
     setError(null);
     
@@ -16,6 +19,7 @@ export default function useAuth() {
       const response = await loginRequest(credentials);
       setToken(response.data.access_token);
       setAuthenticated(true);
+      navigate(ROUTES.HOME);
       return true;
     } catch (err) {
       setError(err.response?.data?.message || "Error al iniciar sesión.");
@@ -29,6 +33,8 @@ export default function useAuth() {
     removeToken();
     clearUser();
     setAuthenticated(false);
+    setError(null);
+    navigate(ROUTES.AUTH.LOGIN);
   };
   
   return { login, logout, error, authenticated };

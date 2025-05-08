@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import useAuth from '../features/auth/hooks/useAuth'; // Adjust the import path if necessary
+import useAuth from '../features/auth/hooks/useAuth';
 import { ROUTES } from '../config';
 
 
@@ -231,7 +231,9 @@ function Sidebar({ toggleSidebar }) {
                                 </a>
                             </li>
                             <li>
-                                <Link to={ROUTES.AUTH.LOGOUT} className="sidebar-item-group group">
+                                <button
+                                    onClick={logout}
+                                    className="sidebar-item-group group">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="sidebar-item-icon group-hover:text-red-700"
@@ -245,7 +247,7 @@ function Sidebar({ toggleSidebar }) {
                                         <path d="m7.405 13.5l-2.905-3l2.905-3m-2.905 3h9m-6-7l8 .002c1.104.001 2 .896 2 2v9.995a2 2 0 0 1-2 2l-8 .003"/>
                                     </svg>
                                     <span className="sidebar-item-text group-hover:text-red-700">Cerrar sesión</span>
-                                </Link>
+                                </button>
                             </li>
                         </ul>
                     </div>         
