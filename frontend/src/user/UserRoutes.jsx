@@ -13,11 +13,11 @@ function UserRoutes() {
   return (
 
     <Routes>
-      <Route path={ROUTES.HOME} element={<HomePage />} />
       <Route path={ROUTES.AUTH.LOGIN} element={<LoginPage />} />
       <Route path={ROUTES.AUTH.SIGNUP} element={<RegisterPage />} />
       
       <Route element={<ProtectedRoute />}>
+        <Route path={ROUTES.HOME} element={<HomePage />} />
         <Route path={ROUTES.USER.PROFILE} element={<UserInfoPage />} />
         <Route path={ROUTES.USER.EDIT_PROFILE} element={<UserFormPage />} />
       </Route>

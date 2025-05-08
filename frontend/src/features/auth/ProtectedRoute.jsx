@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { getToken } from '../../utils/auth';
+import { getToken, removeToken } from '../../utils/auth';
 import { ROUTES } from '../../config';
 import { verifyTokenRequest } from '../../services/authService';
 
@@ -16,17 +16,21 @@ const ProtectedRoute = () => {
       const token = getToken();
       
       if (!token) {
-        setAuthStatus({ isAuthenticated: false, loading: false });
         console.error("No token found");
+        setAuthStatus({ isAuthenticated: false, loading: false });
         return;
       }
 
       try {
         const response = await verifyTokenRequest(token);
-        setAuthStatus({ 
-          isAuthenticated: response.status === 200, 
-          loading: false 
-        });
+        console.log("Token verification response:", response);
+        if (response && response.status === 200) {
+          console.log("Token is valid");
+          setAuthStatus({ 
+            isAuthenticated: true, 
+            loading: false 
+          });
+        }
       } catch (error) {
         console.error("Token verification failed:", error);
         removeToken();
@@ -37,14 +41,18 @@ const ProtectedRoute = () => {
     verifyToken();
   }, []);
 
+  console.log("Current auth status:", authStatus);
+  console.log("Current location:", location);
+
   if (authStatus.loading) {
-    return <div>Loading...</div>;
+    return <div>Verificando autenticación...</div>;
   }
 
   if (!authStatus.isAuthenticated) {
+    console.log("Not authenticated, redirecting to:", ROUTES.AUTH.LOGIN);
     return <Navigate to={ROUTES.AUTH.LOGIN} replace state={{ from: location }} />;
   }
-
+  console.log("Authenticated, rendering protected content");
   return <Outlet />;
 };
 
