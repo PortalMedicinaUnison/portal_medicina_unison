@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import useUserUpdate from '../hooks/useUserUpdate';
+import { ROUTES } from "../../../config";
 
 function UserForm() {
   const { user } = useUser();
@@ -91,17 +92,6 @@ function UserForm() {
         </div>
       )}
 
-      <div className="component-container_header">
-        <div className="component-container_header-content">
-          <div className="component-container_pretitle">
-            <p>Inicio</p>
-          </div>
-          <h2 className="page-title-1">
-            Editar perfil
-          </h2>
-        </div>
-      </div>
-
       <div className="info-container">
         <div className="user-info-photo">
           <img 
@@ -189,11 +179,16 @@ function UserForm() {
           <button 
             type="button" 
             className="btn-secondary" 
-            onClick={() => navigate("/profile")} // Redirige a la página de perfil
+            onClick={() => navigate(ROUTES.USER.PROFILE)}
           >
             Cancelar
           </button>
-          <button type="submit" className="btn-primary">Guardar</button>
+          <button 
+            type="submit" 
+            className="btn-primary"
+          >
+            Guardar
+          </button>
         </div>
       </div>
     </form>

@@ -1,17 +1,15 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { ROUTES } from '../config';
+import ProtectedRoute from '../features/auth/ProtectedRoute';
 
-// Ajusta los imports según la ubicación real de tus componentes/páginas
-// import ProtectedRoute from '../features/auth/ProtectedRoute';
-
-// Ejemplos de páginas de administrador (cámbialas según tu proyecto)
+import UserList from '../admin/features/users/pages/UserListPage';
 
 function AdminRoutes() {
   return (
     <Routes>
-      {/* Rutas protegidas para administrador */}
       <Route element={<ProtectedRoute />}>
-        {/* <Route path="/admin/dashboard" element={<AdminDashboardPage />} /> */}
+        <Route path={ROUTES.ADMIN.USER_LIST} element={<UserList />} />
       </Route>
     </Routes>
   );

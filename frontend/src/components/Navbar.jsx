@@ -1,5 +1,7 @@
 import '../styles.css';
 import { useUser } from '../contexts/UserContext';
+import { Link } from 'react-router-dom';
+import { ROUTES } from '../config';
 
 function Navbar() {
     const { user, loading } = useUser();
@@ -33,16 +35,22 @@ function Navbar() {
                         </svg>
                     </button>
                 </div>
-                <div className="flex items-center justify-end">
+                <Link to={ROUTES.USER.PROFILE} className="flex items-center justify-end">
                     {user ? (
                         <>
-                            <button type="button" className="flex flex-col px-3 text-right" aria-expanded="false">
+                            <button 
+                              type="button" 
+                              className="flex flex-col px-3 text-right" 
+                              aria-expanded="false">
                                 <span className="text-xs font-semibold text-gray-900">
                                     {user.first_name} {user.last_name}
                                 </span>
                                 <span className="text-[10px] text-gray-900">{user.email}</span>
                             </button>
-                            <button type="button" className="rounded-full focus:ring-0 focus:ring-gray-200 focus:ring-offset-1 focus:ring-offset-gray-200" aria-expanded="false">
+                            <button 
+                              type="button" 
+                              className="rounded-full focus:ring-0 focus:ring-gray-200 focus:ring-offset-1 focus:ring-offset-gray-200" 
+                              aria-expanded="false">
                                 <img 
                                     src={user.profile_photo || "/default-avatar.png"} 
                                     alt="User Photo" 
@@ -57,7 +65,7 @@ function Navbar() {
                         ) : (
                             <span className="text-xs text-gray-500">Cargando usuario...</span>
                         )}
-                </div>
+                </Link>
             </div>
         </nav>
     );

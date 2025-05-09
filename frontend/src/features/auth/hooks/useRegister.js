@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import api from '../../../api';
 import { isValidEmail, validatePassword, isValidAcademicId} from '../../../utils/validations';
 import { cleanFormData } from '../../../utils/utils';
 import { DEFAULT_PROFILE_IMAGE } from '../../../config';
+import { createUserRequest } from '../../../services/userService';
 
 export default function useRegister() {
   const [error, setError] = useState('');
@@ -49,7 +49,7 @@ export default function useRegister() {
     };
 
     try {
-      await api.post('/users/', user);
+      await createUserRequest(user);
       setSuccess(true);
       return true;
     } catch (err) {

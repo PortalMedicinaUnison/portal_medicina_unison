@@ -1,36 +1,12 @@
 import React from 'react';
 import { useUser } from "../../../contexts/UserContext";
-import { useNavigate } from "react-router-dom";
+
 
 function UserInfo() {
   const { user } = useUser();
-  const navigate = useNavigate();
 
   return (
-    <div className="component-container">
-      <div className="component-container_header">
-        <div className="component-container_header-content">
-          <div className="component-container_pretitle">
-            <p>Inicio</p>
-          </div>
-          <h2 className="page-title-1">
-            Perfil
-          </h2>
-        </div>
-        
-        <div className="component-container_actions"> 
-          <span className="show-on-sm">
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => navigate("/edit-profile")}
-            >
-              Editar
-            </button>
-          </span>
-        </div>
-      </div>
-  
+    <div>
       {user ? (
         <div className="info-container">
           <div className="user-info-photo">
@@ -44,16 +20,6 @@ function UserInfo() {
               }}
             />
           </div>
-        
-          {/* <div className="button-group my-4">
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => navigate("/edit-profile")}
-            >
-              Editar
-            </button>
-          </div> */}
 
           <div className="item-container">
             <dl className="item-list">
@@ -90,17 +56,6 @@ function UserInfo() {
             <button type="button" className='item-link'>Reset Password</button>
             <button type="button" className='item-link'>Remove account</button>
           </div>
-          
-          {/* <div className="button-group">
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => navigate("/edit-profile")}
-            >
-              Editar
-            </button>
-          </div> */}
-
         </div>
       ) : (
         <span className="text-xs text-gray-500">Cargando usuario...</span>
