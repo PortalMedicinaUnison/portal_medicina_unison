@@ -25,7 +25,7 @@ function Sidebar({ toggleSidebar }) {
                 </div>
                 <div className="sidebar footer">
                     <ul className="space-y-1">
-                        <p className="text-gray-400 text-xs px-1">
+                        <p className="text-gray-600 text-xs px-1">
                             General
                         </p>
                         <li>
@@ -72,7 +72,7 @@ function Sidebar({ toggleSidebar }) {
                         </p> */}
 
                         <li mb-2>
-                            <p className="text-gray-400 text-xs px-1 mt-4 py-2 border-t">
+                            <p className="text-gray-600 text-xs px-1 mt-4 py-2 border-t">
                                 Internado
                             </p>
                         </li>
@@ -131,7 +131,7 @@ function Sidebar({ toggleSidebar }) {
                         
 
                         <li mb-2>
-                            <p className="text-gray-400 text-xs px-1 mt-4 py-2 border-t">
+                            <p className="text-gray-600 text-xs px-1 mt-4 py-2 border-t">
                                 Servicio social
                             </p>
                         </li>
