@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import api from '../../../api';
 import { isValidEmail, validatePassword } from '../../../utils/validations';
 import { cleanFormData } from '../../../utils/utils';
 import { DEFAULT_PROFILE_IMAGE } from '../../../config';
