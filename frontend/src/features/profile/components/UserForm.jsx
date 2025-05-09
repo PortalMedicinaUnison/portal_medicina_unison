@@ -92,17 +92,6 @@ function UserForm() {
         </div>
       )}
 
-      <div className="component-container_header">
-        <div className="component-container_header-content">
-          <div className="component-container_pretitle">
-            <p>Inicio</p>
-          </div>
-          <h2 className="page-title-1">
-            Editar perfil
-          </h2>
-        </div>
-      </div>
-
       <div className="info-container">
         <div className="user-info-photo">
           <img 
