@@ -4,11 +4,11 @@ import useAuth from '../features/auth/hooks/useAuth';
 import { ROUTES } from '../config';
 
 
-function Sidebar({ toggleSidebar }) {
+function Sidebar() {
     const { logout, authenticated } = useAuth();
 
     return (
-        <div>
+        <div id="sidebar">
             <aside 
                 id="logo-sidebar" 
                 className="sidebar-container" 
