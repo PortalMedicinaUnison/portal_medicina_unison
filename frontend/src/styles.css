@@ -377,6 +377,7 @@
         flex
         w-full
         h-16
+        pr-4
     }
 
     .sidebar { @apply 
@@ -437,6 +438,23 @@
         group-hover:text-indigo-600
     }
 
+    .sidebar-item-link { @apply
+        flex
+        items-center
+        w-full
+        p-2
+        text-xs
+        font-normal
+        text-gray-900
+        transition
+        duration-75
+        rounded-lg
+        group-hover:bg-gray-100
+        dark:hover:text-white
+        dark:hover:bg-gray-500
+        pl-11
+    }
+
     .sidebar-toggle-icon { @apply 
         w-5
         h-5
@@ -460,6 +478,26 @@
         text-blue-800
         bg-blue-100
         rounded-full
+    }
+
+    #sidebar-internship-dropdown { @apply
+        hidden
+        text-black
+        py-2
+        space-y-2
+        group-hover:flex
+        flex-col
+        absolute
+        /* bg-gray-100 */
+        z-10
+    }
+
+    #show-sidebar-button{
+        display: none;
+    }
+
+    #show-sidebar-button{
+        display: block;
     }
 
     /* ------------- SINGULAR READ & UPDATE ------------- */

@@ -10,7 +10,7 @@ function Navbar({ toggleSidebar }) {
         <nav className="navbar">
             <div className="flex items-center justify-between">
                 <div className="flex justify-start rtl:justify-end">
-                    <button id="toggle-sidebar-button" onClick={toggleSidebar}>
+                    <button id="show-sidebar-button" style={{display: 'none'}} onClick={toggleSidebar}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="sidebar-item-icon"
