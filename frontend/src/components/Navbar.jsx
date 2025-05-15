@@ -3,14 +3,14 @@ import { useUser } from '../contexts/UserContext';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../config';
 
-function Navbar({ toggleSidebar }) {
+function Navbar({ toggleSidebar, openToggleButton }) {
     const { user, loading } = useUser();
 
     return (        
         <nav className="navbar">
             <div className="flex items-center justify-between">
                 <div className="flex justify-start rtl:justify-end">
-                    <button id="show-sidebar-button" style={{display: 'none'}} onClick={toggleSidebar}>
+                    <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="sidebar-item-icon"

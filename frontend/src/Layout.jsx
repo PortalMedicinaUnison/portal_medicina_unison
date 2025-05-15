@@ -5,43 +5,30 @@ import Navbar from './components/Navbar';
 
 
 function Layout({ children }) {
-  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [openSidebar, setOpenSidebar] = useState(true);
+  const [expandMainContainer, setExpandMainContainer] = useState(false);
+  const [openHideButton, setOpenHideButton] = useState(true);
+  const [openShowButton, setOpenShowButton] = useState(false);
 
   const toggleSidebar = () => {
-    const sidebar = document.getElementById("sidebar-container");
-    const noSidebar = document.getElementById("no-sidebar-container");
-    const showButton = document.getElementById("show-sidebar-button");
-    const hideButton = document.getElementById("hide-sidebar-button");
-
-    if(sidebarVisible){
-        noSidebar.style.width = '100vw';
-        sidebar.style.width = '0';
-        sidebar.style.transform = 'translateX(-14rem)';
-        showButton.style.display = 'block';
-        hideButton.style.display = 'none';
-      }else{
-        noSidebar.style.width = 'calc(100vw - 14rem)';
-        sidebar.style.width = '14rem';
-        sidebar.style.transform = 'translateX(0rem)';
-        showButton.style.display = 'none';
-        hideButton.style.display = 'block';
-    }
-    setSidebarVisible(prev => !prev);
+    setExpandMainContainer(!expandMainContainer);
+    setOpenSidebar(!openSidebar);
+    setOpenShowButton(!openShowButton);
+    setOpenHideButton(!openHideButton);
   };
 
   return (
     <div className="flex justify-between">
-      <div id="sidebar-container" className="sidebar-container">
-        <Sidebar toggleSidebar={toggleSidebar}/>
+      <div id="sidebar-container" className={`sidebar-container ${openSidebar ? 'w-56 translate-x-0' : 'w-0 -translate-x-56'}`}>
+        <Sidebar toggleSidebar={toggleSidebar} openToggleButton={openHideButton} />
       </div>
-      <div id="no-sidebar-container" className="no-sidebar-container">
-        <Navbar toggleSidebar={toggleSidebar}/>
-        <div id="main-container" className="main-container">
-          <div id="main-content" className="main-content">
-            {children}
-          </div>
-        </div>      
-      </div>
+
+      <div id="main-container" className={`main-container ${expandMainContainer ? 'w-screen' : 'w-[calc(100vw-14rem)]'}`}>
+        <Navbar toggleSidebar={toggleSidebar} openToggleButton={openShowButton} />
+        <div id="main-content" className="main-content">
+          {children}
+        </div>
+      </div>      
     </div>
   );
 }

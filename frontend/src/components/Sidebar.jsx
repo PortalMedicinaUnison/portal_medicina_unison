@@ -5,38 +5,18 @@ import useAuth from '../features/auth/hooks/useAuth';
 import { ROUTES } from '../config';
 
 
-function Sidebar({ toggleSidebar }) {
+function Sidebar({ toggleSidebar, openToggleButton }) {
     const { logout, authenticated } = useAuth();
 
-    const [showInternship, setShowInternship] = useState(false);
-    const internshipDropdownContent = document.getElementsByClassName("sidebar-internship-dropdown");
-
-    const [showSocialService, setShowSocialService] = useState(false);
-    const socialServiceDropdownContent = document.getElementsByClassName("sidebar-social-service-dropdown");
-
-    useEffect(() => {
-        for(let i = 0; i < internshipDropdownContent.length; i++){
-            internshipDropdownContent[i].style.display = 'none';
-        }
-        for(let i = 0; i < socialServiceDropdownContent.length; i++){
-            socialServiceDropdownContent[i].style.display = 'none';
-        }
-    }, []);
+    const [openInternshipDropdown, setOpenInternshipDropdown] = useState(false);
+    const [openSocialServiceDropdown, setOpenSocialServiceDropdown] = useState(false);
 
     const toggleInternshipDropdown = () => {
-        var display = showInternship ? 'none' : 'block';
-        for(let i = 0; i < internshipDropdownContent.length; i++){
-            internshipDropdownContent[i].style.display = display;
-        }
-        setShowInternship(prev => !prev);
+        setOpenInternshipDropdown(!openInternshipDropdown);
     };
-
+    
     const toggleSocialServiceDropdown = () => {
-        var display = showSocialService ? 'none' : 'block';
-        for(let i = 0; i < socialServiceDropdownContent.length; i++){
-            socialServiceDropdownContent[i].style.display = display;
-        }
-        setShowSocialService(prev => !prev);
+        setOpenSocialServiceDropdown(!openSocialServiceDropdown);
     };
 
     return (
@@ -53,7 +33,7 @@ function Sidebar({ toggleSidebar }) {
                             {/* <span className="self-center font-semibold sm:text-xl  whitespace-nowrap">Portal de Medina Unison</span> */}
                             <img src="unison-letters.svg" className="h-8 me-3" alt="unison logo" />
                         </a>
-                        <button id="hide-sidebar-button" onClick={toggleSidebar}>
+                        <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="sidebar-item-icon"
@@ -140,21 +120,21 @@ function Sidebar({ toggleSidebar }) {
                                 <svg className="sidebar-toggle-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
                             </div>
                         </div>
-                        <div className='sidebar-internship-dropdown'>
+                        <div className={`${openInternshipDropdown ? 'block' : 'hidden'}`}>
                             <a href="#"
                                 className="sidebar-item-link"
                             >
                                 Products
                             </a>
                         </div>
-                        <div className='sidebar-internship-dropdown'>
+                        <div className={`${openInternshipDropdown ? 'block' : 'hidden'}`}>
                             <a href="#"
                                 className="sidebar-item-link"
                             >
                                 Billing
                             </a>
                         </div>
-                        <div className='sidebar-internship-dropdown'>
+                        <div className={`${openInternshipDropdown ? 'block' : 'hidden'}`}>
                             <a href="#"
                                 className="sidebar-item-link"
                             >
@@ -205,15 +185,15 @@ function Sidebar({ toggleSidebar }) {
                                 <svg className="sidebar-toggle-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
                             </button>
                         </div>
-                        <div className="sidebar-social-service-dropdown">
+                        <div className={`${openSocialServiceDropdown ? 'block' : 'hidden'}`}>
                             <a href="#"
                                 className="sidebar-item-link">Products</a>
                         </div>
-                        <div className="sidebar-social-service-dropdown">
+                        <div className={`${openSocialServiceDropdown ? 'block' : 'hidden'}`}>
                             <a href="#"
                                 className="sidebar-item-link">Billing</a>
                         </div>
-                        <div className="sidebar-social-service-dropdown">
+                        <div className={`${openSocialServiceDropdown ? 'block' : 'hidden'}`}>
                             <a href="#"
                                 className="sidebar-item-link">Invoice</a>
                         </div>
