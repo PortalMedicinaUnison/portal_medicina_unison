@@ -1,26 +1,14 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useAuth from '../features/auth/hooks/useAuth';
 import { ROUTES } from '../config';
 
 
-function Sidebar({ toggleSidebar, openToggleButton }) {
+function Sidebar({ toggleSidebar }) {
     const { logout, authenticated } = useAuth();
 
-    const [openInternshipDropdown, setOpenInternshipDropdown] = useState(false);
-    const [openSocialServiceDropdown, setOpenSocialServiceDropdown] = useState(false);
-
-    const toggleInternshipDropdown = () => {
-        setOpenInternshipDropdown(!openInternshipDropdown);
-    };
-    
-    const toggleSocialServiceDropdown = () => {
-        setOpenSocialServiceDropdown(!openSocialServiceDropdown);
-    };
-
     return (
-        <div id="sidebar">
+        <div>
             <aside 
                 id="logo-sidebar" 
                 className="sidebar-container" 
@@ -33,32 +21,14 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             {/* <span className="self-center font-semibold sm:text-xl  whitespace-nowrap">Portal de Medina Unison</span> */}
                             <img src="unison-letters.svg" className="h-8 me-3" alt="unison logo" />
                         </a>
-                        <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="sidebar-item-icon"
-                                viewBox="-1 -1 23 23"
-                                aria-hidden="true"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M4.5 6.5h12m-12.002 4h11.997M4.5 14.5h11.995"/>
-                            </svg>
-                        </button>
                     </div>
                 </div>
                 <div className="sidebar footer">
-                    <div className="space-y-1">
-
-                        {/* General */}
-                        <div>
-                            <p className="text-gray-400 text-xs px-1 py-2">
-                                General
-                            </p>
-                        </div>
-                        <div>
+                    <ul className="space-y-1">
+                        <p className="text-gray-600 text-xs px-1">
+                            General
+                        </p>
+                        <li>
                             <a href="#" className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -75,8 +45,8 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                 </svg>                        
                                 <span className="sidebar-item-text">Inicio</span>
                             </a>
-                        </div>
-                        <div>
+                        </li>
+                        <li>
                             <a href="#" className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -94,17 +64,22 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                 </svg>                        
                                 <span className="sidebar-item-text">Reportes</span>
                             </a>
-                        </div>
+                        </li>
 
-                        {/* Internado */}
-                        <div>
+                        {/* <div className="px-1 border-b py-1"></div>
+                        <p className="text-gray-400 text-xs py-2">
+                            Internado
+                        </p> */}
+
+                        <li>
                             <p className="text-gray-400 text-xs px-1 mt-4 py-2 border-t">
                                 Internado
                             </p>
-                        </div>
-                        <div>
-                            <div onClick={toggleInternshipDropdown} className="sidebar-item-group group" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-                                <svg
+                        </li>
+
+                        <li>
+                            <button type="button" className="sidebar-item-group group" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
+                            <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
                                     viewBox="0 0 20 20"
@@ -117,87 +92,82 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                     <path d="M3.5 5.5v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.497a2 2 0 0 0-1.85-1.994l-.15-.005l-5 .002l-2-2h-4a1 1 0 0 0-1 1m0 1h7"/>
                                 </svg>                        
                                 <span className="sidebar-item-text">Internado</span>
-                                <svg className="sidebar-toggle-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-                            </div>
-                        </div>
-                        <div className={`${openInternshipDropdown ? 'block' : 'hidden'}`}>
-                            <a href="#"
-                                className="sidebar-item-link"
-                            >
-                                Products
-                            </a>
-                        </div>
-                        <div className={`${openInternshipDropdown ? 'block' : 'hidden'}`}>
-                            <a href="#"
-                                className="sidebar-item-link"
-                            >
-                                Billing
-                            </a>
-                        </div>
-                        <div className={`${openInternshipDropdown ? 'block' : 'hidden'}`}>
-                            <a href="#"
-                                className="sidebar-item-link"
-                            >
-                                Invoice
-                            </a>
-                        </div>
-                        <div>
-                            <a href="https://medicina.unison.mx/internado-de-pregrado/" target="_blank" rel="noopener noreferrer" className="sidebar-item-group group">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="sidebar-item-icon"
-                                    viewBox="-3 -3 23 23"
-                                    aria-hidden="true"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <circle cx="8.5" cy="8.5" r="8" fill="none"/>
-                                    <path d="M8.5 12.5v-4h-1m0 4h2"/>
-                                    <circle cx="8.5" cy="5.5" r="1"/>
-                                </svg>
-                                <span className="sidebar-item-text">Pagina Internado</span>
-                            </a>
-                        </div>
-
-                        {/* Servicio Social */}
-                        <div>
-                            <p className="text-gray-400 text-xs px-1 mt-4 py-2 border-t">
-                                Servicio social
-                            </p>
-                        </div>
-                        <div>
-                            <button onClick={toggleSocialServiceDropdown} type="button" className="sidebar-item-group group" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-                                <svg
+                            <svg className="sidebar-toggle-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
+                            </button>
+                            <ul id="dropdown-example" className="hidden py-2 space-y-2">
+                                <li>
+                                    <a href="#"
+                                        className="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 pl-11">Products</a>
+                                </li>
+                                <li>
+                                    <a href="#"
+                                        className="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 pl-11">Billing</a>
+                                </li>
+                                <li>
+                                    <a href="#"
+                                        className="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 pl-11">Invoice</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                                <a href="https://medicina.unison.mx/internado-de-pregrado/" target="_blank" rel="noopener noreferrer" className="sidebar-item-group group">
+                                    <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="sidebar-item-icon"
-                                        viewBox="0 0 20 20"
+                                        viewBox="-3 -3 23 23"
                                         aria-hidden="true"
                                         fill="none"
                                         stroke="currentColor"
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
                                     >
-                                        <path d="M3.5 5.5v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.497a2 2 0 0 0-1.85-1.994l-.15-.005l-5 .002l-2-2h-4a1 1 0 0 0-1 1m0 1h7"/>
-                                    </svg>                        
-                                    <span className="sidebar-item-text">Servicio social</span>
-                                <svg className="sidebar-toggle-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
+                                        <circle cx="8.5" cy="8.5" r="8" fill="none"/>
+                                        <path d="M8.5 12.5v-4h-1m0 4h2"/>
+                                        <circle cx="8.5" cy="5.5" r="1"/>
+                                    </svg>
+                                    <span className="sidebar-item-text">Pagina Internado</span>
+                                </a>
+                            </li>
+                        
+                        <li>
+                            <p className="text-gray-400 text-xs px-1 mt-4 py-2 border-t">
+                                Servicio social
+                            </p>
+                        </li>
+
+                        <li>
+                        <button type="button" className="sidebar-item-group group" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
+                            <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="sidebar-item-icon"
+                                    viewBox="0 0 20 20"
+                                    aria-hidden="true"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <path d="M3.5 5.5v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.497a2 2 0 0 0-1.85-1.994l-.15-.005l-5 .002l-2-2h-4a1 1 0 0 0-1 1m0 1h7"/>
+                                </svg>                        
+                                <span className="sidebar-item-text">Servicio social</span>
+                            <svg className="sidebar-toggle-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
                             </button>
-                        </div>
-                        <div className={`${openSocialServiceDropdown ? 'block' : 'hidden'}`}>
-                            <a href="#"
-                                className="sidebar-item-link">Products</a>
-                        </div>
-                        <div className={`${openSocialServiceDropdown ? 'block' : 'hidden'}`}>
-                            <a href="#"
-                                className="sidebar-item-link">Billing</a>
-                        </div>
-                        <div className={`${openSocialServiceDropdown ? 'block' : 'hidden'}`}>
-                            <a href="#"
-                                className="sidebar-item-link">Invoice</a>
-                        </div>
-                        <div>
+                            <ul id="dropdown-example" className="hidden py-2 space-y-2">
+                                <li>
+                                    <a href="#"
+                                        className="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 pl-11">Products</a>
+                                </li>
+                                <li>
+                                    <a href="#"
+                                        className="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 pl-11">Billing</a>
+                                </li>
+                                <li>
+                                    <a href="#"
+                                        className="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 pl-11">Invoice</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
                             <a href="https://medicina.unison.mx/servicio-social/" target="_blank" rel="noopener noreferrer" className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -215,8 +185,8 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                 </svg>
                                 <span className="sidebar-item-text">Pagina Servicio Social</span>
                             </a>
-                        </div>
-                    </div>
+                        </li>
+                    </ul>
 
 
                     <div>
