@@ -5,17 +5,59 @@ from repos.site import SiteRepo
 
 def test_create_site(db_session):
     site_repo = SiteRepo(db_session)
-    new_site = Site(site_id=1, admin_id=1, name="Test Site", site_type=1, contact_name="John Doe", is_available=True)
+    new_site = Site(
+        name="Test Site",
+        institution_id=1,
+        site_type=SiteTypeEnum.HOSPITAL,
+        address="123 Test St",
+        city="Test City",
+        state="Test State",
+        capacity=100,
+        director="Dr. Test",
+        subdirector="Dr. Example",
+        contact_email="cdscsa@example.com",
+        contact_phone="555-0000",
+        is_available=True,
+        created_by=1
+    )
     site_repo.create(new_site)
-    site_from_db = site_repo.get_by_id(1)
+    site_from_db = site_repo.get_by_id(new_site.site_id)
     assert site_from_db is not None
     assert site_from_db.name == "Test Site"
 
 def test_get_all_sites(db_session):
     site_repo = SiteRepo(db_session)
     sites = [
-        Site(site_id=2, admin_id=1, name="Site One", site_type=1, contact_name="Alice"),
-        Site(site_id=3, admin_id=2, name="Site Two", site_type=2, contact_name="Bob")
+        Site(
+            name="Site One",
+            institution_id=1,
+            site_type=SiteTypeEnum.CLINIC,
+            address="456 Clinic Ave",
+            city="Medic City",
+            state="CareState",
+            capacity=200,
+            director="Dr. Care",
+            subdirector="Dr. Help",
+            contact_email="ans@gmail.com",
+            contact_phone="555-5678",
+            is_available=True,
+            created_by=1
+        ),
+        Site(
+                name="Site Two",
+                institution_id=1,
+                site_type=SiteTypeEnum.LABORATORY,
+                address="789 Lab St",
+                city="Science City",
+                state="LabState",
+                capacity=300,
+                director="Dr. Science",
+                subdirector="Dr. Experiment",
+                contact_email="jorg@gmail.com",
+                contact_phone="555-1234",
+                is_available=True,
+                created_by=1
+        )
     ]
     for site in sites:
         site_repo.create(site)
@@ -24,14 +66,43 @@ def test_get_all_sites(db_session):
 
 def test_update_site(db_session):
     site_repo = SiteRepo(db_session)
-    site = Site(site_id=4, admin_id=1, name="Old Name", site_type=1, contact_name="Charlie")
+    site = Site(
+        name="Site Update",
+        institution_id=1,
+        site_type=SiteTypeEnum.OFFICE,
+        address="123 Update St",
+        city="Update City",
+        state="Update State",
+        capacity=150,
+        director="Dr. Update",
+        subdirector="Dr. Change",
+        contact_email="fjdsa@gmail.com",
+        contact_phone="555-9999",
+        is_available=True,
+        created_by=1
+    )
+    
     site_repo.create(site)
-    site_repo.update(4, {"name": "Updated Name"})
-    updated_site = site_repo.get_by_id(4)
+    site_repo.update(site.site_id, {"name": "Updated Name"})
+    updated_site = site_repo.get_by_id(site.site_id)
     assert updated_site.name == "Updated Name"
 
 def test_delete_site(db_session):
     site_repo = SiteRepo(db_session)
-    site = Site(site_id=5, admin_id=1, name="ToDelete", site_type=1, contact_name="Dave")
+    site = Site(
+        name="Site Update",
+        institution_id=1,
+        site_type=SiteTypeEnum.OFFICE,
+        address="123 Update St",
+        city="Update City",
+        state="Update State",
+        capacity=150,
+        director="Dr. Update",
+        subdirector="Dr. Change",
+        contact_email="fjdsa@gmail.com",
+        contact_phone="555-9999",
+        is_available=True,
+        created_by=1
+    )
     site_repo.create(site)
-    assert site_repo.delete(5) is True
+    assert site_repo.delete(site.site_id) is True
