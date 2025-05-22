@@ -1,6 +1,8 @@
 from .base import BaseRepo
 from models.site import Site, Institution
 
+# ---------------  SITE  ----------------------
+
 class SiteRepo(BaseRepo):
     
     def create(self, data: Site) -> Site:
@@ -34,6 +36,45 @@ class SiteRepo(BaseRepo):
         site = self.get_by_id(site_id)
         if site:
             site.is_active = False
+            self.session.commit()
+            return True
+        return False
+
+# ---------------  INSTITUTION  ----------------------
+
+class InstitutionRepo(BaseRepo):
+    
+    def create(self, data: Institution) -> Institution:
+        """Crea una nueva institución en la base de datos."""
+        self.session.add(data)
+        self.session.commit()
+        self.session.refresh(data)
+        return data
+    
+    def get_by_id(self, institution_id: int) -> Institution:
+        """Obtiene una institución por su ID."""
+        return self.session.query(Institution).filter(Institution.institution_id == institution_id).first()
+    
+    def get_all(self):
+        """Obtiene todas las instituciones."""
+        return self.session.query(Institution).all()
+    
+    def update(self, institution_id: int, data: dict) -> Institution:
+        """Actualiza los datos de una institución."""
+        institution = self.get_by_id(institution_id)
+        if institution:
+            for key, value in data.items():
+                if hasattr(institution, key):
+                    setattr(institution, key, value)
+            self.session.commit()
+            self.session.refresh(institution)
+        return institution
+    
+    def delete(self, institution_id: int) -> bool:
+        """Elimina una institución por su ID."""
+        institution = self.get_by_id(institution_id)
+        if institution:
+            institution.is_active = False
             self.session.commit()
             return True
         return False

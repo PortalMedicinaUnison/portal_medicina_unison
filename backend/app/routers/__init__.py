@@ -2,7 +2,7 @@ from .auth import auth_router
 from .user import user_router, pre_registered_router
 from .communication import announcement_router, survey_router, report_router
 from .internship import internship_router, internship_enrollment_router
-from .site import site_router
+from .site import site_router, institution_router
 
 routers = [
     auth_router,
@@ -13,7 +13,8 @@ routers = [
     report_router,
     internship_router,
     internship_enrollment_router,
-    site_router
+    site_router,
+    institution_router
 ]
 
 __all__ = ["routers"]

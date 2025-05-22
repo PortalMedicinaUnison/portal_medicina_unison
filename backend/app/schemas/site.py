@@ -3,7 +3,7 @@ from models.site import SiteTypeEnum
 from typing import Optional
 from utils.validation import is_valid_email
 
-
+#---------------SITE-------------------
 class SiteInput(BaseModel):
     institution_id: int
     admin_id: int
@@ -24,8 +24,7 @@ class SiteInput(BaseModel):
     def validate_email(cls, email):
         is_valid_email(email)
         return email
-
-
+    
+#---------------INSTITUTION-------------------
 class InstitutionInput(BaseModel):
     name: str
-    

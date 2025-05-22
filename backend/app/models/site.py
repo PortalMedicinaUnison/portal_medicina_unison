@@ -13,7 +13,7 @@ class Institution(BaseModel):
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     
     def __repr__(self):
-        return f"<Institution(name={self.name})>"
+        return f"<Institution(name={self.name}, is_active={self.is_active}>"
 
 
 class SiteTypeEnum(IntEnum):

@@ -1,10 +1,11 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
-from repos.site import SiteRepo
-from models.site import Site
-from schemas.site import SiteInput
+from repos.site import SiteRepo, InstitutionRepo
+from models.site import Site, Institution
+from schemas.site import SiteInput, InstitutionInput
 from utils.utils import orm_to_dict
 
+#---------------SITE-------------------
 
 def create_site(site: SiteInput, db: Session):
     site_repo = SiteRepo(db)
@@ -46,3 +47,35 @@ def update_site(site_id: int, site: SiteInput, db: Session):
 def delete_site(site_id: int, db: Session):
     site_repo = SiteRepo(db)
     return site_repo.delete(site_id)
+
+#---------------INSTITUTION-------------------
+
+def create_institution(institution: InstitutionInput, db: Session):
+    institution_repo = InstitutionRepo(db)
+    new_institution = Institution(
+        name = institution.name
+    )
+    created_institution = institution_repo.create(new_institution)
+    new_institution_response = orm_to_dict(created_institution)
+    return new_institution_response
+
+def get_institution(institution_id: int, db: Session):
+    institution_repo = InstitutionRepo(db)
+    read_institution = institution_repo.get_by_id(institution_id)
+    if read_institution is None:
+        return None
+    institution_response = orm_to_dict(read_institution)
+    return institution_response
+
+def get_all_institutions(db: Session):
+    institution_repo = InstitutionRepo(db)
+    institutions = institution_repo.get_all()
+    institutions_response = [orm_to_dict(institution) for institution in institutions]
+    return institutions_response
+
+def update_institution(institution_id: int, institution: InstitutionInput, db: Session):
+    pass
+
+def delete_institution(institution_id: int, db: Session):
+    institution_repo = InstitutionRepo(db)
+    return institution_repo.delete(institution_id)
