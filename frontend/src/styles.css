@@ -375,6 +375,8 @@
     .sidebar-header { @apply 
         flex
         w-full
+        items-center 
+        justify-between
         h-16
         pr-4
     }
@@ -389,6 +391,13 @@
         overflow-y-auto
 
         justify-between
+    }
+
+    .sidebar-section-title { @apply 
+        text-gray-400
+        text-xs
+        px-1
+        py-2
     }
 
     .sidebar-label { @apply 
