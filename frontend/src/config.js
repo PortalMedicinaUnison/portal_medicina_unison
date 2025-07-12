@@ -14,6 +14,8 @@ export const ROUTES = {
     },  
 
     ADMIN: {
-        USER_LIST: '/users',
+        USER_LIST: 'admin/users',
+
+        SITE_LIST: 'admin/sites',
     }
 }
