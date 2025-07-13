@@ -10,17 +10,17 @@ from utils.utils import orm_to_dict
 def create_site(site: SiteInput, db: Session):
     site_repo = SiteRepo(db)
     new_site = Site(
-        admin_id = site.admin_id,
         name = site.name,
-        site_type = site.site_type,
+        institution_id = site.institution_id,
         address = site.address,
         city = site.city,
-        state = site.state,
-        country = site.country,
         capacity = site.capacity,
-        contact_name = site.contact_name,
-        contact_email = site.contact_email,
-        contact_phone = site.contact_phone,
+        teaching_head_name = site.teaching_head_name,
+        teaching_head_email = site.teaching_head_email,
+        teaching_head_phone = site.teaching_head_phone,
+        teaching_deputy_name = site.teaching_deputy_name,
+        teaching_deputy_email = site.teaching_deputy_email,
+        teaching_deputy_phone = site.teaching_deputy_phone,
         is_available = site.is_available
     )
     created_site = site_repo.create(new_site)
