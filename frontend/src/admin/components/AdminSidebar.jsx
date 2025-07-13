@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import useAuth from '../features/auth/hooks/useAuth';
-import { ROUTES } from '../config';
+import useAuth from '../../features/auth/hooks/useAuth';
+import { ROUTES } from '../../config';
 import { Link, NavLink } from 'react-router-dom';
 
 
@@ -91,7 +91,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                     <circle cx="10.5" cy="14.5" r="1"/>
                                 </svg>                        
                                 <span className="sidebar-item-text">
-                                    Reportes
+                                    Instituciones
                                 </span>
                             </Link>
                         </div>
@@ -102,6 +102,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                 Internado
                             </p>
                         </div>
+
                         <div>
                             <div onClick={toggleInternshipDropdown} className="sidebar-item-group group" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
                                 <svg
@@ -117,7 +118,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                     <path d="M3.5 5.5v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.497a2 2 0 0 0-1.85-1.994l-.15-.005l-5 .002l-2-2h-4a1 1 0 0 0-1 1m0 1h7"/>
                                 </svg>                        
                                 <span className="sidebar-item-text">
-                                    Internado
+                                    Alumnos
                                 </span>
                                 <svg 
                                     className="sidebar-toggle-icon" 
@@ -132,118 +133,55 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                 </svg>
                             </div>
                         </div>
-                        
-                        {/******** INTERNADO DROPDOWN ********/}
                         <div className={`${openInternshipDropdown ? 'block' : 'hidden'}`}>
                             <Link to="#" className="sidebar-item-link">
-                                Mi Internado
+                                Lista de alumnos   
+                            </Link>
+                            <Link to="#" className="sidebar-item-link">
+                                Pre-registro
                             </Link>
                         </div>
 
                         <div>
-                            <Link to="https://medicina.unison.mx/internado-de-pregrado/" target="_blank" rel="noopener noreferrer" className="sidebar-item-group group">
+                            <Link to="#" className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
-                                    viewBox="-3 -3 23 23"
+                                    viewBox="-1 -1 23 23"
                                     aria-hidden="true"
                                     fill="none"
                                     stroke="currentColor"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 >
-                                    <circle cx="8.5" cy="8.5" r="8" fill="none"/>
-                                    <path d="M8.5 12.5v-4h-1m0 4h2"/>
-                                    <circle cx="8.5" cy="5.5" r="1"/>
-                                </svg>
+                                    <circle cx="10.5" cy="10.5" r="8"/>
+                                    <path d="M10.5 11.5v-5"/>
+                                    <circle cx="10.5" cy="14.5" r="1"/>
+                                </svg>                        
                                 <span className="sidebar-item-text">
-                                    Pagina Internado
-                                </span>
-                            </Link>
-                        </div>
-                        <div>
-                            <Link to={ROUTES.ADMIN.SITE_LIST} className="sidebar-item-group group">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="sidebar-item-icon"
-                                    viewBox="-3 -3 23 23"
-                                    aria-hidden="true"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <path d="m6.5 16.54l.631-.711Q8.205 14.6 9.064 13.49l.473-.624Q12.5 8.875 12.5 6.533C12.5 3.201 9.814.5 6.5.5s-6 2.701-6 6.033q0 2.342 2.963 6.334l.473.624a55 55 0 0 0 2.564 3.05"/>
-                                    <circle cx="6.5" cy="6.5" r="2.5"/>
-                                </svg>
-                                <span className="sidebar-item-text">
-                                    Instituciones
+                                    Reportes
                                 </span>
                             </Link>
                         </div>
 
-                        {/************************* Servicio Social *************************/}
                         <div>
-                            <p className="sidebar-section-title border-t">
-                                Servicio social
-                            </p>
-                        </div>
-                        <div>
-                            <button onClick={toggleSocialServiceDropdown} type="button" className="sidebar-item-group group" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-                                <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="sidebar-item-icon"
-                                        viewBox="0 0 20 20"
-                                        aria-hidden="true"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M3.5 5.5v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.497a2 2 0 0 0-1.85-1.994l-.15-.005l-5 .002l-2-2h-4a1 1 0 0 0-1 1m0 1h7"/>
-                                    </svg>                        
-                                    <span className="sidebar-item-text">
-                                        Servicio social
-                                    </span>
-                                <svg 
-                                    className="sidebar-toggle-icon" 
-                                    fill="currentColor" 
-                                    viewBox="0 0 20 20" 
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path fillRule="evenodd" 
-                                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
-                                          clipRule="evenodd">
-                                    </path>
-                                </svg>
-                            </button>
-                        </div>
-                        
-                        {/******** SERVICIO SOCIAL DROPDOWN ********/}
-                        <div className={`${openSocialServiceDropdown ? 'block' : 'hidden'}`}>
-                            <Link to="#"
-                                className="sidebar-item-link">Mi Servicio Social
-                            </Link>
-                        </div>
-                        
-                        <div>
-                            <Link to="https://medicina.unison.mx/servicio-social/" target="_blank" rel="noopener noreferrer" className="sidebar-item-group group">
+                            <Link to="#" className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
-                                    viewBox="-3 -3 23 23"
+                                    viewBox="-1 -1 23 23"
                                     aria-hidden="true"
                                     fill="none"
                                     stroke="currentColor"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 >
-                                    <circle cx="8.5" cy="8.5" r="8" fill="none"/>
-                                    <path d="M8.5 12.5v-4h-1m0 4h2"/>
-                                    <circle cx="8.5" cy="5.5" r="1"/>
-                                </svg>
+                                    <circle cx="10.5" cy="10.5" r="8"/>
+                                    <path d="M10.5 11.5v-5"/>
+                                    <circle cx="10.5" cy="14.5" r="1"/>
+                                </svg>                        
                                 <span className="sidebar-item-text">
-                                    Pagina Servicio Social
+                                    Avisos
                                 </span>
                             </Link>
                         </div>
@@ -252,48 +190,6 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
 
                     <div>
                         <ul>
-                            <li>
-                                <a href="#" className="sidebar-item-group group">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="sidebar-item-icon"
-                                        viewBox="-3 -3 23 23"
-                                        aria-hidden="true"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <circle cx="8.5" cy="8.5" r="8"/>
-                                        <path d="M8.5 9.5v-1l1.414-1.414a2 2 0 0 0 .586-1.414V5.5c0-.613-.346-1.173-.894-1.447l-.212-.106a2 2 0 0 0-1.788 0L7.5 4c-.613.306-1 .933-1 1.618V6.5"/>
-                                        <circle cx="8.5" cy="12.5" r="1"/>
-                                    </svg>                        
-                                    <span className="sidebar-item-text">
-                                        Preguntas frecuentes
-                                    </span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://medicina.unison.mx/" className="sidebar-item-group group">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="sidebar-item-icon"
-                                        viewBox="-3 -3 23 23"
-                                        aria-hidden="true"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <circle cx="8.5" cy="8.5" r="8" fill="none"/>
-                                        <path d="M8.5 12.5v-4h-1m0 4h2"/>
-                                        <circle cx="8.5" cy="5.5" r="1"/>
-                                    </svg>
-                                    <span className="sidebar-item-text">
-                                        Página Medicina Unison
-                                    </span>
-                                </a>
-                            </li>
                             <li>
                                 <button
                                     onClick={logout}

@@ -1,14 +1,23 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import Sidebar from './components/Sidebar';
+import { useState } from 'react';
+import { useUser } from './contexts/UserContext';
+import StudentSidebar from './user/components/StudentSidebar';
+import AdminSidebar from './admin/components/AdminSidebar';
 import Navbar from './components/Navbar';
 
 
 function Layout({ children }) {
+  const { userRole } = useUser();
   const [openSidebar, setOpenSidebar] = useState(true);
   const [expandMainContainer, setExpandMainContainer] = useState(false);
   const [openHideButton, setOpenHideButton] = useState(true);
   const [openShowButton, setOpenShowButton] = useState(false);
+
+  let Sidebar;
+  if (userRole === 'admin') {
+    Sidebar = AdminSidebar;
+  } else {
+    Sidebar = StudentSidebar;
+  }
 
   const toggleSidebar = () => {
     setExpandMainContainer(!expandMainContainer);
