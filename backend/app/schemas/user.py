@@ -62,7 +62,8 @@ class UserInputUpdate(BaseModel):
 
     @field_validator("email")
     def validate_email(cls, email):
-        is_valid_email(email)
+        if email:
+            is_valid_email(email)
         return email
 
 class UserOutput(BaseModel):
