@@ -16,6 +16,9 @@ export const ROUTES = {
     },
 
     ADMIN: {
+        USER_LIST: 'admin/users',
+
+        SITE_LIST: 'admin/sites',
         USER_LIST: '/users',
         USER_DETAIL: (userId) => `/users/${userId}`,
 
