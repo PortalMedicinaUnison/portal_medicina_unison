@@ -21,18 +21,6 @@
         background-color: #e1b73d; 
     }
 
-    
-
-    /* ------------- NO SIDEBAR ------------- */
-
-    .no-sidebar-container { @apply 
-        w-[calc(100vw-14rem)]
-        h-screen
-
-        transition-all
-        duration-500  
-    }
-
     .main-container { @apply 
         /* w-[calc(100vw-14rem)] */
         /* h-[calc(100vh-4rem)] */
@@ -301,14 +289,12 @@
     /* ------------- NAVBAR ------------- */
 
     .navbar { @apply 
-        /* fixed */
+        fixed
         top-0
-        /* z-10 */
+        z-10
         h-16
-        right-0
-        /* ml-56 */
-        /* w-[calc(100%-14rem)]     */
-        w-full
+        ml-56
+        w-[calc(100%-14rem)]
         bg-white
         border-b
 
@@ -355,10 +341,9 @@
     /* ------------- SIDEBAR ------------- */
 
     .sidebar-container { @apply 
-        /* fixed */
+        fixed
         w-56
         h-screen
-        bg-blue-200
         pt-0
         bg-white
         border-r
@@ -368,15 +353,16 @@
         top-0
         left-0        
         z-0
-        transition-all
-        duration-500      
+        transition-transform
+        -translate-x-full        
     }
 
     .sidebar-header { @apply 
         flex
         w-full
+        items-center 
+        justify-between
         h-16
-        pr-4
     }
 
     .sidebar { @apply 
@@ -389,6 +375,13 @@
         overflow-y-auto
 
         justify-between
+    }
+
+    .sidebar-section-title { @apply 
+        text-gray-400
+        text-xs
+        px-1
+        py-2
     }
 
     .sidebar-label { @apply 
@@ -435,23 +428,6 @@
         transition 
         duration-75
         group-hover:text-indigo-600
-    }
-
-    .sidebar-item-link { @apply
-        flex
-        items-center
-        w-full
-        p-2
-        text-xs
-        font-normal
-        text-gray-900
-        transition
-        duration-75
-        rounded-lg
-        group-hover:bg-gray-100
-        dark:hover:text-white
-        dark:hover:bg-gray-500
-        pl-11
     }
 
     .sidebar-toggle-icon { @apply 

@@ -17,14 +17,14 @@ def test_create_pre_registered_user(db_session: Session):
     
     result = create_pre_registered_user(user_input, db_session)
     
-    assert result["academic_id"] == 222203834
+    assert result["academic_id"] == "222203834"
     assert result["assigned_year"] == 2025
     assert result["assigned_period"] == 2025
     
     pre_user_repo = PreRegisteredUserRepo(db_session)
     db_user = pre_user_repo.get_by_id(result["pre_registered_id"])
     assert db_user is not None
-    assert db_user.academic_id == 222203834
+    assert db_user.academic_id == "222203834"
     assert db_user.assigned_year == 2025
     assert db_user.assigned_period == 2025
 
@@ -79,7 +79,7 @@ def test_create_user(db_session: Session):
         is_super_admin=False
     )
     result = create_user(user_input, db_session)
-    assert result["academic_id"] == 222203869
+    assert result["academic_id"] == "222203869"
     assert result["email"] == "john.doe@example.com"
     assert result["is_admin"] is False
     
@@ -103,7 +103,7 @@ def test_get_user(db_session: Session):
 def test_update_user(db_session: Session):
     user_repo = UserRepo(db_session)
     user = user_repo.create(User(
-        academic_id=221203840,
+        academic_id="221203840",
         first_name="Bob",
         last_name="Marley",
         second_last_name="King",
