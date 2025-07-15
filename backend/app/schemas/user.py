@@ -51,14 +51,14 @@ class UserInput(BaseModel):
         return email
 
 class UserInputUpdate(BaseModel):
-    first_name: Optional[str]
-    last_name: Optional[str]
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     second_last_name: Optional[str] = None
-    email: Optional[str]
-    phone_number: Optional[str]
-    profile_photo: Optional[str]
-    is_admin: Optional[bool]
-    is_super_admin: Optional[bool]
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
+    profile_photo: Optional[str] = None
+    is_admin: Optional[bool] = None
+    is_super_admin: Optional[bool] = None
 
     @field_validator("email")
     def validate_email(cls, email):

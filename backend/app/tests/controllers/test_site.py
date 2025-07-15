@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy.orm import Session
 from models.site import Site, Institution
 from repos.site import SiteRepo, InstitutionRepo
-from schemas.site import InstitutionInput, SiteInput
+from schemas.site import InstitutionInput, SiteInput, SiteInputUpdate
 from controllers.site import (
     create_institution, get_institution, get_all_institutions, update_institution, delete_institution,
     create_site, get_site, get_all_sites, update_site, delete_site
@@ -38,21 +38,22 @@ def test_get_all_institutions(db_session: Session):
 
 def test_update_institution(db_session: Session):
     repo = InstitutionRepo(db_session)
-    inst = repo.create(Institution(name="IMS"))
+    inst = repo.create(Institution(name="Instituciones publicas"))
 
-    update_input = InstitutionInput(name="IMSS")
+    update_input = InstitutionInput(name="Institutciones privadas")
     result = update_institution(inst.institution_id, update_input, db_session)
-    assert result["name"] == "IMSS"
+    assert result["name"] == "Institutciones privadas"
 
 def test_delete_institution(db_session: Session):
     repo = InstitutionRepo(db_session)
     inst = repo.create(Institution(name="SEDENA"))
     assert delete_institution(inst.institution_id, db_session) is True
 
+# -------------------------- Site Tests --------------------------
 
 def test_create_site(db_session: Session):
     inst_repo = InstitutionRepo(db_session)
-    inst = inst_repo.create(Institution(name="ISSSTE"))
+    inst = inst_repo.create(Institution(name="ISSSTE Morelos"))
 
     site_input = SiteInput(
         name="Hospital General 'Dr. Fernando Ocaranza'",
@@ -60,8 +61,8 @@ def test_create_site(db_session: Session):
         address="Blvd. Morelos y Av. Cuatro",
         city="Hermosillo",
         capacity=14,
-        teaching_head="Dra. Sayil de la Torre",
-        teaching_deputy="Dr. Yayo"
+        teaching_head_name="Dra. Sayil de la Torre",
+        teaching_deputy_name="Dr. Yayo"
     )
     result = create_site(site_input, db_session)
     assert result["name"] == "Hospital General 'Dr. Fernando Ocaranza'"
@@ -69,7 +70,7 @@ def test_create_site(db_session: Session):
 
 def test_get_site(db_session: Session):
     inst_repo = InstitutionRepo(db_session)
-    inst = inst_repo.create(Institution(name="SEDENA"))
+    inst = inst_repo.create(Institution(name="SEDENA Hermosillo"))
 
     site_repo = SiteRepo(db_session)
     site = site_repo.create(Site(
@@ -78,8 +79,8 @@ def test_get_site(db_session: Session):
         address="Calle Norte 123",
         city="Hermosillo",
         capacity=2000,
-        teaching_head="Dr. García",
-        teaching_deputy="Dra. Martínez"
+        teaching_head_name="Dr. García",
+        teaching_deputy_name="Dra. Martínez"
     ))
     result = get_site(site.site_id, db_session)
 
@@ -96,18 +97,18 @@ def test_get_all_sites(db_session: Session):
         institution_id=inst.institution_id,
         address="Dir A",
         city="CityA",
-        capacity=100,
-        teaching_head="H1",
-        teaching_deputy="D1"
+        capacity=10,
+        teaching_head_name="H1",
+        teaching_deputy_name="D1"
     ))
     s2 = site_repo.create(Site(
         name="Campus B",
         institution_id=inst.institution_id,
         address="Dir B",
         city="CityB",
-        capacity=200,
-        teaching_head="H2",
-        teaching_deputy="D2"
+        capacity=11,
+        teaching_head_name="H2",
+        teaching_deputy_name="D2"
     ))
     result = get_all_sites(db_session)
     names = [s["name"] for s in result]
@@ -125,8 +126,9 @@ def test_update_site(db_session: Session):
         address="Old Addr",
         city="OldCity",
         capacity=10,
-        teaching_head="H3",
-        teaching_deputy="D3"
+        teaching_head_name="H3",
+        teaching_head_email="email@example.com",
+        teaching_deputy_name="D3"
     ))
     update_input = SiteInputUpdate(
         name="Updated Site",
@@ -147,7 +149,7 @@ def test_delete_site(db_session: Session):
         address="AddrDel",
         city="CityDel",
         capacity=5,
-        teaching_head="H4",
-        teaching_deputy="D4"
+        teaching_head_name="H4",
+        teaching_deputy_name="D4"
     ))
     assert delete_site(site.site_id, db_session) is True

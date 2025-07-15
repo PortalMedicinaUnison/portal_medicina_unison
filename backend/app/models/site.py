@@ -28,11 +28,11 @@ class Site(BaseModel):
     city: Mapped[str] = mapped_column(String(50))
     capacity: Mapped[int] = mapped_column(Integer)
     teaching_head_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    teaching_head_email: Mapped[str] = mapped_column(String(50))
-    teaching_head_phone: Mapped[str] = mapped_column(String(15))
-    teaching_deputy_name: Mapped[str] = mapped_column(String(100))
-    teaching_deputy_email: Mapped[str] = mapped_column(String(50))
-    teaching_deputy_phone: Mapped[str] = mapped_column(String(15))
+    teaching_head_email: Mapped[str] = mapped_column(String(50), nullable=True)
+    teaching_head_phone: Mapped[str] = mapped_column(String(15), nullable=True)
+    teaching_deputy_name: Mapped[str] = mapped_column(String(100), nullable=True)
+    teaching_deputy_email: Mapped[str] = mapped_column(String(50), nullable=True)
+    teaching_deputy_phone: Mapped[str] = mapped_column(String(15), nullable=True)
     is_available: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
