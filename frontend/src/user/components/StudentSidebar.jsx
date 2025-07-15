@@ -1,14 +1,25 @@
 import { useState } from 'react';
-import useAuth from '../features/auth/hooks/useAuth';
-import { ROUTES } from '../config';
+import useAuth from '../../features/auth/hooks/useAuth';
+import { ROUTES } from '../../config';
 import { Link, NavLink } from 'react-router-dom';
 
 
-function Sidebar({ toggleSidebar }) {
+function Sidebar({ toggleSidebar, openToggleButton }) {
     const { logout, authenticated } = useAuth();
 
+    const [openInternshipDropdown, setOpenInternshipDropdown] = useState(false);
+    const [openSocialServiceDropdown, setOpenSocialServiceDropdown] = useState(false);
+
+    const toggleInternshipDropdown = () => {
+        setOpenInternshipDropdown(!openInternshipDropdown);
+    };
+    
+    const toggleSocialServiceDropdown = () => {
+        setOpenSocialServiceDropdown(!openSocialServiceDropdown);
+    };
+
     return (
-        <div>
+        <div id="sidebar">
             <aside 
                 id="logo-sidebar" 
                 className="sidebar-container" 
@@ -90,11 +101,10 @@ function Sidebar({ toggleSidebar }) {
                             <p className="sidebar-section-title border-t">
                                 Internado
                             </p>
-                        </li>
-
-                        <li>
-                            <button type="button" className="sidebar-item-group group" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-                            <svg
+                        </div>
+                        <div>
+                            <Link to="#" className="sidebar-item-group group">
+                                <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
                                     viewBox="0 0 20 20"
@@ -109,18 +119,7 @@ function Sidebar({ toggleSidebar }) {
                                 <span className="sidebar-item-text">
                                     Internado
                                 </span>
-                                <svg 
-                                    className="sidebar-toggle-icon" 
-                                    fill="currentColor" 
-                                    viewBox="0 0 20 20" 
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path fillRule="evenodd" 
-                                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
-                                          clipRule="evenodd">
-                                    </path>
-                                </svg>
-                            </div>
+                            </Link>
                         </div>
                         
                         {/******** INTERNADO DROPDOWN ********/}
@@ -168,72 +167,6 @@ function Sidebar({ toggleSidebar }) {
                                 </svg>
                                 <span className="sidebar-item-text">
                                     Instituciones
-                                </span>
-                            </Link>
-                        </div>
-
-                        {/************************* Servicio Social *************************/}
-                        <div>
-                            <p className="sidebar-section-title border-t">
-                                Servicio social
-                            </p>
-                        </div>
-                        <div>
-                            <button onClick={toggleSocialServiceDropdown} type="button" className="sidebar-item-group group" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-                                <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="sidebar-item-icon"
-                                        viewBox="-3 -3 23 23"
-                                        aria-hidden="true"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M3.5 5.5v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.497a2 2 0 0 0-1.85-1.994l-.15-.005l-5 .002l-2-2h-4a1 1 0 0 0-1 1m0 1h7"/>
-                                    </svg>                        
-                                    <span className="sidebar-item-text">
-                                        Servicio social
-                                    </span>
-                                <svg 
-                                    className="sidebar-toggle-icon" 
-                                    fill="currentColor" 
-                                    viewBox="0 0 20 20" 
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path fillRule="evenodd" 
-                                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
-                                          clipRule="evenodd">
-                                    </path>
-                                </svg>
-                            </button>
-                        </div>
-                        
-                        {/******** SERVICIO SOCIAL DROPDOWN ********/}
-                        <div className={`${openSocialServiceDropdown ? 'block' : 'hidden'}`}>
-                            <Link to="#"
-                                className="sidebar-item-link">Mi Servicio Social
-                            </Link>
-                        </div>
-                        
-                        <div>
-                            <Link to="https://medicina.unison.mx/servicio-social/" target="_blank" rel="noopener noreferrer" className="sidebar-item-group group">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="sidebar-item-icon"
-                                    viewBox="-3 -3 23 23"
-                                    aria-hidden="true"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <circle cx="8.5" cy="8.5" r="8" fill="none"/>
-                                    <path d="M8.5 12.5v-4h-1m0 4h2"/>
-                                    <circle cx="8.5" cy="5.5" r="1"/>
-                                </svg>
-                                <span className="sidebar-item-text">
-                                    Pagina Servicio Social
                                 </span>
                             </Link>
                         </div>

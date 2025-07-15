@@ -22,14 +22,21 @@
     }
 
     .main-container { @apply 
-        px-10
-        py-6
-        mt-16
-        sm:ml-56
+        /* w-[calc(100vw-14rem)] */
+        /* h-[calc(100vh-4rem)] */
+        h-screen
+        right-0
+        transition-all
+        duration-500
+        overflow-auto
     }
 
     .main-content { @apply 
-        /* border */
+        flex
+        flex-col
+        my-4
+        mx-8
+        border
         h-screen 
         border-dashed
         rounded-lg
@@ -353,6 +360,8 @@
     .sidebar-header { @apply 
         flex
         w-full
+        items-center 
+        justify-between
         h-16
     }
 
@@ -366,6 +375,13 @@
         overflow-y-auto
 
         justify-between
+    }
+
+    .sidebar-section-title { @apply 
+        text-gray-400
+        text-xs
+        px-1
+        py-2
     }
 
     .sidebar-label { @apply 
