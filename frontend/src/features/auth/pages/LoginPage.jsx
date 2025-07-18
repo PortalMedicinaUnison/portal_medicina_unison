@@ -5,8 +5,8 @@ function LoginPage() {
   return (
 
   <div className="flex flex-col min-h-screen bg-gray-100">
-      <header className="bg-white w-full">
-        <div className="flex px-4 py-4">
+      <nav className=" w-full">
+        <div className="flex px-4 py-8">
           <a
             href="#"
             className="border-b-4 border-gray-700 pb-2 text-2xl font-bold text-black"
@@ -14,21 +14,19 @@ function LoginPage() {
             Portal internado-servicio social
           </a>
         </div>
-      </header>
+      </nav>
 
     <div className="flex flex-1">      
-      <div className="hidden md:flex w-1/2 items-center justify-center">
+      <div className="hidden md:flex w-1/2 relative bg-[url('../../../../assets/base.svg')] bg-center bg-contain">
         <img 
-          className="w-3/4 h-3/4 object-contain" 
-          src="../../../../assets/started3.svg" 
+          className="absolute top-20 left-1/4 w-3/4 h-3/4 object-contain" 
+          src="../../../../assets/started.svg" 
         />
-      </div>
-
-    
+      </div>    
 
     {/* Formulario */}
-      <div className="flex min-h-screen flex-1 flex-col justify-center lg:px-8">
-        <div className='px-10 py-10 mx-auto sm:mx-auto sm:w-full sm:max-w-sm rounded-[3vw] border bg-white'>
+      <div className="flex min-h-screen flex-1 flex-col relative lg:px-8">
+        <div className='absolute top-1/4 left-1/4 w-3/4 object-contain px-10 py-10 mx-auto sm:mx-auto sm:w-full sm:max-w-sm rounded-[3vw] border bg-white'>
             <h2 className="login-title">
               Inicio sesión
             </h2>
