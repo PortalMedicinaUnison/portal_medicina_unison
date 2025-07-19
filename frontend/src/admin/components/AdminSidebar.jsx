@@ -75,7 +75,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </NavLink>
                         </div>
                         <div>
-                            <Link to="#" className="sidebar-item-group group">
+                            <Link to={ROUTES.ADMIN.SITE_CREATE} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
@@ -91,7 +91,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                     <circle cx="10.5" cy="14.5" r="1"/>
                                 </svg>                        
                                 <span className="sidebar-item-text">
-                                    Instituciones
+                                    Sedes
                                 </span>
                             </Link>
                         </div>

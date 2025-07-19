@@ -34,13 +34,12 @@
     }
 
     .main-container { @apply 
-        /* w-[calc(100vw-14rem)] */
-        /* h-[calc(100vh-4rem)] */
         h-screen
         right-0
         transition-all
         duration-500
         overflow-auto
+        /* bg-gray-500 */
     }
 
     .main-content { @apply 
@@ -55,6 +54,7 @@
         text-sm/6
         /* text-[13px] */
         font-light
+        /* bg-indigo-500 */
     }
 
     .main-content-header { @apply 

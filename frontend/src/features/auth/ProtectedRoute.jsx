@@ -41,9 +41,6 @@ const ProtectedRoute = () => {
     verifyToken();
   }, []);
 
-  console.log("Current auth status:", authStatus);
-  console.log("Current location:", location);
-
   if (authStatus.loading) {
     return <div>Verificando autenticación...</div>;
   }

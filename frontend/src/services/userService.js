@@ -14,4 +14,4 @@ export const deleteUserRequest = (id) =>
   api.delete(API_ENDPOINTS.USERS.DELETE(id));
 
 export const getAllUsersRequest = () =>
-  api.get(API_ENDPOINTS.USERS.LIST);
+  api.get(API_ENDPOINTS.USERS.GET_ALL);

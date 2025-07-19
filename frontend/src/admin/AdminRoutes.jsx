@@ -1,17 +1,14 @@
-import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { ROUTES } from '../config';
+import { ROUTES } from '../config.js';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 
-import UserList from '../admin/features/users/pages/UserListPage';
-import SiteList from '../admin/features/sites/pages/SitesListPage';
+import SiteFormPage from '../admin/features/sites/pages/SiteFormPage.jsx';
 
 function AdminRoutes() {
   return (
     <Routes>
       <Route element={<ProtectedRoute />}>
-        <Route path={ROUTES.ADMIN.USER_LIST} element={<UserList />} />
-        <Route path={ROUTES.ADMIN.SITE_LIST} element={<SiteList />} />
+        <Route path={ROUTES.ADMIN.SITE_CREATE} element={<SiteFormPage />} />
       </Route>
     </Routes>
   );
