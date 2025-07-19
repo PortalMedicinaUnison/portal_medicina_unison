@@ -1,4 +1,5 @@
 export const DEFAULT_PROFILE_IMAGE = '/default_picture.jpg';
+export const adminAbs = (sub) => `/admin/${sub}`;
 
 export const ROUTES = {
     HOME: '/',
@@ -16,25 +17,24 @@ export const ROUTES = {
     },
 
     ADMIN: {
-        USER_LIST: 'admin/users',
+        SITE_LIST: 'sites',
+        SITE_CREATE: 'sites/create',
 
-        SITE_LIST: '/sites',
-        SITE_CREATE: '/sites/create',
-        USER_LIST: '/users',
-        USER_DETAIL: (userId) => `/users/${userId}`,
+        USER_LIST: 'users',
+        USER_DETAIL: (userId) => `users/${userId}`,
 
-        REPORT_LIST: '/reports',
-        REPORT_DETAIL: (reportId) => `/reports/${reportId}`,
+        REPORT_LIST: 'reports',
+        REPORT_DETAIL: (reportId) => `reports/${reportId}`,
 
-        ANNOUNCEMENT_LIST: '/announcements',
-        ANNOUNCEMENT_DETAIL: (announcementId) => `/announcements/${announcementId}`,
-        ANNOUNCEMENT_CREATE: '/announcements/create',
-        ANNOUNCEMENT_DELETE: (announcementId) => `/announcements/${announcementId}/delete`,
+        ANNOUNCEMENT_LIST: 'announcements',
+        ANNOUNCEMENT_DETAIL: (announcementId) => `announcements/${announcementId}`,
+        ANNOUNCEMENT_CREATE: 'announcements/create',
+        ANNOUNCEMENT_DELETE: (announcementId) => `announcements/${announcementId}/delete`,
 
-        INSTITUTION_LIST: '/institutions',
-        INSTITUTION_DETAIL: (institutionId) => `/institutions/${institutionId}`,
-        INSTITUTION_CREATE: '/institutions/create',
-        INSTITUTION_EDIT: (institutionId) => `/institutions/${institutionId}/edit`,
-        INSTITUTION_DELETE: (institutionId) => `/institutions/${institutionId}/delete`,
+        INSTITUTION_LIST: 'institutions',
+        INSTITUTION_DETAIL: (institutionId) => `institutions/${institutionId}`,
+        INSTITUTION_CREATE: 'institutions/create',
+        INSTITUTION_EDIT: (institutionId) => `institutions/${institutionId}/edit`,
+        INSTITUTION_DELETE: (institutionId) => `institutions/${institutionId}/delete`,
     }
 }

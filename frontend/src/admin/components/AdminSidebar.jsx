@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import useAuth from '../../features/auth/hooks/useAuth';
-import { ROUTES } from '../../config';
+import { ROUTES, adminAbs } from '../../config';
 import { Link, NavLink } from 'react-router-dom';
 
 
@@ -75,7 +75,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </NavLink>
                         </div>
                         <div>
-                            <Link to={ROUTES.ADMIN.SITE_CREATE} className="sidebar-item-group group">
+                            <Link to={adminAbs(ROUTES.ADMIN.SITE_CREATE)} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
