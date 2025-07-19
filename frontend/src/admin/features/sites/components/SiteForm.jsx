@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useCreateSite from "../hooks/useCreateSite";
 import { ROUTES } from "../../../../config";
+import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
+import { isValidCity } from "../../../../utils/validations.js";
 
 function SiteForm() {
   const navigate = useNavigate();
@@ -32,6 +34,10 @@ function SiteForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isValidCity(formData.city)) {
+      alert('El municipio seleccionado no es válido');
+      return;
+    }
 
     const isCreated = await createSite(formData);
     if (isCreated) {
@@ -104,14 +110,21 @@ function SiteForm() {
             <div className="item-row">
               <dt className="item-header">Ciudad</dt>
               <dd className="item-text">
-                <input
+                <select
                   className="form-input--half"
                   name="city"
                   type="text"
                   value={formData.city}
                   onChange={handleChange}
                   placeholder="Ciudad"
-                />
+                >
+                  <option value="">Seleccionar municipio</option>
+                  {SONORA_MUNICIPALITIES.map(city => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
+                </select>
               </dd>
             </div>
 

@@ -28,7 +28,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
 
                 <div className="sidebar-header">
                         <Link to={ROUTES.HOME} className="ms-5 md:me-15">
-                            <img src="unison-letters.svg" className="h-8 me-3" alt="unison logo" />
+                            <img src="../../unison-letters.svg" className="h-8 me-3" alt="unison logo" />
                         </Link>
                         <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
                             <svg

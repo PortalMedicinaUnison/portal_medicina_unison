@@ -1,6 +1,7 @@
 from pydantic import BaseModel, field_validator
 from typing import Optional
 from utils.validation import is_valid_email
+from utils.constants import MUNICIPALITY_SET
 
 #---------------SITE-------------------
 class SiteInput(BaseModel):
@@ -30,6 +31,13 @@ class SiteInput(BaseModel):
             is_valid_email(email)
         return email
     
+    @field_validator("city")
+    @classmethod
+    def validate_city(cls, v: str):
+        if v not in MUNICIPALITY_SET:
+            raise ValueError("Municipio inválido")
+        return v
+    
 class SiteInputUpdate(BaseModel):
     name: Optional[str] = None
     address: Optional[str] = None
@@ -55,6 +63,14 @@ class SiteInputUpdate(BaseModel):
         if email:
             is_valid_email(email)
         return email
+    
+    @field_validator("city")
+    @classmethod
+    def validate_city(cls, v: str):
+        # Normaliza espacios y capitalización básica si quieres
+        if v not in MUNICIPALITY_SET:
+            raise ValueError("Municipio inválido")
+        return v
 
 #---------------INSTITUTION-------------------
 class InstitutionInput(BaseModel):
