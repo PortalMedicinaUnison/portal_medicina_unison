@@ -45,7 +45,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </svg>
                         </button>
                 </div>
-                <div className="sidebar footer">
+                <div className="sidebar-body">
                     <div className="space-y-1">
 
                         {/************************ GENERAL ************************/}
@@ -186,34 +186,34 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </Link>
                         </div>
                     </div>
-
-
-                    <div>
-                        <ul>
-                            <li>
-                                <button
-                                    onClick={logout}
-                                    className="sidebar-item-group group">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="sidebar-item-icon group-hover:text-red-700"
-                                        viewBox="0 0 23 23"
-                                        aria-hidden="true"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="m7.405 13.5l-2.905-3l2.905-3m-2.905 3h9m-6-7l8 .002c1.104.001 2 .896 2 2v9.995a2 2 0 0 1-2 2l-8 .003"/>
-                                    </svg>
-                                    <span className="sidebar-item-text group-hover:text-red-700">
-                                        Cerrar sesión
-                                    </span>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>         
                 </div>
+                
+
+                <div className="sidebar-footer">
+                    <ul>
+                        <li>
+                            <button
+                                onClick={logout}
+                                className="sidebar-item-group group">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="sidebar-item-icon group-hover:text-red-700"
+                                    viewBox="0 0 23 23"
+                                    aria-hidden="true"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <path d="m7.405 13.5l-2.905-3l2.905-3m-2.905 3h9m-6-7l8 .002c1.104.001 2 .896 2 2v9.995a2 2 0 0 1-2 2l-8 .003"/>
+                                </svg>
+                                <span className="sidebar-item-text group-hover:text-red-700">
+                                    Cerrar sesión
+                                </span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>         
             </aside>
         </div>
     );

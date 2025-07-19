@@ -27,34 +27,31 @@
 
     .no-sidebar-container { @apply 
         w-[calc(100vw-14rem)]
-        h-screen
 
         transition-all
         duration-500  
     }
 
     .main-container { @apply 
-        h-screen
+        h-full
         right-0
         transition-all
         duration-500
         overflow-auto
-        /* bg-gray-500 */
     }
 
     .main-content { @apply 
         flex
         flex-col
         my-4
+        mb-16
         mx-8
         border
-        h-screen 
         border-dashed
         rounded-lg
         text-sm/6
         /* text-[13px] */
         font-light
-        /* bg-indigo-500 */
     }
 
     .main-content-header { @apply 
@@ -65,7 +62,6 @@
 
     .main-content-body { @apply 
         p-4
-        h-screen
         overflow-y-auto
         bg-black
     }
@@ -76,15 +72,15 @@
         gap-8;
     }
 
-    .component-container_header {
-        @apply lg:flex lg:justify-between;
+    .component-container_header { @apply
+        lg:flex 
+        lg:justify-between;
     }
       
     .component-container_header-content { @apply 
         min-w-0 
         flex-1
     }
-      
 
     .component-container-pretitle { @apply 
         mt-1 
@@ -355,42 +351,35 @@
     /* ------------- SIDEBAR ------------- */
 
     .sidebar-container { @apply 
-        /* fixed */
         w-56
-        h-screen
-        bg-blue-200
-        pt-0
+        min-h-screen
+        flex
+        flex-col
         bg-white
         border-r
-        border-gray-200
-        sm:translate-x-0
-
-        top-0
-        left-0        
-        z-0
-        transition-all
-        duration-500      
+        transition-all duration-500      
     }
 
     .sidebar-header { @apply 
         flex
-        w-full
         items-center 
         justify-between
         h-16
         pr-4
     }
 
-    .sidebar { @apply 
-        flex
-        flex-col
-        h-[calc(100%-4rem)]
+    .sidebar-body { @apply 
+        flex-1
         py-6
         px-4
-        pb-4
         overflow-y-auto
+    }
 
-        justify-between
+    .sidebar-footer { @apply 
+        px-4 py-4
+        shrink-0
+        fixed
+        bottom-0
     }
 
     .sidebar-section-title { @apply 

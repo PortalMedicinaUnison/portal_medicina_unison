@@ -28,7 +28,7 @@
     };
 
     return (
-      <div className="flex justify-between">
+      <div className="flex h-full">
         <div id="sidebar-container" className={`sidebar-container ${openSidebar ? 'w-56 translate-x-0' : 'w-0 -translate-x-56'}`}>
           <Sidebar toggleSidebar={toggleSidebar} openToggleButton={openHideButton} />
         </div>
