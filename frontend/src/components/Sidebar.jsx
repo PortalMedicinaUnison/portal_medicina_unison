@@ -4,11 +4,22 @@ import { ROUTES } from '../config';
 import { Link, NavLink } from 'react-router-dom';
 
 
-function Sidebar({ toggleSidebar }) {
+function Sidebar({ toggleSidebar, openToggleButton }) {
     const { logout, authenticated } = useAuth();
 
+    const [openInternshipDropdown, setOpenInternshipDropdown] = useState(false);
+    const [openSocialServiceDropdown, setOpenSocialServiceDropdown] = useState(false);
+
+    const toggleInternshipDropdown = () => {
+        setOpenInternshipDropdown(!openInternshipDropdown);
+    };
+    
+    const toggleSocialServiceDropdown = () => {
+        setOpenSocialServiceDropdown(!openSocialServiceDropdown);
+    };
+
     return (
-        <div>
+        <div id="sidebar">
             <aside 
                 id="logo-sidebar" 
                 className="sidebar-container" 
@@ -90,11 +101,10 @@ function Sidebar({ toggleSidebar }) {
                             <p className="sidebar-section-title border-t">
                                 Internado
                             </p>
-                        </li>
-
-                        <li>
-                            <button type="button" className="sidebar-item-group group" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-                            <svg
+                        </div>
+                        <div>
+                            <div onClick={toggleInternshipDropdown} className="sidebar-item-group group" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
+                                <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
                                     viewBox="0 0 20 20"
@@ -183,7 +193,7 @@ function Sidebar({ toggleSidebar }) {
                                 <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="sidebar-item-icon"
-                                        viewBox="-3 -3 23 23"
+                                        viewBox="0 0 20 20"
                                         aria-hidden="true"
                                         fill="none"
                                         stroke="currentColor"
