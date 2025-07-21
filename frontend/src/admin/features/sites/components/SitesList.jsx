@@ -3,7 +3,7 @@ import api from '../../../../api';
 
 function SitesList() {
     const [search, setSearch] = useState('');
-    const [statusFilter, setStatusFilter] = useState('active');
+    const [statusFilter, setStatusFilter] = useState('available');
     const [sites, setSites] = useState([]);
 
     const getSites = async () => {
@@ -11,7 +11,7 @@ function SitesList() {
             const response = await api.get("/sites/");
             setSites(response.data);
         } catch (error) {
-            console.error("Edit failed", error);
+            console.error("Error loading sites", error);
         }
     };
     
@@ -20,13 +20,12 @@ function SitesList() {
     }, []);
     
     
-    const handleEditButton = (e) => {
-        // getSites();
-        console.log(statusFilter);
+    const handleEditButton = (siteId) => {
+        console.log('Edit site:', siteId);
     };
     
     const handleDeleteButton = (siteId) => {
-        const deleteUser = async () => {
+        const deleteSite = async () => {
             try {
                 const response = await api.delete(`/sites/${siteId}`);
                 await getSites();
@@ -35,9 +34,9 @@ function SitesList() {
             }
         };
 
-        const userConfirmed = confirm('El estado de este usuario se establecerá como inactivo. ¿Deseas continuar?');
+        const userConfirmed = confirm('Este sitio se marcará como no disponible. ¿Deseas continuar?');
         if (userConfirmed) {
-            deleteUser();
+            deleteSite();
         }
     };
 
@@ -47,29 +46,31 @@ function SitesList() {
                 <input className='form-input--sm'
                     type="text"
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder='Buscar usuario'
+                    placeholder='Buscar sitio'
                 />
             
-
                 <select id="status" 
                     className='btn-tertiary' 
+                    value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}>
                         
                         <option value="all">Todos</option>
-                        <option value="active" selected>Activo</option>
-                        <option value="inactive">Inactivo</option>
+                        <option value="available">Disponible</option>
+                        <option value="unavailable">No disponible</option>
                 </select>
             </div>
 
             <div className='table-container-body'>
             <table className='table'>
-                <thead class="text-xs text-gray-700 bg-gray-50 ">
+                <thead className="text-xs text-gray-700 bg-gray-50 ">
                     <tr>
-                        <th>Expediente</th>
+                        <th>ID</th>
                         <th>Nombre</th>
-                        <th>Apellido(s)</th>
-                        <th>Correo</th>
-                        <th>Estatus</th>
+                        <th>Ciudad</th>
+                        <th>Dirección</th>
+                        <th>Capacidad</th>
+                        <th>Responsable</th>
+                        <th>Estado</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -78,21 +79,23 @@ function SitesList() {
                 <tbody>
                     {sites.filter((item) => {
                         return (search.toLowerCase() === '' 
-                            || item.last_name.toLowerCase().includes(search.toLowerCase())
-                            || item.second_last_name.toLowerCase().includes(search.toLowerCase())
-                            || item.first_name.toLowerCase().includes(search.toLowerCase())
-                            || String(item.academic_id).includes(search))
-                            // && (statusFilter == 'all');
-                            && (statusFilter == 'all' ? item : (statusFilter == 'active') ? item.is_active : !item.is_active);
+                            || item.name.toLowerCase().includes(search.toLowerCase())
+                            || item.city.toLowerCase().includes(search.toLowerCase())
+                            || item.address.toLowerCase().includes(search.toLowerCase())
+                            || item.teaching_head_name.toLowerCase().includes(search.toLowerCase())
+                            || String(item.id).includes(search))
+                            && (statusFilter == 'all' ? item : (statusFilter == 'available') ? item.is_available : !item.is_available);
                     }).map((item) => (
-                        <tr>
-                            <td>{item.academic_id}</td>
-                            <td>{item.first_name}</td>
-                            <td>{item.last_name} {item.second_last_name}</td>
-                            <td>{item.email}</td>
-                            <td>{(item.is_active) ? 'Activo' : 'Inactivo'}</td>
-                            <td><button className='item-link' onClick={e => handleEditButton(item.user_id)}>Editar</button></td>
-                            {(statusFilter != 'inactive') && (<td><button className='table-action' onClick={e => handleDeleteButton(item.user_id)}>Borrar</button></td>)}
+                        <tr key={item.id}>
+                            <td>{item.id}</td>
+                            <td>{item.name}</td>
+                            <td>{item.city}</td>
+                            <td>{item.address}</td>
+                            <td>{item.capacity}</td>
+                            <td>{item.teaching_head_name}</td>
+                            <td>{(item.is_available) ? 'Disponible' : 'No disponible'}</td>
+                            <td><button className='item-link' onClick={e => handleEditButton(item.id)}>Editar</button></td>
+                            {(statusFilter != 'unavailable') && (<td><button className='table-action' onClick={e => handleDeleteButton(item.id)}>Borrar</button></td>)}
                         </tr>
                     ))}
                 </tbody>

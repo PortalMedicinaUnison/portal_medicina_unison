@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useCreateSite from "../hooks/useCreateSite";
-import { ROUTES } from "../../../../config";
+import { ROUTES, adminAbs } from "../../../../config";
 import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
 import { isValidCity } from "../../../../utils/validations.js";
 
@@ -251,7 +251,7 @@ function SiteForm() {
           <button 
             type="button" 
             className="btn-secondary" 
-            onClick={() => navigate(ROUTES.ADMIN.SITE_LIST)}
+            onClick={() => navigate(adminAbs(ROUTES.ADMIN.SITE_LIST))}
           >
             Cancelar
           </button>

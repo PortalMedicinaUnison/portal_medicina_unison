@@ -2,7 +2,7 @@ import SitesList from '../components/SitesList.jsx';
 import Layout from '../../../../Layout.jsx';
 import PageLayout from '../../../../components/PageLayout.jsx';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../../../config.js';
+import { ROUTES, adminAbs } from '../../../../config.js';
 
 
 function SitesListPage() {
@@ -13,7 +13,7 @@ function SitesListPage() {
       <button
         type="button"
         className="btn-primary"
-        onClick={() => navigate(ROUTES.ADMIN.CREATE_SITE)}
+        onClick={() => navigate(adminAbs(ROUTES.ADMIN.SITE_CREATE))}
       >
         Crear
       </button>
