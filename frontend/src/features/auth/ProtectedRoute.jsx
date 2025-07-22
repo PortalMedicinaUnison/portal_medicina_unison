@@ -23,9 +23,7 @@ const ProtectedRoute = () => {
 
       try {
         const response = await verifyTokenRequest(token);
-        console.log("Token verification response:", response);
         if (response && response.status === 200) {
-          console.log("Token is valid");
           setAuthStatus({ 
             isAuthenticated: true, 
             loading: false 
@@ -46,10 +44,8 @@ const ProtectedRoute = () => {
   }
 
   if (!authStatus.isAuthenticated) {
-    console.log("Not authenticated, redirecting to:", ROUTES.AUTH.LOGIN);
     return <Navigate to={ROUTES.AUTH.LOGIN} replace state={{ from: location }} />;
   }
-  console.log("Authenticated, rendering protected content");
   return <Outlet />;
 };
 
