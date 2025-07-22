@@ -68,8 +68,8 @@ function InstitutionsList() {
                             || item.name.toLowerCase().includes(search.toLowerCase())
                             || String(item.id).includes(search));
                     }).map((item) => (
-                        <tr key={item.id}>
-                            <td>{item.id}</td>
+                        <tr key={item.institution_id}>
+                            <td>{item.institution_id}</td>
                             <td>{item.name}</td>
                             <td><button className='item-link' onClick={e => handleEditButton(item.id)}>Editar</button></td>
                             <td><button className='table-action' onClick={e => handleDeleteButton(item.id)}>Borrar</button></td>
