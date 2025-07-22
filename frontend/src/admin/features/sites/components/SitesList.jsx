@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../../../api';
+import { ROUTES, adminAbs } from '../../../../config.js';
+
 
 function SitesList() {
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('available');
     const [sites, setSites] = useState([]);
+    const navigate = useNavigate();
+
 
     const getSites = async () => {
         try {
             const response = await api.get("/sites/");
             setSites(response.data);
+            console.log("Sites loaded successfully", response.data);
         } catch (error) {
             console.error("Error loading sites", error);
         }
@@ -19,6 +25,9 @@ function SitesList() {
         getSites();
     }, []);
     
+    const handleViewButton = (siteId) => {
+        navigate(adminAbs(ROUTES.ADMIN.SITE_INFO(siteId)));
+    };
     
     const handleEditButton = (siteId) => {
         console.log('Edit site:', siteId);
@@ -34,7 +43,7 @@ function SitesList() {
             }
         };
 
-        const userConfirmed = confirm('Este sitio se marcará como no disponible. ¿Deseas continuar?');
+        const userConfirmed = confirm('Este sitio se eliminará. ¿Deseas continuar?');
         if (userConfirmed) {
             deleteSite();
         }
@@ -86,16 +95,31 @@ function SitesList() {
                             || String(item.id).includes(search))
                             && (statusFilter == 'all' ? item : (statusFilter == 'available') ? item.is_available : !item.is_available);
                     }).map((item) => (
-                        <tr key={item.id}>
-                            <td>{item.id}</td>
+                        <tr key={item.site_id}>
+                            <td>{item.site_id}</td>
                             <td>{item.name}</td>
                             <td>{item.city}</td>
                             <td>{item.address}</td>
                             <td>{item.capacity}</td>
                             <td>{item.teaching_head_name}</td>
                             <td>{(item.is_available) ? 'Disponible' : 'No disponible'}</td>
-                            <td><button className='item-link' onClick={e => handleEditButton(item.id)}>Editar</button></td>
-                            {(statusFilter != 'unavailable') && (<td><button className='table-action' onClick={e => handleDeleteButton(item.id)}>Borrar</button></td>)}
+                            <td>
+                                <button className='item-link' onClick={e => handleViewButton(item.site_id)}>
+                                    Ver
+                                </button>
+                            </td>
+                            <td>
+                                <button className='item-link' onClick={e => handleEditButton(item.site_id)}>
+                                    Editar
+                                </button>
+                            </td>
+                            {(statusFilter != 'unavailable') && (
+                                <td>
+                                    <button className='table-action' onClick={e => handleDeleteButton(item.site_id)}>
+                                        Borrar
+                                    </button>
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>

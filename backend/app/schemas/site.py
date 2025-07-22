@@ -16,7 +16,6 @@ class SiteInput(BaseModel):
     teaching_deputy_name: Optional[str] = None
     teaching_deputy_email: Optional[str] = None
     teaching_deputy_phone: Optional[str] = None
-    
     is_available: bool = True
 
     @field_validator("teaching_head_email")
@@ -72,6 +71,25 @@ class SiteInputUpdate(BaseModel):
             raise ValueError("Municipio inválido")
         return v
 
+class SiteOutput(BaseModel):
+    site_id: int
+    institution_id: int
+    name: str
+    address: str
+    city: str
+    capacity: int
+    teaching_head_name: str
+    teaching_head_email: Optional[str] = None
+    teaching_head_phone: Optional[str] = None
+    teaching_deputy_name: Optional[str] = None
+    teaching_deputy_email: Optional[str] = None
+    teaching_deputy_phone: Optional[str] = None
+    is_available: bool = True
+
 #---------------INSTITUTION-------------------
 class InstitutionInput(BaseModel):
+    name: str
+
+class InstitutionOutput(BaseModel):
+    institution_id: int
     name: str
