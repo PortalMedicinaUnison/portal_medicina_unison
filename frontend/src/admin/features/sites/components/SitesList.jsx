@@ -75,10 +75,8 @@ function SitesList() {
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
+                        <th>Institución</th>
                         <th>Ciudad</th>
-                        <th>Dirección</th>
-                        <th>Capacidad</th>
-                        <th>Responsable</th>
                         <th>Estado</th>
                         <th></th>
                         <th></th>
@@ -89,19 +87,15 @@ function SitesList() {
                     {sites.filter((item) => {
                         return (search.toLowerCase() === '' 
                             || item.name.toLowerCase().includes(search.toLowerCase())
-                            || item.city.toLowerCase().includes(search.toLowerCase())
-                            || item.address.toLowerCase().includes(search.toLowerCase())
-                            || item.teaching_head_name.toLowerCase().includes(search.toLowerCase())
+                            || item.institution_name.toLowerCase().includes(search.toLowerCase())
                             || String(item.id).includes(search))
                             && (statusFilter == 'all' ? item : (statusFilter == 'available') ? item.is_available : !item.is_available);
                     }).map((item) => (
                         <tr key={item.site_id}>
                             <td>{item.site_id}</td>
                             <td>{item.name}</td>
+                            <td>{item.institution_name}</td>
                             <td>{item.city}</td>
-                            <td>{item.address}</td>
-                            <td>{item.capacity}</td>
-                            <td>{item.teaching_head_name}</td>
                             <td>{(item.is_available) ? 'Disponible' : 'No disponible'}</td>
                             <td>
                                 <button className='item-link' onClick={e => handleViewButton(item.site_id)}>

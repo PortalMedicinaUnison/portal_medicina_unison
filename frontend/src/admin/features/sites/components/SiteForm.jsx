@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useCreateSite from "../hooks/useCreateSite";
+import useGetInstitutions from "../hooks/useGetInstitutions";
 import { ROUTES, adminAbs } from "../../../../config";
 import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
 import { isValidCity } from "../../../../utils/validations.js";
@@ -10,6 +11,7 @@ function SiteForm() {
 
   const [formData, setFormData] = useState({
     name: '',
+    institutionId: '',
     address: '',
     city: '',
     capacity: '',
@@ -23,6 +25,7 @@ function SiteForm() {
   });
 
   const { createSite, error, success } = useCreateSite();
+  const { institutions, loading: institutionsLoading, error: institutionsError } = useGetInstitutions();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,12 +42,18 @@ function SiteForm() {
       return;
     }
 
+    if (!formData.institutionId) {
+      alert('Por favor selecciona una institución');
+      return;
+    }
+
     const isCreated = await createSite(formData);
     if (isCreated) {
       console.log('Sede registrada exitosamente');
       
       setFormData({
         name: '',
+        institutionId: '',
         address: '',
         city: '',
         capacity: '',
@@ -90,6 +99,29 @@ function SiteForm() {
                   onChange={handleChange}
                   placeholder="Razon social"
                 />
+              </dd>
+            </div>
+
+            <div className="item-row">
+              <dt className="item-header">Institución</dt>
+              <dd className="item-text">
+                <select
+                  className="form-input--half"
+                  name="institutionId"
+                  value={formData.institutionId}
+                  onChange={handleChange}
+                  required
+                  disabled={institutionsLoading}
+                >
+                  <option value="">
+                    {institutionsLoading ? 'Cargando instituciones...' : 'Seleccionar institución'}
+                  </option>
+                  {institutions.map(institution => (
+                    <option key={institution.id} value={institution.id}>
+                      {institution.name}
+                    </option>
+                  ))}
+                </select>
               </dd>
             </div>
 

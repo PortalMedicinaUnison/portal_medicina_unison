@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator
-from typing import Optional
+from typing import List, Optional
 from utils.validation import is_valid_email
 from utils.constants import MUNICIPALITY_SET
 
@@ -93,3 +93,4 @@ class InstitutionInput(BaseModel):
 class InstitutionOutput(BaseModel):
     institution_id: int
     name: str
+    sites: List[SiteOutput] = []
