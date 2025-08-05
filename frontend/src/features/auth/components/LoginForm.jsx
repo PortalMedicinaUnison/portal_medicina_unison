@@ -14,7 +14,6 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const cleanedEmail = email.trim();
-    console.log(cleanedEmail);
     if (!isValidEmail(cleanedEmail)) {
       alert("Por favor, ingresa un correo electrónico válido.");
       return;

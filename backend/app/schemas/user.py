@@ -67,6 +67,7 @@ class UserInputUpdate(BaseModel):
         return email
 
 class UserOutput(BaseModel):
+    user_id: int
     academic_id: str
     first_name: str
     last_name: str

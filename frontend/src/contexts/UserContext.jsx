@@ -35,10 +35,7 @@ export function UserProvider({ children }) {
         const role = getUserRole(userData);
         setUser(userData);
         setUserRole(role);
-        console.log("User fetched successfully:", userData);
-        console.log("User role:", role);
       } catch (error) {
-        console.error("User not found", error);
         setError("User not found");
       } finally {
         setLoading(false);

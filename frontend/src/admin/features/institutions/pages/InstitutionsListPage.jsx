@@ -1,19 +1,19 @@
-import SitesList from '../components/SitesList.jsx';
+import InstitutionsList from '../components/InstitutionsList.jsx';
 import Layout from '../../../../Layout.jsx';
 import PageLayout from '../../../../components/PageLayout.jsx';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config.js';
 
 
-function SitesListPage() {
+function InstitutionsListPage() {
   const navigate = useNavigate();
 
-  const siteActions = (
+  const instituionActions = (
     <span className="show-on-sm">
       <button
         type="button"
         className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.ADMIN.SITE_CREATE))}
+        onClick={() => navigate(adminAbs(ROUTES.ADMIN.INSTITUTION_CREATE))}
       >
         Crear
       </button>
@@ -23,13 +23,13 @@ function SitesListPage() {
   return (
       <Layout>
         <PageLayout 
-          title="Lista de sedes"
-          actions={siteActions}
+          title="Lista de instituciones"
+          actions={instituionActions}
           >
-          <SitesList />
+          <InstitutionsList />
         </PageLayout>
       </Layout>
   );
 }
 
-export default SitesListPage;
+export default InstitutionsListPage;

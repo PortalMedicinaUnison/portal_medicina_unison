@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Form, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List, Union
-from schemas.site import SiteInput, InstitutionInput
+from schemas.site import SiteInput, SiteOutput, InstitutionInput, InstitutionOutput
 from core.dependencies import get_db
 from controllers.site import (
     create_site,
@@ -31,7 +31,7 @@ async def create_site_route(site: SiteInput, db: Session = Depends(get_db)):
             detail="No se pudo crear el sitio")
     return site
 
-@site_router.get('/{site_id}', response_model=SiteInput)
+@site_router.get('/{site_id}')
 async def get_site_route(site_id: int, db: Session = Depends(get_db)):
     site =  get_site(site_id, db)
     if not site:
@@ -40,7 +40,7 @@ async def get_site_route(site_id: int, db: Session = Depends(get_db)):
             detail="Sitio no encontrado")
     return site
 
-@site_router.get('/', response_model=List[SiteInput])
+@site_router.get('/', response_model=List[SiteOutput])
 async def get_sites_route(db: Session = Depends(get_db)):
     sites =  get_all_sites(db)
     if not sites:
@@ -78,7 +78,7 @@ async def create_institution_route(institution: InstitutionInput, db: Session = 
             detail="No se pudo crear la institución")
     return institution
 
-@institution_router.get('/{institution_id}', response_model=InstitutionInput)
+@institution_router.get('/{institution_id}')
 async def get_institution_route(institution_id: int, db: Session = Depends(get_db)):
     institution =  get_institution(institution_id, db)
     if not institution:
@@ -87,7 +87,7 @@ async def get_institution_route(institution_id: int, db: Session = Depends(get_d
             detail="Institución no encontrada")
     return institution
 
-@institution_router.get('/', response_model=List[InstitutionInput])
+@institution_router.get('/', response_model=List[InstitutionOutput])
 async def get_institutions_route(db: Session = Depends(get_db)):
     institutions =  get_all_institutions(db)
     if not institutions:
