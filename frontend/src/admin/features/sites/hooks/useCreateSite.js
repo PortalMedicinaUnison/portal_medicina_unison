@@ -10,11 +10,16 @@ export default function useCreateSite() {
   const createSite = async (formData) => {  
     const cleanedData = cleanFormData(formData);
     
-    if (!isValidEmail(cleanedData.email)) {
-      setError('El formato del correo es inválido.');
+    if (!isValidEmail(cleanedData.teachingHeadEmail)) {
+      setError('El formato del correo del jefe de enseñanza es inválido.');
       return false;
     }
-    
+
+    if (cleanedData.teachingDeputyEmail && !isValidEmail(cleanedData.teachingDeputyEmail)) {
+      setError('El formato del correo del subjefe de enseñanza es inválido.');
+      return false;
+    }
+
     setError('');
     
     const site = {
@@ -22,14 +27,12 @@ export default function useCreateSite() {
       name: cleanedData.name,
       address: cleanedData.address,
       city: cleanedData.city,
-      capacity: cleanedData.capacity,
       teaching_head_name: cleanedData.teachingHeadName,
       teaching_head_email: cleanedData.teachingHeadEmail,
       teaching_head_phone: cleanedData.teachingHeadPhone,
       teaching_deputy_name: cleanedData.teachingDeputyName,
       teaching_deputy_email: cleanedData.teachingDeputyEmail,
       teaching_deputy_phone: cleanedData.teachingDeputyPhone,
-      is_available: true,
     };
 
     try {

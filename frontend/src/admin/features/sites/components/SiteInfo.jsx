@@ -60,20 +60,6 @@ function SiteDetail() {
                             </div>
 
                             <div className="item-row">
-                                <dt className="item-header">Capacidad</dt>
-                                <dd className="item-text">{site.capacity} personas</dd>
-                            </div>
-
-                            <div className="item-row">
-                                <dt className="item-header">Estado</dt>
-                                <dd className="item-text">
-                                    <span className={site.is_available ? 'text-green-600' : 'text-red-600'}>
-                                        {site.is_available ? 'Disponible' : 'No disponible'}
-                                    </span>
-                                </dd>
-                            </div>
-
-                            <div className="item-row">
                                 <dt className="item-header">Responsable principal</dt>
                                 <dd className="item-text">{site.teaching_head_name}</dd>
                             </div>

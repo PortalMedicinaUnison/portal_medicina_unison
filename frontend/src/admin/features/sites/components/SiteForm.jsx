@@ -14,14 +14,12 @@ function SiteForm() {
     institutionId: '',
     address: '',
     city: '',
-    capacity: '',
     teachingHeadName: '',
     teachingHeadEmail: '',
     teachingHeadPhone: '',
     teachingDeputyName: '',
     teachingDeputyEmail: '',
     teachingDeputyPhone: '',
-    isAvailable: true,
   });
 
   const { createSite, error, success } = useCreateSite();
@@ -56,14 +54,12 @@ function SiteForm() {
         institutionId: '',
         address: '',
         city: '',
-        capacity: '',
         teachingHeadName: '',
         teachingHeadEmail: '',
         teachingHeadPhone: '',
         teachingDeputyName: '',
         teachingDeputyEmail: '',
         teachingDeputyPhone: '',
-        isAvailable: true,
       });
     }
   };
@@ -117,7 +113,7 @@ function SiteForm() {
                     {institutionsLoading ? 'Cargando instituciones...' : 'Seleccionar institución'}
                   </option>
                   {institutions.map(institution => (
-                    <option key={institution.id} value={institution.id}>
+                    <option key={institution.institution_id} value={institution.institution_id}>
                       {institution.name}
                     </option>
                   ))}
@@ -161,26 +157,11 @@ function SiteForm() {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Capacidad</dt>
-              <dd className="item-text">
-                <input
-                  className="form-input--half"
-                  name="capacity"
-                  type="number"
-                  min="0"
-                  value={formData.capacity}
-                  onChange={handleChange}
-                  placeholder="Capacidad"
-                />
-              </dd>
-            </div>
-
-            <div className="item-row">
               <dt className="item-header">Jefe de enseñanza</dt>
               <dd className="item-text">
                 <input
                   className="form-input--half"
-                  name="teaching_head_name"
+                  name="teachingHeadName"
                   type="text"
                   value={formData.teachingHeadName}
                   onChange={handleChange}
@@ -195,11 +176,11 @@ function SiteForm() {
               <dd className="item-text">
                 <input
                   className="form-input--half"
-                  name="teaching_head_email"
+                  name="teachingHeadEmail"
                   type="email"
                   value={formData.teachingHeadEmail}
                   onChange={handleChange}
-                  placeholder="email@dominio"
+                  placeholder="email@dominio.com"
                 />
               </dd>
             </div>
@@ -209,7 +190,7 @@ function SiteForm() {
               <dd className="item-text">
                 <input
                   className="form-input--half"
-                  name="teaching_head_phone"
+                  name="teachingHeadPhone"
                   type="tel"
                   value={formData.teachingHeadPhone}
                   onChange={handleChange}
@@ -223,9 +204,9 @@ function SiteForm() {
               <dd className="item-text">
                 <input
                   className="form-input--half"
-                  name="teaching_head_name"
+                  name="teachingDeputyName"
                   type="text"
-                  value={formData.teachingHeadName}
+                  value={formData.teachingDeputyName}
                   onChange={handleChange}
                   placeholder="Nombre"
                   required
@@ -238,11 +219,11 @@ function SiteForm() {
               <dd className="item-text">
                 <input
                   className="form-input--half"
-                  name="teaching_head_email"
+                  name="teachingDeputyEmail"
                   type="email"
-                  value={formData.teachingHeadEmail}
+                  value={formData.teachingDeputyEmail}
                   onChange={handleChange}
-                  placeholder="email@dominio"
+                  placeholder="email@dominio.com"
                 />
               </dd>
             </div>
@@ -252,28 +233,12 @@ function SiteForm() {
               <dd className="item-text">
                 <input
                   className="form-input--half"
-                  name="teaching_head_phone"
+                  name="teachingDeputyPhone"
                   type="tel"
-                  value={formData.teachingHeadPhone}
+                  value={formData.teachingDeputyPhone}
                   onChange={handleChange}
                   placeholder="Teléfono"
                 />
-              </dd>
-            </div>
-
-
-            <div className="item-row">
-              <dt className="item-header">¿Esta disponible?</dt>
-              <dd className="item-text">
-                <label className="inline-flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="is_available"
-                    checked={formData.isAvailable}
-                    onChange={handleChange}
-                  />
-                  <span>Sí</span>
-                </label>
               </dd>
             </div>
           </dl>

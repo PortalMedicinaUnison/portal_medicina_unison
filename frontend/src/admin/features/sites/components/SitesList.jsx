@@ -77,7 +77,6 @@ function SitesList() {
                         <th>Nombre</th>
                         <th>Institución</th>
                         <th>Ciudad</th>
-                        <th>Estado</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -96,7 +95,6 @@ function SitesList() {
                             <td>{item.name}</td>
                             <td>{item.institution_name}</td>
                             <td>{item.city}</td>
-                            <td>{(item.is_available) ? 'Disponible' : 'No disponible'}</td>
                             <td>
                                 <button className='item-link' onClick={e => handleViewButton(item.site_id)}>
                                     Ver
