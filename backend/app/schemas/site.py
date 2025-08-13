@@ -9,14 +9,12 @@ class SiteInput(BaseModel):
     name: str
     address: str
     city: str
-    capacity: int
     teaching_head_name: str
     teaching_head_email: Optional[str] = None
     teaching_head_phone: Optional[str] = None
     teaching_deputy_name: Optional[str] = None
     teaching_deputy_email: Optional[str] = None
     teaching_deputy_phone: Optional[str] = None
-    is_available: bool = True
 
     @field_validator("teaching_head_email")
     def validate_email(cls, email):
@@ -41,15 +39,12 @@ class SiteInputUpdate(BaseModel):
     name: Optional[str] = None
     address: Optional[str] = None
     city: Optional[str] = None
-    capacity: Optional[int] = None
     teaching_head_name: Optional[str] = None
     teaching_head_email: Optional[str] = None
     teaching_head_phone: Optional[str] = None
     teaching_deputy_name: Optional[str] = None
     teaching_deputy_email: Optional[str] = None
     teaching_deputy_phone: Optional[str] = None
-    
-    is_available: Optional[bool] = None
 
     @field_validator("teaching_head_email")
     def validate_email(cls, email):
@@ -77,14 +72,12 @@ class SiteOutput(BaseModel):
     name: str
     address: str
     city: str
-    capacity: int
     teaching_head_name: str
     teaching_head_email: Optional[str] = None
     teaching_head_phone: Optional[str] = None
     teaching_deputy_name: Optional[str] = None
     teaching_deputy_email: Optional[str] = None
     teaching_deputy_phone: Optional[str] = None
-    is_available: bool = True
 
 #---------------INSTITUTION-------------------
 class InstitutionInput(BaseModel):

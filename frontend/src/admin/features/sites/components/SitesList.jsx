@@ -57,16 +57,6 @@ function SitesList() {
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder='Buscar sitio'
                 />
-            
-                <select id="status" 
-                    className='btn-tertiary' 
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}>
-                        
-                        <option value="all">Todos</option>
-                        <option value="available">Disponible</option>
-                        <option value="unavailable">No disponible</option>
-                </select>
             </div>
 
             <div className='table-container-body'>
@@ -86,14 +76,12 @@ function SitesList() {
                     {sites.filter((item) => {
                         return (search.toLowerCase() === '' 
                             || item.name.toLowerCase().includes(search.toLowerCase())
-                            || item.institution_name.toLowerCase().includes(search.toLowerCase())
                             || String(item.id).includes(search))
-                            && (statusFilter == 'all' ? item : (statusFilter == 'available') ? item.is_available : !item.is_available);
                     }).map((item) => (
                         <tr key={item.site_id}>
                             <td>{item.site_id}</td>
                             <td>{item.name}</td>
-                            <td>{item.institution_name}</td>
+                            <td>{item.institution_id}</td>
                             <td>{item.city}</td>
                             <td>
                                 <button className='item-link' onClick={e => handleViewButton(item.site_id)}>

@@ -45,8 +45,8 @@ function SiteDetail() {
                             </div>
 
                             <div className="item-row">
-                                <dt className="item-header">ID</dt>
-                                <dd className="item-text">{site.id}</dd>
+                                <dt className="item-header">Institución</dt>
+                                <dd className="item-text">{site.institution_id}</dd>
                             </div>
 
                             <div className="item-row">
