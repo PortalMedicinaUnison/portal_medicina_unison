@@ -46,6 +46,12 @@ class PromotionSiteDetailRepo(BaseRepo):
     def get_by_id(self, psd_id: int) -> PromotionSiteDetail:
         return self.session.query(PromotionSiteDetail).filter(PromotionSiteDetail.psd_id == psd_id).first()
     
+    def get_by_promotion(self, promotion_id: int):
+        return self.session.query(PromotionSiteDetail).filter_by(promotion_id=promotion_id).all()
+
+    def get_by_site(self, site_id: int):
+        return self.session.query(PromotionSiteDetail).filter_by(site_id=site_id).all()
+
     def get_all(self):
         return self.session.query(PromotionSiteDetail).all()
     

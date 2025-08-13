@@ -20,7 +20,6 @@ class PromotionSiteDetail(BaseModel):
     promotion_id: Mapped[int] = mapped_column(ForeignKey("promotions.promotion_id", ondelete="CASCADE"), nullable=False)
     site_id: Mapped[int] = mapped_column(ForeignKey("sites.site_id", ondelete="CASCADE"), nullable=False)
     capacity: Mapped[int] = mapped_column(Integer, nullable=False)
-    is_available: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     
     __table_args__ = (
         UniqueConstraint('promotion_id', 'site_id', name='uq_psd_promotion_site'),
@@ -29,4 +28,4 @@ class PromotionSiteDetail(BaseModel):
     )
 
     def __repr__(self):
-        return f"<PromotionSiteDetail(promotion_id={self.promotion_id}, site_id={self.site_id}, capacity={self.capacity}, is_available={self.is_available})>"
+        return f"<PromotionSiteDetail(promotion_id={self.promotion_id}, site_id={self.site_id}, capacity={self.capacity})>"

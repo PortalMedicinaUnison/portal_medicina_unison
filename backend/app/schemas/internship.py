@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from models.internship import DocumentTypeEnum, InternshipStatusEnum
-from utils.validation import is_valid_period, is_valid_internship_year
+from utils.validation import is_valid_period, is_valid_year
 
 
 class InternshipEnrollmentInput(BaseModel):

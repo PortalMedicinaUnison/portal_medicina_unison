@@ -10,6 +10,8 @@ __all__ = [
     "AdminRepo",
     "StudentRepo",
     "SiteRepo",
+    "PromotionRepo",
+    "PromotionSiteDetailRepo",
     "InternshipRepo",
     "InternshipEnrollmentRepo",
     "AnnouncementRepo",
