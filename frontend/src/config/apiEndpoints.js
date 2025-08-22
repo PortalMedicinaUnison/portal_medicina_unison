@@ -13,6 +13,22 @@ export const API_ENDPOINTS = {
       DELETE:  (id) => `/users/${id}/`,
     },
 
+    PROMOTIONS: {
+      CREATE: '/promotions/',
+      GET: (id) => '/promotions/${id}/',
+      GET_ALL: '/promotions/',
+      UPDATE: (id) => `/promotions/${id}/`,
+      DELETE: (id) => `/promotions/${id}/`,
+    },
+
+    PSD: {
+      CREATE:  '/psd/',
+      GET:     (id) => `/psd/${id}/`,
+      GET_ALL:    '/psd/',
+      UPDATE:  (id) => `/psd/${id}/`,
+      DELETE:  (id) => `/psd/${id}/`,
+    },
+
     SITES: {
       CREATE:  '/sites/',
       GET:     (id) => `/sites/${id}/`,
