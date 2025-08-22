@@ -57,9 +57,16 @@ def is_valid_past_date(date: date) -> None:
     if date > date.today():
         raise ValueError("La fecha debe ser igual o anterior a la actual.")
     
-def is_valid_internship_year(year: int) -> None:
+def is_valid_year(year: int) -> None:
     """
     Valida que el año de la pasantía no pueda ser menor al actual.
     """
     if year < date.today().year:
         raise ValueError("El año de la pasantía no puede ser menor al actual.")
+    
+def is_valid_capacity(capacity: int) -> None:
+    """
+    Valida que la capacidad sea un número entero positivo.
+    """
+    if capacity < 0:
+        raise ValueError("La capacidad debe ser un número entero positivo.")

@@ -1,3 +1,5 @@
+import { SONORA_MUNICIPALITIES } from '../utils/constants';
+
 export function isValidEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
@@ -47,3 +49,6 @@ export function validatePassword(password) {
   return { valid: true };
 };
 
+export const isValidCity = (city) => {
+  return SONORA_MUNICIPALITIES.includes(city);
+};

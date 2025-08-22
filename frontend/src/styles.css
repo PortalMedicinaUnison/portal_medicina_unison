@@ -21,10 +21,19 @@
         background-color: #e1b73d; 
     }
 
+    
+
+    /* ------------- NO SIDEBAR ------------- */
+
+    .no-sidebar-container { @apply 
+        w-[calc(100vw-14rem)]
+
+        transition-all
+        duration-500  
+    }
+
     .main-container { @apply 
-        /* w-[calc(100vw-14rem)] */
-        /* h-[calc(100vh-4rem)] */
-        h-screen
+        h-full
         right-0
         transition-all
         duration-500
@@ -35,9 +44,9 @@
         flex
         flex-col
         my-4
+        mb-16
         mx-8
         border
-        h-screen 
         border-dashed
         rounded-lg
         text-sm/6
@@ -53,7 +62,6 @@
 
     .main-content-body { @apply 
         p-4
-        h-screen
         overflow-y-auto
         bg-black
     }
@@ -64,15 +72,15 @@
         gap-8;
     }
 
-    .component-container_header {
-        @apply lg:flex lg:justify-between;
+    .component-container_header { @apply
+        lg:flex 
+        lg:justify-between;
     }
       
     .component-container_header-content { @apply 
         min-w-0 
         flex-1
     }
-      
 
     .component-container-pretitle { @apply 
         mt-1 
@@ -289,12 +297,14 @@
     /* ------------- NAVBAR ------------- */
 
     .navbar { @apply 
-        fixed
+        /* fixed */
         top-0
-        z-10
+        /* z-10 */
         h-16
-        ml-56
-        w-[calc(100%-14rem)]
+        right-0
+        /* ml-56 */
+        /* w-[calc(100%-14rem)]     */
+        w-full
         bg-white
         border-b
 
@@ -341,40 +351,35 @@
     /* ------------- SIDEBAR ------------- */
 
     .sidebar-container { @apply 
-        fixed
         w-56
-        h-screen
-        pt-0
+        min-h-screen
+        flex
+        flex-col
         bg-white
         border-r
-        border-gray-200
-        sm:translate-x-0
-
-        top-0
-        left-0        
-        z-0
-        transition-transform
-        -translate-x-full        
+        transition-all duration-500      
     }
 
     .sidebar-header { @apply 
         flex
-        w-full
         items-center 
         justify-between
         h-16
+        pr-4
     }
 
-    .sidebar { @apply 
-        flex
-        flex-col
-        h-[calc(100%-4rem)]
+    .sidebar-body { @apply 
+        flex-1
         py-6
         px-4
-        pb-4
         overflow-y-auto
+    }
 
-        justify-between
+    .sidebar-footer { @apply 
+        px-4 py-4
+        shrink-0
+        fixed
+        bottom-0
     }
 
     .sidebar-section-title { @apply 
@@ -428,6 +433,23 @@
         transition 
         duration-75
         group-hover:text-indigo-600
+    }
+
+    .sidebar-item-link { @apply
+        flex
+        items-center
+        w-full
+        p-2
+        text-xs
+        font-normal
+        text-gray-900
+        transition
+        duration-75
+        rounded-lg
+        group-hover:bg-gray-100
+        dark:hover:text-white
+        dark:hover:bg-gray-500
+        pl-11
     }
 
     .sidebar-toggle-icon { @apply 

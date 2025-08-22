@@ -1,4 +1,3 @@
-import React from 'react';
 
 function PageLayout({ title, actions, pretitle = "Ir atrás", children }) {
   return (

@@ -37,15 +37,14 @@ class Internship(BaseModel):
     )
 
     internship_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    year: Mapped[int] = mapped_column(Integer, nullable=False)
-    period: Mapped[int] = mapped_column(Integer, nullable=False)
-    status: Mapped[InternshipStatusEnum] = mapped_column(IntEnumType(InternshipStatusEnum), nullable=False)
+    promotion_id: Mapped[int] = mapped_column(ForeignKey("promotions.promotion_id"), nullable=False)
     enrollment_id: Mapped[int] = mapped_column(Integer, ForeignKey("internship_enrollments.enrollment_id", ondelete="RESTRICT"), unique=True, nullable=False)
     student_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
     site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id", ondelete="RESTRICT"), nullable=False)
+    status: Mapped[InternshipStatusEnum] = mapped_column(IntEnumType(InternshipStatusEnum), nullable=False)
 
     def __repr__(self):
-        return f"<Internship(student_id={self.student_id}, site={self.site_id}, year={self.year}, period={self.period}, status={self.status.name})>"
+        return (f"<Internship(student_id={self.student_id}, site_id={self.site_id}, promotion_id={self.promotion_id}, status={self.status.name})>")
 
 class InternshipDocument(BaseModel):
     __tablename__ = 'internship_documents'

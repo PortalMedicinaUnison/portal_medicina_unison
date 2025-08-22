@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import useAuth from '../../features/auth/hooks/useAuth';
-import { ROUTES } from '../../config';
+import { ROUTES, adminAbs } from '../../config';
 import { Link, NavLink } from 'react-router-dom';
 
 
@@ -28,7 +28,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
 
                 <div className="sidebar-header">
                         <Link to={ROUTES.HOME} className="ms-5 md:me-15">
-                            <img src="unison-letters.svg" className="h-8 me-3" alt="unison logo" />
+                            <img src="../../unison-letters.svg" className="h-8 me-3" alt="unison logo" />
                         </Link>
                         <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
                             <svg
@@ -45,7 +45,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </svg>
                         </button>
                 </div>
-                <div className="sidebar footer">
+                <div className="sidebar-body">
                     <div className="space-y-1">
 
                         {/************************ GENERAL ************************/}
@@ -75,7 +75,28 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </NavLink>
                         </div>
                         <div>
-                            <Link to="#" className="sidebar-item-group group">
+                            <Link to={adminAbs(ROUTES.ADMIN.SITE_LIST)} className="sidebar-item-group group">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="sidebar-item-icon"
+                                    viewBox="-1 -1 23 23"
+                                    aria-hidden="true"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <circle cx="10.5" cy="10.5" r="8"/>
+                                    <path d="M10.5 11.5v-5"/>
+                                    <circle cx="10.5" cy="14.5" r="1"/>
+                                </svg>                        
+                                <span className="sidebar-item-text">
+                                    Sedes
+                                </span>
+                            </Link>
+                        </div>
+                        <div>
+                            <Link to={adminAbs(ROUTES.ADMIN.INSTITUTION_LIST)} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
@@ -186,34 +207,34 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </Link>
                         </div>
                     </div>
-
-
-                    <div>
-                        <ul>
-                            <li>
-                                <button
-                                    onClick={logout}
-                                    className="sidebar-item-group group">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="sidebar-item-icon group-hover:text-red-700"
-                                        viewBox="0 0 23 23"
-                                        aria-hidden="true"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="m7.405 13.5l-2.905-3l2.905-3m-2.905 3h9m-6-7l8 .002c1.104.001 2 .896 2 2v9.995a2 2 0 0 1-2 2l-8 .003"/>
-                                    </svg>
-                                    <span className="sidebar-item-text group-hover:text-red-700">
-                                        Cerrar sesión
-                                    </span>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>         
                 </div>
+                
+
+                <div className="sidebar-footer">
+                    <ul>
+                        <li>
+                            <button
+                                onClick={logout}
+                                className="sidebar-item-group group">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="sidebar-item-icon group-hover:text-red-700"
+                                    viewBox="0 0 23 23"
+                                    aria-hidden="true"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <path d="m7.405 13.5l-2.905-3l2.905-3m-2.905 3h9m-6-7l8 .002c1.104.001 2 .896 2 2v9.995a2 2 0 0 1-2 2l-8 .003"/>
+                                </svg>
+                                <span className="sidebar-item-text group-hover:text-red-700">
+                                    Cerrar sesión
+                                </span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>         
             </aside>
         </div>
     );
