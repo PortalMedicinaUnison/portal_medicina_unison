@@ -24,6 +24,10 @@ export const ROUTES = {
         USER_LIST: 'users',
         USER_DETAIL: (userId) => `users/${userId}`,
 
+        PROMOTION_LIST: 'promotions',
+        PROMOTION_DETAIL: (promotionId) => `promotions/${promotionId}`,
+        PROMOTION_CREATE: 'promotions/create',
+
         REPORT_LIST: 'reports',
         REPORT_DETAIL: (reportId) => `reports/${reportId}`,
 
