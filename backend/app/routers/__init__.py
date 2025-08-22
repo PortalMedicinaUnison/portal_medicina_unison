@@ -15,7 +15,7 @@ routers = [
     internship_router,
     internship_enrollment_router,
     site_router,
-    institution_router
+    institution_router,
     promotion_router,
     psd_router
 ]

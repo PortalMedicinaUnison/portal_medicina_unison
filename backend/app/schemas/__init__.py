@@ -2,7 +2,7 @@ from .user import PreRegisteredUserInput, UserInput
 from .site import SiteInput
 from .internship import InternshipEnrollmentInput, InternshipInput, InternshipDocumentInput
 from .communication import AnnouncementInput, SurveyInput, ReportInput
-from .promotion import PromotionInput, PromotionUpdateInput, PromotionSiteDetailInput, PromotionSiteDetailInputUpdate
+from .promotion import PromotionInput, PromotionInputUpdate, PromotionSiteDetailInput, PromotionSiteDetailInputUpdate
 
 
 __all__ = [
@@ -10,7 +10,7 @@ __all__ = [
     "PreRegisteredUserInput",
     "SiteInput",
     "PromotionInput",
-    "PromotionUpdateInput",
+    "PromotionInputUpdate",
     "PromotionSiteDetailInput",
     "PromotionSiteDetailInputUpdate",
     "InternshipEnrollmentInput",
