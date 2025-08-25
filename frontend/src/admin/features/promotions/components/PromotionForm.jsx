@@ -7,9 +7,9 @@ function PromotionForm() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    year: '',
+    year: 2025,
     period: '',
-    is_finished: '',
+    is_finished: false,
   });
 
   const { createPromotion, error, success } = useCreatePromotion();
@@ -30,7 +30,7 @@ function PromotionForm() {
       console.log('Promoción registrada exitosamente');
       
       setFormData({
-        year: '',
+        year: 2025,
         period: '',
         is_finished: '',
       });
@@ -66,6 +66,7 @@ function PromotionForm() {
                   value={formData.year}
                   onChange={handleChange}
                   placeholder="Año"
+                  min={2025}
                 />
               </dd>
             </div>
@@ -87,13 +88,13 @@ function PromotionForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">¿Promoción activa?</dt>
+              <dt className="item-header">¿Promoción finalizada?</dt>
               <dd className="item-text">
                 <input
                   className="form-checkbox"
                   name="is_finished"
                   type="checkbox"
-                  value={formData.is_finished}
+                  checked={formData.is_finished}
                   onChange={handleChange}
                 />
               </dd>
