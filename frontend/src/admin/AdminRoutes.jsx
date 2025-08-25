@@ -2,6 +2,10 @@ import { Routes, Route } from 'react-router-dom';
 import { ROUTES } from '../config.js';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 
+import PromotionFormPage from '../admin/features/promotions/pages/PromotionFormPage.jsx';
+import PromotionListPage from '../admin/features/promotions/pages/PromotionsListPage.jsx';
+import PromotionInfoPage from '../admin/features/promotions/pages/PromotionInfoPage.jsx';
+
 import SiteFormPage from '../admin/features/sites/pages/SiteFormPage.jsx';
 import SitesListPage from '../admin/features/sites/pages/SitesListPage.jsx';
 import SiteInfoPage from '../admin/features/sites/pages/SiteInfoPage.jsx';
@@ -19,6 +23,11 @@ function AdminRoutes() {
         
         <Route path={ROUTES.ADMIN.INSTITUTION_LIST} element={<InstitutionsListPage />} />
         <Route path={ROUTES.ADMIN.INSTITUTION_CREATE} element={<InstitutionFormPage />} />
+
+        <Route path={ROUTES.ADMIN.PROMOTION_CREATE} element={<PromotionFormPage />} />
+        <Route path={ROUTES.ADMIN.PROMOTION_LIST} element={<PromotionListPage />} />
+        <Route path="promotions/:promotionId" element={<PromotionInfoPage />} />
+        
       </Route>
     </Routes>
   );

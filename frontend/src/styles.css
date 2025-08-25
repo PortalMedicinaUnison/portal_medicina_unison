@@ -199,12 +199,15 @@
         lg:max-w-xl
         w-full
     }
-
-
-
+      
     .form-input_full { @apply 
         form-input
         w-full
+    }
+
+    .form-checkbox { @apply 
+        form-input
+        focus:ring-0
     }
 
     .form-label-preline { @apply 
