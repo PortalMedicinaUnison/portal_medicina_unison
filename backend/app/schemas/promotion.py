@@ -23,6 +23,12 @@ class PromotionInputUpdate(BaseModel):
     promotion_id: int
     is_finished: bool = False
 
+class PromotionOutput(BaseModel):
+    promotion_id: int
+    year: int
+    period: int
+    is_finished: bool
+
 #---------------PROMOTION SITE DETAIL-------------------
 class PromotionSiteDetailInput(BaseModel):
     promotion_id: int
@@ -38,3 +44,9 @@ class PromotionSiteDetailInputUpdate(BaseModel):
         if capacity:
             is_valid_capacity(capacity)
         return capacity
+
+class PromotionSiteDetailOutput(BaseModel):
+    psd_id: int
+    promotion_id: int
+    site_id: int
+    capacity: int
