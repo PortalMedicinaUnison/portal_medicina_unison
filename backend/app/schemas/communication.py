@@ -27,22 +27,3 @@ class SurveyInput(BaseModel):
     def validate_expiration_date(cls, input_date: date) -> date:
         is_valid_future_date(input_date)
         return input_date
-
-# ---------------  Report  ----------------------
-class ReportInput(BaseModel):
-    student_id: int
-    internship_id: int
-    date: date
-    site: str
-    report_type: ReportTypeEnum
-    other_type: Optional[str] = None
-    description: str
-    evidence: Optional[str] = None
-    anonymity: bool
-    is_open: bool = True
-    admin_comment: Optional[str] = None
-
-    @field_validator("date")
-    def validate_date(cls, date: date) -> date:
-        is_valid_past_date(date)
-        return date

@@ -1,0 +1,100 @@
+from pydantic import BaseModel, field_validator
+from typing import Optional
+from datetime import date, datetime
+from enum import IntEnum
+
+
+class ReportTypeEnum(IntEnum):
+    INCIDENT = 1
+    SUGGESTION = 2
+    COMPLAINT = 3
+    OTHER = 4
+
+
+class ReportInput(BaseModel):
+    internship_id: int
+    site_id: int
+    date_report: date
+    report_type: ReportTypeEnum
+    other_type: Optional[str] = None
+    description: str
+    evidence: Optional[str] = None
+    anonymity: bool = False
+
+    @field_validator("description")
+    @classmethod
+    def validate_description(cls, v: str):
+        if not v or len(v.strip()) < 10:
+            raise ValueError("La descripción debe tener al menos 10 caracteres")
+        if len(v) > 1000:
+            raise ValueError("La descripción no puede exceder 1000 caracteres")
+        return v.strip()
+
+    @field_validator("other_type")
+    @classmethod
+    def validate_other_type(cls, v: Optional[str], info):
+        report_type = info.data.get("report_type")
+        if report_type == ReportTypeEnum.OTHER and (not v or len(v.strip()) < 3):
+            raise ValueError("Debe especificar el tipo de reporte cuando selecciona 'Otro'")
+        if v and len(v) > 50:
+            raise ValueError("El tipo personalizado no puede exceder 50 caracteres")
+        return v.strip() if v else v
+
+    @field_validator("evidence")
+    @classmethod
+    def validate_evidence(cls, v: Optional[str]):
+        if v and len(v) > 255:
+            raise ValueError("La evidencia no puede exceder 255 caracteres")
+        return v
+
+
+class ReportInputUpdate(BaseModel):
+    evidence: Optional[str] = None
+    is_active: Optional[bool] = None
+
+    @field_validator("evidence")
+    @classmethod
+    def validate_evidence(cls, v: Optional[str]):
+        if v and len(v) > 255:
+            raise ValueError("La evidencia no puede exceder 255 caracteres")
+        return v
+
+
+class ReportOutput(BaseModel):
+    report_id: int
+    student_id: int
+    internship_id: int
+    site_id: int
+    date_report: date
+    report_type: ReportTypeEnum
+    other_type: Optional[str] = None
+    description: str
+    evidence: Optional[str] = None
+    anonymity: bool
+    is_open: bool
+    admin_comment: Optional[str] = None
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+class ReportCreateResponse(BaseModel):
+    report_id: int
+    message: str = "Reporte creado exitosamente"
+
+
+class ReportStatusUpdate(BaseModel):
+    is_active: bool
+
+
+class ReportAdminComment(BaseModel):
+    admin_comment: str
+
+    @field_validator("admin_comment")
+    @classmethod
+    def validate_admin_comment(cls, v: str):
+        if not v or len(v.strip()) < 5:
+            raise ValueError("El comentario del administrador debe tener al menos 5 caracteres")
+        if len(v) > 1000:
+            raise ValueError("El comentario del administrador no puede exceder 1000 caracteres")
+        return v.strip()

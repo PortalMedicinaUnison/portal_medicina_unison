@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from repos.communication import AnnouncementRepo, SurveyRepo, ReportRepo
 from models.communication import Announcement, Survey, Report, AnnouncementTypeEnum
-from schemas.communication import AnnouncementInput, SurveyInput, ReportInput
+from schemas.communication import AnnouncementInput, SurveyInput
+from schemas.report import ReportInput
 from utils.utils import orm_to_dict
 
 # ----------------------  Announcement  ----------------------

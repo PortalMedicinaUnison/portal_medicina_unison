@@ -1,5 +1,10 @@
 export const DEFAULT_PROFILE_IMAGE = '/default_picture.jpg';
 export const adminAbs = (sub) => `/admin/${sub}`;
+export const userAbs = (sub) => {
+  // Remove leading slash if present to avoid double slashes
+  const cleanSub = sub.startsWith('/') ? sub.slice(1) : sub;
+  return `/${cleanSub}`;
+};
 
 export const ROUTES = {
     HOME: '/',
@@ -14,6 +19,12 @@ export const ROUTES = {
         EDIT_PROFILE: '/profile/edit',
         REMOVE_USER: '/delete-account',
         CHANGE_PASSWORD: '/reset-password',
+        
+        // Reports routes
+        REPORTS_LIST: '/reports',
+        REPORT_CREATE: '/reports/create',
+        REPORT_INFO: (reportId) => `/reports/${reportId}`,
+        REPORT_EDIT: (reportId) => `/reports/${reportId}/edit`,
     },
 
     ADMIN: {

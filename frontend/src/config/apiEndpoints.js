@@ -44,5 +44,22 @@ export const API_ENDPOINTS = {
       UPDATE:  (id) => `/institutions/${id}/`,
       DELETE:  (id) => `/institutions/${id}/`,
     },
+
+    REPORTS: {
+      CREATE:  '/reports/',
+      GET:     (id) => `/reports/${id}/`,
+      GET_ALL:    '/reports/',
+      UPDATE:  (id) => `/reports/${id}/`,
+      TOGGLE_STATUS: (id) => `/reports/${id}/toggle-status/`,
+      GET_BY_INTERNSHIP: (id) => `/reports/internship/${id}/`,
+      GET_BY_SITE: (id) => `/reports/site/${id}/`,
+    },
+
+    ADMIN_REPORTS: {
+      GET_ALL:    '/admin/reports/',
+      GET_OPEN:   '/admin/reports/open/',
+      GET_CLOSED: '/admin/reports/closed/',
+      ADD_COMMENT: (id) => `/admin/reports/${id}/admin-comment/`,
+    },
 };
   

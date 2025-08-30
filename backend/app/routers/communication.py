@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Form, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List, Union
-from schemas.communication import AnnouncementInput, SurveyInput, ReportInput, AnnouncementTypeEnum
+from schemas.communication import AnnouncementInput, SurveyInput, AnnouncementTypeEnum
+from schemas.report import ReportInput, ReportInputUpdate, ReportOutput
 from core.dependencies import get_db
 from controllers.communication import (
     create_announcement,
@@ -14,12 +15,16 @@ from controllers.communication import (
     get_survey,
     get_surveys_by_mandatory,
     update_survey,
-    delete_survey,
+    delete_survey
+)
+from controllers.report import (
     create_report,
     get_report,
-    get_reports_by_mandatory,
+    get_all_student_reports,
     update_report,
-    delete_report
+    toggle_report_status,
+    get_report_by_internship,
+    get_report_by_site
 )
 
 # ----------------------  Announcement  ----------------------
@@ -126,47 +131,140 @@ async def delete_survey_route(survey_id: int, db: Session = Depends(get_db)):
 
 report_router = APIRouter(prefix="/reports", tags=["Reportes"])
 
-@report_router.post('/', response_model=ReportInput)
-async def create_report_route(report: ReportInput, db: Session = Depends(get_db)):
-    report = create_report(report, db)
-    if not report:
+@report_router.post('/', response_model=ReportOutput, status_code=status.HTTP_201_CREATED)
+async def create_report_route(
+    report: ReportInput, 
+    student_id: int,  # TODO: Obtener del token de autenticación
+    db: Session = Depends(get_db)
+):
+    """Crear un nuevo reporte"""
+    created_report = create_report(report, student_id, db)
+    if not created_report:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="No se pudo encontrar el reporte")
-    return report
+            detail="No se pudo crear el reporte")
+    return created_report
 
-@report_router.get('/{report_id}', response_model=ReportInput)
-async def get_report_route(report_id: int, db: Session = Depends(get_db)):
-    report = get_report(report_id, db)
+@report_router.get('/{report_id}', response_model=ReportOutput)
+async def get_report_route(
+    report_id: int, 
+    student_id: int,  # TODO: Obtener del token de autenticación
+    db: Session = Depends(get_db)
+):
+    """Obtener un reporte específico del estudiante"""
+    report = get_report(report_id, student_id, db)
     if not report:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Reporte no encontrado")
     return report
 
-@report_router.get('/', response_model=List[ReportInput])
-async def get_reports_by_mandatory_route(mandatory: bool, db: Session = Depends(get_db)):
-    reports = get_reports_by_mandatory(mandatory, db)
+@report_router.get('/', response_model=List[ReportOutput])
+async def get_student_reports_route(
+    student_id: int,  # TODO: Obtener del token de autenticación
+    db: Session = Depends(get_db)
+):
+    """Obtener todos los reportes del estudiante"""
+    reports = get_all_student_reports(student_id, db)
     if not reports:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Reporte no encontrado")
+        return []
     return reports
 
-@report_router.patch('/{report_id}', response_model=ReportInput)
-async def update_report_route(report_id: int, report: ReportInput, db: Session = Depends(get_db)):
-    report = update_report(report_id, report, db)
-    if not report:
+@report_router.patch('/{report_id}', response_model=ReportOutput)
+async def update_report_route(
+    report_id: int, 
+    report_update: ReportInputUpdate, 
+    student_id: int,  # TODO: Obtener del token de autenticación
+    db: Session = Depends(get_db)
+):
+    """Obtener un reporte específico del estudiante"""
+    updated_report = update_report(report_id, report_update, student_id, db)
+    if not updated_report:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Reporte no encontrado")
-    return report
+    return updated_report
 
-@report_router.delete('/{report_id}')
-async def delete_report_route(report_id: int, db: Session = Depends(get_db)):
-    report = delete_report(report_id, db)
-    if not report:
+@report_router.patch('/{report_id}/toggle-status', response_model=ReportOutput)
+async def toggle_report_status_route(
+    report_id: int, 
+    student_id: int,  # TODO: Obtener del token de autenticación
+    db: Session = Depends(get_db)
+):
+    """Cambiar el estado activo/inactivo de un reporte"""
+    updated_report = toggle_report_status(report_id, student_id, db)
+    if not updated_report:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Reporte no encontrado")
-    return report
+    return updated_report
+
+@report_router.get('/internship/{internship_id}', response_model=List[ReportOutput])
+async def get_reports_by_internship_route(
+    internship_id: int, 
+    student_id: int,  # TODO: Obtener del token de autenticación
+    db: Session = Depends(get_db)
+):
+    """Obtener reportes de una pasantía específica del estudiante"""
+    reports = get_report_by_internship(internship_id, student_id, db)
+    if not reports:
+        return []
+    return reports
+
+@report_router.get('/site/{site_id}', response_model=List[ReportOutput])
+async def get_reports_by_site_route(
+    site_id: int, 
+    student_id: int,  # TODO: Obtener del token de autenticación
+    db: Session = Depends(get_db)
+):
+    """Obtener reportes de un sitio específico del estudiante"""
+    reports = get_report_by_site(site_id, student_id, db)
+    if not reports:
+        return []
+    return reports
+
+#---------------REPORTS (ADMINISTRADORES)-------------------
+
+admin_report_router = APIRouter(prefix="/admin/reports", tags=["Reportes - Administración"])
+
+@admin_report_router.get('/', response_model=List[ReportOutput])
+async def get_all_reports_admin_route(db: Session = Depends(get_db)):
+    """Obtener todos los reportes del sistema (solo para administradores)"""
+    from controllers.report import get_all_reports_admin
+    reports = get_all_reports_admin(db)
+    if not reports:
+        return []
+    return reports
+
+@admin_report_router.get('/open', response_model=List[ReportOutput])
+async def get_open_reports_admin_route(db: Session = Depends(get_db)):
+    """Obtener reportes abiertos (solo para administradores)"""
+    from controllers.report import get_open_reports_admin
+    reports = get_open_reports_admin(db)
+    if not reports:
+        return []
+    return reports
+
+@admin_report_router.get('/closed', response_model=List[ReportOutput])
+async def get_closed_reports_admin_route(db: Session = Depends(get_db)):
+    """Obtener reportes cerrados (solo para administradores)"""
+    from controllers.report import get_open_reports_admin
+    reports = get_closed_reports_admin(db)
+    if not reports:
+        return []
+    return reports
+
+@admin_report_router.patch('/{report_id}/admin-comment', response_model=ReportOutput)
+async def add_admin_comment_route(
+    report_id: int, 
+    admin_comment: str, 
+    db: Session = Depends(get_db)
+):
+    """Agregar comentario del administrador (solo para administradores)"""
+    from controllers.report import add_admin_comment
+    updated_report = add_admin_comment(report_id, admin_comment, db)
+    if not updated_report:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Reporte no encontrado")
+    return updated_report

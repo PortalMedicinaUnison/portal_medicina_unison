@@ -1,7 +1,8 @@
 from .user import PreRegisteredUserInput, UserInput
 from .site import SiteInput
 from .internship import InternshipEnrollmentInput, InternshipInput, InternshipDocumentInput
-from .communication import AnnouncementInput, SurveyInput, ReportInput
+from .communication import AnnouncementInput, SurveyInput
+from .report import ReportInput, ReportInputUpdate, ReportOutput, ReportCreateResponse, ReportStatusUpdate, ReportAdminComment
 from .promotion import PromotionInput, PromotionInputUpdate, PromotionSiteDetailInput, PromotionSiteDetailInputUpdate
 
 
@@ -19,4 +20,9 @@ __all__ = [
     "AnnouncementInput",
     "SurveyInput",
     "ReportInput",
+    "ReportInputUpdate",
+    "ReportOutput",
+    "ReportCreateResponse",
+    "ReportStatusUpdate",
+    "ReportAdminComment",
 ]
