@@ -21,9 +21,7 @@ function ReportsList() {
         try {
             const response = await getAllReportsRequest(studentId);
             setReports(response.data || []);
-            console.log("Reports loaded successfully", response.data);
         } catch (error) {
-            console.error("Error loading reports", error);
         } finally {
             setLoading(false);
         }
@@ -51,14 +49,14 @@ function ReportsList() {
         return types[type] || 'Desconocido';
     };
 
-    const getStatusBadge = (isActive, isOpen) => {
+    const getStatusText = (isActive, isOpen) => {
         if (!isActive) {
-            return <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">Inactivo</span>;
+            return "Inactivo";
         }
         if (isOpen) {
-            return <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">Abierto</span>;
+            return "Abierto";
         }
-        return <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">Cerrado</span>;
+        return "Cerrado";
     };
 
     const filteredReports = reports.filter((report) => {
@@ -165,13 +163,9 @@ function ReportsList() {
                                         </div>
                                     </td>
                                     <td>{new Date(report.date_report).toLocaleDateString()}</td>
-                                    <td>{getStatusBadge(report.is_active, report.is_open)}</td>
+                                    <td>{getStatusText(report.is_active, report.is_open)}</td>
                                     <td>
-                                        {report.anonymity ? (
-                                            <span className="text-green-600">✓</span>
-                                        ) : (
-                                            <span className="text-gray-400">✗</span>
-                                        )}
+                                        {report.anonymity ? "Sí" : "No"}
                                     </td>
                                     <td>
                                         <button 

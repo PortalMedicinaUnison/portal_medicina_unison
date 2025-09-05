@@ -20,14 +20,14 @@ function ReportInfo() {
         return types[type] || 'Desconocido';
     };
 
-    const getStatusBadge = (isActive, isOpen) => {
+    const getStatusText = (isActive, isOpen) => {
         if (!isActive) {
-            return <span className="px-3 py-1 text-sm bg-red-100 text-red-800 rounded-full">Inactivo</span>;
+            return "Inactivo";
         }
         if (isOpen) {
-            return <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-full">Abierto</span>;
+            return "Abierto";
         }
-        return <span className="px-3 py-1 text-sm bg-green-100 text-green-800 rounded-full">Cerrado</span>;
+        return "Cerrado";
     };
 
     const formatDate = (dateString) => {
@@ -93,7 +93,7 @@ function ReportInfo() {
                     <div className="item-row">
                         <dt className="item-header">Estado</dt>
                         <dd className="item-text">
-                            {getStatusBadge(report.is_active, report.is_open)}
+                            {getStatusText(report.is_active, report.is_open)}
                         </dd>
                     </div>
 
@@ -154,11 +154,7 @@ function ReportInfo() {
                     <div className="item-row">
                         <dt className="item-header">Reporte anónimo</dt>
                         <dd className="item-text">
-                            {report.anonymity ? (
-                                <span className="text-green-600 font-medium">✓ Sí</span>
-                            ) : (
-                                <span className="text-gray-600">✗ No</span>
-                            )}
+                            {report.anonymity ? "Sí" : "No"}
                         </dd>
                     </div>
 
@@ -166,10 +162,8 @@ function ReportInfo() {
                         <div className="item-row">
                             <dt className="item-header">Comentario del administrador</dt>
                             <dd className="item-text">
-                                <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
-                                    <div className="whitespace-pre-wrap">
-                                        {report.admin_comment}
-                                    </div>
+                                <div className="whitespace-pre-wrap">
+                                    {report.admin_comment}
                                 </div>
                             </dd>
                         </div>

@@ -33,7 +33,7 @@ function ReportInfoPage() {
   return (
       <Layout>
         <PageLayout 
-          title={`📋 Reporte #${report.report_id}`}
+          title={`Reporte #${report.report_id}`}
           actions={editReportActions}
         >
           <ReportInfo/>

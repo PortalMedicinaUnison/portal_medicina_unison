@@ -38,7 +38,6 @@ function ReportForm() {
     
     const isCreated = await createReport(formData, studentId);
     if (isCreated) {
-      console.log('Reporte creado exitosamente');
       resetForm();
       setFormData({
         internshipId: '',
@@ -64,7 +63,7 @@ function ReportForm() {
     <form className="component-container" onSubmit={handleSubmit}>
       {success && (
         <div className="alert-success-text">
-          Reporte creado exitosamente.
+          Reporte registrado exitosamente.
         </div>
       )}
 
@@ -248,7 +247,7 @@ function ReportForm() {
             className="btn-primary"
             disabled={loading}
           >
-            {loading ? 'Creando...' : 'Crear Reporte'}
+            {loading ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
       </div>
