@@ -186,7 +186,7 @@ function ReportForm() {
               <dt className="item-header">Descripción</dt>
               <dd className="item-text">
                 <textarea
-                  className="form-input--full"
+                  className="form-input--half"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
