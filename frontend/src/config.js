@@ -31,7 +31,7 @@ export const ROUTES = {
         REPORT_LIST: 'reports',
         REPORT_DETAIL: (reportId) => `reports/${reportId}`,
 
-        ANNOUNCEMENT_LIST: 'announcements',
+        ANNOUNCEMENTS_LIST: 'announcements',
         ANNOUNCEMENT_DETAIL: (announcementId) => `announcements/${announcementId}`,
         ANNOUNCEMENT_CREATE: 'announcements/create',
         ANNOUNCEMENT_DELETE: (announcementId) => `announcements/${announcementId}/delete`,

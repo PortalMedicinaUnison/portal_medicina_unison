@@ -186,7 +186,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                         </div>
 
                         <div>
-                            <Link to="#" className="sidebar-item-group group">
+                            <Link to={adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST)} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
