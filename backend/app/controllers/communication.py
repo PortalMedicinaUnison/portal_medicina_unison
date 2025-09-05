@@ -9,10 +9,10 @@ from utils.utils import orm_to_dict
 
 def create_announcement(announcement: AnnouncementInput, db: Session):
     new_announcement = Announcement(
-        admin_id = announcement.admin_id,
         title = announcement.title,
         announcement_type = announcement.announcement_type,
-        description = announcement.description
+        description = announcement.description,
+        created_by = announcement.created_by
     )
     announcement_repo = AnnouncementRepo(db)
     created_announcement = announcement_repo.create(new_announcement)
@@ -30,6 +30,12 @@ def get_announcement(announcement_id: int, db: Session):
 def get_announcements_by_type(announcement_type: AnnouncementTypeEnum, db: Session):
     announcement_repo = AnnouncementRepo(db)
     announcements = announcement_repo.get_by_type(announcement_type)
+    announcements_response = [orm_to_dict(announcement) for announcement in announcements]
+    return announcements_response
+
+def get_all_announcements(db: Session):
+    announcement_repo = AnnouncementRepo(db)
+    announcements = announcement_repo.get_all()
     announcements_response = [orm_to_dict(announcement) for announcement in announcements]
     return announcements_response
 

@@ -8,10 +8,17 @@ from utils.validation import is_valid_future_date, is_valid_past_date
 # ---------------  Announcement  ----------------------
 
 class AnnouncementInput(BaseModel):
-    admin_id: int
+    created_by: int
     title: str
     announcement_type: AnnouncementTypeEnum
     description: Optional[str] = None
+
+class AnnouncementOutput(BaseModel):
+    announcement_id: int
+    title: str
+    announcement_type: AnnouncementTypeEnum
+    description: Optional[str] = None
+    is_active: bool = True
 
 # ---------------  Survey  ----------------------
 
