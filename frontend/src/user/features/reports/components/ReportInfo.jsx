@@ -86,7 +86,6 @@ function ReportInfo() {
         <div className="info-container">
             <div className="item-container">
                 <dl className="item-list">
-                    {/* Se ocultó el ID del reporte según requerimiento */}
 
                     <div className="item-row">
                         <dt className="item-header">Estado</dt>
@@ -114,7 +113,6 @@ function ReportInfo() {
                         <dd className="item-text">{formatDate(report.date_report)}</dd>
                     </div>
 
-                    {/* Se ocultó la Pasantía según requerimiento */}
 
                     <div className="item-row">
                         <dt className="item-header">Sitio de práctica</dt>

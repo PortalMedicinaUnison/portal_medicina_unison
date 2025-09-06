@@ -13,7 +13,6 @@ function ReportInfoPage() {
   const { report, loading, error } = useReport(parseInt(reportId), studentId);
   const navigate = useNavigate();
 
-  // Se eliminó el botón de editar de la parte superior
 
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>{error}</div>;
