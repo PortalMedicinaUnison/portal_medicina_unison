@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllReportsAdminRequest, getOpenReportsAdminRequest, getClosedReportsAdminRequest } from '../../../../services/reportService';
+import { getAllReportsAdminRequest } from '../../../../services/reportService';
 import { ROUTES, adminAbs } from '../../../../config';
 
 function ReportsList() {
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
-    const [viewFilter, setViewFilter] = useState('all'); // 'all', 'open', 'closed'
     const [reports, setReports] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -15,17 +14,7 @@ function ReportsList() {
     const getReports = async () => {
         setLoading(true);
         try {
-            let response;
-            
-            // Obtener reportes según el filtro de vista (todos, abiertos, cerrados)
-            if (viewFilter === 'open') {
-                response = await getOpenReportsAdminRequest();
-            } else if (viewFilter === 'closed') {
-                response = await getClosedReportsAdminRequest();
-            } else {
-                response = await getAllReportsAdminRequest();
-            }
-            
+            const response = await getAllReportsAdminRequest();
             setReports(response.data || []);
         } catch (error) {
             console.error("Error loading reports", error);
@@ -36,7 +25,7 @@ function ReportsList() {
     
     useEffect(() => {
         getReports();
-    }, [viewFilter]); // Recargar cuando cambie el filtro de vista
+    }, []);
     
     const handleViewButton = (reportId) => {
         navigate(adminAbs(ROUTES.ADMIN.REPORT_DETAIL(reportId)));
@@ -103,15 +92,6 @@ function ReportsList() {
                         placeholder='Buscar reporte'
                     />
                     
-                    <select 
-                        className='form-input--sm'
-                        value={viewFilter}
-                        onChange={(e) => setViewFilter(e.target.value)}
-                    >
-                        <option value="all">Todos los reportes</option>
-                        <option value="open">Reportes abiertos</option>
-                        <option value="closed">Reportes cerrados</option>
-                    </select>
                     
                     <select 
                         className='form-input--sm'

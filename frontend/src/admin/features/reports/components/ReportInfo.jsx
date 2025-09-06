@@ -271,27 +271,26 @@ function ReportInfo() {
                             <span>Cerrar reporte</span>
                         </label>
                     </div>
-                    <button 
-                        className="btn-primary"
-                        onClick={handleAddComment}
-                        disabled={commentLoading}
-                    >
-                        {commentLoading ? 'Guardando...' : 'Guardar'}
-                    </button>
+                    <div className="flex gap-4">
+                        <button 
+                            className="btn-primary"
+                            onClick={handleAddComment}
+                            disabled={commentLoading}
+                        >
+                            {commentLoading ? 'Guardando...' : 'Guardar'}
+                        </button>
+                        <button 
+                            type="button" 
+                            className="btn-primary"
+                            onClick={() => navigate(adminAbs(ROUTES.ADMIN.REPORT_LIST))}
+                            style={{ outline: 'none' }}
+                        >
+                            Volver a la lista
+                        </button>
+                    </div>
                 </div>
             )}
 
-            <div className="info-actions mt-16">
-                <div className="flex gap-4">
-                    <button 
-                        type="button" 
-                        className='item-link'
-                        onClick={() => navigate(adminAbs(ROUTES.ADMIN.REPORT_LIST))}
-                    >
-                        Volver a la lista
-                    </button>
-                </div>
-            </div>
         </div>
     );
 }
