@@ -96,10 +96,10 @@ class ReportRepo(BaseRepo):
         return self.session.query(Report).filter(Report.is_active == True).all()
     
     def get_by_student_id(self, student_id: int):
-        """Obtener todos los reportes de un estudiante específico"""
+        """Obtener todos los reportes de un estudiante específico
+        Nota: Los estudiantes pueden ver todos sus reportes, incluso los inactivos"""
         return self.session.query(Report).filter(
-            Report.student_id == student_id,
-            Report.is_active == True
+            Report.student_id == student_id
         ).all()
     
     def get_by_internship_id(self, internship_id: int):
@@ -127,12 +127,13 @@ class ReportRepo(BaseRepo):
             self.session.refresh(report)
         return report
     
-    def update_admin_comment(self, report_id: int, admin_comment: str) -> Report:
+    def update_admin_comment(self, report_id: int, admin_comment: str, close_report: bool = False) -> Report:
         """Actualizar el comentario del administrador en un reporte"""
         report = self.get_by_id(report_id)
         if report:
             report.admin_comment = admin_comment
-            report.is_open = False  # Marcar como cerrado cuando se agrega comentario
+            if close_report:
+                report.is_open = False  # Solo marcar como cerrado si se solicita
             self.session.commit()
             self.session.refresh(report)
         return report

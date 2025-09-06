@@ -13,18 +13,7 @@ function ReportInfoPage() {
   const { report, loading, error } = useReport(parseInt(reportId), studentId);
   const navigate = useNavigate();
 
-  const editReportActions = (
-    <span className="show-on-sm">
-      <button
-        type="button"
-        className="btn-primary"
-        onClick={() => navigate(userAbs(ROUTES.USER.REPORT_EDIT(reportId)))}
-        disabled={!report || !report.is_active}
-      >
-        Editar
-      </button>
-    </span>
-  );
+  // Se eliminó el botón de editar de la parte superior
 
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>{error}</div>;
@@ -34,7 +23,6 @@ function ReportInfoPage() {
       <Layout>
         <PageLayout 
           title={`Reporte #${report.report_id}`}
-          actions={editReportActions}
         >
           <ReportInfo/>
         </PageLayout>

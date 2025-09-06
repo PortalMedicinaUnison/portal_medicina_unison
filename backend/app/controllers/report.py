@@ -188,6 +188,45 @@ def get_report_by_site(site_id: int, student_id: int, db: Session):
 
 
 # Funciones para administradores (se implementarán más adelante)
+def get_report_admin(report_id: int, db: Session):
+    """Obtener un reporte específico (solo para administradores)"""
+    report_repo = ReportRepo(db)
+    report = report_repo.get_by_id(report_id)
+    
+    if not report:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Reporte no encontrado"
+        )
+    
+    report_response = orm_to_dict(report)
+    return report_response
+
+
+def update_report_admin(report_id: int, data: dict, db: Session):
+    """Actualizar un reporte específico (solo para administradores)"""
+    report_repo = ReportRepo(db)
+    
+    # Verificar que el reporte existe
+    existing_report = report_repo.get_by_id(report_id)
+    if not existing_report:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Reporte no encontrado"
+        )
+    
+    # Actualizar el reporte
+    updated_report = report_repo.update(report_id, data)
+    if not updated_report:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al actualizar el reporte"
+        )
+    
+    report_response = orm_to_dict(updated_report)
+    return report_response
+
+
 def get_all_reports_admin(db: Session):
     """Obtener todos los reportes (solo para administradores)"""
     report_repo = ReportRepo(db)
@@ -224,7 +263,7 @@ def get_closed_reports_admin(db: Session):
     return reports_response
 
 
-def add_admin_comment(report_id: int, admin_comment: str, db: Session):
+def add_admin_comment(report_id: int, admin_comment: str, db: Session, close_report: bool = False):
     """Agregar comentario del administrador (solo para administradores)"""
     report_repo = ReportRepo(db)
     
@@ -236,7 +275,7 @@ def add_admin_comment(report_id: int, admin_comment: str, db: Session):
             detail="Reporte no encontrado"
         )
     
-    updated_report = report_repo.update_admin_comment(report_id, admin_comment)
+    updated_report = report_repo.update_admin_comment(report_id, admin_comment, close_report)
     if not updated_report:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

@@ -49,6 +49,9 @@ function ReportForm() {
         evidence: '',
         anonymity: false,
       });
+      
+      // Redirigir a la página de "Mis reportes"
+      navigate(userAbs(ROUTES.USER.REPORTS_LIST));
     }
   };
 

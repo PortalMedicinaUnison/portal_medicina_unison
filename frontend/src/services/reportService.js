@@ -35,5 +35,11 @@ export const getOpenReportsAdminRequest = () =>
 export const getClosedReportsAdminRequest = () =>
   api.get(API_ENDPOINTS.ADMIN_REPORTS.GET_CLOSED);
 
-export const addAdminCommentRequest = (id, adminComment) =>
-  api.patch(API_ENDPOINTS.ADMIN_REPORTS.ADD_COMMENT(id), { admin_comment: adminComment });
+export const getReportByIdAdminRequest = (id) =>
+  api.get(API_ENDPOINTS.ADMIN_REPORTS.GET(id));
+
+export const updateReportAdminRequest = (id, data) =>
+  api.patch(API_ENDPOINTS.ADMIN_REPORTS.UPDATE(id), data);
+
+export const addAdminCommentRequest = (id, adminComment, closeReport = false) =>
+  api.patch(API_ENDPOINTS.ADMIN_REPORTS.ADD_COMMENT(id), { admin_comment: adminComment, close_report: closeReport });

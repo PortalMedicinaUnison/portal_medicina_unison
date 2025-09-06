@@ -59,6 +59,8 @@ export const API_ENDPOINTS = {
       GET_ALL:    '/admin/reports/',
       GET_OPEN:   '/admin/reports/open/',
       GET_CLOSED: '/admin/reports/closed/',
+      GET:        (id) => `/admin/reports/${id}/`,
+      UPDATE:     (id) => `/admin/reports/${id}/`,
       ADD_COMMENT: (id) => `/admin/reports/${id}/admin-comment/`,
     },
 };

@@ -13,6 +13,7 @@ import UserInfoPage from '../features/profile/pages/UserInfoPage';
 import ReportsListPage from './features/reports/pages/ReportsListPage';
 import ReportFormPage from './features/reports/pages/ReportFormPage';
 import ReportInfoPage from './features/reports/pages/ReportInfoPage';
+import ReportEditPage from './features/reports/pages/ReportEditPage';
 
 function UserRoutes() {
   return (
@@ -30,6 +31,7 @@ function UserRoutes() {
         <Route path={ROUTES.USER.REPORTS_LIST} element={<ReportsListPage />} />
         <Route path={ROUTES.USER.REPORT_CREATE} element={<ReportFormPage />} />
         <Route path={ROUTES.USER.REPORT_INFO(':reportId')} element={<ReportInfoPage />} />
+        <Route path={ROUTES.USER.REPORT_EDIT(':reportId')} element={<ReportEditPage />} />
       </Route>
     </Routes>
   );

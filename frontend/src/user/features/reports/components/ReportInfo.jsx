@@ -65,6 +65,7 @@ function ReportInfo() {
                     <button 
                         className="btn-primary" 
                         onClick={() => navigate(userAbs(ROUTES.USER.REPORTS_LIST))}
+                        style={{ outline: 'none' }}
                     >
                         Volver a la lista
                     </button>
@@ -85,10 +86,7 @@ function ReportInfo() {
         <div className="info-container">
             <div className="item-container">
                 <dl className="item-list">
-                    <div className="item-row">
-                        <dt className="item-header">ID del reporte</dt>
-                        <dd className="item-text">{report.report_id}</dd>
-                    </div>
+                    {/* Se ocultó el ID del reporte según requerimiento */}
 
                     <div className="item-row">
                         <dt className="item-header">Estado</dt>
@@ -116,10 +114,7 @@ function ReportInfo() {
                         <dd className="item-text">{formatDate(report.date_report)}</dd>
                     </div>
 
-                    <div className="item-row">
-                        <dt className="item-header">Pasantía</dt>
-                        <dd className="item-text">{report.internship_id}</dd>
-                    </div>
+                    {/* Se ocultó la Pasantía según requerimiento */}
 
                     <div className="item-row">
                         <dt className="item-header">Sitio de práctica</dt>
@@ -181,23 +176,25 @@ function ReportInfo() {
                 </dl>
             </div>
 
-            <div className="info-actions mt-16">
+            <div className="component-container_actions">
                 <div className="flex gap-4">
                     <button 
                         type="button" 
-                        className='item-link'
+                        className="btn-primary"
                         onClick={() => navigate(userAbs(ROUTES.USER.REPORTS_LIST))}
+                        style={{ outline: 'none' }}
                     >
                         Volver a la lista
                     </button>
                     
-                    {report.is_active && (
+                    {report.is_active && report.is_open && (
                         <button 
                             type="button" 
-                            className='item-link'
+                            className="btn-primary"
                             onClick={() => navigate(userAbs(ROUTES.USER.REPORT_EDIT(report.report_id)))}
+                            style={{ outline: 'none' }}
                         >
-                            Editar reporte
+                            Editar
                         </button>
                     )}
                 </div>

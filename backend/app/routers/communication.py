@@ -227,6 +227,28 @@ async def get_reports_by_site_route(
 
 admin_report_router = APIRouter(prefix="/admin/reports", tags=["Reportes - Administración"])
 
+@admin_report_router.get('/{report_id}', response_model=ReportOutput)
+async def get_report_admin_route(report_id: int, db: Session = Depends(get_db)):
+    """Obtener un reporte específico (solo para administradores)"""
+    from controllers.report import get_report_admin
+    report = get_report_admin(report_id, db)
+    if not report:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Reporte no encontrado")
+    return report
+
+@admin_report_router.patch('/{report_id}', response_model=ReportOutput)
+async def update_report_admin_route(report_id: int, data: dict, db: Session = Depends(get_db)):
+    """Actualizar un reporte específico (solo para administradores)"""
+    from controllers.report import update_report_admin
+    updated_report = update_report_admin(report_id, data, db)
+    if not updated_report:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Reporte no encontrado")
+    return updated_report
+
 @admin_report_router.get('/', response_model=List[ReportOutput])
 async def get_all_reports_admin_route(db: Session = Depends(get_db)):
     """Obtener todos los reportes del sistema (solo para administradores)"""
@@ -257,12 +279,14 @@ async def get_closed_reports_admin_route(db: Session = Depends(get_db)):
 @admin_report_router.patch('/{report_id}/admin-comment', response_model=ReportOutput)
 async def add_admin_comment_route(
     report_id: int, 
-    admin_comment: str, 
+    data: dict,
     db: Session = Depends(get_db)
 ):
     """Agregar comentario del administrador (solo para administradores)"""
     from controllers.report import add_admin_comment
-    updated_report = add_admin_comment(report_id, admin_comment, db)
+    admin_comment = data.get('admin_comment', '')
+    close_report = data.get('close_report', False)
+    updated_report = add_admin_comment(report_id, admin_comment, db, close_report)
     if not updated_report:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -1,27 +1,34 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllReportsRequest } from '../../../../services/reportService';
-import { ROUTES, userAbs } from '../../../../config.js';
+import { getAllReportsAdminRequest, getOpenReportsAdminRequest, getClosedReportsAdminRequest } from '../../../../services/reportService';
+import { ROUTES, adminAbs } from '../../../../config';
 
 function ReportsList() {
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
+    const [viewFilter, setViewFilter] = useState('all'); // 'all', 'open', 'closed'
     const [reports, setReports] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    
-    // TODO: Obtener studentId del contexto de autenticación
-    const studentId = 1; // Temporal - debe venir del contexto de usuario
 
     const getReports = async () => {
-        if (!studentId) return;
-        
         setLoading(true);
         try {
-            const response = await getAllReportsRequest(studentId);
+            let response;
+            
+            // Obtener reportes según el filtro de vista (todos, abiertos, cerrados)
+            if (viewFilter === 'open') {
+                response = await getOpenReportsAdminRequest();
+            } else if (viewFilter === 'closed') {
+                response = await getClosedReportsAdminRequest();
+            } else {
+                response = await getAllReportsAdminRequest();
+            }
+            
             setReports(response.data || []);
         } catch (error) {
+            console.error("Error loading reports", error);
         } finally {
             setLoading(false);
         }
@@ -29,16 +36,12 @@ function ReportsList() {
     
     useEffect(() => {
         getReports();
-    }, [studentId]);
+    }, [viewFilter]); // Recargar cuando cambie el filtro de vista
     
     const handleViewButton = (reportId) => {
-        navigate(userAbs(ROUTES.USER.REPORT_INFO(reportId)));
+        navigate(adminAbs(ROUTES.ADMIN.REPORT_DETAIL(reportId)));
     };
     
-    const handleEditButton = (reportId) => {
-        navigate(userAbs(ROUTES.USER.REPORT_EDIT(reportId)));
-    };
-
     const getReportTypeLabel = (type) => {
         const types = {
             1: 'Incidente',
@@ -60,14 +63,17 @@ function ReportsList() {
     };
 
     const filteredReports = reports.filter((report) => {
+        // Solo mostrar reportes activos (restricción para administradores)
+        if (!report.is_active) return false;
+        
         const matchesSearch = search.toLowerCase() === '' || 
-            report.description.toLowerCase().includes(search.toLowerCase()) ||
+            report.description?.toLowerCase().includes(search.toLowerCase()) ||
             String(report.report_id).includes(search) ||
             getReportTypeLabel(report.report_type).toLowerCase().includes(search.toLowerCase());
         
         const matchesStatus = statusFilter === 'all' || 
-            (statusFilter === 'active' && report.is_active) ||
-            (statusFilter === 'inactive' && !report.is_active);
+            (statusFilter === 'open' && report.is_open) ||
+            (statusFilter === 'closed' && !report.is_open);
         
         const matchesType = typeFilter === 'all' || 
             String(report.report_type) === typeFilter;
@@ -99,12 +105,22 @@ function ReportsList() {
                     
                     <select 
                         className='form-input--sm'
+                        value={viewFilter}
+                        onChange={(e) => setViewFilter(e.target.value)}
+                    >
+                        <option value="all">Todos los reportes</option>
+                        <option value="open">Reportes abiertos</option>
+                        <option value="closed">Reportes cerrados</option>
+                    </select>
+                    
+                    <select 
+                        className='form-input--sm'
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
                     >
                         <option value="all">Todos los estados</option>
-                        <option value="active">Activos</option>
-                        <option value="inactive">Inactivos</option>
+                        <option value="open">Abiertos</option>
+                        <option value="closed">Cerrados</option>
                     </select>
                     
                     <select 
@@ -126,12 +142,12 @@ function ReportsList() {
                     <thead className="text-xs text-gray-700 bg-gray-50">
                         <tr>
                             <th>ID</th>
+                            <th>Estudiante</th>
                             <th>Tipo</th>
                             <th>Descripción</th>
                             <th>Fecha</th>
                             <th>Estado</th>
                             <th>Anónimo</th>
-                            <th></th>
                             <th></th>
                         </tr>
                     </thead>
@@ -147,6 +163,7 @@ function ReportsList() {
                             filteredReports.map((report) => (
                                 <tr key={report.report_id}>
                                     <td>{report.report_id}</td>
+                                    <td>{report.student_id}</td>
                                     <td>
                                         <span className="font-medium">
                                             {getReportTypeLabel(report.report_type)}
@@ -174,18 +191,6 @@ function ReportsList() {
                                         >
                                             Ver
                                         </button>
-                                    </td>
-                                    <td>
-                                        {report.is_open ? (
-                                            <button 
-                                                className='item-link' 
-                                                onClick={() => handleEditButton(report.report_id)}
-                                            >
-                                                Editar
-                                            </button>
-                                        ) : (
-                                            <span className="text-gray-400">Cerrado</span>
-                                        )}
                                     </td>
                                 </tr>
                             ))
