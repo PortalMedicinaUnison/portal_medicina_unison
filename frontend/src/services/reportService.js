@@ -24,6 +24,19 @@ export const getReportsByInternshipRequest = (internshipId, studentId) =>
 export const getReportsBySiteRequest = (siteId, studentId) =>
   api.get(API_ENDPOINTS.REPORTS.GET_BY_SITE(siteId), { params: { student_id: studentId } });
 
+export const uploadEvidenceRequest = (reportId, file, studentId) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return api.post(
+    API_ENDPOINTS.REPORTS.UPLOAD_EVIDENCE(reportId), 
+    formData, 
+    { 
+      params: { student_id: studentId },
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }
+  );
+};
+
 // ------------ Reports (Administradores) ------------
 
 export const getAllReportsAdminRequest = () =>

@@ -53,6 +53,7 @@ export const API_ENDPOINTS = {
       TOGGLE_STATUS: (id) => `/reports/${id}/toggle-status/`,
       GET_BY_INTERNSHIP: (id) => `/reports/internship/${id}/`,
       GET_BY_SITE: (id) => `/reports/site/${id}/`,
+      UPLOAD_EVIDENCE: (id) => `/reports/${id}/upload-evidence/`,
     },
 
     ADMIN_REPORTS: {

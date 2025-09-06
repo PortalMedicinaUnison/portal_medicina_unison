@@ -24,7 +24,8 @@ from controllers.report import (
     update_report,
     toggle_report_status,
     get_report_by_internship,
-    get_report_by_site
+    get_report_by_site,
+    upload_evidence_file
 )
 
 # ----------------------  Announcement  ----------------------
@@ -222,6 +223,21 @@ async def get_reports_by_site_route(
     if not reports:
         return []
     return reports
+
+@report_router.post('/{report_id}/upload-evidence', response_model=ReportOutput)
+async def upload_evidence_route(
+    report_id: int, 
+    student_id: int,  # TODO: Obtener del token de autenticación
+    file: UploadFile = File(...), 
+    db: Session = Depends(get_db)
+):
+    """Subir un archivo de evidencia para un reporte"""
+    updated_report = upload_evidence_file(report_id, student_id, file, db)
+    if not updated_report:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Reporte no encontrado")
+    return updated_report
 
 #---------------REPORTS (ADMINISTRADORES)-------------------
 

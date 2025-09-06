@@ -61,10 +61,10 @@ export default function useCreateReport() {
     };
 
     try {
-      await createReportRequest(report, studentId);
+      const response = await createReportRequest(report, studentId);
       setSuccess(true);
       setLoading(false);
-      return true;
+      return response.data; // Devuelve los datos del reporte creado
     } catch (err) {
       setError('Error al registrar el reporte. Por favor, intenta nuevamente.');
       setLoading(false);

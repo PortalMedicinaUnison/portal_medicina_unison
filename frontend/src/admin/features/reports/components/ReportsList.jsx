@@ -127,7 +127,6 @@ function ReportsList() {
                             <th>Descripción</th>
                             <th>Fecha</th>
                             <th>Estado</th>
-                            <th>Anónimo</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -135,7 +134,7 @@ function ReportsList() {
                     <tbody>
                         {filteredReports.length === 0 ? (
                             <tr>
-                                <td colSpan="8" className="text-center py-8 text-gray-500">
+                                <td colSpan="7" className="text-center py-8 text-gray-500">
                                     {reports.length === 0 ? 'No hay reportes disponibles' : 'No se encontraron reportes con los filtros aplicados'}
                                 </td>
                             </tr>
@@ -161,9 +160,6 @@ function ReportsList() {
                                     </td>
                                     <td>{new Date(report.date_report).toLocaleDateString()}</td>
                                     <td>{getStatusText(report.is_active, report.is_open)}</td>
-                                    <td>
-                                        {report.anonymity ? "Sí" : "No"}
-                                    </td>
                                     <td>
                                         <button 
                                             className='item-link' 

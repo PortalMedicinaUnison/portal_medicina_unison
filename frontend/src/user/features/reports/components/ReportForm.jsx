@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import useCreateReport from "../hooks/useCreateReport";
 import useGetInternships from "../hooks/useGetInternships";
 import useGetSites from "../hooks/useGetSites";
 import { ROUTES, userAbs } from "../../../../config";
+import { uploadEvidenceRequest } from "../../../../services/reportService";
 
 function ReportForm() {
   const navigate = useNavigate();
@@ -20,6 +21,10 @@ function ReportForm() {
     evidence: '',
     anonymity: false,
   });
+  
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [fileError, setFileError] = useState('');
+  const fileInputRef = useRef(null);
 
   const { createReport, error, success, loading, resetForm } = useCreateReport();
   const { internships, loading: internshipsLoading, error: internshipsError } = useGetInternships(studentId);
@@ -32,12 +37,62 @@ function ReportForm() {
       [name]: type === 'checkbox' ? checked : value
     }));
   };
+  
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setFileError('');
+    
+    // Validar tamaño total (máximo 50MB)
+    const totalSize = files.reduce((acc, file) => acc + file.size, 0);
+    const maxSize = 50 * 1024 * 1024; // 50MB en bytes
+    
+    if (totalSize > maxSize) {
+      setFileError(`Los archivos seleccionados superan el límite de 50MB (${(totalSize / (1024 * 1024)).toFixed(2)}MB)`);
+      setSelectedFiles([]);
+      return;
+    }
+    
+    setSelectedFiles(files);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const isCreated = await createReport(formData, studentId);
-    if (isCreated) {
+    // Validar archivos si hay seleccionados
+    if (selectedFiles.length > 0) {
+      const totalSize = selectedFiles.reduce((acc, file) => acc + file.size, 0);
+      const maxSize = 50 * 1024 * 1024; // 50MB en bytes
+      
+      if (totalSize > maxSize) {
+        setFileError(`Los archivos seleccionados superan el límite de 50MB (${(totalSize / (1024 * 1024)).toFixed(2)}MB)`);
+        return;
+      }
+    }
+    
+    // Crear el reporte primero
+    const createdReport = await createReport(formData, studentId);
+    console.log("Respuesta de createReport:", createdReport);
+    
+    if (createdReport) {
+      // Si hay archivos seleccionados, subirlos
+      if (selectedFiles.length > 0) {
+        try {
+          // Obtener el ID del reporte recién creado
+          const reportId = createdReport.report_id;
+          console.log("ID del reporte creado:", reportId);
+          
+          // Subir cada archivo
+          for (const file of selectedFiles) {
+            console.log("Subiendo archivo:", file.name);
+            await uploadEvidenceRequest(reportId, file, studentId);
+            console.log("Archivo subido correctamente:", file.name);
+          }
+        } catch (error) {
+          console.error('Error al subir archivos:', error);
+          // Continuar con la redirección aunque falle la subida de archivos
+        }
+      }
+      
       resetForm();
       setFormData({
         internshipId: '',
@@ -49,6 +104,7 @@ function ReportForm() {
         evidence: '',
         anonymity: false,
       });
+      setSelectedFiles([]);
       
       // Redirigir a la página de "Mis reportes"
       navigate(userAbs(ROUTES.USER.REPORTS_LIST));
@@ -207,15 +263,43 @@ function ReportForm() {
             <div className="item-row">
               <dt className="item-header">Evidencia (opcional)</dt>
               <dd className="item-text">
-                <input
-                  className="form-input--half"
-                  name="evidence"
-                  type="text"
-                  value={formData.evidence}
-                  onChange={handleChange}
-                  placeholder="Enlace o referencia a evidencia"
-                  maxLength={255}
-                />
+                <div className="flex flex-col gap-2">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    multiple
+                    accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
+                  />
+                  <button
+                    type="button"
+                    className="btn-secondary w-fit"
+                    onClick={() => fileInputRef.current.click()}
+                  >
+                    Seleccionar archivos
+                  </button>
+                  
+                  {selectedFiles.length > 0 && (
+                    <div className="mt-2">
+                      <p className="font-medium">Archivos seleccionados:</p>
+                      <ul className="list-disc pl-5">
+                        {selectedFiles.map((file, index) => (
+                          <li key={index} className="text-sm">
+                            {file.name} ({(file.size / (1024 * 1024)).toFixed(2)} MB)
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Total: {(selectedFiles.reduce((acc, file) => acc + file.size, 0) / (1024 * 1024)).toFixed(2)} MB
+                      </p>
+                    </div>
+                  )}
+                  
+                  {fileError && (
+                    <p className="text-red-500 text-sm mt-1">{fileError}</p>
+                  )}
+                </div>
               </dd>
             </div>
 
