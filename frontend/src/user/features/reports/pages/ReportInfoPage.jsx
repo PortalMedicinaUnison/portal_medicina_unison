@@ -13,6 +13,17 @@ function ReportInfoPage() {
   const { report, loading, error } = useReport(parseInt(reportId), studentId);
   const navigate = useNavigate();
 
+  const editReportActions = report && report.is_active && report.is_open ? (
+    <span className="show-on-sm">
+      <button
+        type="button"
+        className="btn-primary"
+        onClick={() => navigate(userAbs(ROUTES.USER.REPORT_EDIT(report.report_id)))}
+      >
+        Editar
+      </button>
+    </span>
+  ) : null;
 
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>{error}</div>;
@@ -22,6 +33,7 @@ function ReportInfoPage() {
       <Layout>
         <PageLayout 
           title={`Reporte #${report.report_id}`}
+          actions={editReportActions}
         >
           <ReportInfo/>
         </PageLayout>

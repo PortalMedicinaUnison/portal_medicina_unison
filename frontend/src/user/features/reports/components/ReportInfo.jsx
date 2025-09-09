@@ -177,28 +177,14 @@ function ReportInfo() {
                 </dl>
             </div>
 
-            <div className="component-container_actions">
-                <div className="flex gap-4">
-                    <button 
-                        type="button" 
-                        className="btn-primary"
-                        onClick={() => navigate(userAbs(ROUTES.USER.REPORTS_LIST))}
-                        style={{ outline: 'none' }}
-                    >
-                        Volver a la lista
-                    </button>
-                    
-                    {report.is_active && report.is_open && (
-                        <button 
-                            type="button" 
-                            className="btn-primary"
-                            onClick={() => navigate(userAbs(ROUTES.USER.REPORT_EDIT(report.report_id)))}
-                            style={{ outline: 'none' }}
-                        >
-                            Editar
-                        </button>
-                    )}
-                </div>
+            <div className="info-actions mt-16">
+                <button 
+                    type="button" 
+                    className='item-link'
+                    onClick={() => navigate(userAbs(ROUTES.USER.REPORTS_LIST))}
+                >
+                    Volver a la lista
+                </button>
             </div>
         </div>
     );

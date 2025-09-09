@@ -12,6 +12,7 @@ function ReportInfo() {
     const [closeReport, setCloseReport] = useState(false);
     const [commentLoading, setCommentLoading] = useState(false);
     const [commentError, setCommentError] = useState('');
+    const [reopenLoading, setReopenLoading] = useState(false);
 
     const getReportTypeLabel = (type) => {
         const types = {
@@ -104,6 +105,20 @@ function ReportInfo() {
             } finally {
                 setCommentLoading(false);
             }
+        }
+    };
+
+    const handleReopenReport = async () => {
+        setReopenLoading(true);
+        setCommentError('');
+
+        try {
+            await updateReportAdminRequest(reportId, { is_open: true });
+            refetch(); // Recargar el reporte para mostrar el cambio
+        } catch (error) {
+            setCommentError('Error al reabrir el reporte. Por favor, intente nuevamente.');
+        } finally {
+            setReopenLoading(false);
         }
     };
 
@@ -248,7 +263,7 @@ function ReportInfo() {
                 </dl>
             </div>
 
-            {report.is_open && (
+            {report.is_open ? (
                 <div className="mt-8">
                     <h3 className="text-lg font-medium mb-2">Agregar comentario</h3>
                     <div className="mb-4">
@@ -274,22 +289,52 @@ function ReportInfo() {
                             <span>Cerrar reporte</span>
                         </label>
                     </div>
-                    <div className="flex gap-4">
-                        <button 
-                            className="btn-primary"
-                            onClick={handleAddComment}
-                            disabled={commentLoading}
-                        >
-                            {commentLoading ? 'Guardando...' : 'Guardar'}
-                        </button>
-                        <button 
-                            type="button" 
-                            className="btn-primary"
-                            onClick={() => navigate(adminAbs(ROUTES.ADMIN.REPORT_LIST))}
-                            style={{ outline: 'none' }}
-                        >
-                            Volver a la lista
-                        </button>
+                    <div className="info-actions">
+                        <div className="flex gap-4">
+                            <button 
+                                className='item-link'
+                                onClick={handleAddComment}
+                                disabled={commentLoading}
+                            >
+                                {commentLoading ? 'Guardando...' : 'Guardar'}
+                            </button>
+                            <button 
+                                type="button" 
+                                className='item-link'
+                                onClick={() => navigate(adminAbs(ROUTES.ADMIN.REPORT_LIST))}
+                            >
+                                Volver a la lista
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className="mt-8">
+                    <div className="mb-4">
+                        <p className="text-gray-600 mb-4">
+                            Este reporte está cerrado. Puedes reabrirlo si necesitas hacer cambios adicionales.
+                        </p>
+                        {commentError && (
+                            <p className="text-red-500 text-sm mt-1">{commentError}</p>
+                        )}
+                    </div>
+                    <div className="info-actions">
+                        <div className="flex gap-4">
+                            <button 
+                                className='item-link'
+                                onClick={handleReopenReport}
+                                disabled={reopenLoading}
+                            >
+                                {reopenLoading ? 'Reabriendo...' : 'Reabrir reporte'}
+                            </button>
+                            <button 
+                                type="button" 
+                                className='item-link'
+                                onClick={() => navigate(adminAbs(ROUTES.ADMIN.REPORT_LIST))}
+                            >
+                                Volver a la lista
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

@@ -49,8 +49,38 @@ class ReportInput(BaseModel):
 
 
 class ReportInputUpdate(BaseModel):
+    internship_id: Optional[int] = None
+    site_id: Optional[int] = None
+    date_report: Optional[date] = None
+    report_type: Optional[ReportTypeEnum] = None
+    other_type: Optional[str] = None
+    description: Optional[str] = None
     evidence: Optional[str] = None
+    anonymity: Optional[bool] = None
     is_active: Optional[bool] = None
+
+    @field_validator("description")
+    @classmethod
+    def validate_description(cls, v: Optional[str]):
+        if v is not None:
+            if not v or len(v.strip()) < 10:
+                raise ValueError("La descripción debe tener al menos 10 caracteres")
+            if len(v) > 1000:
+                raise ValueError("La descripción no puede exceder 1000 caracteres")
+            return v.strip()
+        return v
+
+    @field_validator("other_type")
+    @classmethod
+    def validate_other_type(cls, v: Optional[str], info):
+        if v is not None:
+            report_type = info.data.get("report_type")
+            if report_type == ReportTypeEnum.OTHER and (not v or len(v.strip()) < 3):
+                raise ValueError("Debe especificar el tipo de reporte cuando selecciona 'Otro'")
+            if v and len(v) > 50:
+                raise ValueError("El tipo personalizado no puede exceder 50 caracteres")
+            return v.strip() if v else v
+        return v
 
     @field_validator("evidence")
     @classmethod

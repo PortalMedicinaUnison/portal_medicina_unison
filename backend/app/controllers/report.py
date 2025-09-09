@@ -6,6 +6,11 @@ from models.communication import Report
 from schemas.report import ReportInput, ReportInputUpdate, ReportStatusUpdate
 from utils.utils import orm_to_dict
 from datetime import datetime
+from typing import Optional
+from pydantic import field_validator
+from datetime import date
+from models.communication import ReportTypeEnum
+from pydantic import BaseModel
 
 
 def create_report(report: ReportInput, student_id: int, db: Session):
@@ -100,7 +105,7 @@ def update_report(report_id: int, report_input: ReportInputUpdate, student_id: i
     update_data = report_input.dict(exclude_unset=True)
     
     # Validar que no se estén modificando campos restringidos
-    restricted_fields = ['description', 'anonymity', 'internship_id', 'site_id', 'date_report', 'report_type']
+    restricted_fields = ['report_id', 'student_id', 'is_open', 'admin_comment', 'created_at', 'updated_at']
     for field in restricted_fields:
         if field in update_data:
             del update_data[field]

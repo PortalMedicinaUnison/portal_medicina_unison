@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { getReportByIdRequest } from '../../../../services/reportService.js';
 
 export const useReport = (reportId, studentId) => {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
     const [report, setReport] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -28,7 +31,7 @@ export const useReport = (reportId, studentId) => {
         if (reportId && studentId) {
             getReportById(reportId, studentId);
         }
-    }, [reportId, studentId]);
+    }, [reportId, studentId, location.search]);
 
     // Función para refrescar los datos
     const refetch = () => {
