@@ -56,6 +56,10 @@ class SurveyRepo(BaseRepo):
     def get_by_id(self, survey_id: int) -> Survey:
         """Obtiene una encuesta por su ID."""
         return self.session.query(Survey).filter(Survey.survey_id == survey_id).first()
+
+    def get_all(self):
+        """Obtiene todas las encuestas."""
+        return self.session.query(Survey).all()
     
     def get_by_mandatory(self, mandatory: bool):
         """Obtiene encuestas según si son obligatorias o no."""

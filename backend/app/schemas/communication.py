@@ -23,7 +23,7 @@ class AnnouncementOutput(BaseModel):
 # ---------------  Survey  ----------------------
 
 class SurveyInput(BaseModel):
-    admin_id: int
+    created_by: int
     title: str
     web_link: HttpUrl
     description: Optional[str] = None
@@ -34,6 +34,15 @@ class SurveyInput(BaseModel):
     def validate_expiration_date(cls, input_date: date) -> date:
         is_valid_future_date(input_date)
         return input_date
+
+class SurveyOutput(BaseModel):
+    survey_id: int
+    title: str
+    web_link: HttpUrl
+    description: Optional[str] = None
+    expiration_date: date
+    mandatory: bool
+    is_active: bool = True
 
 # ---------------  Report  ----------------------
 class ReportInput(BaseModel):
