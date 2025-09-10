@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Form, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List, Union
-from schemas.communication import AnnouncementInput, AnnouncementOutput, SurveyInput, ReportInput, AnnouncementTypeEnum
+from schemas.communication import AnnouncementInput, AnnouncementOutput, SurveyInput, SurveyOutput, ReportInput, AnnouncementTypeEnum
 from core.dependencies import get_db
 from controllers.communication import (
     create_announcement,
@@ -13,6 +13,7 @@ from controllers.communication import (
     create_survey,
     update_survey,
     get_survey,
+    get_all_surveys,
     get_surveys_by_mandatory,
     update_survey,
     delete_survey,
@@ -94,7 +95,7 @@ async def create_survey_route(survey: SurveyInput, db: Session = Depends(get_db)
             detail="No se pudo encontrar la encuesta")
     return survey
 
-@survey_router.get('/{survey_id}', response_model=SurveyInput)
+@survey_router.get('/{survey_id}', response_model=SurveyOutput)
 async def get_survey_route(survey_id: int, db: Session = Depends(get_db)):
     survey = get_survey(survey_id, db)
     if not survey:
@@ -103,7 +104,7 @@ async def get_survey_route(survey_id: int, db: Session = Depends(get_db)):
             detail="Encuesta no encontrada")
     return survey
 
-@survey_router.get('/', response_model=List[SurveyInput])
+@survey_router.get('/{mandatory}', response_model=List[SurveyOutput])
 async def get_surveys_by_mandatory_route(mandatory: bool, db: Session = Depends(get_db)):
     surveys = get_surveys_by_mandatory(mandatory, db)
     if not surveys:
@@ -112,7 +113,16 @@ async def get_surveys_by_mandatory_route(mandatory: bool, db: Session = Depends(
             detail="Encuesta no encontrada")
     return surveys
 
-@survey_router.patch('/{survey_id}', response_model=SurveyInput)
+@survey_router.get('/', response_model=List[SurveyOutput])
+async def get_surveys_route(db: Session = Depends(get_db)):
+    surveys =  get_all_surveys(db)
+    if not surveys:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Encuestas no encontradas")
+    return surveys
+
+@survey_router.patch('/{survey_id}', response_model=SurveyOutput)
 async def update_survey_route(survey_id: int, survey: SurveyInput, db: Session = Depends(get_db)):
     survey = update_survey(survey_id, survey, db)
     if not survey:

@@ -41,5 +41,11 @@ export const ROUTES = {
         INSTITUTION_CREATE: 'institutions/create',
         INSTITUTION_EDIT: (institutionId) => `institutions/${institutionId}/edit`,
         INSTITUTION_DELETE: (institutionId) => `institutions/${institutionId}/delete`,
+
+        SURVEY_LIST: 'surveys',
+        SURVEY_DETAIL: (surveyId) => `surveys/${surveyId}`,
+        SURVEY_CREATE: 'surveys/create',
+        SURVEY_EDIT: (surveyId) => `surveys/${surveyId}/edit`,
+        SURVEY_DELETE: (surveyId) => `surveys/${surveyId}/delete`,
     }
 }
