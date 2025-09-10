@@ -44,5 +44,13 @@ export const API_ENDPOINTS = {
       UPDATE:  (id) => `/institutions/${id}/`,
       DELETE:  (id) => `/institutions/${id}/`,
     },
+
+    ANNOUNCEMENTS: {
+        CREATE: '/announcements/',
+        GET: (id) => `/announcements/${id}`,
+        GET_ALL: '/announcements/',
+        UPDATE: (id) => `/announcements/${id}`,
+        DELETE: (id) => `/announcements/${id}`
+    }
 };
   
