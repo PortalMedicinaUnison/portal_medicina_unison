@@ -62,9 +62,7 @@ def create_promotion_site_detail(psd: PromotionSiteDetailInput, db: Session):
     new_psd = PromotionSiteDetail(
         promotion_id = psd.promotion_id,
         site_id = psd.site_id,
-        start_date = psd.start_date,
-        end_date = psd.end_date,
-        is_active = psd.is_active,
+        capacity = psd.capacity,
     )
     psd_repo = PromotionSiteDetailRepo(db)
     created_psd = psd_repo.create(new_psd)
@@ -95,9 +93,7 @@ def update_promotion_site_detail(psd_id: int, psd_input: PromotionSiteDetailInpu
         "psd_id": updated_psd.psd_id,
         "promotion_id": updated_psd.promotion_id,
         "site_id": updated_psd.site_id,
-        "start_date": updated_psd.start_date,
-        "end_date": updated_psd.end_date,
-        "is_active": updated_psd.is_active,
+        "capacity": updated_psd.capacity,
     }
 
 def delete_promotion_site_detail(psd_id: int, db: Session):
