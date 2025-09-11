@@ -28,8 +28,6 @@ function PsdForm({ onClose, onSuccess }){
     e.preventDefault();
     e.stopPropagation();
     
-    console.log('Promotion ID:', promotionId);
-
     const data = {
       promotion_id: promotionId ?? promotion?.promotion_id,
       site_id: formData.siteId,

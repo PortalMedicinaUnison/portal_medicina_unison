@@ -167,7 +167,6 @@ function PromotionUpdate() {
           >
             Añadir sede
           </button>
-
           <button
             type="button"
             className="btn-secondary"

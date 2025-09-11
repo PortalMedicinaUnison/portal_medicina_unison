@@ -46,8 +46,8 @@
         my-4
         mb-16
         mx-8
-        border
-        border-dashed
+        /* border */
+        /* border-dashed */
         rounded-lg
         text-sm/6
         /* text-[13px] */
@@ -294,6 +294,7 @@
         display: flex;
         justify-content: flex-end;
         gap: 1rem; 
+        margin-top: 6rem;
     }
     
 

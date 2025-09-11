@@ -9,7 +9,6 @@ function PromotionDetail() {
     const handleDeletePromotion = () => {
         const userConfirmed = confirm('¿Estás seguro de que deseas marcar esta promoción?');
         if (userConfirmed) {
-            // Aquí iría la lógica para eliminar/desactivar la promoción
             console.log('Deleting promotion:', promotionId);
         }
     };
@@ -51,7 +50,7 @@ function PromotionDetail() {
 
                             <div className="item-row">
                                 <dt className="item-header">¿Esta finalizado?</dt>
-                                <dd className="item-text">{promotion.is_finished}</dd>
+                                <dd className="item-text">  {promotion?.is_finished ? 'Finalizado' : 'No finalizado'}</dd>
                             </div>
                         </dl>
                     </div>
