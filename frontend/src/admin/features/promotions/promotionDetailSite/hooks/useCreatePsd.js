@@ -12,6 +12,7 @@ export default function useCreatePsd() {
     setError('');
     
     const psd = {
+      promotion_id: cleanedData.promotion_id,
       site_id: cleanedData.site_id,
       capacity: cleanedData.capacity,
     };
