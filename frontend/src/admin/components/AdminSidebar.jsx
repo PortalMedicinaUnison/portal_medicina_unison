@@ -75,6 +75,27 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </NavLink>
                         </div>
                         <div>
+                            <Link to={adminAbs(ROUTES.ADMIN.PROMOTION_LIST)} className="sidebar-item-group group">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="sidebar-item-icon"
+                                    viewBox="-1 -1 23 23"
+                                    aria-hidden="true"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <circle cx="10.5" cy="10.5" r="8"/>
+                                    <path d="M10.5 11.5v-5"/>
+                                    <circle cx="10.5" cy="14.5" r="1"/>
+                                </svg>                        
+                                <span className="sidebar-item-text">
+                                    Promociones
+                                </span>
+                            </Link>
+                        </div>
+                        <div>
                             <Link to={adminAbs(ROUTES.ADMIN.SITE_LIST)} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"

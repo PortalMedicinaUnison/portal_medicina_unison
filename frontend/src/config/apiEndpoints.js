@@ -15,7 +15,7 @@ export const API_ENDPOINTS = {
 
     PROMOTIONS: {
       CREATE: '/promotions/',
-      GET: (id) => '/promotions/${id}/',
+      GET: (id) => `/promotions/${id}/`,
       GET_ALL: '/promotions/',
       UPDATE: (id) => `/promotions/${id}/`,
       DELETE: (id) => `/promotions/${id}/`,
