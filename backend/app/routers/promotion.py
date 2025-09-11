@@ -8,8 +8,10 @@ from core.dependencies import get_db
 from schemas.promotion import (
     PromotionInput,
     PromotionInputUpdate,
+    PromotionOutput,
     PromotionSiteDetailInput,
     PromotionSiteDetailInputUpdate,
+    PromotionSiteDetailOutput
 )
 from controllers.promotion import (
     # Promotion
@@ -46,7 +48,7 @@ async def get_promotion_route(promotion_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Promoción no encontrada")
     return promotion
 
-@promotion_router.get("/", response_model=List[PromotionInput])
+@promotion_router.get("/", response_model=List[PromotionOutput])
 async def get_promotions_route(db: Session = Depends(get_db)):
     promotions = get_all_promotions(db)
     if not promotions:
@@ -86,7 +88,7 @@ async def get_psd_route(psd_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Detalle de promoción no encontrado")
     return psd
 
-@psd_router.get("/", response_model=List[PromotionSiteDetailInput])
+@psd_router.get("/", response_model=List[PromotionSiteDetailOutput])
 async def get_all_psd_route(db: Session = Depends(get_db)):
     psds = get_all_promotion_site_details(db)
     if not psds:

@@ -17,6 +17,10 @@ class AnnouncementRepo(BaseRepo):
     def get_by_type(self, announcement_type: AnnouncementTypeEnum):
         """Obtiene anuncios por su tipo."""
         return self.session.query(Announcement).filter(Announcement.announcement_type == announcement_type).all()
+
+    def get_all(self):
+        """Obtiene todos los anuncios."""
+        return self.session.query(Announcement).all()
     
     def update(self, announcement_id: int, data: dict) -> Announcement:
         """Actualiza los datos de un anuncio."""
@@ -52,6 +56,10 @@ class SurveyRepo(BaseRepo):
     def get_by_id(self, survey_id: int) -> Survey:
         """Obtiene una encuesta por su ID."""
         return self.session.query(Survey).filter(Survey.survey_id == survey_id).first()
+
+    def get_all(self):
+        """Obtiene todas las encuestas."""
+        return self.session.query(Survey).all()
     
     def get_by_mandatory(self, mandatory: bool):
         """Obtiene encuestas según si son obligatorias o no."""
