@@ -2,13 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useCreatePromotion from "../hooks/useCreatePromotion.js";
 import { ROUTES, adminAbs } from "../../../../config.js";
-import PromotionsList from '../components/PromotionsList.jsx';
-import PsdForm from '../promotionDetailSite/components/PsdForm.jsx'
-import Modal from '../../../../utils/utils-components.jsx'
+
 
 function PromotionForm() {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     year: 2025,
@@ -102,34 +99,8 @@ function PromotionForm() {
                 />
               </dd>
             </div>
-            <div className="item-row">
-              <dt className="item-header">Sedes</dt>
-              <dd className="item-text">
-                <button 
-                  type="button" 
-                  className="btn-secondary"
-                  onClick={() => setOpen(true)}
-
-                >
-                  Añadir
-                </button>
-              </dd>
-            </div>
           </dl>
         </div>
-
-        <Modal
-          open={open}
-          title="Añadir cupos a una sede"
-          onClose={() => setOpen(false)}
-        >
-          <PsdForm 
-            onClose={() => setOpen(false)}
-            onSuccess={() => setOpen(false)} 
-          />
-        </Modal>
-
-        <PromotionsList />
 
         <div className="button-group">
           <button 

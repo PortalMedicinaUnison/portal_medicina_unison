@@ -30,7 +30,7 @@ function PromotionPage() {
   return (
       <Layout>
         <PageLayout 
-          title={'Promociones'}
+          title={'🏷️ ' + promotion.year + ' - ' + promotion.period}
           actions={editPromotionActions}
         >
           <PromotionInfo/>

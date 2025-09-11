@@ -30,7 +30,7 @@ function PromotionsList() {
     };
     
     const handleEditButton = (promotionId) => {
-        console.log('Edit promotion:', promotionId);
+        navigate(adminAbs(ROUTES.ADMIN.PROMOTION_EDIT(promotionId)));
     };
     
     const handleDeleteButton = (promotionId) => {
