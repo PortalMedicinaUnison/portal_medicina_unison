@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import useCreateSurvey from '../hooks/useCreateSurvey';
-import { ROUTES, adminAbs } from '../../../../config.js';
+import { ROUTES, adminAbs } from '../../../../config';
 
 function SurveyForm() {
     const navigate = useNavigate();
