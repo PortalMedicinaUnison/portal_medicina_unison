@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ROUTES, adminAbs } from "../../../../config.js";
-import { usePromotion } from "../hooks/usePromotion.js";
-import usePromotionUpdate from "../hooks/useUpdatePromotion.js";
-import PromotionsList from '../components/PromotionsList.jsx';
+import { ROUTES, adminAbs } from "../../../../config";
+import { usePromotion } from "../hooks/usePromotion";
+import usePromotionUpdate from "../hooks/useUpdatePromotion";
+import PsdList from '../promotionDetailSite/components/PsdList';
 
-import PsdForm from '../promotionDetailSite/components/PsdForm.jsx'
-import Modal from '../../../../utils/utils-components.jsx'
+import PsdForm from '../promotionDetailSite/components/PsdForm'
+import Modal from '../../../../utils/utils-components'
 
 function PromotionUpdate() {
   const navigate = useNavigate();
@@ -131,7 +131,7 @@ function PromotionUpdate() {
           </dl>
         </div>
 
-        <PromotionsList />
+        <PsdList />
 
         <Modal
           open={open}

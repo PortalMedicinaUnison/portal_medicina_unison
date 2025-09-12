@@ -36,8 +36,8 @@ function PromotionsList() {
     const ok = window.confirm('Esta promoción se eliminará. ¿Deseas continuar?');
     if (!ok) return;
 
-    const done = await deletePromotion(id);
-    if (done) await refetch();
+    await deletePromotion(id);
+    await refetch();
   };
 
   const searchQuery = search.trim().toLowerCase();
@@ -59,7 +59,7 @@ function PromotionsList() {
   });
 
   if (listLoading) return <p>Cargando promociones…</p>;
-  if (listError) return <p>Error: {String(listError)}</p>;
+  if (listError) return <p>Error es: {String(listError)}</p>;
 
   return (
     <div className="table-container">
@@ -126,13 +126,11 @@ function PromotionsList() {
                     Editar
                   </button>
                 </td>
-                {statusFilter !== 'unavailable' && (
-                  <td>
-                    <button className="table-action" onClick={() => handleDeleteButton(item.promotion_id)}>
-                      Borrar
-                    </button>
-                  </td>
-                )}
+                <td>
+                  <button className="table-action" onClick={() => handleDeleteButton(item.promotion_id)}>
+                    Borrar
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
