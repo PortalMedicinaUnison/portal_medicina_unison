@@ -1,15 +1,28 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../../../api.js';
 import { ROUTES, adminAbs } from '../../../../config.js';
 import useGetPromotions from '../hooks/useGetPromotions';
+import useDeletePromotion from '../hooks/useDeletePromotion';
+
 
 function PromotionsList() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('available');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [yearFilter, setYearFilter] = useState('');
 
-  const { promotions, loading, error, refetch } = useGetPromotions();
+  const { promotions, loading: listLoading, error: listError, refetch } = useGetPromotions();
+  const { deletePromotion, loading: deleting, success: deleteSuccess, error: deleteError } = useDeletePromotion();
+
+  const yearOptions = useMemo(() => {
+    const ys = new Set(
+      promotions
+        .map(p => p?.year)
+        .filter(y => y !== undefined && y !== null && y !== '')
+        .map(String)
+    );
+    return Array.from(ys).sort((a, b) => Number(b) - Number(a));
+  }, [promotions]);
 
   const handleViewButton = (id) => {
     navigate(adminAbs(ROUTES.ADMIN.PROMOTION_DETAIL(id)));
@@ -22,16 +35,20 @@ function PromotionsList() {
   const handleDeleteButton = async (id) => {
     const ok = window.confirm('Esta promoción se eliminará. ¿Deseas continuar?');
     if (!ok) return;
-    try {
-      await api.delete(`/promotions/${id}`);
-      await refetch();
-    } catch (e) {
-      console.error('Delete failed', e);
-    }
+
+    const done = await deletePromotion(id);
+    if (done) await refetch();
   };
 
   const searchQuery = search.trim().toLowerCase();
   const filtered = promotions.filter((promotion) => {
+    if (yearFilter && String(promotion.year) !== yearFilter) return false;
+
+    if (statusFilter !== '') {
+      const wanted = statusFilter === 'true';
+      if (p.is_finished !== wanted) return false;
+    }
+
     if (!searchQuery) return true;
     return (
       String(promotion.promotion_id).includes(searchQuery) ||
@@ -41,8 +58,8 @@ function PromotionsList() {
     );
   });
 
-  if (loading) return <p>Cargando promociones…</p>;
-  if (error) return <p>Error: {String(error)}</p>;
+  if (listLoading) return <p>Cargando promociones…</p>;
+  if (listError) return <p>Error: {String(listError)}</p>;
 
   return (
     <div className="table-container">
@@ -54,6 +71,29 @@ function PromotionsList() {
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar promoción"
         />
+
+        <select
+          className="form-input--sm"
+          value={yearFilter}
+          onChange={(e) => setYearFilter(e.target.value)}
+          aria-label="Filtrar por año"
+        >
+          <option value="">Todos los años</option>
+          {yearOptions.map((y) => (
+            <option key={y} value={y}>{y}</option>
+          ))}
+        </select>
+
+        <select
+          className="form-input--sm"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          aria-label="Filtrar por estado"
+        >
+          <option value="">Estatus</option>
+          <option value="false">Si</option>
+          <option value="true">No</option>
+        </select>
       </div>
 
       <div className="table-container-body">

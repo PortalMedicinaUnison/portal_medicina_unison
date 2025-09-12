@@ -128,20 +128,6 @@ function PromotionUpdate() {
                 />
               </dd>
             </div>
-
-            <div className="item-row">
-              <dt className="item-header">Sedes</dt>
-              <dd className="item-text">
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => setOpen(true)}
-                  disabled={loadingPromotion || saving}
-                >
-                  Añadir / Editar cupos
-                </button>
-              </dd>
-            </div>
           </dl>
         </div>
 

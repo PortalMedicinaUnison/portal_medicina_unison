@@ -3,12 +3,8 @@ import { useNavigate } from "react-router-dom";
 import useCreatePromotion from "../hooks/useCreatePromotion.js";
 import { ROUTES, adminAbs } from "../../../../config.js";
 
-import PsdForm from '../promotionDetailSite/components/PsdForm.jsx'
-import Modal from '../../../../utils/utils-components.jsx'
-
 function PromotionForm() {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
   const { createPromotion, error, success } = useCreatePromotion();
 
   const [formData, setFormData] = useState({
@@ -92,27 +88,11 @@ function PromotionForm() {
           </dl>
         </div>
 
-
-        <Modal
-          open={open}
-          title="Añadir cupos a una sede"
-          onClose={() => setOpen(false)}
-        >
-          <PsdForm 
-            onClose={() => setOpen(false)}
-            onSuccess={() => setOpen(false)} 
-          />
-        </Modal>
+        <div className="item-row">
+              <dd className="item-text">Para añadir una sede, primero crea la promoción y luego dirigete a editar esa promoción</dd>
+        </div>
 
         <div className="button-group">
-        <button 
-            type="button" 
-            className="btn-tertiary"
-            onClick={() => setOpen(true)}
-
-          >
-            Añadir sede
-          </button>
           <button 
             type="button" 
             className="btn-secondary" 
