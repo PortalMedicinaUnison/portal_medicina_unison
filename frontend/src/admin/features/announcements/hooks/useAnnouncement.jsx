@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-// Asumimos que tienes un servicio para los anuncios, similar a siteService
-import { getAnnouncementByIdRequest } from '../../../../services/announcementService.jsx';
+import { getAnnouncementByIdRequest } from '../../../../services/announcementService';
 
 export const useAnnouncement = (announcementId) => {
     const [announcement, setAnnouncement] = useState(null);

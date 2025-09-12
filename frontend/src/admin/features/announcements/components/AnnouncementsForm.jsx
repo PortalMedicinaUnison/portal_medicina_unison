@@ -2,7 +2,7 @@ import { useState, useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
 import useCreateAnnouncement from '../hooks/useCreateAnnouncement';
 import useGetAnnouncements from '../hooks/useGetAnnouncements';
-import { ROUTES, adminAbs } from '../../../../config.js';
+import { ROUTES, adminAbs } from '../../../../config';
 
 function AnnouncementForm() {
     const navigate = useNavigate();
