@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { usePromotion } from '../hooks/usePromotion';
 import useDeletePromotion from '../hooks/useDeletePromotion';
 import { ROUTES, adminAbs } from '../../../../config';
+import PsdListReadOnly from '../promotionDetailSite/components/PsdListReadOnly';
 
 function PromotionDetail() {
     const { promotionId } = useParams();
@@ -57,6 +58,10 @@ function PromotionDetail() {
                                 <dd className="item-text">  {promotion?.is_finished ? 'Finalizado' : 'No finalizado'}</dd>
                             </div>
                         </dl>
+                    </div>
+
+                    <div className='mt-16'>
+                        <PsdListReadOnly/>
                     </div>
 
                     <div className="info-actions mt-16">
