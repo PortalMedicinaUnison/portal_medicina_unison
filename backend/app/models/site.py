@@ -1,7 +1,12 @@
 from sqlalchemy import Integer, String, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import BaseModel
+import typing
+from typing import List
 
+
+if typing.TYPE_CHECKING:
+    from .promotion import PromotionSiteDetail
 
 class Institution(BaseModel):
     __tablename__ = 'institutions'
@@ -31,5 +36,7 @@ class Site(BaseModel):
     teaching_deputy_email: Mapped[str] = mapped_column(String(50), nullable=True)
     teaching_deputy_phone: Mapped[str] = mapped_column(String(15), nullable=True)
 
+    promotion_details: Mapped[List["PromotionSiteDetail"]] = relationship(back_populates="site")
+
     def __repr__(self):
-        return f"<Site(name={self.name}, institution={self.institution.name}, is_active={self.is_active})>"
+        return f"<Site(name={self.name}, institution_id={self.institution_id}, is_active={self.is_active})>"

@@ -22,11 +22,13 @@ export const API_ENDPOINTS = {
     },
 
     PSD: {
-      CREATE:  '/psd/',
-      GET:     (id) => `/psd/${id}/`,
-      GET_ALL:    '/psd/',
-      UPDATE:  (id) => `/psd/${id}/`,
-      DELETE:  (id) => `/psd/${id}/`,
+      CREATE:  '/psd',
+      GET:     (id) => `/psd/${id}`,
+      GET_ALL:    '/psd',
+      GET_BY_PROMOTION: (promotionId) => `/psd/by-promotion/${promotionId}`,
+      GET_BY_SITE:      (siteId) => `/psd/by-site/${siteId}`,
+      UPDATE:  (id) => `/psd/${id}`,
+      DELETE:  (id) => `/psd/${id}`,
     },
 
     SITES: {

@@ -30,13 +30,13 @@ def get_promotion(promotion_id: int, db: Session):
     if promotion is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Promoción no encontrada")
     promotion_response = orm_to_dict(promotion)
-    return promotion_response
+    return promotion
 
 def get_all_promotions(db: Session):
     promotion_repo = PromotionRepo(db)
     promotions = promotion_repo.get_all()
     promotions_response = [orm_to_dict(promotion) for promotion in promotions]
-    return promotions_response
+    return promotions
 
 def update_promotion(promotion_id: int, promotion_input: PromotionInputUpdate, db: Session):
     update_data = promotion_input.dict(exclude_unset=True)
@@ -74,14 +74,14 @@ def get_promotion_site_detail(psd_id: int, db: Session):
     psd = psd_repo.get_by_id(psd_id)
     if psd is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Detalle de promoción no encontrado")
-    psd_response = orm_to_dict(psd)
-    return psd_response
+    # psd_response = orm_to_dict(psd)
+    return psd
 
 def get_all_promotion_site_details(db: Session):
     psd_repo = PromotionSiteDetailRepo(db)
     psds = psd_repo.get_all()
-    psds_response = [orm_to_dict(psd) for psd in psds]
-    return psds_response
+    # psds_response = [orm_to_dict(psd) for psd in psds]
+    return psds
 
 def update_promotion_site_detail(psd_id: int, psd_input: PromotionSiteDetailInputUpdate, db: Session):
     update_data = psd_input.dict(exclude_unset=True)

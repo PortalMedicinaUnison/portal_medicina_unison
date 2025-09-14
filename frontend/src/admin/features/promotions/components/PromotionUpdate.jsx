@@ -131,7 +131,9 @@ function PromotionUpdate() {
           </dl>
         </div>
 
-        <PsdList />
+        <div className="mt-16"> 
+          <PsdList />
+        </div>
 
         <Modal
           open={open}

@@ -44,16 +44,26 @@ class PromotionSiteDetailRepo(BaseRepo):
         return data
     
     def get_by_id(self, psd_id: int) -> PromotionSiteDetail:
-        return self.session.query(PromotionSiteDetail).filter(PromotionSiteDetail.psd_id == psd_id).first()
-    
+        return self.session.query(PromotionSiteDetail).filter(
+                PromotionSiteDetail.psd_id == psd_id,
+                PromotionSiteDetail.is_active.is_(True),
+            ).first()
+        
     def get_by_promotion_id(self, promotion_id: int):
-        return self.session.query(PromotionSiteDetail).filter_by(promotion_id=promotion_id).all()
+        return self.session.query(PromotionSiteDetail).filter(
+                PromotionSiteDetail.promotion_id == promotion_id,
+                PromotionSiteDetail.is_active.is_(True),
+            ).all()
 
     def get_by_site_id(self, site_id: int):
-        return self.session.query(PromotionSiteDetail).filter_by(site_id=site_id).all()
+        return self.session.query(PromotionSiteDetail).filter(
+                PromotionSiteDetail.site_id == site_id,
+                PromotionSiteDetail.is_active.is_(True),
+            ).all()
 
     def get_all(self):
-        return self.session.query(PromotionSiteDetail).all()
+        return self.session.query(PromotionSiteDetail).filter(
+            PromotionSiteDetail.is_active.is_(True)).all()
     
     def update(self, psd_id: int, data: dict) -> PromotionSiteDetail:
         psd = self.get_by_id(psd_id)

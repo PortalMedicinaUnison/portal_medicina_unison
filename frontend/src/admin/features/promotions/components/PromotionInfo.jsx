@@ -9,8 +9,6 @@ function PromotionDetail() {
     const { promotion, loading, error, refetch } = usePromotion(parseInt(promotionId));
     const { deletePromotion, loading: deleting, success: deleteSuccess, error: deleteError } = useDeletePromotion();
 
-    emptyList = listError?.response?.status === 404;
-
     const handleDeleteButton = async (id) => {
         const ok = window.confirm('Esta promoción se eliminará. ¿Deseas continuar?');
         if (!ok) return;
