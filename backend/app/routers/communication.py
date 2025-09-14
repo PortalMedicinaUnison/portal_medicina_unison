@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Form, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List, Union
-from schemas.communication import AnnouncementInput, SurveyInput, AnnouncementTypeEnum
-from schemas.report import ReportInput, ReportInputUpdate, ReportOutput
+from schemas.communication import AnnouncementInput, SurveyInput, AnnouncementTypeEnum, ReportInput, ReportInputUpdate, ReportOutput
 from core.dependencies import get_db
 from controllers.communication import (
     create_announcement,
@@ -15,9 +14,7 @@ from controllers.communication import (
     get_survey,
     get_surveys_by_mandatory,
     update_survey,
-    delete_survey
-)
-from controllers.report import (
+    delete_survey,
     create_report,
     get_report,
     get_all_student_reports,
@@ -25,7 +22,13 @@ from controllers.report import (
     toggle_report_status,
     get_report_by_internship,
     get_report_by_site,
-    upload_evidence_file
+    upload_evidence_file,
+    get_report_admin,
+    update_report_admin,
+    get_all_reports_admin,
+    get_open_reports_admin,
+    get_closed_reports_admin,
+    add_admin_comment
 )
 
 # ----------------------  Announcement  ----------------------
@@ -246,7 +249,6 @@ admin_report_router = APIRouter(prefix="/admin/reports", tags=["Reportes - Admin
 @admin_report_router.get('/{report_id}', response_model=ReportOutput)
 async def get_report_admin_route(report_id: int, db: Session = Depends(get_db)):
     """Obtener un reporte específico (solo para administradores)"""
-    from controllers.report import get_report_admin
     report = get_report_admin(report_id, db)
     if not report:
         raise HTTPException(
@@ -257,7 +259,6 @@ async def get_report_admin_route(report_id: int, db: Session = Depends(get_db)):
 @admin_report_router.patch('/{report_id}', response_model=ReportOutput)
 async def update_report_admin_route(report_id: int, data: dict, db: Session = Depends(get_db)):
     """Actualizar un reporte específico (solo para administradores)"""
-    from controllers.report import update_report_admin
     updated_report = update_report_admin(report_id, data, db)
     if not updated_report:
         raise HTTPException(
@@ -268,7 +269,6 @@ async def update_report_admin_route(report_id: int, data: dict, db: Session = De
 @admin_report_router.get('/', response_model=List[ReportOutput])
 async def get_all_reports_admin_route(db: Session = Depends(get_db)):
     """Obtener todos los reportes del sistema (solo para administradores)"""
-    from controllers.report import get_all_reports_admin
     reports = get_all_reports_admin(db)
     if not reports:
         return []
@@ -277,7 +277,6 @@ async def get_all_reports_admin_route(db: Session = Depends(get_db)):
 @admin_report_router.get('/open', response_model=List[ReportOutput])
 async def get_open_reports_admin_route(db: Session = Depends(get_db)):
     """Obtener reportes abiertos (solo para administradores)"""
-    from controllers.report import get_open_reports_admin
     reports = get_open_reports_admin(db)
     if not reports:
         return []
@@ -286,7 +285,6 @@ async def get_open_reports_admin_route(db: Session = Depends(get_db)):
 @admin_report_router.get('/closed', response_model=List[ReportOutput])
 async def get_closed_reports_admin_route(db: Session = Depends(get_db)):
     """Obtener reportes cerrados (solo para administradores)"""
-    from controllers.report import get_open_reports_admin
     reports = get_closed_reports_admin(db)
     if not reports:
         return []
@@ -299,7 +297,6 @@ async def add_admin_comment_route(
     db: Session = Depends(get_db)
 ):
     """Agregar comentario del administrador (solo para administradores)"""
-    from controllers.report import add_admin_comment
     admin_comment = data.get('admin_comment', '')
     close_report = data.get('close_report', False)
     updated_report = add_admin_comment(report_id, admin_comment, db, close_report)
