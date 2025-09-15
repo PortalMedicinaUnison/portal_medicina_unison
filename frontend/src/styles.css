@@ -5,9 +5,7 @@
 
 /* ------------------------------------------ */
 
-
 @layer components {
-
     .show-on-sm { @apply 
         hidden 
         sm:block;
@@ -21,13 +19,10 @@
         background-color: #e1b73d; 
     }
 
-    
-
     /* ------------- NO SIDEBAR ------------- */
 
     .no-sidebar-container { @apply 
         w-[calc(100vw-14rem)]
-
         transition-all
         duration-500  
     }
@@ -65,7 +60,7 @@
     .component-container { @apply 
         flex
         flex-col
-        gap-8
+        gap-16
     }
 
     .component-container_header { @apply
@@ -153,8 +148,6 @@
         sm:text-3xl 
         sm:tracking-tight
     }
-
-    
 
     /* ------------- FORMS ------------- */
 
@@ -298,7 +291,6 @@
         gap: 1rem; 
         margin-top: 6rem;
     }
-    
 
     /* ------------- NAVBAR ------------- */
 
@@ -313,7 +305,6 @@
         w-full
         bg-white
         border-b
-
         px-4
         py-2
         lg:px-5
@@ -613,10 +604,14 @@
 
     .table { @apply 
         w-full 
+        text-center
         text-sm 
-        text-left
         rtl:text-right
         border-collapse
+    }
+
+    .table thead { @apply 
+        bg-gray-50
     }
 
     .table tr { @apply

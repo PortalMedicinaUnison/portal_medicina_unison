@@ -93,7 +93,7 @@ function PromotionsList() {
         </select>
 
         <select
-          className="btn-input--fit"
+          className="btn-tertiary--light"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           aria-label="Filtrar por estado"
@@ -105,22 +105,30 @@ function PromotionsList() {
       </div>
 
       <div className="table-container-body">
-        <table className="table w-full">
-          <thead className="text-xs text-center text-gray-700 bg-gray-50">
+        <table className="table">
+          <thead>
             <tr>
               <th>Año</th>
               <th>Periodo</th>
               <th>¿Activa?</th>
               <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((item) => (
-              <tr key={item.promotion_id} className="text-center">
+              <tr key={item.promotion_id}>
                 <td>{item.year}</td>
                 <td>{item.period}</td>
                 <td>{item.is_finished ? 'No' : 'Sí'}</td>
-                <td className="relative">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td className="text-right">
                 <div data-row-menu className="inline-block text-left">
                   <button
                       type="button"
