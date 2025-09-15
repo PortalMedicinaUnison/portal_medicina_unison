@@ -21,7 +21,7 @@ class PreRegisteredUserRepo(BaseRepo):
 
     def get_all(self):
         """ Obtiene todos los usuarios pre-registrados. """
-        return self.session.query(PreRegisteredUser).all()
+        return self.session.query(PreRegisteredUser).filter(PreRegisteredUser.is_active == True).all()
 
     def update(self, academic_id: int, data: dict) -> PreRegisteredUser:
         """ Actualiza la información de un usuario pre-registrado. """
@@ -64,7 +64,7 @@ class UserRepo(BaseRepo):
 
     def get_all(self):
         """ Obtiene todos los usuarios. """
-        return self.session.query(User).all()
+        return self.session.query(User).filter(User.is_active == True).all()
 
     def update(self, user_id: int, data: dict) -> User:
         """ Actualiza los datos de un usuario. """

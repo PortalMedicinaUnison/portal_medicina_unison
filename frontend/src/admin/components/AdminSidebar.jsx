@@ -179,7 +179,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             <Link to="#" className="sidebar-item-link">
                                 Lista de alumnos   
                             </Link>
-                            <Link to="#" className="sidebar-item-link">
+                            <Link to={adminAbs(ROUTES.ADMIN.ENROLLMENT_LIST)} className="sidebar-item-link">
                                 Pre-registro
                             </Link>
                         </div>

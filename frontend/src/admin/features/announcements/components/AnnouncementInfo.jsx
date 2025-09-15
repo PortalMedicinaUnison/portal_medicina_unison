@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAnnouncement } from '../hooks/useAnnouncement'; // Hook para obtener un anuncio
+import { useAnnouncement } from '../hooks/useAnnouncement';
 
 function AnnouncementDetail() {
     const { announcementId } = useParams();

@@ -1,6 +1,6 @@
-import SurveysForm from '../components/SurveysForm.jsx';
-import Layout from '../../../../Layout.jsx';
-import PageLayout from '../../../../components/PageLayout.jsx';
+import SurveysForm from '../components/SurveysForm';
+import Layout from '../../../../Layout';
+import PageLayout from '../../../../components/PageLayout';
 
 function SurveyFormPage() {
     return (

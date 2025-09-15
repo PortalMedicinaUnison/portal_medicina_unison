@@ -37,7 +37,6 @@
         right-0
         transition-all
         duration-500
-        overflow-auto
     }
 
     .main-content { @apply 
@@ -45,31 +44,28 @@
         flex-col
         my-4
         mb-16
-        mx-8
-        border
-        border-dashed
+        mx-8        
         rounded-lg
         text-sm/6
-        /* text-[13px] */
         font-light
+        /* border */
+        /* border-dashed */
+        /* text-[13px] */
     }
 
     .main-content-header { @apply 
         p-4 
         border-b
-        bg-black
     }
 
     .main-content-body { @apply 
         p-4
-        overflow-y-auto
-        bg-black
     }
 
     .component-container { @apply 
         flex
         flex-col
-        gap-8;
+        gap-8
     }
 
     .component-container_header { @apply
@@ -287,13 +283,20 @@
         font-normal
         text-gray-700
         px-0
+    }
 
+    .btn-input--fit { @apply 
+        inline-block
+        w-auto
+        max-w-full
+        min-w-[1ch];
     }
 
     .button-group {
         display: flex;
         justify-content: flex-end;
         gap: 1rem; 
+        margin-top: 6rem;
     }
     
 
@@ -375,7 +378,7 @@
         flex-1
         py-6
         px-4
-        overflow-y-auto
+        /* overflow-y-auto */
     }
 
     .sidebar-footer { @apply 
@@ -593,13 +596,14 @@
         flex
         flex-col
         gap-4
-        overflow-x-auto 
+        relative
         sm:rounded-lg
     }
 
     .table-container-actions { @apply 
-        lg:flex 
-        lg:justify-between
+        flex 
+        justify-end
+        gap-4
     }
 
     .table-container-body { @apply 
@@ -625,8 +629,6 @@
         py-2
         text-gray-900
         whitespace-nowrap
-
-
     }
 
     .table th { @apply 
@@ -641,7 +643,17 @@
     }
 
     .dropdown-menu { @apply 
-        absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden
+        absolute 
+        right-0 
+        z-10 
+        mt-2 
+        w-56 
+        origin-top-right 
+        rounded-md 
+        bg-white 
+        shadow-lg 
+        ring-1 
+        ring-black/5
     }
 
     .dropdown-item { @apply 

@@ -2,21 +2,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useCreatePromotion from "../hooks/useCreatePromotion.js";
 import { ROUTES, adminAbs } from "../../../../config.js";
-import PromotionsList from '../components/PromotionsList.jsx';
-import PsdForm from '../promotionDetailSite/components/PsdForm.jsx'
-import Modal from '../../../../utils/utils-components.jsx'
 
 function PromotionForm() {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const { createPromotion, error, success } = useCreatePromotion();
 
   const [formData, setFormData] = useState({
     year: 2025,
     period: '',
     is_finished: false,
   });
-
-  const { createPromotion, error, success } = useCreatePromotion();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,46 +85,12 @@ function PromotionForm() {
                 </select>
               </dd>
             </div>
-            <div className="item-row">
-              <dt className="item-header">¿Promoción finalizada?</dt>
-              <dd className="item-text">
-                <input
-                  className="form-checkbox"
-                  name="is_finished"
-                  type="checkbox"
-                  checked={formData.is_finished}
-                  onChange={handleChange}
-                />
-              </dd>
-            </div>
-            <div className="item-row">
-              <dt className="item-header">Sedes</dt>
-              <dd className="item-text">
-                <button 
-                  type="button" 
-                  className="btn-secondary"
-                  onClick={() => setOpen(true)}
-
-                >
-                  Añadir
-                </button>
-              </dd>
-            </div>
           </dl>
         </div>
 
-        <Modal
-          open={open}
-          title="Añadir cupos a una sede"
-          onClose={() => setOpen(false)}
-        >
-          <PsdForm 
-            onClose={() => setOpen(false)}
-            onSuccess={() => setOpen(false)} 
-          />
-        </Modal>
-
-        <PromotionsList />
+        <div className="item-row">
+              <dd className="item-text">Para añadir una sede, primero crea la promoción y luego dirigete a editar esa promoción</dd>
+        </div>
 
         <div className="button-group">
           <button 
