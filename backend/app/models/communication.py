@@ -64,9 +64,7 @@ class Report(BaseModel):
     anonymity: Mapped[bool] = mapped_column(Boolean, nullable=False)
     is_open: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     admin_comment: Mapped[str] = mapped_column(Text)
-    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+   
+   
     def __repr__(self):
         return f"<Report(student_id={self.student_id}, type={self.report_type.name}, is_open={self.is_open})>"
