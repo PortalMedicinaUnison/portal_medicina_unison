@@ -27,41 +27,40 @@ export const deleteInternshipRequest = (id) =>
 
 // ------------ Internship Enrollments ------------
 
-export const createEnrollmentRequest = (data) =>
-  api.post(API_ENDPOINTS.ENROLLMENTS.CREATE, data);
+export const createInternshipApplicationRequest = (data) =>
+  api.post(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.CREATE, data);
 
-export const getEnrollmentByIdRequest = (id) =>
-  api.get(API_ENDPOINTS.ENROLLMENTS.GET(id));
+export const getInternshipApplicationByIdRequest = (id) =>
+  api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.GET(id));
 
-export const getEnrollmentsByStudentRequest = (studentId) =>
-  api.get(API_ENDPOINTS.ENROLLMENTS.GET_BY_STUDENT(studentId));
+export const getInternshipApplicationsByStudentRequest = (studentId) =>
+  api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.GET_BY_STUDENT(studentId));
 
-export const getEnrollmentsByStatusRequest = (isAccepted) =>
-  api.get(API_ENDPOINTS.ENROLLMENTS.GET_BY_STATUS(isAccepted));
+export const getInternshipApplicationsByStatusRequest = (isAccepted) =>
+  api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.GET_BY_STATUS(isAccepted));
 
-export const getAllEnrollmentsRequest = () =>
-  api.get(API_ENDPOINTS.ENROLLMENTS.GET_ALL);
+export const getAllInternshipApplicationsRequest = () =>
+  api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.GET_ALL);
 
-export const updateEnrollmentRequest = (id, data) =>
-  api.patch(API_ENDPOINTS.ENROLLMENTS.UPDATE(id), data);
+export const updateInternshipApplicationRequest = (id, data) =>
+  api.patch(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.UPDATE(id), data);
 
-export const deleteEnrollmentRequest = (id) =>
-  api.delete(API_ENDPOINTS.ENROLLMENTS.DELETE(id));
-
+export const deleteInternshipApplicationRequest = (id) =>
+  api.delete(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.DELETE(id));
 
 // ------------ Internship Documents ------------
 
 export const createInternshipDocumentRequest = (data) =>
-  api.post(API_ENDPOINTS.INTERNSHIPS_DOCUMENTS.CREATE, data);
+  api.post(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.CREATE, data);
 
 export const getInternshipDocumentByIdRequest = (id) =>
-  api.get(API_ENDPOINTS.INTERNSHIPS_DOCUMENTS.GET(id));
+  api.get(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.GET(id));
 
 export const getDocumentsByInternshipRequest = (internshipId) =>
-  api.get(API_ENDPOINTS.INTERNSHIPS_DOCUMENTS.GET_BY_INTERNSHIP(internshipId));
+  api.get(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.GET_BY_INTERNSHIP(internshipId));
 
 export const updateInternshipDocumentRequest = (id, data) =>
-  api.patch(API_ENDPOINTS.INTERNSHIPS_DOCUMENTS.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.UPDATE(id), data);
 
 export const deleteInternshipDocumentRequest = (id) =>
-  api.delete(API_ENDPOINTS.INTERNSHIPS_DOCUMENTS.DELETE(id));
+  api.delete(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.DELETE(id));
