@@ -1,8 +1,8 @@
 // SurveysList.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../../../api'; // Asegúrate que la ruta del API es correcta
-import { ROUTES, adminAbs } from '../../../../config.js'; // Asegúrate que la ruta de config es correcta
+import api from '../../../../api';
+import { ROUTES, adminAbs } from '../../../../config';
 
 function SurveysList() {
     const [search, setSearch] = useState('');
@@ -11,7 +11,7 @@ function SurveysList() {
 
     const getSurveys = async () => {
         try {
-            const response = await api.get("/surveys/"); // Endpoint para encuestas
+            const response = await api.get("/surveys/");
             setSurveys(response.data);
             console.log("Surveys loaded successfully", response.data);
         } catch (error) {

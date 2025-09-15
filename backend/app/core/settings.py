@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
 
     # CORS settings
-    ORIGINS: List[str]
+    ORIGINS: List[str] = ["http://localhost:5173","http://127.0.0.1:5173"]
     CORS_CREDENTIALS: bool = True
     CORS_METHODS: List[str] = ["*"]
     CORS_HEADERS: List[str] = ["*"]

@@ -1,18 +1,22 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { usePromotion } from '../hooks/usePromotion';
+import useDeletePromotion from '../hooks/useDeletePromotion';
+import { ROUTES, adminAbs } from '../../../../config';
+import PsdListReadOnly from '../promotionDetailSite/components/PsdListReadOnly';
 
 function PromotionDetail() {
     const { promotionId } = useParams();
     const navigate = useNavigate();
     const { promotion, loading, error, refetch } = usePromotion(parseInt(promotionId));
+    const { deletePromotion, loading: deleting, success: deleteSuccess, error: deleteError } = useDeletePromotion();
 
-    const handleDeletePromotion = () => {
-        const userConfirmed = confirm('¿Estás seguro de que deseas marcar esta promoción?');
-        if (userConfirmed) {
-            // Aquí iría la lógica para eliminar/desactivar la promoción
-            console.log('Deleting promotion:', promotionId);
-        }
-    };
+    const handleDeleteButton = async (id) => {
+        const ok = window.confirm('Esta promoción se eliminará. ¿Deseas continuar?');
+        if (!ok) return;
+    
+        await deletePromotion(id);
+        navigate(adminAbs(ROUTES.ADMIN.PROMOTION_LIST), { replace: true });
+      };
 
     return (
         <div>
@@ -51,16 +55,20 @@ function PromotionDetail() {
 
                             <div className="item-row">
                                 <dt className="item-header">¿Esta finalizado?</dt>
-                                <dd className="item-text">{promotion.is_finished}</dd>
+                                <dd className="item-text">  {promotion?.is_finished ? 'Finalizado' : 'No finalizado'}</dd>
                             </div>
                         </dl>
+                    </div>
+
+                    <div className='mt-16'>
+                        <PsdListReadOnly/>
                     </div>
 
                     <div className="info-actions mt-16">
                         <button 
                             type="button" 
                             className='item-link'
-                            onClick={() => navigate(`/promotions/${promotion.id}/edit`)}
+                            onClick={() => handleDeleteButton(promotionId)}
                         >
                             Eliminar promoción
                         </button>

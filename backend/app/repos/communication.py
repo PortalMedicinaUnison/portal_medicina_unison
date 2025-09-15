@@ -20,7 +20,7 @@ class AnnouncementRepo(BaseRepo):
 
     def get_all(self):
         """Obtiene todos los anuncios."""
-        return self.session.query(Announcement).all()
+        return self.session.query(Announcement).filter(Announcement.is_active == True).all()
     
     def update(self, announcement_id: int, data: dict) -> Announcement:
         """Actualiza los datos de un anuncio."""
@@ -59,7 +59,7 @@ class SurveyRepo(BaseRepo):
 
     def get_all(self):
         """Obtiene todas las encuestas."""
-        return self.session.query(Survey).all()
+        return self.session.query(Survey).filter(Survey.is_active == True).all()
     
     def get_by_mandatory(self, mandatory: bool):
         """Obtiene encuestas según si son obligatorias o no."""
@@ -98,6 +98,10 @@ class ReportRepo(BaseRepo):
     def get_by_id(self, report_id: int) -> Report:
         """Obtiene un reporte por su ID."""
         return self.session.query(Report).filter(Report.report_id == report_id).first()
+    
+    def get_all(self):
+        """Obtiene todos los reportes."""
+        return self.session.query(Report).filter(Report.is_active == True).all()
     
     def get_by_mandatory(self, mandatory: bool):
         """Obtiene reportes según si son obligatorios o no."""

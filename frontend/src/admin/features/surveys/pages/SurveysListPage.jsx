@@ -1,9 +1,9 @@
-import SurveysList from '../components/SurveysList.jsx';
+import SurveysList from '../components/SurveysList';
 
-import Layout from '../../../../Layout.jsx';
-import PageLayout from '../../../../components/PageLayout.jsx';
+import Layout from '../../../../Layout';
+import PageLayout from '../../../../components/PageLayout';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../../../../config.js';
+import { ROUTES, adminAbs } from '../../../../config';
 
 function SurveysListPage() {
     const navigate = useNavigate();

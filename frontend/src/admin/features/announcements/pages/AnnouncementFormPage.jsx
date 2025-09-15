@@ -1,6 +1,6 @@
-import AnnouncementsForm from '../components/AnnouncementsForm.jsx';
-import Layout from '../../../../Layout.jsx';
-import PageLayout from '../../../../components/PageLayout.jsx';
+import AnnouncementsForm from '../components/AnnouncementsForm';
+import Layout from '../../../../Layout';
+import PageLayout from '../../../../components/PageLayout';
 
 function AnnouncementFormPage() {
     return (

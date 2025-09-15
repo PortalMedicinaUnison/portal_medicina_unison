@@ -79,6 +79,11 @@ class SiteOutput(BaseModel):
     teaching_deputy_email: Optional[str] = None
     teaching_deputy_phone: Optional[str] = None
 
+class SiteBasicOutput(BaseModel):
+    site_id: int
+    name: str
+    city: str
+
 #---------------INSTITUTION-------------------
 class InstitutionInput(BaseModel):
     name: str

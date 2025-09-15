@@ -1,64 +1,95 @@
 export const API_ENDPOINTS = {
     AUTH: {
-      LOGIN:         '/auth/login/',
-      VERIFY_TOKEN:  '/auth/verify-token/',
-      REFRESH_TOKEN: '/auth/refresh/',
+      LOGIN:         '/auth/login',
+      VERIFY_TOKEN:  '/auth/verify-token',
+      REFRESH_TOKEN: '/auth/refresh',
     },
 
     USERS: {
-      CREATE:  '/users/',
-      GET:     (id) => `/users/${id}/`,
-      GET_ALL:    '/users/',
-      UPDATE:  (id) => `/users/${id}/`,
-      DELETE:  (id) => `/users/${id}/`,
+      CREATE:  '/users',
+      GET_ALL:    '/users',
+      GET:     (id) => `/users/${id}`,
+      UPDATE:  (id) => `/users/${id}`,
+      DELETE:  (id) => `/users/${id}`,
     },
 
     PROMOTIONS: {
-      CREATE: '/promotions/',
-      GET: (id) => `/promotions/${id}/`,
-      GET_ALL: '/promotions/',
-      UPDATE: (id) => `/promotions/${id}/`,
-      DELETE: (id) => `/promotions/${id}/`,
+      CREATE: '/promotions',
+      GET_ALL: '/promotions',
+      GET: (id) => `/promotions/${id}`,
+      UPDATE: (id) => `/promotions/${id}`,
+      DELETE: (id) => `/promotions/${id}`,
     },
 
     PSD: {
-      CREATE:  '/psd/',
-      GET:     (id) => `/psd/${id}/`,
-      GET_ALL:    '/psd/',
-      UPDATE:  (id) => `/psd/${id}/`,
-      DELETE:  (id) => `/psd/${id}/`,
+      CREATE:  '/psd',
+      GET_ALL:    '/psd',
+      GET:     (id) => `/psd/${id}`,
+      GET_BY_PROMOTION: (promotionId) => `/psd/by-promotion/${promotionId}`,
+      GET_BY_SITE:      (siteId) => `/psd/by-site/${siteId}`,
+      UPDATE:  (id) => `/psd/${id}`,
+      DELETE:  (id) => `/psd/${id}`,
     },
 
     SITES: {
-      CREATE:  '/sites/',
-      GET:     (id) => `/sites/${id}/`,
-      GET_ALL:    '/sites/',
-      UPDATE:  (id) => `/sites/${id}/`,
-      DELETE:  (id) => `/sites/${id}/`,
+      CREATE:  '/sites',
+      GET_ALL:    '/sites',
+      GET:     (id) => `/sites/${id}`,
+      UPDATE:  (id) => `/sites/${id}`,
+      DELETE:  (id) => `/sites/${id}`,
     },
 
     INSTITUTIONS: {
-      CREATE:  '/institutions/',
-      GET:     (id) => `/institutions/${id}/`,
-      GET_ALL:    '/institutions/',
-      UPDATE:  (id) => `/institutions/${id}/`,
-      DELETE:  (id) => `/institutions/${id}/`,
+      CREATE:  '/institutions',
+      GET_ALL:    '/institutions',
+      GET:     (id) => `/institutions/${id}`,
+      UPDATE:  (id) => `/institutions/${id}`,
+      DELETE:  (id) => `/institutions/${id}`,
     },
 
     ANNOUNCEMENTS: {
-        CREATE: '/announcements/',
+        CREATE: '/announcements',
+        GET_ALL: '/announcements',
         GET: (id) => `/announcements/${id}`,
-        GET_ALL: '/announcements/',
         UPDATE: (id) => `/announcements/${id}`,
         DELETE: (id) => `/announcements/${id}`
     },
 
     SURVEYS: {
-        CREATE: '/surveys/',
+        CREATE: '/surveys',
         GET: (id) => `/surveys/${id}`,
-        GET_ALL: '/surveys/',
+        GET_ALL: '/surveys',
         UPDATE: (id) => `/surveys/${id}`,
         DELETE: (id) => `/surveys/${id}`
+    },
+
+    ENROLLMENTS: {
+      CREATE:        '/internship_enrollments',
+      GET_ALL:       '/internship_enrollments',
+      GET:           (id) => `/internship_enrollments/${id}`,
+      GET_BY_STUDENT:(studentId) => `/internship_enrollments/by-student/${studentId}`,
+      GET_BY_STATUS: (isAccepted) => `/internship_enrollments?is_accepted=${isAccepted}`,
+      UPDATE:        (id) => `/internship_enrollments/${id}`,
+      DELETE:        (id) => `/internship_enrollments/${id}`,
+    },
+    
+    INTERNSHIPS: {
+      CREATE:        '/internships',
+      GET_ALL:       '/internships',
+      GET:           (id) => `/internships/${id}`,
+      GET_BY_STUDENT:(studentId) => `/internships/by-student/${studentId}`,
+      GET_BY_SITE:   (siteId) => `/internships/by-site/${siteId}`,
+      UPDATE:        (id) => `/internships/${id}`,
+      DELETE:        (id) => `/internships/${id}`,
+    },
+  
+    INTERNSHIPS_DOCUMENTS: {
+      CREATE:           '/internship_documents',
+      GET:              (id) => `/internship_documents/${id}`,
+      GET_BY_INTERNSHIP:(internshipId) => `/internship_documents/by-internship/${internshipId}`,
+      UPDATE:           (id) => `/internship_documents/${id}`,
+      DELETE:           (id) => `/internship_documents/${id}`,
     }
+
 };
   

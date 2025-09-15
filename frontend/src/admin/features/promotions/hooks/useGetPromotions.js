@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../../../api';
-
+import { getAllPromotionsRequest } from '../../../../services/promotionService';
 
 const useGetPromotions = () => {
   const [promotions, setPromotions] = useState([]);
@@ -12,11 +11,12 @@ const useGetPromotions = () => {
     setError(null);
     
     try {
-      const response = await api.get('/promotions');
+      const response = await getAllPromotionsRequest();
       setPromotions(response.data);
     } catch (err) {
-      setError(err.message);
       console.error('Error fetching promotions:', err);
+      setError(err.message);
+      return false;
     } finally {
       setLoading(false);
     }

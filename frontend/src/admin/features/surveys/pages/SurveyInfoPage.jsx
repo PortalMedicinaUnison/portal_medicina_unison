@@ -1,9 +1,9 @@
-import SurveyInfo from "../components/SurveyInfo.jsx";
+import SurveyInfo from "../components/SurveyInfo";
 import { useNavigate, useParams } from "react-router-dom";
-import { ROUTES, adminAbs } from "../../../../config.js";
-import { useSurvey } from "../hooks/useSurvey.jsx";
-import Layout from "../../../../Layout.jsx";
-import PageLayout from '../../../../components/PageLayout.jsx';
+import { ROUTES, adminAbs } from "../../../../config";
+import { useSurvey } from "../hooks/useSurvey";
+import Layout from "../../../../Layout";
+import PageLayout from '../../../../components/PageLayout';
 
 function SurveyPage() {
   const { surveyId } = useParams();
