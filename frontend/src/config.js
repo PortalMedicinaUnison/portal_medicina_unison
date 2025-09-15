@@ -40,8 +40,8 @@ export const ROUTES = {
         PSD_DELETE: (psdId) => `psd/${psdId}/delete`,
 
         REPORT_LIST: 'reports',
-        REPORT_DETAIL: (reportId) => `reports/${reportId}`,
         REPORT_CREATE: 'reports/create',
+        REPORT_DETAIL: (reportId) => `reports/${reportId}`,
         REPORT_EDIT: (reportId) => `reports/${reportId}/edit`,
         REPORT_DELETE: (reportId) => `reports/${reportId}/delete`,
 
@@ -62,5 +62,23 @@ export const ROUTES = {
         SURVEY_DETAIL: (surveyId) => `surveys/${surveyId}`,
         SURVEY_EDIT: (surveyId) => `surveys/${surveyId}/edit`,
         SURVEY_DELETE: (surveyId) => `surveys/${surveyId}/delete`,
+
+        INTERNSHIP_LIST: 'internships',
+        INTERNSHIP_CREATE: 'internships/create',
+        INTERNSHIP_DETAIL: (internshipId) => `internships/${internshipId}`,
+        INTERNSHIP_EDIT:   (internshipId) => `internships/${internshipId}/edit`,
+        INTERNSHIP_DELETE: (internshipId) => `internships/${internshipId}/delete`,
+
+        ENROLLMENT_LIST:   'internship_enrollments',
+        ENROLLMENT_CREATE: 'internship_enrollments/create',
+        ENROLLMENT_DETAIL: (enrollmentId) => `internship_enrollments/${enrollmentId}`,
+        ENROLLMENT_EDIT:   (enrollmentId) => `internship_enrollments/${enrollmentId}/edit`,
+        ENROLLMENT_DELETE: (enrollmentId) => `internship_enrollments/${enrollmentId}/delete`,
+
+        INTERNSHIP_DOCUMENT_LIST:   'internship_documents',
+        INTERNSHIP_DOCUMENT_CREATE: 'internship_documents/create',
+        INTERNSHIP_DOCUMENT_DETAIL: (documentId) => `internship_documents/${documentId}`,
+        INTERNSHIP_DOCUMENT_EDIT:   (documentId) => `internship_documents/${documentId}/edit`,
+        INTERNSHIP_DOCUMENT_DELETE: (documentId) => `internship_documents/${documentId}/delete`,
     }
 }
