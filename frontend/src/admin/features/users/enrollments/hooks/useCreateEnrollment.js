@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { cleanFormData } from '../../../../utils/utils';
-import { createEnrollmentRequest } from '../../../../services/internshipService';
+import { cleanFormData } from '../../../../../utils/utils';
+import { createUserEnrollmentRequest } from '../../../../../services/userService';
 
-export default function useCreateEnrollment() {
+export default function useCreateUserEnrollment() {
   const [error, setError]     = useState('');
   const [success, setSuccess] = useState(false);
 
-  const createEnrollment = async (formData) => {  
+  const createUserEnrollment = async (formData) => {  
     const cleanedData = cleanFormData(formData);
     setError('');
     setSuccess(false);
@@ -17,15 +17,15 @@ export default function useCreateEnrollment() {
     };
 
     try {
-      await createEnrollmentRequest(payload);
+      await createUserEnrollmentRequest(payload);
       setSuccess(true);
       return true;
     } catch (err) {
       console.error("Register failed", err);
-      setError('Error al pre-registrar al alumno. Por favor, intenta nuevamente.');
+      setError('Error al dar de alta al alumno. Por favor, intenta nuevamente.');
       return false;
     }
   };
 
-  return { createEnrollment, error, success };
+  return { createUserEnrollment, error, success };
 }

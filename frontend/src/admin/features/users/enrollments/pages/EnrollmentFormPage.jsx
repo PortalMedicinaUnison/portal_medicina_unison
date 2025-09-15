@@ -1,6 +1,6 @@
-import EnrollmentForm from "../components/EnrollmentForm.jsx";
-import Layout from "../../../../Layout.jsx";
-import PageLayout from '../../../../components/PageLayout.jsx';
+import EnrollmentForm from "../components/EnrollmentForm";
+import Layout from "../../../../../Layout.jsx";
+import PageLayout from '../../../../../components/PageLayout.jsx';
 
 
 function EnrollmentFormPage() {

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../../../../config.js';
-import Layout from '../../../../Layout.jsx';
-import PageLayout from '../../../../components/PageLayout.jsx';
+import { ROUTES, adminAbs } from '../../../../../config';
+import Layout from '../../../../../Layout.jsx';
+import PageLayout from '../../../../../components/PageLayout.jsx';
 import EnrollmentsList from '../components/EnrollmentsList.jsx';
 
 
@@ -13,7 +13,7 @@ function EnrollmentsListPage() {
       <button
         type="button"
         className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.ADMIN.ENROLLMENT_CREATE))}
+        onClick={() => navigate(adminAbs(ROUTES.ADMIN.USER_ENROLLMENT_CREATE))}
       >
         Crear
       </button>

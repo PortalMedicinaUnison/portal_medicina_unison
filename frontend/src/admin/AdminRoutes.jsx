@@ -26,8 +26,8 @@ import SurveyFormPage from '../admin/features/surveys/pages/SurveysFormPage.jsx'
 import SurveyInfoPage from '../admin/features/surveys/pages/SurveyInfoPage.jsx';
 // import SurveyUpdatePage from '../admin/features/surveys/pages/SurveyUpdatePage.jsx';
 
-import EnrollmentFormPage from '../admin/features/enrollments/pages/EnrollmentFormPage.jsx';
-import EnrollmentsListPage from '../admin/features/enrollments/pages/EnrollmentsListPage.jsx';
+import EnrollmentFormPage from '../admin/features/users/enrollments/pages/EnrollmentFormPage.jsx';
+import EnrollmentsListPage from '../admin/features/users/enrollments/pages/EnrollmentsListPage.jsx';
 
 import ReportsListPage from '../admin/features/reports/pages/ReportsListPage.jsx';
 import ReportInfoPage from '../admin/features/reports/pages/ReportInfoPage.jsx';
@@ -67,9 +67,9 @@ function AdminRoutes() {
         <Route path="surveys/:surveyId" element={<SurveyInfoPage />} />
         {/* <Route path="surveys/:surveyId/edit" element={<SurveyUpdatePage />} /> */}
 
-        {/* Internship nrollments */}
-        <Route path="internship_enrollments" element={<EnrollmentsListPage />} />
-        <Route path="internship_enrollments/create" element={<EnrollmentFormPage />} />
+        {/* User enrollments */}
+        <Route path="user/enrollments" element={<EnrollmentsListPage />} />
+        <Route path="user/enrollments/create" element={<EnrollmentFormPage />} />
 
         {/* Reports */}
         <Route path="reports" element={<ReportsListPage />} />

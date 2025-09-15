@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ROUTES, adminAbs } from "../../../../config";
+import { ROUTES, adminAbs } from "../../../../../config";
 import useCreateEnrollment from "../hooks/useCreateEnrollment";
 
 function EnrollmentForm() {
@@ -8,8 +8,8 @@ function EnrollmentForm() {
   const { createEnrollment, error, success } = useCreateEnrollment();
 
   const [formData, setFormData] = useState({
-    student_id: '',
-    is_accepted: false,
+    academic_id: '',
+    is_enrolled: false,
   });
 
   const handleChange = (e) => {
@@ -28,8 +28,8 @@ function EnrollmentForm() {
       console.log('Alumno pre-registrado exitosamente');
       
       setFormData({
-        student_id: '',
-        is_accepted: false,
+        academic_id: '',
+        is_enrolled: false,
       });
     }
   };
@@ -39,7 +39,7 @@ function EnrollmentForm() {
 
       {success && (
         <div className="alert-success-text">
-          Alumno pre-registrado exitosamente.
+          Alumno dado de alta exitosamente.
         </div>
       )}
 
@@ -61,9 +61,22 @@ function EnrollmentForm() {
                   className="form-input--half"
                   name="student_id"
                   type="text"
-                  value={formData.student_id}
+                  value={formData.academic_id}
                   onChange={handleChange}
                   placeholder="Expediente del alumno"
+                />
+              </dd>
+            </div>
+            <div className="item-row">
+              <dt className="item-header">Estatus</dt>
+              <dd className="item-text">
+                <input
+                  className="form-input--half"
+                  name="is_enrolled"
+                  type="text"
+                  value={formData.is_enrolled}
+                  onChange={handleChange}
+                  placeholder="¿El alumno está inscrito?"
                 />
               </dd>
             </div>
@@ -83,7 +96,7 @@ function EnrollmentForm() {
           <button 
             type="button" 
             className="btn-secondary" 
-            onClick={() => navigate(adminAbs(ROUTES.ADMIN.ENROLLMENT_LIST))}
+            onClick={() => navigate(adminAbs(ROUTES.ADMIN.USER_ENROLLMENT_LIST))}
           >
             Cancelar
           </button>

@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { deleteEnrollmentRequest } from '../../../../services/internshipService';
+import { deleteUserEnrollmentRequest } from '../../../../../services/userService';
 
-export default function useDeleteEnrollment() {
+export default function useDeleteUserEnrollment() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError]     = useState('');
 
-  const deleteEnrollment = async (id) => {
+  const deleteUserEnrollment = async (id) => {
     setLoading(true);
     setSuccess(false);
     setError('');
 
     try {
-      await deleteEnrollmentRequest(id);
+      await deleteUserEnrollmentRequest(id);
       setSuccess(true);
       return true;
     } catch (err) {
@@ -30,5 +30,5 @@ export default function useDeleteEnrollment() {
     setError('');
   };
 
-  return { deleteEnrollment, loading, success, error, reset };
+  return { deleteUserEnrollment, loading, success, error, reset };
 }

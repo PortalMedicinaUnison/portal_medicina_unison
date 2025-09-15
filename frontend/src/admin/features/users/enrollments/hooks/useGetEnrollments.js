@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { getAllEnrollmentsRequest } from '../../../../services/internshipService';
+import { getAllUserEnrollmentsRequest } from '../../../../../services/userService';
 
-const useGetEnrollments = () => {
+const useGetUserEnrollments = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading]         = useState(false);
   const [error, setError]             = useState(null);
@@ -11,10 +11,10 @@ const useGetEnrollments = () => {
     setError(null);
     
     try {
-      const response = await getAllEnrollmentsRequest();
+      const response = await getAllUserEnrollmentsRequest();
       setEnrollments(response.data);
     } catch (err) {
-      console.error('Error fetching enrollments:', err);
+      console.error('Error fetching user enrollments:', err);
       setError(err.message);
       return false;
     } finally {
@@ -29,4 +29,4 @@ const useGetEnrollments = () => {
   return { enrollments, loading, error, refetch: fetchEnrollments };
 };
 
-export default useGetEnrollments;
+export default useGetUserEnrollments;
