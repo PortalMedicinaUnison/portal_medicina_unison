@@ -37,7 +37,6 @@
         right-0
         transition-all
         duration-500
-        overflow-auto
     }
 
     .main-content { @apply 
@@ -45,31 +44,28 @@
         flex-col
         my-4
         mb-16
-        mx-8
-        border
-        border-dashed
+        mx-8        
         rounded-lg
         text-sm/6
-        /* text-[13px] */
         font-light
+        /* border */
+        /* border-dashed */
+        /* text-[13px] */
     }
 
     .main-content-header { @apply 
         p-4 
         border-b
-        bg-black
     }
 
     .main-content-body { @apply 
         p-4
-        overflow-y-auto
-        bg-black
     }
 
     .component-container { @apply 
         flex
         flex-col
-        gap-8;
+        gap-8
     }
 
     .component-container_header { @apply
@@ -199,12 +195,15 @@
         lg:max-w-xl
         w-full
     }
-
-
-
+      
     .form-input_full { @apply 
         form-input
         w-full
+    }
+
+    .form-checkbox { @apply 
+        form-input
+        focus:ring-0
     }
 
     .form-label-preline { @apply 
@@ -284,13 +283,20 @@
         font-normal
         text-gray-700
         px-0
+    }
 
+    .btn-input--fit { @apply 
+        inline-block
+        w-auto
+        max-w-full
+        min-w-[1ch];
     }
 
     .button-group {
         display: flex;
         justify-content: flex-end;
         gap: 1rem; 
+        margin-top: 6rem;
     }
     
 
@@ -372,7 +378,7 @@
         flex-1
         py-6
         px-4
-        overflow-y-auto
+        /* overflow-y-auto */
     }
 
     .sidebar-footer { @apply 
@@ -590,13 +596,14 @@
         flex
         flex-col
         gap-4
-        overflow-x-auto 
+        relative
         sm:rounded-lg
     }
 
     .table-container-actions { @apply 
-        lg:flex 
-        lg:justify-between
+        flex 
+        justify-end
+        gap-4
     }
 
     .table-container-body { @apply 
@@ -622,8 +629,6 @@
         py-2
         text-gray-900
         whitespace-nowrap
-
-
     }
 
     .table th { @apply 
@@ -638,7 +643,17 @@
     }
 
     .dropdown-menu { @apply 
-        absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden
+        absolute 
+        right-0 
+        z-10 
+        mt-2 
+        w-56 
+        origin-top-right 
+        rounded-md 
+        bg-white 
+        shadow-lg 
+        ring-1 
+        ring-black/5
     }
 
     .dropdown-item { @apply 
@@ -647,5 +662,65 @@
         py-2 
         text-sm 
         text-gray-700
+    }
+
+    /* ------------- MODAL ------------- */
+
+    .modal-container { @apply 
+        mb-4 
+        flex 
+        items-start 
+        justify-between 
+        gap-4
+    }
+
+    .modal-overlay { @apply 
+        hidden 
+        fixed 
+        inset-0 
+        z-40 
+        bg-black/50
+    }
+
+    .modal-dialog { @apply 
+        fixed 
+        inset-0 
+        z-50 
+        flex 
+        items-center 
+        justify-center 
+        overflow-y-auto 
+        bg-black/50
+    }
+
+    .modal-content { @apply 
+        bg-white 
+        rounded-lg 
+        shadow-lg 
+        w-full 
+        max-w-2xl 
+        mx-4 
+        sm:mx-6 
+        lg:mx-8
+    }
+
+    .modal-header { @apply 
+        flex 
+        items-center 
+        justify-between 
+        p-4 
+        border-b
+    }
+
+    .modal-title { @apply 
+        text-lg 
+        font-semibold 
+        text-gray-900
+    }
+
+    .modal-body { @apply 
+        p-4
+        max-h-[70vh]
+        overflow-y-auto
     }
 }

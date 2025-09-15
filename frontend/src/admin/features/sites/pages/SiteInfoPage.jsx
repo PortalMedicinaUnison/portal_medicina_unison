@@ -16,7 +16,7 @@ function SitePage() {
       <button
         type="button"
         className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.ADMIN.SITE_CREATE))}
+        onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_EDIT))}
       >
         Editar
       </button>

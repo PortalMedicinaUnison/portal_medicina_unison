@@ -12,10 +12,10 @@ from typing import Optional
 
 def create_announcement(announcement: AnnouncementInput, db: Session):
     new_announcement = Announcement(
-        admin_id = announcement.admin_id,
         title = announcement.title,
         announcement_type = announcement.announcement_type,
-        description = announcement.description
+        description = announcement.description,
+        created_by = announcement.created_by
     )
     announcement_repo = AnnouncementRepo(db)
     created_announcement = announcement_repo.create(new_announcement)
@@ -36,6 +36,12 @@ def get_announcements_by_type(announcement_type: AnnouncementTypeEnum, db: Sessi
     announcements_response = [orm_to_dict(announcement) for announcement in announcements]
     return announcements_response
 
+def get_all_announcements(db: Session):
+    announcement_repo = AnnouncementRepo(db)
+    announcements = announcement_repo.get_all()
+    announcements_response = [orm_to_dict(announcement) for announcement in announcements]
+    return announcements_response
+
 def update_announcement(announcement_id: int, announcement: AnnouncementInput, db: Session):
     pass
     
@@ -47,9 +53,9 @@ def delete_announcement(announcement_id: int, db: Session):
 
 def create_survey(survey: SurveyInput, db: Session):
     new_survey = Survey(
-        admin_id = survey.admin_id,
+        created_by = survey.created_by,
         title = survey.title,
-        web_link = survey.web_link,
+        web_link = str(survey.web_link),
         description = survey.description,
         expiration_date = survey.expiration_date,
         mandatory = survey.mandatory
@@ -70,6 +76,12 @@ def get_survey(survey_id: int, db: Session):
 def get_surveys_by_mandatory(mandatory: bool, db: Session):
     survey_repo = SurveyRepo(db)
     surveys = survey_repo.get_by_mandatory(mandatory)
+    surveys_response = [orm_to_dict(survey) for survey in surveys]
+    return surveys_response
+
+def get_all_surveys(db: Session):
+    survey_repo = SurveyRepo(db)
+    surveys = survey_repo.get_all()
     surveys_response = [orm_to_dict(survey) for survey in surveys]
     return surveys_response
 

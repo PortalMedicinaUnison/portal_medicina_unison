@@ -1,6 +1,10 @@
 from sqlalchemy import Boolean, Integer, ForeignKey, UniqueConstraint, Index
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import BaseModel
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .site import Site         
 
 class Promotion(BaseModel):
     __tablename__ = 'promotions'
@@ -21,6 +25,12 @@ class PromotionSiteDetail(BaseModel):
     site_id: Mapped[int] = mapped_column(ForeignKey("sites.site_id", ondelete="CASCADE"), nullable=False)
     capacity: Mapped[int] = mapped_column(Integer, nullable=False)
     
+    site: Mapped["Site"] = relationship(
+        "Site",
+        back_populates="promotion_details",
+        lazy="joined",
+    )
+
     __table_args__ = (
         UniqueConstraint('promotion_id', 'site_id', name='uq_psd_promotion_site'),
         Index('ix_psd_promotion_id', 'promotion_id'),

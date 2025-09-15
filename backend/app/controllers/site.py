@@ -59,7 +59,6 @@ def update_site(site_id: int, site_input: SiteInput, db: Session):
         "teaching_deputy_phone": updated_site.teaching_deputy_phone,
     }
     
-
 def delete_site(site_id: int, db: Session):
     site_repo = SiteRepo(db)
     return site_repo.delete(site_id)
