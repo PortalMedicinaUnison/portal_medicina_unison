@@ -26,7 +26,7 @@ function PageLayout({ title, actions, pretitle = "Ir atrás", children }) {
         )}
       </div>
       
-      <div className="content-container">
+      <div className="component-container-content">
         {children}
       </div>
     </div>

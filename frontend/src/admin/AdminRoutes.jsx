@@ -26,6 +26,9 @@ import SurveyFormPage from '../admin/features/surveys/pages/SurveysFormPage.jsx'
 import SurveyInfoPage from '../admin/features/surveys/pages/SurveyInfoPage.jsx';
 // import SurveyUpdatePage from '../admin/features/surveys/pages/SurveyUpdatePage.jsx';
 
+import EnrollmentFormPage from '../admin/features/enrollments/pages/EnrollmentFormPage.jsx';
+import EnrollmentsListPage from '../admin/features/enrollments/pages/EnrollmentsListPage.jsx';
+
 function AdminRoutes() {
   return (
     <Routes>
@@ -59,6 +62,10 @@ function AdminRoutes() {
         <Route path="surveys/create" element={<SurveyFormPage />} />
         <Route path="surveys/:surveyId" element={<SurveyInfoPage />} />
         {/* <Route path="surveys/:surveyId/edit" element={<SurveyUpdatePage />} /> */}
+
+        {/* Internship nrollments */}
+        <Route path="internship_enrollments" element={<EnrollmentsListPage />} />
+        <Route path="internship_enrollments/create" element={<EnrollmentFormPage />} />
       </Route>
     </Routes>
   );
