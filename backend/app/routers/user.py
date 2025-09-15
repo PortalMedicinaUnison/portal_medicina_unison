@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from typing import List
 from sqlalchemy.orm import Session
-from schemas.user import UserInput, PreRegisteredUserInput, UserInputUpdate, PreRegisteredUserInputUpdate, UserOutput
+from schemas.user import UserInput, UserEnrollmentInput, UserInputUpdate, UserEnrollmentInputUpdate, UserOutput
 from core.dependencies import get_db
 from controllers.user import (
     create_user,
@@ -10,11 +10,11 @@ from controllers.user import (
     get_all_users,
     update_user,
     delete_user,
-    create_pre_registered_user,
-    get_pre_registered_user,
-    get_all_pre_registered_users,
-    update_pre_registered_user,
-    delete_pre_registered_user,
+    create_user_enrollment,
+    get_user_enrollment,
+    get_all_user_enrollments,
+    update_user_enrollment,
+    delete_user_enrollment,
 )
 
 # ----------------------  Users  ----------------------
@@ -71,48 +71,48 @@ async def get_users_route(db: Session = Depends(get_db)):
 
 # ----------------------  Pre-Registered Users  ----------------------
 
-pre_registered_router = APIRouter(prefix="/pre-registered", tags=["Pre-Registrados"])
+user_enrollment_router = APIRouter(prefix="/user/enrollments", tags=["User Enrollments"])
 
-@pre_registered_router.post("/", status_code=status.HTTP_201_CREATED)
-def create_pre_registered_user_router(user_input: PreRegisteredUserInput, db: Session = Depends(get_db)):
-    user = create_pre_registered_user(user_input, db)
+@user_enrollment_router.post("/", status_code=status.HTTP_201_CREATED)
+def create_user_enrollment_router(user_input: UserEnrollmentInput, db: Session = Depends(get_db)):
+    user = create_user_enrollment(user_input, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No se pudo crear el usuario pre-registrado")
+            detail="No se pudo crear el user enrollment")
     return user
 
-@pre_registered_router.get("/{academic_id}")
-def get_pre_registered_user_router(academic_id: int, db: Session = Depends(get_db)):
-    user = get_pre_registered_user(academic_id, db)
+@user_enrollment_router.get("/{academic_id}")
+def get_user_enrollment_router(academic_id: int, db: Session = Depends(get_db)):
+    user = get_user_enrollment(academic_id, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Usuario pre-registrado no encontrado")
+            detail="User enrollment no encontrado")
     return user
 
-@pre_registered_router.put("/{academic_id}")
-def update_pre_registered_user_router(academic_id: int, user_input: PreRegisteredUserInput, db: Session = Depends(get_db)):
-    user = update_pre_registered_user(academic_id, user_input, db)
+@user_enrollment_router.put("/{academic_id}")
+def update_user_enrollment_router(academic_id: int, user_input: UserEnrollmentInputUpdate, db: Session = Depends(get_db)):
+    user = update_user_enrollment(academic_id, user_input, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Usuario pre-registrado no encontrado")
+            detail="User enrollment no encontrado")
     return user
 
-@pre_registered_router.delete("/{academic_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_pre_registered_user_router(academic_id: int, db: Session = Depends(get_db)):
-    if not delete_pre_registered_user(academic_id, db):
+@user_enrollment_router.delete("/{academic_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user_enrollment_router(academic_id: int, db: Session = Depends(get_db)):
+    if not delete_user_enrollment(academic_id, db):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Usuario pre-registrado no encontrado")
+            detail="User enrollment no encontrado")
     return
 
-@pre_registered_router.get('/', response_model=List[PreRegisteredUserInput])
-async def get_pre_registered_users_route(db: Session = Depends(get_db)):
-    pre_registered_users =  get_all_pre_registered_users(db)
-    if not pre_registered_users:
+@user_enrollment_router.get('/', response_model=List[UserEnrollmentInput])
+async def get_user_enrollments_route(db: Session = Depends(get_db)):
+    user_enrollments = get_all_user_enrollments(db)
+    if not user_enrollments:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Usuarios pre-registrados no encontrado")
-    return pre_registered_users
+            detail="Users enrollments no encontrado")
+    return user_enrollments

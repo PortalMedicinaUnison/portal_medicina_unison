@@ -3,20 +3,18 @@ from typing import Optional
 from utils.validation import is_valid_academic_id, is_valid_password, is_valid_email
 
 
-class PreRegisteredUserInput(BaseModel):
+class UserEnrollmentInput(BaseModel):
     academic_id: str
-    assigned_year: int
-    assigned_period: int
+    is_enrolled: bool = False
 
     @field_validator("academic_id")
     def validate_academic_id(cls, academic_id):
         is_valid_academic_id(academic_id)
         return academic_id
 
-class PreRegisteredUserInputUpdate(BaseModel):
+class UserEnrollmentInputUpdate(BaseModel):
     academic_id: Optional[str]
-    assigned_year: Optional[int]
-    assigned_period: Optional[int]
+    is_enrolled: Optional[bool] = None
 
     @field_validator("academic_id")
     def validate_academic_id(cls, academic_id):

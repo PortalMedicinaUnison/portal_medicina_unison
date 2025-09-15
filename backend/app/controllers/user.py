@@ -1,63 +1,62 @@
 from fastapi import HTTPException, status, Depends, Request
 from sqlalchemy.orm import Session
 from core.dependencies import get_db
-from repos.user import UserRepo, PreRegisteredUserRepo
-from models.user import User, PreRegisteredUser
-from schemas.user import UserInput, PreRegisteredUserInput, UserInputUpdate, PreRegisteredUserInputUpdate
+from repos.user import UserRepo, UserEnrollmentRepo
+from models.user import User, UserEnrollment
+from schemas.user import UserInput, UserEnrollmentInput, UserInputUpdate, UserEnrollmentInputUpdate
 from utils.security import hash_password
 from utils.utils import orm_to_dict
 
 
-# ----------------------  Pre-Registered Users  ----------------------
 
-def create_pre_registered_user(user_input: PreRegisteredUserInput, db: Session) -> dict:
+# ----------------------  USER ENROLLMENT  ----------------------
+
+def create_user_enrollment(user_input: UserEnrollmentInput, db: Session) -> dict:
     academic_id_int = int(user_input.academic_id)
-    new_pre_user = PreRegisteredUser(
+    new_user_enrollment = UserEnrollment(
         academic_id=academic_id_int,
-        assigned_year=user_input.assigned_year,
-        assigned_period=user_input.assigned_period,
+        is_enrolled=user_input.is_enrolled,
     )
-    pre_registered_repo = PreRegisteredUserRepo(db)
-    created_pre_user = pre_registered_repo.create(new_pre_user)
-    pre_user_response = orm_to_dict(created_pre_user)
-    return pre_user_response
+    user_enrollment_repo = UserEnrollmentRepo(db)
+    created_user_enrollment = user_enrollment_repo.create(new_user_enrollment)
+    user_enrollment_response = orm_to_dict(created_user_enrollment)
+    return user_enrollment_response
 
-def get_pre_registered_user(academic_id: int, db: Session) -> dict:
-    pre_registered_repo = PreRegisteredUserRepo(db)
-    pre_user = pre_registered_repo.get_by_academic_id(academic_id)
-    if not pre_user:
+def get_user_enrollment(academic_id: int, db: Session) -> dict:
+    user_enrollment_repo = UserEnrollmentRepo(db)
+    user_enrollment = user_enrollment_repo.get_by_academic_id(academic_id)
+    if not user_enrollment:
         return None
-    pre_user_response = orm_to_dict(pre_user)
-    return pre_user_response
+    user_enrollment_response = orm_to_dict(user_enrollment)
+    return user_enrollment_response
 
-def update_pre_registered_user(academic_id: int, user_input: PreRegisteredUserInputUpdate, db: Session) -> dict:
+def update_user_enrollment(academic_id: int, user_input: UserEnrollmentInputUpdate, db: Session) -> dict:
     all_data = user_input.dict()
     update_data = {key: value for key, value in all_data.items() if value is not None}
 
-    pre_registered_repo = PreRegisteredUserRepo(db)
-    updated_user = pre_registered_repo.update(academic_id, update_data)
+    user_enrollment_repo = UserEnrollmentRepo(db)
+    updated_user = user_enrollment_repo.update(academic_id, update_data)
     if not updated_user:
         return None
     return {
-        "pre_registered_id": updated_user.pre_registered_id,
+        "enrollment_id": updated_user.enrollment_id,
         "academic_id": updated_user.academic_id,
-        "assigned_year": updated_user.assigned_year,
-        "assigned_period": updated_user.assigned_period,
+        "is_enrolled": updated_user.is_enrolled,
     }
 
-def delete_pre_registered_user(academic_id: int, db: Session) -> bool:
-    pre_registered_repo = PreRegisteredUserRepo(db)
-    return pre_registered_repo.delete(academic_id)
+def delete_user_enrollment(academic_id: int, db: Session) -> bool:
+    user_enrollment_repo = UserEnrollmentRepo(db)
+    return user_enrollment_repo.delete(academic_id)
 
-def get_all_pre_registered_users(db: Session):
-    user_pre_registered_repo = PreRegisteredUserRepo(db)
-    pre_registered_users = user_pre_registered_repo.get_all()
+def get_all_user_enrollments(db: Session):
+    user_enrollment_repo = UserEnrollmentRepo(db)
+    user_enrollments = user_enrollment_repo.get_all()
 
-    if not pre_registered_users:
+    if not user_enrollments:
         return None
 
-    pre_registered_users_reponse = [orm_to_dict(user) for user in pre_registered_users]
-    return pre_registered_users_reponse
+    user_enrollments_response = [orm_to_dict(user) for user in user_enrollments]
+    return user_enrollments_response
 
 # ----------------------  Users  ----------------------
 
