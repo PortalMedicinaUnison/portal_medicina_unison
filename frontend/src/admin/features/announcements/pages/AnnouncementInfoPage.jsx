@@ -1,9 +1,9 @@
-import AnnouncementInfo from "../components/AnnouncementInfo.jsx";
+import AnnouncementInfo from "../components/AnnouncementInfo";
 import { useNavigate, useParams } from "react-router-dom";
-import { ROUTES, adminAbs } from "../../../../config.js";
-import { useAnnouncement } from "../hooks/useAnnouncement.jsx";
-import Layout from "../../../../Layout.jsx";
-import PageLayout from '../../../../components/PageLayout.jsx';
+import { ROUTES, adminAbs } from "../../../../config";
+import { useAnnouncement } from "../hooks/useAnnouncement";
+import Layout from "../../../../Layout";
+import PageLayout from '../../../../components/PageLayout';
 
 function AnnouncementPage() {
   const { announcementId } = useParams();

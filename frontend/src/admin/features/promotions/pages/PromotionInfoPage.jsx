@@ -16,7 +16,7 @@ function PromotionPage() {
       <button
         type="button"
         className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_CREATE))}
+        onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_EDIT(promotionId)))}
       >
         Editar
       </button>
@@ -30,7 +30,7 @@ function PromotionPage() {
   return (
       <Layout>
         <PageLayout 
-          title={'Promociones'}
+          title={'🏷️ ' + promotion.year + ' - ' + promotion.period}
           actions={editPromotionActions}
         >
           <PromotionInfo/>

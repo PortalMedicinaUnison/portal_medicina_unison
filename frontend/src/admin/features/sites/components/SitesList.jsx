@@ -26,7 +26,7 @@ function SitesList() {
     }, []);
     
     const handleViewButton = (siteId) => {
-        navigate(adminAbs(ROUTES.ADMIN.SITE_INFO(siteId)));
+        navigate(adminAbs(ROUTES.ADMIN.SITE_DETAIL(siteId)));
     };
     
     const handleEditButton = (siteId) => {

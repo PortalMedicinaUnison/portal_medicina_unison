@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../../api';
-import { ROUTES, adminAbs } from '../../../../config.js';
+import { ROUTES, adminAbs } from '../../../../config';
 
 function AnnouncementsList() {
     const [search, setSearch] = useState('');

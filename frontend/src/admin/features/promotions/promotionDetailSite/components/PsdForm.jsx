@@ -1,9 +1,13 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { usePromotion } from "../../hooks/usePromotion";
 import useCreatePsd from "../hooks/useCreatePsd";
 import useGetSites from "../hooks/useGetSites"
 
 function PsdForm({ onClose, onSuccess }){  
   const {createPsd, error, success} = useCreatePsd();
+  const { promotionId } = useParams();
+  const { promotion } = usePromotion(promotionId);
   const { sites, loading: sitesLoading, error: sitesError } = useGetSites();
   const [formData, setFormData] = useState({
     siteId: "",
@@ -22,8 +26,15 @@ function PsdForm({ onClose, onSuccess }){
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
     
-    const isCreated = await createPsd(formData);
+    const data = {
+      promotion_id: promotionId ?? promotion?.promotion_id,
+      site_id: formData.siteId,
+      capacity: formData.capacity,
+    };
+
+    const isCreated = await createPsd(data);
     if (isCreated) {
       console.log('Sede añadida exitosamente');
       
@@ -37,7 +48,7 @@ function PsdForm({ onClose, onSuccess }){
   };
 
   return (
-      <form onSubmit={handleSubmit} >
+      <div>
         {success && (
           <div className="alert-success-text">
             Sede añadida exitosamente.
@@ -53,7 +64,7 @@ function PsdForm({ onClose, onSuccess }){
 
         <dl className="item-list">
           <div className="item-row">
-            <dt className="item-header">Capacidad</dt>
+            <dt className="item-header">Sede</dt>
             <dd className="item-text">
             <select
               id="siteId"
@@ -101,14 +112,15 @@ function PsdForm({ onClose, onSuccess }){
               Cancelar
             </button>
             <button 
-              type="submit"
+              type="button"
               className="btn-primary disabled:opacity-50"
               disabled={!isValid}
+              onClick={handleSubmit}
             >
               Guardar
             </button>
           </div>
-      </form>
+      </div>
   );
 }
 

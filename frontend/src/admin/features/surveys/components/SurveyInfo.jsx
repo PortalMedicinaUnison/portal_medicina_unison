@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSurvey } from '../hooks/useSurvey'; // Hook para obtener una encuesta
+import { useSurvey } from '../hooks/useSurvey';
 
 function SurveyDetail() {
     const { surveyId } = useParams();

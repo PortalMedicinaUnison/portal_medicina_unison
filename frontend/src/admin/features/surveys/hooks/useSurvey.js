@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-// Asumimos que tienes un servicio para los anuncios, similar a siteService
-import { getSurveyByIdRequest } from '../../../../services/surveyService.jsx';
+import { getSurveyByIdRequest } from '../../../../services/surveyService';
 
 export const useSurvey = (surveyId) => {
     const [survey, setSurvey] = useState(null);

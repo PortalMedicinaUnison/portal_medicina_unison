@@ -30,7 +30,6 @@ export const usePromotion = (promotionId) => {
         }
     }, [promotionId]);
 
-    // Función para refrescar los datos
     const refetch = () => {
         if (promotionId) {
             getPromotionById(promotionId);
