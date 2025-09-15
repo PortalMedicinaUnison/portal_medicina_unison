@@ -185,7 +185,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                         </div>
 
                         <div>
-                            <Link to="#" className="sidebar-item-group group">
+                            <Link to={adminAbs(ROUTES.ADMIN.REPORT_LIST)} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
@@ -196,9 +196,10 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 >
-                                    <circle cx="10.5" cy="10.5" r="8"/>
-                                    <path d="M10.5 11.5v-5"/>
-                                    <circle cx="10.5" cy="14.5" r="1"/>
+                                    <path d="M16.5 3.5h-12a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-12a1 1 0 0 0-1-1z"/>
+                                    <path d="M7.5 7.5h6"/>
+                                    <path d="M7.5 10.5h6"/>
+                                    <path d="M7.5 13.5h3"/>
                                 </svg>                        
                                 <span className="sidebar-item-text">
                                     Reportes

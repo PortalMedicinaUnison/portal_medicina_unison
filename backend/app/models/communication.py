@@ -41,12 +41,13 @@ class Survey(BaseModel):
     def __repr__(self):
         return f"<Survey(created_by={self.created_by}, title={self.title}, mandatory={self.mandatory})>"
 
-# ---------------  Survey  ----------------------
+# ---------------  Report  ----------------------
 
 class ReportTypeEnum(IntEnum):
-    ACCIDENT = 1
-    WORK_HARASSMENT = 2
-    SEXUAL_HARASSMENT = 3
+    INCIDENT = 1
+    SUGGESTION = 2
+    COMPLAINT = 3
+    OTHER = 4
 
 class Report(BaseModel):
     __tablename__ = 'reports'
@@ -63,6 +64,7 @@ class Report(BaseModel):
     anonymity: Mapped[bool] = mapped_column(Boolean, nullable=False)
     is_open: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     admin_comment: Mapped[str] = mapped_column(Text)
-    
+   
+   
     def __repr__(self):
         return f"<Report(student_id={self.student_id}, type={self.report_type.name}, is_open={self.is_open})>"

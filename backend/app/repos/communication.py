@@ -1,3 +1,7 @@
+import os
+import shutil
+from datetime import datetime
+from fastapi import UploadFile
 from .base import BaseRepo
 from models.communication import Announcement, Survey, Report, AnnouncementTypeEnum, ReportTypeEnum
 
@@ -89,29 +93,75 @@ class SurveyRepo(BaseRepo):
 class ReportRepo(BaseRepo):
     
     def create(self, data: Report) -> Report:
-        """Crea un nuevo reporte en la base de datos."""
+        """Crear un nuevo reporte"""
         self.session.add(data)
         self.session.commit()
         self.session.refresh(data)
         return data
+        
+    def upload_evidence(self, report_id: int, file: UploadFile) -> str:
+        """Subir un archivo de evidencia para un reporte"""
+        report = self.get_by_id(report_id)
+        if not report:
+            return None
+        
+        # Crear directorio para el reporte si no existe
+        evidence_dir = os.path.join("app", "evidence_files", str(report_id))
+        os.makedirs(evidence_dir, exist_ok=True)
+        
+        # Generar nombre único para el archivo
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{timestamp}_{file.filename}"
+        file_path = os.path.join(evidence_dir, filename)
+        
+        # Guardar el archivo
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+            
+        # Guardar la ruta relativa en el reporte
+        relative_path = os.path.join("evidence_files", str(report_id), filename)
+        report.evidence = relative_path
+        self.session.commit()
+        
+        return relative_path
     
     def get_by_id(self, report_id: int) -> Report:
-        """Obtiene un reporte por su ID."""
+        """Obtener un reporte por su ID"""
         return self.session.query(Report).filter(Report.report_id == report_id).first()
     
     def get_all(self):
-        """Obtiene todos los reportes."""
+        """Obtener todos los reportes activos"""
         return self.session.query(Report).filter(Report.is_active == True).all()
+    
+    def get_by_student_id(self, student_id: int):
+        """Obtener todos los reportes de un estudiante específico
+        Nota: Los estudiantes pueden ver todos sus reportes, incluso los inactivos"""
+        return self.session.query(Report).filter(
+            Report.student_id == student_id
+        ).all()
+    
+    def get_by_internship_id(self, internship_id: int):
+        """Obtener todos los reportes de una pasantía específica"""
+        return self.session.query(Report).filter(
+            Report.internship_id == internship_id,
+            Report.is_active == True
+        ).all()
+    
+    def get_by_site_id(self, site_id: int):
+        """Obtener todos los reportes de un sitio específico"""
+        return self.session.query(Report).filter(
+            Report.site_id == site_id,
+            Report.is_active == True
+        ).all()
     
     def get_by_mandatory(self, mandatory: bool):
         """Obtiene reportes según si son obligatorios o no."""
         return self.session.query(Report).filter(Report.anonymity == mandatory).all()
     
     def update(self, report_id: int, data: dict) -> Report:
-        """Actualiza los datos de un reporte."""
+        """Actualizar un reporte existente"""
         report = self.get_by_id(report_id)
         if report:
-            data = data.dict(exclude_unset=True)
             for key, value in data.items():
                 if hasattr(report, key):
                     setattr(report, key, value)
@@ -119,11 +169,45 @@ class ReportRepo(BaseRepo):
             self.session.refresh(report)
         return report
     
-    def delete(self, report_id: int) -> bool:
-        """Elimina un reporte por su ID."""
+    def update_admin_comment(self, report_id: int, admin_comment: str, close_report: bool = False) -> Report:
+        """Actualizar el comentario del administrador en un reporte"""
+        report = self.get_by_id(report_id)
+        if report:
+            report.admin_comment = admin_comment
+            if close_report:
+                report.is_open = False  # Solo marcar como cerrado si se solicita
+            self.session.commit()
+            self.session.refresh(report)
+        return report
+    
+    def toggle_status(self, report_id: int) -> Report:
+        """Cambiar el estado activo/inactivo de un reporte"""
+        report = self.get_by_id(report_id)
+        if report:
+            report.is_active = not report.is_active
+            self.session.commit()
+            self.session.refresh(report)
+        return report
+    
+    def soft_delete(self, report_id: int) -> bool:
+        """Eliminación lógica - marcar como inactivo"""
         report = self.get_by_id(report_id)
         if report:
             report.is_active = False
             self.session.commit()
             return True
         return False
+    
+    def get_open_reports(self):
+        """Obtener todos los reportes abiertos (sin comentario del admin)"""
+        return self.session.query(Report).filter(
+            Report.is_open == True,
+            Report.is_active == True
+        ).all()
+    
+    def get_closed_reports(self):
+        """Obtener todos los reportes cerrados (con comentario del admin)"""
+        return self.session.query(Report).filter(
+            Report.is_open == False,
+            Report.is_active == True
+        ).all()

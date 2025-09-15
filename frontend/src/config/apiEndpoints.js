@@ -47,6 +47,26 @@ export const API_ENDPOINTS = {
       DELETE:  (id) => `/institutions/${id}`,
     },
 
+    REPORTS: {
+      CREATE:  '/reports/',
+      GET:     (id) => `/reports/${id}/`,
+      GET_ALL:    '/reports/',
+      UPDATE:  (id) => `/reports/${id}/`,
+      TOGGLE_STATUS: (id) => `/reports/${id}/toggle-status/`,
+      GET_BY_INTERNSHIP: (id) => `/reports/internship/${id}/`,
+      GET_BY_SITE: (id) => `/reports/site/${id}/`,
+      UPLOAD_EVIDENCE: (id) => `/reports/${id}/upload-evidence/`,
+    },
+
+    ADMIN_REPORTS: {
+      GET_ALL:    '/admin/reports/',
+      GET_OPEN:   '/admin/reports/open/',
+      GET_CLOSED: '/admin/reports/closed/',
+      GET:        (id) => `/admin/reports/${id}/`,
+      UPDATE:     (id) => `/admin/reports/${id}/`,
+      ADD_COMMENT: (id) => `/admin/reports/${id}/admin-comment/`,
+    },
+  
     ANNOUNCEMENTS: {
         CREATE: '/announcements',
         GET_ALL: '/announcements',

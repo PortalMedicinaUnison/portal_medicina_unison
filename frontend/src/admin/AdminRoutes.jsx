@@ -11,7 +11,7 @@ import SiteFormPage from '../admin/features/sites/pages/SiteFormPage.jsx';
 import SiteInfoPage from '../admin/features/sites/pages/SiteInfoPage.jsx';
 // import SiteUpdatePage from '../admin/features/sites/pages/SiteUpdatePage.jsx';
 
-import InstitutionsListPage from '../admin/features/institutions/pages/InstitutionsListPage.jsx'
+import InstitutionsListPage from '../admin/features/institutions/pages/InstitutionsListPage.jsx';
 import InstitutionFormPage from '../admin/features/institutions/pages/InstitutionsFormPage.jsx';
 // import InstitutionInfoPage from '../admin/features/institutions/pages/InstitutionsInfoPage.jsx';
 // import InstitutionUpdatePage from '../admin/features/institutions/pages/InstitutionsUpdatePage.jsx';
@@ -29,10 +29,14 @@ import SurveyInfoPage from '../admin/features/surveys/pages/SurveyInfoPage.jsx';
 import EnrollmentFormPage from '../admin/features/enrollments/pages/EnrollmentFormPage.jsx';
 import EnrollmentsListPage from '../admin/features/enrollments/pages/EnrollmentsListPage.jsx';
 
+import ReportsListPage from '../admin/features/reports/pages/ReportsListPage.jsx';
+import ReportInfoPage from '../admin/features/reports/pages/ReportInfoPage.jsx';
+
 function AdminRoutes() {
   return (
     <Routes>
       <Route element={<ProtectedRoute />}>
+
         {/* Promotions */}
         <Route path="promotions" element={<PromotionListPage />} />
         <Route path="promotions/create" element={<PromotionFormPage />} />
@@ -66,6 +70,10 @@ function AdminRoutes() {
         {/* Internship nrollments */}
         <Route path="internship_enrollments" element={<EnrollmentsListPage />} />
         <Route path="internship_enrollments/create" element={<EnrollmentFormPage />} />
+
+        {/* Reports */}
+        <Route path="reports" element={<ReportsListPage />} />
+        <Route path="reports/:reportId" element={<ReportInfoPage />} />
       </Route>
     </Routes>
   );
