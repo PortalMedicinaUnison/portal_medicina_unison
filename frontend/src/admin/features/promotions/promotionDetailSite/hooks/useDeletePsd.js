@@ -3,8 +3,8 @@ import { deletePsdRequest } from '../../../../../services/promotionService';
 
 export default function useDeletePsd() {
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess]   = useState(false);
-  const [error, setError]       = useState('');
+  const [success, setSuccess] = useState(false);
+  const [error, setError]     = useState('');
 
   const deletePsd = async (id) => {
     setLoading(true);

@@ -3,13 +3,13 @@ import { cleanFormData } from '../../../../../utils/utils';
 import { createPsdRequest } from '../../../../../services/promotionService';
 
 export default function useCreatePsd() {
-  const [error, setError] = useState('');
+  const [error, setError]     = useState('');
   const [success, setSuccess] = useState(false);
 
   const createPsd = async (formData) => {  
     const cleanedData = cleanFormData(formData);
-
     setError('');
+    setSuccess(false);
     
     const psd = {
       promotion_id: cleanedData.promotion_id,

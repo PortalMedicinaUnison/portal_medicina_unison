@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { usePromotion } from "../../hooks/usePromotion";
 import useCreatePsd from "../hooks/useCreatePsd";
 import useGetSites from "../hooks/useGetSites"
-import { usePromotion } from "../../hooks/usePromotion";
 
 function PsdForm({ onClose, onSuccess }){  
   const {createPsd, error, success} = useCreatePsd();

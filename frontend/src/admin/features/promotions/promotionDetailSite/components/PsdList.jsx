@@ -6,10 +6,9 @@
 
   function PsdList() {
     const navigate = useNavigate();
-    const [search, setSearch] = useState('');
-
     const { psds, loading: listLoading, error: listError, refetch } = useGetPsds();
     const { deletePsd, loading: deleting, success: deleteSuccess, error: deleteError } = useDeletePsd();
+    const [search, setSearch] = useState('');
 
     const handleViewButton = (id) => {
       navigate(adminAbs(ROUTES.ADMIN.PSD_DETAIL(id)));
@@ -20,18 +19,18 @@
     };
 
     const handleDeleteButton = async (id) => {
-      const ok = window.confirm('Este registro se eliminará. ¿Deseas continuar?');
-      if (!ok) return;
+      const userConfirmation = window.confirm('Este registro se eliminará. ¿Deseas continuar?');
+      if (!userConfirmation) return;
 
       await deletePsd(id);
       await refetch();
     };
 
-    const searchQuery = search.trim().toLowerCase();
     const filtered = psds.filter((psd) => {
+      const searchQuery = search.trim().toLowerCase();
       if (!searchQuery) return true;
       return (
-        String(psd.site_id).includes(searchQuery)
+        String(psd.site_id).toLowerCase().includes(searchQuery)
       );
     });
 
@@ -40,7 +39,7 @@
 
     return (
       <div className="table-container">
-        <div className="table-container-actions flex justify-end">
+        <div className="table-container-actions">
           <input
             className="form-input--sm"
             type="text"
