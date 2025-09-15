@@ -161,7 +161,7 @@
     .form-input { @apply 
         block
         min-w-0
-        grow
+        flex-grow
         py-2
         pr-2
         pl-2
@@ -178,8 +178,6 @@
     .form-input--sm { @apply 
         form-input
         max-w-xs
-        lg:max-w-sm
-        w-full
     }
 
     .form-input--half { @apply 
@@ -273,7 +271,7 @@
 
     .btn-tertiary--light { @apply 
         btn-tertiary
-        font-normal
+        font-light
         text-gray-700
         px-0
     }
@@ -594,6 +592,7 @@
     .table-container-actions { @apply 
         flex 
         justify-end
+        items-end
         gap-4
     }
 
