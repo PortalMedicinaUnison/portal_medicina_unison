@@ -70,6 +70,10 @@ function AdminRoutes() {
         {/* Internship nrollments */}
         <Route path="internship_enrollments" element={<EnrollmentsListPage />} />
         <Route path="internship_enrollments/create" element={<EnrollmentFormPage />} />
+
+        {/* Reports */}
+        <Route path="reports" element={<ReportsListPage />} />
+        <Route path="reports/:reportId" element={<ReportInfoPage />} />
       </Route>
     </Routes>
   );

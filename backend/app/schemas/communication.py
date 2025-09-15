@@ -164,8 +164,3 @@ class ReportAdminComment(BaseModel):
         if len(v) > 1000:
             raise ValueError("El comentario del administrador no puede exceder 1000 caracteres")
         return v.strip()
-
-    @field_validator("date")
-    def validate_date(cls, date: date) -> date:
-        is_valid_past_date(date)
-        return date
