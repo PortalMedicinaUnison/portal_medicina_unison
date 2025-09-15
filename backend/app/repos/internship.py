@@ -1,5 +1,5 @@
 from .base import BaseRepo
-from models.internship import  InternshipEnrollment, Internship, InternshipDocument
+from models.internship import  InternshipApplication, Internship, InternshipDocument
 from typing import List, Optional
 
 
@@ -52,53 +52,53 @@ class InternshipRepo(BaseRepo):
             return True
         return False
 
-# ---------------  INTERNSHIP ENROLLMENT  ----------------------
+# ---------------  INTERNSHIP APPLICATION  ----------------------
 
-class InternshipEnrollmentRepo(BaseRepo):
+class InternshipApplicationRepo(BaseRepo):
 
-    def create(self, data: InternshipEnrollment) -> InternshipEnrollment:
+    def create(self, data: InternshipApplication) -> InternshipApplication:
         self.session.add(data)
         self.session.commit()
         self.session.refresh(data)
         return data
 
-    def get_by_id(self, enrollment_id: int) -> Optional[InternshipEnrollment]:
-        return (self.session.query(InternshipEnrollment).filter(
-            InternshipEnrollment.enrollment_id == enrollment_id,
-            InternshipEnrollment.is_active == True
+    def get_by_id(self, application_id: int) -> Optional[InternshipApplication]:
+        return (self.session.query(InternshipApplication).filter(
+            InternshipApplication.application_id == application_id,
+            InternshipApplication.is_active == True
         ).first())
 
-    def get_by_student_id(self, student_id: int) -> List[InternshipEnrollment]:
-        return self.session.query(InternshipEnrollment).filter(
-            InternshipEnrollment.student_id == student_id,
-            InternshipEnrollment.is_active == True
+    def get_by_student_id(self, student_id: int) -> List[InternshipApplication]:
+        return self.session.query(InternshipApplication).filter(
+            InternshipApplication.student_id == student_id,
+            InternshipApplication.is_active == True
         ).all()
 
-    def get_by_status(self, is_accepted: bool) -> List[InternshipEnrollment]:
-        return self.session.query(InternshipEnrollment).filter(
-            InternshipEnrollment.is_accepted == is_accepted,
-            InternshipEnrollment.is_active == True
+    def get_by_status(self, is_accepted: bool) -> List[InternshipApplication]:
+        return self.session.query(InternshipApplication).filter(
+            InternshipApplication.is_accepted == is_accepted,
+            InternshipApplication.is_active == True
         ).all()
     
-    def get_all(self) -> List[InternshipEnrollment]:
-        return self.session.query(InternshipEnrollment).filter(
-            InternshipEnrollment.is_active == True
+    def get_all(self) -> List[InternshipApplication]:
+        return self.session.query(InternshipApplication).filter(
+            InternshipApplication.is_active == True
         ).all()
     
-    def update(self, enrollment_id: int, data: dict) -> Optional[InternshipEnrollment]:
-        enrollment = self.get_by_id(enrollment_id)
-        if enrollment:
+    def update(self, application_id: int, data: dict) -> Optional[InternshipApplication]:
+        application = self.get_by_id(application_id)
+        if application:
             for k, v in data.items():
-                if hasattr(enrollment, k):
-                    setattr(enrollment, k, v)
+                if hasattr(application, k):
+                    setattr(application, k, v)
             self.session.commit()
-            self.session.refresh(enrollment)
-        return enrollment
+            self.session.refresh(application)
+        return application
 
-    def delete(self, enrollment_id: int) -> bool:
-        enrollment = self.get_by_id(enrollment_id)
-        if enrollment:
-            enrollment.is_active = False
+    def delete(self, application_id: int) -> bool:
+        application = self.get_by_id(application_id)
+        if application:
+            application.is_active = False
             self.session.commit()
             return True
         return False

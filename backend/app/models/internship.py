@@ -19,15 +19,16 @@ class InternshipStatusEnum(IntEnum):
     SUSPENDED = 4
     FINISHED = 5
 
-class InternshipEnrollment(BaseModel):
-    __tablename__ = 'internship_enrollments'
+class InternshipApplication(BaseModel):
+    __tablename__ = 'internship_applications'
     
-    enrollment_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    application_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     student_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    promotion_id: Mapped[int] = mapped_column(ForeignKey("promotions.promotion_id"), nullable=False)
     is_accepted: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     def __repr__(self):
-        return f"<InternshipEnrollment(student_id={self.student_id}, is_accepted={self.is_accepted})>"
+        return f"<InternshipApplication(student_id={self.student_id}, is_accepted={self.is_accepted})>"
 
 class Internship(BaseModel):
     __tablename__ = 'internships'
@@ -38,7 +39,7 @@ class Internship(BaseModel):
 
     internship_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     promotion_id: Mapped[int] = mapped_column(ForeignKey("promotions.promotion_id"), nullable=False)
-    enrollment_id: Mapped[int] = mapped_column(Integer, ForeignKey("internship_enrollments.enrollment_id", ondelete="RESTRICT"), unique=True, nullable=False)
+    application_id: Mapped[int] = mapped_column(Integer, ForeignKey("internship_applications.application_id", ondelete="RESTRICT"), unique=True, nullable=False)
     student_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
     site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id", ondelete="RESTRICT"), nullable=False)
     status: Mapped[InternshipStatusEnum] = mapped_column(IntEnumType(InternshipStatusEnum), nullable=False)

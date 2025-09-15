@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from schemas.internship import (
     InternshipInput, InternshipUpdate, InternshipOutput,
-    InternshipEnrollmentInput, InternshipEnrollmentUpdate, InternshipEnrollmentOutput,
+    InternshipApplicationInput, InternshipApplicationUpdate, InternshipApplicationOutput,
     InternshipDocumentInput, InternshipDocumentUpdate, InternshipDocumentOutput
 )
 from core.dependencies import get_db
@@ -16,12 +16,12 @@ from controllers.internship import (
     update_internship,
     delete_internship,
 
-    create_internship_enrollment,
-    get_all_internship_enrollments,
-    get_internship_enrollments_by_student,
-    get_internship_enrollments_by_status,
-    update_internship_enrollment, 
-    delete_internship_enrollment, 
+    create_internship_application,
+    get_all_internship_applications,
+    get_internship_applications_by_student,
+    get_internship_applications_by_status,
+    update_internship_application, 
+    delete_internship_application, 
     create_internship_document,
     get_all_internship_documents,
     get_internship_documents_by_internship,
@@ -99,65 +99,65 @@ async def delete_internship_route(internship_id: int, db: Session = Depends(get_
 
 # ----------------------  Internship enrollments  ----------------------
 
-internship_enrollment_router = APIRouter(prefix="/internship_enrollments", tags=["Inscripciones"])
+internship_application_router = APIRouter(prefix="/internship/applications", tags=["Internship Applications"])
 
-@internship_enrollment_router.post('/', response_model=InternshipEnrollmentInput)
-async def create_internship_enrollment_route(internship_enrollment: InternshipEnrollmentInput, db: Session = Depends(get_db)):
-    internship_enrollment = create_internship_enrollment(internship_enrollment, db)
-    if not internship_enrollment:
+@internship_application_router.post('/', response_model=InternshipApplicationInput)
+async def create_internship_application_route(internship_application: InternshipApplicationInput, db: Session = Depends(get_db)):
+    application = create_internship_application(internship_application, db)
+    if not application:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="No se pudo crear la inscripción al internado")
-    return internship_enrollment
+            detail="No se pudo crear la aplicación al internado")
+    return application
 
-@internship_enrollment_router.get('/', response_model=List[InternshipEnrollmentOutput])
-async def get_sites_route(db: Session = Depends(get_db)):
-    sites =  get_all_internship_enrollments(db)
-    if not sites:
+@internship_application_router.get('/', response_model=List[InternshipApplicationOutput])
+async def get_all_internship_applications_route(db: Session = Depends(get_db)):
+    applications = get_all_internship_applications(db)
+    if not applications:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No se encontraron alumnos pre-registrados al internado")
-    return sites
+            detail="No se encontraron aplicaciones al internado")
+    return applications
 
-@internship_enrollment_router.get('/{student_id}', response_model=List[InternshipEnrollmentOutput])
-async def get_internship_enrollments_by_student_route(student_id: int, db: Session = Depends(get_db)):
-    internship_enrollments = get_internship_enrollments_by_student(student_id, db)
-    if not internship_enrollments:
+@internship_application_router.get('/{student_id}', response_model=List[InternshipApplicationOutput])
+async def get_internship_applications_by_student_route(student_id: int, db: Session = Depends(get_db)):
+    applications = get_internship_applications_by_student(student_id, db)
+    if not applications:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Inscripción a internado no encontrada")
-    return internship_enrollments
+            detail="Aplicación al internado no encontrada")
+    return applications
 
-@internship_enrollment_router.get('/', response_model=List[InternshipEnrollmentOutput])
-async def get_internship_enrollments_by_status_route(is_accepted: bool, db: Session = Depends(get_db)):
-    internship_enrollments = get_internship_enrollments_by_status(is_accepted, db)
-    if not internship_enrollments:
+@internship_application_router.get('/by-status/', response_model=List[InternshipApplicationOutput])
+async def get_internship_applications_by_status_route(is_accepted: bool, db: Session = Depends(get_db)):
+    applications = get_internship_applications_by_status(is_accepted, db)
+    if not applications:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Inscripción a internado no encontrada")
-    return internship_enrollments
+            detail="Aplicación al internado no encontrada")
+    return applications
 
-@internship_enrollment_router.patch('/{enrollment_id}', response_model=InternshipEnrollmentUpdate)
-async def update_internship_enrollment_route(enrollment_id: int, enrollment: InternshipEnrollmentInput, db: Session = Depends(get_db)):
-    enrollment = update_internship_enrollment(enrollment_id, enrollment, db)
-    if not enrollment:
+@internship_application_router.patch('/{application_id}', response_model=InternshipApplicationUpdate)
+async def update_internship_application_route(application_id: int, application: InternshipApplicationInput, db: Session = Depends(get_db)):
+    updated_application = update_internship_application(application_id, application, db)
+    if not updated_application:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Inscripción no encontrada")
-    return enrollment
+            detail="Aplicación no encontrada")
+    return updated_application
 
-@internship_enrollment_router.delete('/{enrollment_id}')
-async def delete_internship_enrollment_route(enrollment_id: int, db: Session = Depends(get_db)):
-    enrollment = delete_internship_enrollment(enrollment_id, db)
-    if not enrollment:
+@internship_application_router.delete('/{application_id}')
+async def delete_internship_application_route(application_id: int, db: Session = Depends(get_db)):
+    deleted = delete_internship_application(application_id, db)
+    if not deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Inscripción no encontrada")
-    return enrollment
+            detail="Aplicación no encontrada")
+    return deleted
 
 # ----------------------  Internship documents  ----------------------
 
-internship_document_router = APIRouter(prefix="/internship_documents", tags=["Documentos"])
+internship_document_router = APIRouter(prefix="/internship/documents", tags=["Documentos"])
 
 @internship_document_router.post('/', response_model=InternshipDocumentInput)
 async def create_internship_document_route(internship_document: InternshipDocumentInput, db: Session = Depends(get_db)):

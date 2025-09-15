@@ -4,17 +4,17 @@ from utils.validation import is_valid_period, is_valid_year
 from typing import Optional, List
 
 
-#-------------- ENROLLMENTS ------------------
+#-------------- APPLICATIONS ------------------
 
-class InternshipEnrollmentInput(BaseModel):
+class InternshipApplicationInput(BaseModel):
     student_id: int
     is_accepted: bool
 
-class InternshipEnrollmentUpdate(BaseModel):
+class InternshipApplicationUpdate(BaseModel):
     is_accepted: bool = None
 
-class InternshipEnrollmentOutput(BaseModel):
-    enrollment_id: int
+class InternshipApplicationOutput(BaseModel):
+    application_id: int
     student_id: int
     is_accepted: bool
 
@@ -23,14 +23,14 @@ class InternshipEnrollmentOutput(BaseModel):
 
 class InternshipInput(BaseModel):
     promotion_id: int
-    enrollment_id: int
+    application_id: int
     student_id: int
     site_id: int
     status: InternshipStatusEnum
 
 class InternshipUpdate(BaseModel):
     promotion_id: int = None
-    enrollment_id: int = None
+    application_id: int = None
     student_id: int = None
     site_id: int = None
     status: InternshipStatusEnum = None
@@ -38,7 +38,7 @@ class InternshipUpdate(BaseModel):
 class InternshipOutput(BaseModel):
     internship_id: int
     promotion_id: int
-    enrollment_id: int
+    application_id: int
     student_id: int
     site_id: int
     status: InternshipStatusEnum

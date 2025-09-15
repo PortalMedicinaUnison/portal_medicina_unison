@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
-from models.internship import Internship, InternshipEnrollment, InternshipDocument
-from repos.internship import InternshipRepo, InternshipEnrollmentRepo, InternshipDocumentRepo
+from models.internship import Internship, InternshipApplication, InternshipDocument
+from repos.internship import InternshipRepo, InternshipApplicationRepo, InternshipDocumentRepo
 from schemas.internship import (
     InternshipInput, 
-    InternshipEnrollmentInput,
-    InternshipEnrollmentUpdate, 
+    InternshipApplicationInput,
+    InternshipApplicationUpdate, 
     InternshipDocumentInput,
     InternshipDocumentUpdate,
 )
@@ -72,54 +72,54 @@ def delete_internship(internship_id: int, db: Session):
     internship_repo = InternshipRepo(db)
     return internship_repo.delete(internship_id)
 
-# ----------------------  Internship enrollments  ----------------------
+# ----------------------  Internship applications  ----------------------
 
-def create_internship_enrollment(internship_enrollment: InternshipEnrollmentInput, db: Session):
-    new_internship_enrollment = InternshipEnrollment(
-        student_id = internship_enrollment.student_id,
-        is_accepted = internship_enrollment.is_accepted
+def create_internship_application(internship_application: InternshipApplicationInput, db: Session):
+    new_internship_application = InternshipApplication(
+        student_id = internship_application.student_id,
+        is_accepted = internship_application.is_accepted
     )
-    internship_enrollment_repo = InternshipEnrollmentRepo(db)
-    created_internship_enrollment = internship_enrollment_repo.create(new_internship_enrollment)
-    internship_enrollment_response = orm_to_dict(created_internship_enrollment)
-    return internship_enrollment_response
+    internship_application_repo = InternshipApplicationRepo(db)
+    created_internship_application = internship_application_repo.create(new_internship_application)
+    internship_application_response = orm_to_dict(created_internship_application)
+    return internship_application_response
 
-def get_all_internship_enrollments(db: Session):
-    internship_enrollment_repo = InternshipEnrollmentRepo(db)
-    internship_enrollments = internship_enrollment_repo.get_all()
-    if internship_enrollments is None:
+def get_all_internship_applications(db: Session):
+    internship_application_repo = InternshipApplicationRepo(db)
+    internship_applications = internship_application_repo.get_all()
+    if internship_applications is None:
         return None
-    internship_enrollments_response = [orm_to_dict(internship_enrollment) for internship_enrollment in internship_enrollments]
-    return internship_enrollments_response
+    internship_applications_response = [orm_to_dict(internship_application) for internship_application in internship_applications]
+    return internship_applications_response
 
-def get_internship_enrollments_by_student(student_id: int, db: Session):
-    internship_enrollment_repo = InternshipEnrollmentRepo(db)
-    internship_enrollments = internship_enrollment_repo.get_by_student_id(student_id)
-    if internship_enrollments is None:
+def get_internship_applications_by_student(student_id: int, db: Session):
+    internship_application_repo = InternshipApplicationRepo(db)
+    internship_applications = internship_application_repo.get_by_student_id(student_id)
+    if internship_applications is None:
         return None
-    internship_enrollments_response = [orm_to_dict(internship_enrollment) for internship_enrollment in internship_enrollments]
-    return internship_enrollments_response
+    internship_applications_response = [orm_to_dict(internship_application) for internship_application in internship_applications]
+    return internship_applications_response
 
-def get_internship_enrollments_by_status(status: bool, db: Session):
-    internship_enrollment_repo = InternshipEnrollmentRepo(db)
-    internship_enrollments = internship_enrollment_repo.get_by_status(status)
-    if internship_enrollments is None:
+def get_internship_applications_by_status(status: bool, db: Session):
+    internship_application_repo = InternshipApplicationRepo(db)
+    internship_applications = internship_application_repo.get_by_status(status)
+    if internship_applications is None:
         return None
-    internship_enrollments_response = [orm_to_dict(internship_enrollment) for internship_enrollment in internship_enrollments]
-    return internship_enrollments_response
+    internship_applications_response = [orm_to_dict(internship_application) for internship_application in internship_applications]
+    return internship_applications_response
 
-def update_internship_enrollment(enrollment_id: int, internship_enrollment_input: InternshipEnrollmentUpdate, db: Session):
-    update_data = internship_enrollment_input.dict(exclude_unset=True)
-    internship_enrollment_repo = InternshipEnrollmentRepo(db)
-    updated_internship_enrollment = internship_enrollment_repo.update(enrollment_id, update_data)
-    if not updated_internship_enrollment:
+def update_internship_application(application_id: int, internship_application_input: InternshipApplicationUpdate, db: Session):
+    update_data = internship_application_input.dict(exclude_unset=True)
+    internship_application_repo = InternshipApplicationRepo(db)
+    updated_internship_application = internship_application_repo.update(application_id, update_data)
+    if not updated_internship_application:
         return None
-    updated_internship_enrollment_response = orm_to_dict(updated_internship_enrollment)
-    return updated_internship_enrollment_response
+    updated_internship_application_response = orm_to_dict(updated_internship_application)
+    return updated_internship_application_response
 
-def delete_internship_enrollment(enrollment_id: int, db: Session):
-    internship_enrollment_repo = InternshipEnrollmentRepo(db)
-    return internship_enrollment_repo.delete(enrollment_id)
+def delete_internship_application(application_id: int, db: Session):
+    internship_application_repo = InternshipApplicationRepo(db)
+    return internship_application_repo.delete(application_id)
 
 # ----------------------  Internship documents  ----------------------
 
