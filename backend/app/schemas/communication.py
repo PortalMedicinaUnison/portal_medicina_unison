@@ -93,7 +93,6 @@ class ReportInputUpdate(BaseModel):
     description: Optional[str] = None
     evidence: Optional[str] = None
     anonymity: Optional[bool] = None
-    is_active: Optional[bool] = None
 
     @field_validator("description")
     @classmethod
