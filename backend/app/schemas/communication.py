@@ -9,15 +9,22 @@ from utils.validation import is_valid_future_date, is_valid_past_date
 # ---------------  Announcement  ----------------------
 
 class AnnouncementInput(BaseModel):
-    admin_id: int
+    created_by: int
     title: str
     announcement_type: AnnouncementTypeEnum
     description: Optional[str] = None
 
+class AnnouncementOutput(BaseModel):
+    announcement_id: int
+    title: str
+    announcement_type: AnnouncementTypeEnum
+    description: Optional[str] = None
+    is_active: bool = True
+
 # ---------------  Survey  ----------------------
 
 class SurveyInput(BaseModel):
-    admin_id: int
+    created_by: int
     title: str
     web_link: HttpUrl
     description: Optional[str] = None
@@ -29,6 +36,14 @@ class SurveyInput(BaseModel):
         is_valid_future_date(input_date)
         return input_date
 
+class SurveyOutput(BaseModel):
+    survey_id: int
+    title: str
+    web_link: HttpUrl
+    description: Optional[str] = None
+    expiration_date: date
+    mandatory: bool
+    is_active: bool = True
 
 # ---------------  Report  ----------------------
 
@@ -149,3 +164,8 @@ class ReportAdminComment(BaseModel):
         if len(v) > 1000:
             raise ValueError("El comentario del administrador no puede exceder 1000 caracteres")
         return v.strip()
+
+    @field_validator("date")
+    def validate_date(cls, date: date) -> date:
+        is_valid_past_date(date)
+        return date

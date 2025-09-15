@@ -1,5 +1,3 @@
-import api from '../api';
-
 export function cleanFormData(data = {}, fields = null) {
   const cleanedData = {};
   Object.keys(data).forEach((key) => {

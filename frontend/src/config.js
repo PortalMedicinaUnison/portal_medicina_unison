@@ -42,7 +42,7 @@ export const ROUTES = {
         REPORT_LIST: 'reports',
         REPORT_DETAIL: (reportId) => `reports/${reportId}`,
 
-        ANNOUNCEMENT_LIST: 'announcements',
+        ANNOUNCEMENTS_LIST: 'announcements',
         ANNOUNCEMENT_DETAIL: (announcementId) => `announcements/${announcementId}`,
         ANNOUNCEMENT_CREATE: 'announcements/create',
         ANNOUNCEMENT_DELETE: (announcementId) => `announcements/${announcementId}/delete`,
@@ -52,5 +52,11 @@ export const ROUTES = {
         INSTITUTION_CREATE: 'institutions/create',
         INSTITUTION_EDIT: (institutionId) => `institutions/${institutionId}/edit`,
         INSTITUTION_DELETE: (institutionId) => `institutions/${institutionId}/delete`,
+
+        SURVEY_LIST: 'surveys',
+        SURVEY_DETAIL: (surveyId) => `surveys/${surveyId}`,
+        SURVEY_CREATE: 'surveys/create',
+        SURVEY_EDIT: (surveyId) => `surveys/${surveyId}/edit`,
+        SURVEY_DELETE: (surveyId) => `surveys/${surveyId}/delete`,
     }
 }

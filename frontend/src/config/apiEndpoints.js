@@ -15,7 +15,7 @@ export const API_ENDPOINTS = {
 
     PROMOTIONS: {
       CREATE: '/promotions/',
-      GET: (id) => '/promotions/${id}/',
+      GET: (id) => `/promotions/${id}/`,
       GET_ALL: '/promotions/',
       UPDATE: (id) => `/promotions/${id}/`,
       DELETE: (id) => `/promotions/${id}/`,
@@ -64,5 +64,21 @@ export const API_ENDPOINTS = {
       UPDATE:     (id) => `/admin/reports/${id}/`,
       ADD_COMMENT: (id) => `/admin/reports/${id}/admin-comment/`,
     },
+  
+    ANNOUNCEMENTS: {
+        CREATE: '/announcements/',
+        GET: (id) => `/announcements/${id}`,
+        GET_ALL: '/announcements/',
+        UPDATE: (id) => `/announcements/${id}`,
+        DELETE: (id) => `/announcements/${id}`
+    },
+
+    SURVEYS: {
+        CREATE: '/surveys/',
+        GET: (id) => `/surveys/${id}`,
+        GET_ALL: '/surveys/',
+        UPDATE: (id) => `/surveys/${id}`,
+        DELETE: (id) => `/surveys/${id}`
+    }
 };
   

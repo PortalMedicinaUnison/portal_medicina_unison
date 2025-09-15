@@ -1,17 +1,19 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Form, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List, Union
-from schemas.communication import AnnouncementInput, SurveyInput, AnnouncementTypeEnum, ReportInput, ReportInputUpdate, ReportOutput
+from schemas.communication import AnnouncementInput, AnnouncementOutput, SurveyInput, SurveyOutput, AnnouncementTypeEnum, ReportInput, ReportInputUpdate, ReportOutput
 from core.dependencies import get_db
 from controllers.communication import (
     create_announcement,
     get_announcement,
     get_announcements_by_type,
+    get_all_announcements,
     update_announcement,
     delete_announcement,
     create_survey,
     update_survey,
     get_survey,
+    get_all_surveys,
     get_surveys_by_mandatory,
     update_survey,
     delete_survey,
@@ -44,7 +46,7 @@ async def create_announcement_route(announcement: AnnouncementInput, db: Session
             detail="No se pudo encontrar el aviso")
     return announcement
 
-@announcement_router.get('/{announcement_id}', response_model=AnnouncementInput)
+@announcement_router.get('/{announcement_id}', response_model=AnnouncementOutput)
 async def get_announcement_route(announcement_id: int, db: Session = Depends(get_db)):
     announcement = get_announcement(announcement_id, db)
     if not announcement:
@@ -53,7 +55,7 @@ async def get_announcement_route(announcement_id: int, db: Session = Depends(get
             detail="Aviso no encontrado")
     return announcement
 
-@announcement_router.get('/', response_model=List[AnnouncementInput])
+@announcement_router.get('/{announcement_type}', response_model=List[AnnouncementOutput])
 async def get_announcements_by_type_route(announcement_type: AnnouncementTypeEnum, db: Session = Depends(get_db)):
     announcements = get_announcements_by_type(announcement_type, db)
     if not announcements:
@@ -80,6 +82,14 @@ async def delete_announcement_route(announcement_id: int, db: Session = Depends(
             detail="Aviso no encontrado")
     return announcement
 
+@announcement_router.get('/', response_model=List[AnnouncementOutput])
+async def get_announcements_route(db: Session = Depends(get_db)):
+    announcements =  get_all_announcements(db)
+    if not announcements:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+        detail="Avisos no encontrados")
+    return announcements
 
 # ----------------------  Survey  ----------------------
 
@@ -94,7 +104,7 @@ async def create_survey_route(survey: SurveyInput, db: Session = Depends(get_db)
             detail="No se pudo encontrar la encuesta")
     return survey
 
-@survey_router.get('/{survey_id}', response_model=SurveyInput)
+@survey_router.get('/{survey_id}', response_model=SurveyOutput)
 async def get_survey_route(survey_id: int, db: Session = Depends(get_db)):
     survey = get_survey(survey_id, db)
     if not survey:
@@ -103,7 +113,7 @@ async def get_survey_route(survey_id: int, db: Session = Depends(get_db)):
             detail="Encuesta no encontrada")
     return survey
 
-@survey_router.get('/', response_model=List[SurveyInput])
+@survey_router.get('/{mandatory}', response_model=List[SurveyOutput])
 async def get_surveys_by_mandatory_route(mandatory: bool, db: Session = Depends(get_db)):
     surveys = get_surveys_by_mandatory(mandatory, db)
     if not surveys:
@@ -112,7 +122,16 @@ async def get_surveys_by_mandatory_route(mandatory: bool, db: Session = Depends(
             detail="Encuesta no encontrada")
     return surveys
 
-@survey_router.patch('/{survey_id}', response_model=SurveyInput)
+@survey_router.get('/', response_model=List[SurveyOutput])
+async def get_surveys_route(db: Session = Depends(get_db)):
+    surveys =  get_all_surveys(db)
+    if not surveys:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Encuestas no encontradas")
+    return surveys
+
+@survey_router.patch('/{survey_id}', response_model=SurveyOutput)
 async def update_survey_route(survey_id: int, survey: SurveyInput, db: Session = Depends(get_db)):
     survey = update_survey(survey_id, survey, db)
     if not survey:
