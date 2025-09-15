@@ -619,8 +619,9 @@
     }
 
     .table th, .table td { @apply 
+        text-sm
         px-6
-        py-2
+        py-1
         text-gray-900
         whitespace-nowrap
     }
