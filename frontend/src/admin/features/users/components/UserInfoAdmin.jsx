@@ -5,8 +5,8 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 
 function UserDetail() {
     const navigate = useNavigate();
-    const { userId } = useParams();
-    const { userAdmin, loading, error, refetch } = useUserAdmin(parseInt(userId));
+    const { academicId } = useParams();
+    const { userAdmin, loading, error, refetch } = useUserAdmin(academicId);
 
     if (loading) return <LoadingSpinner />;
     if (error) return <p>Error es: {String(error)}</p>;

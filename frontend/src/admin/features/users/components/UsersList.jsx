@@ -26,7 +26,7 @@ function UserList() {
   }, [users, searchQuery, statusFilter]);
 
   const handleViewButton = (id) => {
-    navigate(adminAbs(ROUTES.ADMIN.USER_DETAIL(id)));
+    navigate(adminAbs(ROUTES.ADMIN.USER_DETAIL_ACADEMIC(id)));
     };
 
   if (listLoading) return <LoadingSpinner />;
@@ -77,7 +77,7 @@ function UserList() {
               </tr>
             ) : (
               filtered.map((item) => (
-              <tr key={item.user_id}>
+              <tr key={item.user_id || item.academic_id}>
                 <td>{item.academic_id}</td>
                 <td>{item.first_name} {item.last_name} {item.second_last_name}</td>
                 <td>{item.email}</td>
@@ -88,7 +88,7 @@ function UserList() {
                 <td className="text-right">
                   <DropdownMenu
                     actions={[
-                      { label: 'Ver', onClick: () => handleViewButton(item.user_id) }
+                      { label: 'Ver', onClick: () => handleViewButton(item.academic_id) }
                     ]}
                   />
                 </td>

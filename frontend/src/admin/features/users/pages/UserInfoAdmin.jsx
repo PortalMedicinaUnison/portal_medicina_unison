@@ -8,15 +8,15 @@ import PageLayout from '../../../../components/PageLayout.jsx';
 
 function UserInfoAdminPage() {
   const navigate = useNavigate();
-  const { userId } = useParams();
-  const { userAdmin, loading, error } = useUserAdmin(userId);
+  const { academicId } = useParams();
+  const { userAdmin, loading, error } = useUserAdmin(academicId);
 
   const editUserActions = (
     <span className="show-on-sm">
       <button
         type="button"
         className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_EDIT(userId)))}
+        onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_EDIT(academicId)))}
       >
         Editar
       </button>

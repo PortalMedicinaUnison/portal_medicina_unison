@@ -41,8 +41,7 @@ function AdminRoutes() {
       <Route element={<ProtectedRoute />}>
         {/* Users */}
         <Route path="users" element={<UserListPage />} />
-        {/* <Route path="users/academic/:academicId" element={<UserInfoAdminPage />} /> */}
-        <Route path="users/:userId" element={<UserInfoAdminPage />} />
+        <Route path="users/academic/:academicId" element={<UserInfoAdminPage />} />
 
         {/* Promotions */}
         <Route path="promotions" element={<PromotionListPage />} />

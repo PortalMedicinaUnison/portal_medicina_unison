@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
-import { getUserByIdRequest } from '../../../../services/userService';
+import { getUserByAcademicIdRequest } from '../../../../services/userService';
 
-export const useUserAdmin = (userId) => {
+export const useUserAdmin = (academicId) => {
     const [userAdmin, setUserAdmin] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const getUserById = async (id) => {
+    const getUserAcademicById = async (id) => {
         if (!id) return;
         
         setLoading(true);
         setError(null);
         
         try {
-            const response = await getUserByIdRequest(id);
+            const response = await getUserByAcademicIdRequest(id);
             setUserAdmin(response.data);
             console.log('User fetched:', response.data);
         } catch (err) {
@@ -25,14 +25,14 @@ export const useUserAdmin = (userId) => {
     };
 
     useEffect(() => {
-        if (userId) {
-            getUserById(userId);
+        if (academicId) {
+            getUserAcademicById(academicId);
         }
-    }, [userId]);
+    }, [academicId]);
 
     const refetch = () => {
-        if (userId) {
-            getUserById(userId);
+        if (academicId) {
+            getUserAcademicById(academicId);
         }
     };
 
@@ -41,6 +41,6 @@ export const useUserAdmin = (userId) => {
         loading,
         error,
         refetch,
-        getUserById
+        getUserAcademicById
     };
 };
