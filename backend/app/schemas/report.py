@@ -1,46 +1,8 @@
-from pydantic import BaseModel, field_validator, HttpUrl
+from pydantic import BaseModel, field_validator
 from typing import Optional
 from datetime import date, datetime
-from models.communication import ReportTypeEnum, AnnouncementTypeEnum
-from utils.validation import is_valid_future_date
+from models.communication import ReportTypeEnum
 
-
-# -------------- ANNOUNCEMENT ------------------
-class AnnouncementInput(BaseModel):
-    created_by: int
-    title: str
-    announcement_type: AnnouncementTypeEnum
-    description: Optional[str] = None
-
-class AnnouncementOutput(BaseModel):
-    announcement_id: int
-    title: str
-    announcement_type: AnnouncementTypeEnum
-    description: Optional[str] = None
-    is_active: bool = True
-
-# -------------- SURVEY ------------------
-class SurveyInput(BaseModel):
-    created_by: int
-    title: str
-    web_link: HttpUrl
-    description: Optional[str] = None
-    expiration_date: date
-    mandatory: bool
-
-    @field_validator("expiration_date")
-    def validate_expiration_date(cls, input_date: date) -> date:
-        is_valid_future_date(input_date)
-        return input_date
-
-class SurveyOutput(BaseModel):
-    survey_id: int
-    title: str
-    web_link: HttpUrl
-    description: Optional[str] = None
-    expiration_date: date
-    mandatory: bool
-    is_active: bool = True
 
 # -------------- REPORTS ------------------
 class ReportInput(BaseModel):
@@ -78,7 +40,6 @@ class ReportInput(BaseModel):
         if v and len(v) > 255:
             raise ValueError("La evidencia no puede exceder 255 caracteres")
         return v
-
 
 class ReportInputUpdate(BaseModel):
     internship_id: Optional[int] = None

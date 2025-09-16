@@ -3,6 +3,7 @@ from typing import Optional
 from utils.validation import is_valid_academic_id, is_valid_password, is_valid_email
 
 
+# -------------- ENROLLMENTS ------------------
 class UserEnrollmentInput(BaseModel):
     academic_id: str
     is_enrolled: bool = False
@@ -13,14 +14,14 @@ class UserEnrollmentInput(BaseModel):
         return academic_id
 
 class UserEnrollmentInputUpdate(BaseModel):
-    academic_id: Optional[str]
     is_enrolled: Optional[bool] = None
 
-    @field_validator("academic_id")
-    def validate_academic_id(cls, academic_id):
-        is_valid_academic_id(academic_id)
-        return academic_id
+class UserEnrollmentOutput(BaseModel):
+    enrollment_id: int
+    academic_id: str
+    is_enrolled: bool = False
     
+# -------------- USERS ------------------
 class UserInput(BaseModel):
     academic_id: str
     first_name: str
@@ -72,8 +73,11 @@ class UserOutput(BaseModel):
     second_last_name: Optional[str] = None
     email: str
     profile_photo: str
+    phone_number: Optional[str] = None
+    is_admin: bool = False
+    is_super_admin: bool = False
     is_active: bool = False
-    
+
 class UserAdminInputUpdate(UserInputUpdate):
     is_admin: Optional[bool]
 

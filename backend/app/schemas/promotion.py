@@ -1,8 +1,9 @@
 from pydantic import BaseModel, field_validator
-from utils.validation import is_valid_period, is_valid_year, is_valid_capacity
 from schemas.site import SiteBasicOutput
+from utils.validation import is_valid_period, is_valid_year, is_valid_capacity
 
-#---------------PROMOTION-------------------
+
+# -------------- PROMOTIONS ------------------
 class PromotionInput(BaseModel):
     year: int
     period: int
@@ -30,7 +31,7 @@ class PromotionOutput(BaseModel):
     period: int
     is_finished: bool
 
-#---------------PROMOTION SITE DETAIL-------------------
+# -------------- PROMOTION SITE DETAIL ------------------
 class PromotionSiteDetailInput(BaseModel):
     promotion_id: int
     site_id: int

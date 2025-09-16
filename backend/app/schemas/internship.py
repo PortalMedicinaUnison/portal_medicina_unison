@@ -1,11 +1,8 @@
 from pydantic import BaseModel
 from models.internship import DocumentTypeEnum, InternshipStatusEnum
-from utils.validation import is_valid_period, is_valid_year
-from typing import Optional, List
 
 
-#-------------- APPLICATIONS ------------------
-
+# -------------- APPLICATIONS ------------------
 class InternshipApplicationInput(BaseModel):
     student_id: int
     is_accepted: bool
@@ -18,9 +15,7 @@ class InternshipApplicationOutput(BaseModel):
     student_id: int
     is_accepted: bool
 
-
-#-------------- INTERNSHIPS ------------------
-
+# -------------- INTERNSHIPS ------------------
 class InternshipInput(BaseModel):
     promotion_id: int
     application_id: int
@@ -43,9 +38,7 @@ class InternshipOutput(BaseModel):
     site_id: int
     status: InternshipStatusEnum
 
-
-#-------------- DOCUMENTS ------------------
-
+# -------------- DOCUMENTS ------------------
 class InternshipDocumentInput(BaseModel):
     internship_id: int
     document_type: DocumentTypeEnum

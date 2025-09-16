@@ -3,7 +3,8 @@ from typing import List, Optional
 from utils.validation import is_valid_email
 from utils.constants import MUNICIPALITY_SET
 
-#---------------SITE-------------------
+
+# -------------- SITE ------------------
 class SiteInput(BaseModel):
     institution_id: int
     name: str
@@ -84,7 +85,7 @@ class SiteBasicOutput(BaseModel):
     name: str
     city: str
 
-#---------------INSTITUTION-------------------
+# -------------- INSTITUTION ------------------
 class InstitutionInput(BaseModel):
     name: str
 

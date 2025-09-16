@@ -1,5 +1,5 @@
 from .user import (
-    UserEnrollmentInput, UserEnrollmentInputUpdate,
+    UserEnrollmentInput, UserEnrollmentInputUpdate,UserEnrollmentOutput,
     UserInput, UserInputUpdate, UserOutput
 )
 from .site import (
@@ -29,6 +29,7 @@ __all__ = [
     "UserOutput",
     "UserEnrollmentInput",
     "UserEnrollmentInputUpdate",
+    UserEnrollmentOutput,
 
     # Site
     "SiteInput",
