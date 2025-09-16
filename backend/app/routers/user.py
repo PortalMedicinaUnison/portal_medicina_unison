@@ -41,7 +41,6 @@ async def get_users_route(db: Session = Depends(get_db)):
 
 @user_router.get("/{user_id}", response_model=UserOutput)
 def get_user_router(user_id: int, db: Session = Depends(get_db)):
-    print("Antes de llamar a get_user:")
     user = get_user(user_id, db)
     if not user:
         raise HTTPException(
@@ -50,10 +49,9 @@ def get_user_router(user_id: int, db: Session = Depends(get_db)):
     return user
 
 @user_router.get("/academic/{academic_id}", response_model=UserOutput)
-def get_user_by_academic_id_router(academic_id: str, db: Session = Depends(get_db)):
-    print("Antes de llamar a get_user_by_academic_id: " , academic_id)
+def get_user_router(academic_id: str, db: Session = Depends(get_db)):
+    print("Antes de llamar a get_user:")
     user = get_user_by_academic_id(academic_id, db)
-    print("Después de llamar a get_user_by_academic_id: ")
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
