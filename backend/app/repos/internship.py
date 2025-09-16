@@ -4,37 +4,36 @@ from typing import List, Optional
 
 
 class InternshipRepo(BaseRepo):
-
     def create(self, data: Internship) -> Internship:
-        """ Crea una nueva pasantía en la base de datos. """
         self.session.add(data)
         self.session.commit()
         self.session.refresh(data)
         return data
+    
+    def get_all(self) -> List[Internship]:
+        return self.session.query(Internship).filter(
+            Internship.is_active == True
+        ).all()
 
     def get_by_id(self, internship_id: int) -> Internship:
-        """ Obtiene una pasantía por su ID. """
         return self.session.query(Internship).filter(
             Internship.internship_id == internship_id,
             Internship.is_active == True
         ).first()
 
     def get_by_student_id(self, student_id: int) -> List[Internship]:
-        """ Obtiene todas las pasantías asociadas a un estudiante. """
         return self.session.query(Internship).filter(
             Internship.student_id == student_id,
             Internship.is_active == True
         ).all()
 
     def get_by_site_id(self, site_id: int) -> List[Internship]:
-        """ Obtiene todas las pasantías asociadas a un sitio. """
         return self.session.query(Internship).filter(
             Internship.site_id == site_id,
             Internship.is_active == True
         ).all()
 
     def update(self, internship_id: int, data: dict) -> Internship:
-        """ Actualiza los datos de una pasantía. """
         internship = self.get_by_id(internship_id)
         if internship:
             for key, value in data.items():
@@ -55,12 +54,16 @@ class InternshipRepo(BaseRepo):
 # ---------------  INTERNSHIP APPLICATION  ----------------------
 
 class InternshipApplicationRepo(BaseRepo):
-
     def create(self, data: InternshipApplication) -> InternshipApplication:
         self.session.add(data)
         self.session.commit()
         self.session.refresh(data)
         return data
+    
+    def get_all(self) -> List[InternshipApplication]:
+        return self.session.query(InternshipApplication).filter(
+            InternshipApplication.is_active == True
+        ).all()
 
     def get_by_id(self, application_id: int) -> Optional[InternshipApplication]:
         return (self.session.query(InternshipApplication).filter(
@@ -77,11 +80,6 @@ class InternshipApplicationRepo(BaseRepo):
     def get_by_status(self, is_accepted: bool) -> List[InternshipApplication]:
         return self.session.query(InternshipApplication).filter(
             InternshipApplication.is_accepted == is_accepted,
-            InternshipApplication.is_active == True
-        ).all()
-    
-    def get_all(self) -> List[InternshipApplication]:
-        return self.session.query(InternshipApplication).filter(
             InternshipApplication.is_active == True
         ).all()
     
@@ -111,6 +109,11 @@ class InternshipDocumentRepo(BaseRepo):
         self.session.commit()
         self.session.refresh(data)
         return data
+    
+    def get_all(self) -> List[InternshipDocument]:
+        return self.session.query(InternshipDocument).filter(
+            InternshipDocument.is_active == True
+        ).all()
 
     def get_by_id(self, document_id: int) -> Optional[InternshipDocument]:
         return (self.session.query(InternshipDocument).filter(
