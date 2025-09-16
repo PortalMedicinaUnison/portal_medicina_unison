@@ -1,22 +1,11 @@
-import { useState } from 'react';
-import useAuth from '../../features/auth/hooks/useAuth';
-import { ROUTES, adminAbs } from '../../config';
 import { Link, NavLink } from 'react-router-dom';
+import { ROUTES, adminAbs } from '../../config';
+import useAuth from '../../features/auth/hooks/useAuth';
+import SidebarCollapse from '../../utils/ui/CollapseMenu';
 
 
 function Sidebar({ toggleSidebar, openToggleButton }) {
     const { logout, authenticated } = useAuth();
-
-    const [openInternshipDropdown, setOpenInternshipDropdown] = useState(false);
-    const [openSocialServiceDropdown, setOpenSocialServiceDropdown] = useState(false);
-
-    const toggleInternshipDropdown = () => {
-        setOpenInternshipDropdown(!openInternshipDropdown);
-    };
-    
-    const toggleSocialServiceDropdown = () => {
-        setOpenSocialServiceDropdown(!openSocialServiceDropdown);
-    };
 
     return (
         <div id="sidebar">
@@ -55,7 +44,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </p>
                         </div>
                         <div>
-                            <NavLink to={ROUTES.HOME} className={({ isActive }) => isActive ? "sidebar-item-group group text-indigo-900" : "sidebar-item-group group"}>
+                            <NavLink to={ROUTES.HOME} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
@@ -73,6 +62,35 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                     Inicio
                                 </span>
                             </NavLink>
+                        </div>
+                        <div>
+                            <SidebarCollapse
+                                title="Alumnos"
+                                links={[
+                                    { label: 'Lista de alumnos', to: adminAbs(ROUTES.ADMIN.USER_LIST), className: 'sidebar-item-link' },
+                                    { label: 'Pre-registro', to: adminAbs(ROUTES.ADMIN.USER_ENROLLMENT_LIST), className: 'sidebar-item-link' },
+                                ]}
+                                icon={
+                                    <svg 
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <path d="M12 12q-1.65 0-2.825-1.175T8 8t1.175-2.825T12 4t2.825 1.175T16 8t-1.175 2.825T12 12m-8 8v-2.8q0-.85.438-1.562T5.6 14.55q1.55-.775 3.15-1.162T12 13t3.25.388t3.15 1.162q.725.375 1.163 1.088T20 17.2V20z"/>
+                                    </svg>
+                                }
+                            />
+                        </div>
+
+                        {/************************ INTERNADO ************************/}
+                        <div>
+                            <p className="sidebar-section-title border-t">
+                                Internado
+                            </p>
                         </div>
                         <div>
                             <Link to={adminAbs(ROUTES.ADMIN.PROMOTION_LIST)} className="sidebar-item-group group">
@@ -96,7 +114,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </Link>
                         </div>
                         <div>
-                            <Link to={adminAbs(ROUTES.ADMIN.SITE_LIST)} className="sidebar-item-group group">
+                            <Link to={adminAbs(ROUTES.ADMIN.PROMOTION_LIST)} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
@@ -112,78 +130,32 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                     <circle cx="10.5" cy="14.5" r="1"/>
                                 </svg>                        
                                 <span className="sidebar-item-text">
-                                    Sedes
+                                    Internados
                                 </span>
                             </Link>
                         </div>
                         <div>
-                            <Link to={adminAbs(ROUTES.ADMIN.INSTITUTION_LIST)} className="sidebar-item-group group">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="sidebar-item-icon"
-                                    viewBox="-1 -1 23 23"
-                                    aria-hidden="true"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <circle cx="10.5" cy="10.5" r="8"/>
-                                    <path d="M10.5 11.5v-5"/>
-                                    <circle cx="10.5" cy="14.5" r="1"/>
-                                </svg>                        
-                                <span className="sidebar-item-text">
-                                    Instituciones
-                                </span>
-                            </Link>
+                            <SidebarCollapse
+                                title="Sedes"
+                                links={[
+                                    { label: 'Sedes', to: adminAbs(ROUTES.ADMIN.SITE_LIST), className: 'sidebar-item-link' },
+                                    { label: 'Instituciones', to: adminAbs(ROUTES.ADMIN.INSTITUTION_LIST), className: 'sidebar-item-link' },
+                                ]}
+                                icon={
+                                    <svg 
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <path d="M12 21.325q-.35 0-.7-.125t-.625-.375Q9.05 19.325 7.8 17.9t-2.087-2.762t-1.275-2.575T4 10.2q0-3.75 2.413-5.975T12 2t5.588 2.225T20 10.2q0 1.125-.437 2.363t-1.275 2.575T16.2 17.9t-2.875 2.925q-.275.25-.625.375t-.7.125M12 12q.825 0 1.413-.587T14 10t-.587-1.412T12 8t-1.412.588T10 10t.588 1.413T12 12"/>
+                                    </svg>
+                                }
+                            />
                         </div>
-
-                        {/************************ INTERNADO ************************/}
-                        <div>
-                            <p className="sidebar-section-title border-t">
-                                Internado
-                            </p>
-                        </div>
-
-                        <div>
-                            <div onClick={toggleInternshipDropdown} className="sidebar-item-group group" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="sidebar-item-icon"
-                                    viewBox="0 0 20 20"
-                                    aria-hidden="true"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <path d="M3.5 5.5v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.497a2 2 0 0 0-1.85-1.994l-.15-.005l-5 .002l-2-2h-4a1 1 0 0 0-1 1m0 1h7"/>
-                                </svg>                        
-                                <span className="sidebar-item-text">
-                                    Alumnos
-                                </span>
-                                <svg 
-                                    className="sidebar-toggle-icon" 
-                                    fill="currentColor" 
-                                    viewBox="0 0 20 20" 
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path fillRule="evenodd" 
-                                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
-                                          clipRule="evenodd">
-                                    </path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div className={`${openInternshipDropdown ? 'block' : 'hidden'}`}>
-                            <Link to="#" className="sidebar-item-link">
-                                Lista de alumnos   
-                            </Link>
-                            <Link to={adminAbs(ROUTES.ADMIN.USER_ENROLLMENT_LIST)} className="sidebar-item-link">
-                                Pre-registro
-                            </Link>
-                        </div>
-
                         <div>
                             <Link to={adminAbs(ROUTES.ADMIN.REPORT_LIST)} className="sidebar-item-group group">
                                 <svg
@@ -228,9 +200,31 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                                 </span>
                             </Link>
                         </div>
+                        <div>
+                            <Link to={adminAbs(ROUTES.ADMIN.SURVEY_LIST)} className="sidebar-item-group group">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="sidebar-item-icon"
+                                    viewBox="-1 -1 23 23"
+                                    aria-hidden="true"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <circle cx="10.5" cy="10.5" r="8"/>
+                                    <path d="M10.5 11.5v-5"/>
+                                    <circle cx="10.5" cy="14.5" r="1"/>
+                                </svg>                        
+                                <span className="sidebar-item-text">
+                                    Encuestas
+                                </span>
+                            </Link>
+                        </div>
                     </div>
                 </div>
                 
+                {/************************ INTERNADO ************************/}
 
                 <div className="sidebar-footer">
                     <ul>

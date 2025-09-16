@@ -446,9 +446,7 @@
         transition
         duration-75
         rounded-lg
-        group-hover:bg-gray-100
-        dark:hover:text-white
-        dark:hover:bg-gray-500
+        hover:bg-gray-100
         pl-11
     }
 
