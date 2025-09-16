@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 
+import UserListPage from '../admin/features/users/pages/UserListPage.jsx'
+
 import PromotionListPage from '../admin/features/promotions/pages/PromotionsListPage.jsx';
 import PromotionFormPage from '../admin/features/promotions/pages/PromotionFormPage.jsx';
 import PromotionInfoPage from '../admin/features/promotions/pages/PromotionInfoPage.jsx';
@@ -36,6 +38,8 @@ function AdminRoutes() {
   return (
     <Routes>
       <Route element={<ProtectedRoute />}>
+        {/* Users */}
+        <Route path="users" element={<UserListPage />} />
 
         {/* Promotions */}
         <Route path="promotions" element={<PromotionListPage />} />
