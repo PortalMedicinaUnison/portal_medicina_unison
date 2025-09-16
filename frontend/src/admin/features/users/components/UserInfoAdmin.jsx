@@ -1,12 +1,22 @@
+import { useState } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useUserAdmin } from '../hooks/useUserAdmin';
-import { ROUTES, adminAbs } from '../../../../config';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
+import UpdateUserAdmin from './UpdateUserAdmin';
+
+import Modal from '../../../../utils/ui/Modal';
 
 function UserDetail() {
-    const navigate = useNavigate();
     const { academicId } = useParams();
     const { userAdmin, loading, error, refetch } = useUserAdmin(academicId);
+
+    const [open, setOpen] = useState(false);
+    const [localError, setLocalError] = useState("");    
+
+    const handleSuccess = async () => {
+        await refetch();
+        setOpen(false);
+      };
 
     if (loading) return <LoadingSpinner />;
     if (error) return <p>Error es: {String(error)}</p>;
@@ -59,9 +69,26 @@ function UserDetail() {
                     </dl>
                 </div>
 
+                <Modal
+                    open={open}
+                    title="Cambiar rol"
+                    onClose={() => setOpen(false)}
+                >
+                <UpdateUserAdmin 
+                    academicId={academicId} 
+                    onClose={() => setOpen(false)}
+                    onSuccess={handleSuccess} 
+                />
+                </Modal>
+
                 <div class="info-actions mt-16">
-                    <button type="button" className='item-link'>Cambiar rol</button>
-                    <button type="button" className='item-link'>Reset Password</button>
+                    <button 
+                      type="button" 
+                      className='item-link'
+                      onClick={() => setOpen(true)}
+                    >
+                      Cambiar rol
+                    </button>
                 </div>
               </div>
             )}
