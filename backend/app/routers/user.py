@@ -2,7 +2,10 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from typing import List
 from sqlalchemy.orm import Session
-from schemas.user import UserInput, UserEnrollmentInput, UserInputUpdate, UserEnrollmentInputUpdate, UserOutput
+from schemas.user import (
+    UserInput, UserEnrollmentInput, UserEnrollmentOutput,
+    UserInputUpdate, UserEnrollmentInputUpdate, UserOutput
+)
 from core.dependencies import get_db
 from controllers.user import (
     create_user,
@@ -30,7 +33,7 @@ def create_user_router(user_input: UserInput, db: Session = Depends(get_db)):
             detail="No se pudo crear el usuario")
     return user
 
-@user_router.get("/{user_id}")
+@user_router.get("/{user_id}", response_model=UserOutput)
 def get_user_router(user_id: int, db: Session = Depends(get_db)):
     user = get_user(user_id, db)
     if not user:
@@ -39,7 +42,7 @@ def get_user_router(user_id: int, db: Session = Depends(get_db)):
             detail="Usuario no encontrado")
     return user
 
-@user_router.put("/{user_id}")
+@user_router.put("/{user_id}", response_model=UserOutput)
 def update_user_router(user_id: int, user_input: UserInputUpdate, db: Session = Depends(get_db)):
     user = update_user(user_id, user_input, db)
     if not user:
@@ -69,7 +72,7 @@ async def get_users_route(db: Session = Depends(get_db)):
             detail="Usuarios no encontrados")
     return users
 
-# ----------------------  Pre-Registered Users  ----------------------
+# ----------------------  USER ENROLLMENTS  ----------------------
 
 user_enrollment_router = APIRouter(prefix="/user/enrollments", tags=["User Enrollments"])
 
@@ -82,33 +85,33 @@ def create_user_enrollment_router(user_input: UserEnrollmentInput, db: Session =
             detail="No se pudo crear el user enrollment")
     return user
 
-@user_enrollment_router.get("/{academic_id}")
-def get_user_enrollment_router(academic_id: int, db: Session = Depends(get_db)):
-    user = get_user_enrollment(academic_id, db)
+@user_enrollment_router.get("/{enrollment_id}", response_model=UserEnrollmentOutput)
+def get_user_enrollment_router(enrollment_id: int, db: Session = Depends(get_db)):
+    user = get_user_enrollment(enrollment_id, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User enrollment no encontrado")
     return user
 
-@user_enrollment_router.put("/{academic_id}")
-def update_user_enrollment_router(academic_id: int, user_input: UserEnrollmentInputUpdate, db: Session = Depends(get_db)):
-    user = update_user_enrollment(academic_id, user_input, db)
+@user_enrollment_router.put("/{enrollment_id}", response_model=UserEnrollmentOutput)
+def update_user_enrollment_router(enrollment_id: int, user_input: UserEnrollmentInputUpdate, db: Session = Depends(get_db)):
+    user = update_user_enrollment(enrollment_id, user_input, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User enrollment no encontrado")
     return user
 
-@user_enrollment_router.delete("/{academic_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user_enrollment_router(academic_id: int, db: Session = Depends(get_db)):
-    if not delete_user_enrollment(academic_id, db):
+@user_enrollment_router.delete("/{enrollment_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user_enrollment_router(enrollment_id: int, db: Session = Depends(get_db)):
+    if not delete_user_enrollment(enrollment_id, db):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User enrollment no encontrado")
     return
 
-@user_enrollment_router.get('/', response_model=List[UserEnrollmentInput])
+@user_enrollment_router.get('/', response_model=List[UserEnrollmentOutput])
 async def get_user_enrollments_route(db: Session = Depends(get_db)):
     user_enrollments = get_all_user_enrollments(db)
     if not user_enrollments:

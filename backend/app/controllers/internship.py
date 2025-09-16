@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
 from models.internship import Internship, InternshipApplication, InternshipDocument
 from repos.internship import InternshipRepo, InternshipApplicationRepo, InternshipDocumentRepo
 from schemas.internship import (

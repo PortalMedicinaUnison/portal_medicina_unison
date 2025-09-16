@@ -2,11 +2,10 @@ import os
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, UploadFile
 from repos.communication import AnnouncementRepo, SurveyRepo, ReportRepo
-from models.communication import Announcement, Survey, Report, AnnouncementTypeEnum, ReportTypeEnum
+from models.communication import Announcement, Survey, Report, AnnouncementTypeEnum
 from schemas.communication import AnnouncementInput, SurveyInput, ReportInput, ReportInputUpdate, ReportStatusUpdate, ReportOutput, ReportCreateResponse, ReportAdminComment
 from utils.utils import orm_to_dict
 from datetime import datetime
-from typing import Optional
 
 # ----------------------  Announcement  ----------------------
 

@@ -12,9 +12,8 @@ from utils.utils import orm_to_dict
 # ----------------------  USER ENROLLMENT  ----------------------
 
 def create_user_enrollment(user_input: UserEnrollmentInput, db: Session) -> dict:
-    academic_id_int = int(user_input.academic_id)
     new_user_enrollment = UserEnrollment(
-        academic_id=academic_id_int,
+        academic_id=user_input.academic_id,
         is_enrolled=user_input.is_enrolled,
     )
     user_enrollment_repo = UserEnrollmentRepo(db)
@@ -22,20 +21,20 @@ def create_user_enrollment(user_input: UserEnrollmentInput, db: Session) -> dict
     user_enrollment_response = orm_to_dict(created_user_enrollment)
     return user_enrollment_response
 
-def get_user_enrollment(academic_id: int, db: Session) -> dict:
+def get_user_enrollment(enrollment_id: int, db: Session) -> dict:
     user_enrollment_repo = UserEnrollmentRepo(db)
-    user_enrollment = user_enrollment_repo.get_by_academic_id(academic_id)
+    user_enrollment = user_enrollment_repo.get_by_id(enrollment_id)
     if not user_enrollment:
         return None
     user_enrollment_response = orm_to_dict(user_enrollment)
     return user_enrollment_response
 
-def update_user_enrollment(academic_id: int, user_input: UserEnrollmentInputUpdate, db: Session) -> dict:
+def update_user_enrollment(enrollment_id: int, user_input: UserEnrollmentInputUpdate, db: Session) -> dict:
     all_data = user_input.dict()
     update_data = {key: value for key, value in all_data.items() if value is not None}
 
     user_enrollment_repo = UserEnrollmentRepo(db)
-    updated_user = user_enrollment_repo.update(academic_id, update_data)
+    updated_user = user_enrollment_repo.update(enrollment_id, update_data)
     if not updated_user:
         return None
     return {
@@ -44,9 +43,9 @@ def update_user_enrollment(academic_id: int, user_input: UserEnrollmentInputUpda
         "is_enrolled": updated_user.is_enrolled,
     }
 
-def delete_user_enrollment(academic_id: int, db: Session) -> bool:
+def delete_user_enrollment(enrollment_id: int, db: Session) -> bool:
     user_enrollment_repo = UserEnrollmentRepo(db)
-    return user_enrollment_repo.delete(academic_id)
+    return user_enrollment_repo.delete(enrollment_id)
 
 def get_all_user_enrollments(db: Session):
     user_enrollment_repo = UserEnrollmentRepo(db)

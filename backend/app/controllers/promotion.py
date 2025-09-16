@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
 from models.promotion import Promotion, PromotionSiteDetail
 from repos.promotion import PromotionRepo, PromotionSiteDetailRepo
 from schemas.promotion import (
@@ -28,15 +27,15 @@ def get_promotion(promotion_id: int, db: Session):
     promotion_repo = PromotionRepo(db)
     promotion = promotion_repo.get_by_id(promotion_id)
     if promotion is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Promoción no encontrada")
+        return None
     promotion_response = orm_to_dict(promotion)
-    return promotion
+    return promotion_response
 
 def get_all_promotions(db: Session):
     promotion_repo = PromotionRepo(db)
     promotions = promotion_repo.get_all()
     promotions_response = [orm_to_dict(promotion) for promotion in promotions]
-    return promotions
+    return promotions_response
 
 def update_promotion(promotion_id: int, promotion_input: PromotionInputUpdate, db: Session):
     update_data = promotion_input.dict(exclude_unset=True)
@@ -73,7 +72,7 @@ def get_promotion_site_detail(psd_id: int, db: Session):
     psd_repo = PromotionSiteDetailRepo(db)
     psd = psd_repo.get_by_id(psd_id)
     if psd is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Detalle de promoción no encontrado")
+        return None
     # psd_response = orm_to_dict(psd)
     return psd
 
@@ -104,7 +103,7 @@ def get_promotion_site_details_by_promotion(promotion_id: int, db: Session):
     psd_repo = PromotionSiteDetailRepo(db)
     psds = psd_repo.get_by_promotion_id(promotion_id)
     if not psds:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No se encontraron detalles de promoción para esta promoción")
+        return None
     psds_response = [orm_to_dict(psd) for psd in psds]
     return psds_response
 
@@ -112,6 +111,6 @@ def get_promotion_site_details_by_site(site_id: int, db: Session):
     psd_repo = PromotionSiteDetailRepo(db)
     psds = psd_repo.get_by_site_id(site_id)
     if not psds:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No se encontraron detalles de promoción para este sitio")
+        return None
     psds_response = [orm_to_dict(psd) for psd in psds]
     return psds_response

@@ -1,9 +1,6 @@
-# routers/promotion.py
-
 from typing import List, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-
 from core.dependencies import get_db
 from schemas.promotion import (
     PromotionInput,

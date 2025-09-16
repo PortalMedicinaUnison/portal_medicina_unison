@@ -28,8 +28,8 @@ class UserEnrollmentRepo(BaseRepo):
                 UserEnrollment.is_active == True,
             ).first()
 
-    def update(self, academic_id: int, data: dict) -> UserEnrollment:
-        user = self.get_by_academic_id(academic_id)
+    def update(self, enrollment_id: int, data: dict) -> UserEnrollment:
+        user = self.get_by_id(enrollment_id)
         if user:
             for key, value in data.items():
                 if hasattr(user, key):
@@ -38,8 +38,8 @@ class UserEnrollmentRepo(BaseRepo):
             self.session.refresh(user)
         return user
 
-    def delete(self, academic_id: int) -> bool:
-        user = self.get_by_academic_id(academic_id)
+    def delete(self, enrollment_id: int) -> bool:
+        user = self.get_by_id(enrollment_id)
         if user:
             user.is_active = False
             self.session.commit()
