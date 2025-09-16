@@ -30,6 +30,7 @@ export const ROUTES = {
     ADMIN: {
         USER_LIST: '/users',
         USER_DETAIL: (userId) => `/users/${userId}`,
+        USER_DETAIL_ACADEMIC: (academicId) => `/users/academic/${academicId}`,
         UPLOAD_PROFILE_PICTURE: (userId) => `/users/${userId}/upload-profile-picture`,
 
         USER_ENROLLMENT_LIST: '/user/enrollments',

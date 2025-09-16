@@ -8,7 +8,6 @@ from utils.security import hash_password
 from utils.utils import orm_to_dict
 
 
-
 # ----------------------  USER ENROLLMENT  ----------------------
 
 def create_user_enrollment(user_input: UserEnrollmentInput, db: Session) -> dict:
@@ -85,6 +84,14 @@ def create_user(user_input: UserInput, db: Session) -> dict:
 def get_user(user_id: int, db: Session) -> dict:
     user_repo = UserRepo(db)
     user = user_repo.get_by_id(user_id)
+    if not user:
+        return None
+    user_response = orm_to_dict(user)
+    return user_response
+
+def get_user_by_academic_id(academic_id: int, db: Session):
+    user_repo = UserRepo(db)
+    user = user_repo.get_by_academic_id(academic_id)
     if not user:
         return None
     user_response = orm_to_dict(user)

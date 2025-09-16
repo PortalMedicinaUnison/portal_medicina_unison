@@ -8,6 +8,9 @@ export const createUserRequest = (userData) =>
 export const getAllUsersRequest = () =>
   api.get(API_ENDPOINTS.USERS.GET_ALL);
 
+export const getUserByAcademicIdRequest = (academicId) =>
+  api.get(API_ENDPOINTS.USERS.GET_BY_ACADEMIC_ID(academicId));
+
 export const getUserByIdRequest = (id) =>
   api.get(API_ENDPOINTS.USERS.GET(id));
 

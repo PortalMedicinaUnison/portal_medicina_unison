@@ -72,24 +72,30 @@ function EnrollmentsList() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((item) => (
-              <tr key={item.enrollment_id}>
-                <td>{item.academic_id}</td>
-                <td>{item.is_enrolled ? 'Registrado' : 'No registrado'}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td className="text-right">
-                  <DropdownMenu
-                    actions={[
-                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.enrollment_id), className: 'text-red-600' },
-                    ]}
-                  />
-                </td>
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan="8">No se encontraron usuarios pre-registrados.</td>
               </tr>
-            ))}
+            ) : (
+              filtered.map((item) => (
+                <tr key={item.enrollment_id}>
+                  <td>{item.academic_id}</td>
+                  <td>{item.is_enrolled ? 'Registrado' : 'No registrado'}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td className="text-right">
+                    <DropdownMenu
+                      actions={[
+                        { label: 'Eliminar', onClick: () => handleDeleteButton(item.enrollment_id), className: 'text-red-600' },
+                      ]}
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

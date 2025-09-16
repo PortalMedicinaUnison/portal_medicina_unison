@@ -1,9 +1,12 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES, adminAbs } from '../../../../config';
 import useGetUsers from '../hooks/useGetUsers';
 import DropdownMenu from '../../../../utils/ui/DropdownMenu';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 
 function UserList() {
+  const navigate = useNavigate();
   const { users, loading: listLoading, error: listError, refetch } = useGetUsers();
 
   const [search, setSearch] = useState('');
@@ -23,7 +26,7 @@ function UserList() {
   }, [users, searchQuery, statusFilter]);
 
   const handleViewButton = (id) => {
-      navigate(adminAbs(ROUTES.ADMIN.INSTITUTION_DETAIL(id)));
+    navigate(adminAbs(ROUTES.ADMIN.USER_DETAIL(id)));
     };
 
   if (listLoading) return <LoadingSpinner />;
@@ -36,7 +39,9 @@ function UserList() {
           type="text"
           className="form-input--sm mr-auto"
           placeholder="Buscar por nombre o expediente"
+          value={search}
           onChange={(e) => setSearch(e.target.value)}
+          aria-label="Buscar por nombre o expediente"
         />
 
         <select
@@ -68,11 +73,11 @@ function UserList() {
           <tbody>
           {filtered.length === 0 ? (
               <tr>
-                <td colSpan="8">No se encontraron instituciones.</td>
+                <td colSpan="8">No se encontraron usuarios.</td>
               </tr>
             ) : (
               filtered.map((item) => (
-              <tr key={item.enrollment_id}>
+              <tr key={item.user_id}>
                 <td>{item.academic_id}</td>
                 <td>{item.first_name} {item.last_name} {item.second_last_name}</td>
                 <td>{item.email}</td>
@@ -83,7 +88,7 @@ function UserList() {
                 <td className="text-right">
                   <DropdownMenu
                     actions={[
-                      { label: 'Ver', onClick: () => handleViewButton(item.academic_id)},
+                      { label: 'Ver', onClick: () => handleViewButton(item.user_id) }
                     ]}
                   />
                 </td>

@@ -9,6 +9,7 @@ export const API_ENDPOINTS = {
     CREATE: '/users',
     GET_ALL: '/users',
     GET: (id) => `/users/${id}`,
+    GET_BY_ACADEMIC_ID: (academicId) => `/users/academic/${academicId}`,
     UPDATE: (id) => `/users/${id}`,
     DELETE: (id) => `/users/${id}`,
     UPLOAD_PROFILE_PICTURE: (id) => `/users/${id}/upload-profile-picture`,
