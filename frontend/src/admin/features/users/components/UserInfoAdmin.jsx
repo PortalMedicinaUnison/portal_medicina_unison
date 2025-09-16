@@ -16,26 +16,54 @@ function UserDetail() {
             {!userAdmin ? (
                 <p>No se encontró el usuario.</p>
             ) : (
-                <div className="info-container">
-                    <div className="item-container">
-                        <dl className="item-list">
-                            <div className="item-row">
-                                <dt className="item-header">Expediente</dt>
-                                <dd className="item-text">{userAdmin.academic_id}</dd>
-                            </div>
-
-                            <div className="item-row">
-                                <dt className="item-header">Nombre</dt>
-                                <dd className="item-text">{userAdmin.first_name}</dd>
-                            </div>
-
-                            <div className="item-row">
-                                <dt className="item-header">Rol</dt>
-                                <dd className="item-text">  {userAdmin?.is_admin ? 'Administrador' : 'Alumno'}</dd>
-                            </div>
-                        </dl>
-                    </div>
+              <div className="info-container">
+                <div className="user-info-photo">
+                    <img 
+                    src={userAdmin.profile_photo || "/default-avatar.png"} 
+                    alt="Foto de perfil" 
+                    className="user-profile-photo"
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/default-avatar.png";
+                    }}
+                    />
                 </div>
+
+                <div className="item-container">
+                    <dl className="item-list">
+                    <div className="item-row">
+                        <dt className="item-header">Nombre completo</dt>
+                        <dd className="item-text">
+                        {userAdmin.first_name} {userAdmin.last_name} {userAdmin.second_last_name}
+                        </dd>
+                    </div>
+
+                    <div className="item-row">
+                        <dt className="item-header">Correo electrónico</dt>
+                        <dd className="item-text">{userAdmin.email}</dd>
+                    </div>
+
+                    <div className="item-row">
+                        <dt className="item-header">Expediente</dt>
+                        <dd className="item-text">{userAdmin.academic_id}</dd>
+                    </div>
+
+                    <div className="item-row">
+                        <dt className="item-header">Teléfono</dt>
+                        <dd className="item-text">{userAdmin.phone_number}</dd>
+                    </div>
+                    <div className="item-row">
+                        <dt className="item-header">Rol</dt>
+                        <dd className="item-text">{userAdmin.is_admin ? 'Administrador' : 'Alumno'}</dd>
+                    </div>
+                    </dl>
+                </div>
+
+                <div class="info-actions mt-16">
+                    <button type="button" className='item-link'>Cambiar rol</button>
+                    <button type="button" className='item-link'>Reset Password</button>
+                </div>
+              </div>
             )}
         </div>
     );

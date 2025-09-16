@@ -11,18 +11,6 @@ function UserInfoAdminPage() {
   const { academicId } = useParams();
   const { userAdmin, loading, error } = useUserAdmin(academicId);
 
-  const editUserActions = (
-    <span className="show-on-sm">
-      <button
-        type="button"
-        className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_EDIT(academicId)))}
-      >
-        Editar
-      </button>
-    </span>
-  );
-
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>{error}</div>;
   if (!userAdmin) return <div>No se encontró el usuarioo.</div>;
@@ -30,8 +18,7 @@ function UserInfoAdminPage() {
   return (
       <Layout>
         <PageLayout 
-          title={'🏷️  Amado'}
-          actions={editUserActions}
+          title={ userAdmin.first_name + ' ' + userAdmin.last_name + ' ' + userAdmin.second_last_name }
         >
           <UserDetail/>
         </PageLayout>
