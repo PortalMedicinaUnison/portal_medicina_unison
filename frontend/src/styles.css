@@ -180,6 +180,11 @@
         max-w-xs
     }
 
+    .form-select--sm { @apply 
+        form-input
+        max-w-[8rem]
+    }
+
     .form-input--half { @apply 
         form-input
         max-w-xs

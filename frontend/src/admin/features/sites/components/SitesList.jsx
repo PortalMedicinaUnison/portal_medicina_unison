@@ -70,26 +70,32 @@ function SitesList() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((item) => (
-              <tr key={item.site_id}>
-                <td>{item.name}</td>
-                <td>{item.institution_id}</td>
-                <td>{item.city}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td className="text-right">
-                  <DropdownMenu
-                    actions={[
-                      { label: 'Ver', onClick: () => handleViewButton(item.site_id) },
-                      { label: 'Editar', onClick: () => handleEditButton(item.site_id) },
-                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.site_id), className: 'text-red-600' },
-                    ]}
-                  />
-                </td>
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan="8">No se encontraron instituciones.</td>
               </tr>
-            ))}
+            ) : (
+              filtered.map((item) => (
+                <tr key={item.site_id}>
+                  <td>{item.name}</td>
+                  <td>{item.institution_id}</td>
+                  <td>{item.city}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td className="text-right">
+                    <DropdownMenu
+                      actions={[
+                        { label: 'Ver', onClick: () => handleViewButton(item.site_id) },
+                        { label: 'Editar', onClick: () => handleEditButton(item.site_id) },
+                        { label: 'Eliminar', onClick: () => handleDeleteButton(item.site_id), className: 'text-red-600' },
+                      ]}
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

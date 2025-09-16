@@ -115,26 +115,32 @@ function PromotionsList() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((item) => (
-              <tr key={item.promotion_id}>
-                <td>{item.year}</td>
-                <td>{item.period}</td>
-                <td>{item.is_finished ? 'Finalizada' : 'Activa'}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td className="text-right">
-                  <DropdownMenu actions={
-                    [
-                      { label: 'Ver', onClick: () => handleViewButton(item.promotion_id) },
-                      { label: 'Editar', onClick: () => handleEditButton(item.promotion_id) },
-                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.promotion_id), className: 'text-red-600' },
-                    ]
-                  } />
-                </td>
+          {filtered.length === 0 ? (
+              <tr>
+                <td colSpan="8">No se encontraron instituciones.</td>
               </tr>
-            ))}
+            ) : (
+              filtered.map((item) => (
+                <tr key={item.promotion_id}>
+                  <td>{item.year}</td>
+                  <td>{item.period}</td>
+                  <td>{item.is_finished ? 'Finalizada' : 'Activa'}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td className="text-right">
+                    <DropdownMenu actions={
+                      [
+                        { label: 'Ver', onClick: () => handleViewButton(item.promotion_id) },
+                        { label: 'Editar', onClick: () => handleEditButton(item.promotion_id) },
+                        { label: 'Eliminar', onClick: () => handleDeleteButton(item.promotion_id), className: 'text-red-600' },
+                      ]
+                    } />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

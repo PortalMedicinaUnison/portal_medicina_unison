@@ -71,26 +71,32 @@ function InstitutionsList() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((item) => (
-              <tr key={item.institution_id}>
-                <td>{item.name}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td className="text-right">
-                  <DropdownMenu actions={
-                    [
-                      { label: 'Ver', onClick: () => handleViewButton(item.institution_id) },
-                      { label: 'Editar', onClick: () => handleEditButton(item.institution_id) },
-                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.institution_id), className: 'text-red-600' },
-                    ]
-                  } />
-                </td>
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan="8">No se encontraron instituciones.</td>
               </tr>
-            ))}
+            ) : (
+              filtered.map((item) => (
+                <tr key={item.institution_id}>
+                  <td>{item.name}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td className="text-right">
+                    <DropdownMenu actions={
+                      [
+                        { label: 'Ver', onClick: () => handleViewButton(item.institution_id) },
+                        { label: 'Editar', onClick: () => handleEditButton(item.institution_id) },
+                        { label: 'Eliminar', onClick: () => handleDeleteButton(item.institution_id), className: 'text-red-600' },
+                      ]
+                    } />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
