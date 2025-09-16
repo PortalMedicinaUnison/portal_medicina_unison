@@ -2,18 +2,18 @@ import { useState } from 'react';
 import { cleanFormData } from '../../../../../utils/utils';
 import { createUserEnrollmentRequest } from '../../../../../services/userService';
 
-export default function useCreateUserEnrollment() {
+export default function useCreateEnrollment() {
   const [error, setError]     = useState('');
   const [success, setSuccess] = useState(false);
 
-  const createUserEnrollment = async (formData) => {  
+  const createEnrollment = async (formData) => {  
     const cleanedData = cleanFormData(formData);
     setError('');
     setSuccess(false);
     
     const payload = {
-      student_id: cleanedData.student_id,
-      is_accepted: cleanedData.is_accepted,
+      academic_id: cleanedData.academic_id,
+      is_enrolled: cleanedData.is_enrolled,
     };
 
     try {
@@ -27,5 +27,5 @@ export default function useCreateUserEnrollment() {
     }
   };
 
-  return { createUserEnrollment, error, success };
+  return { createEnrollment, error, success };
 }

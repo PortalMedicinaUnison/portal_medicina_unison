@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { deleteUserEnrollmentRequest } from '../../../../../services/userService';
 
-export default function useDeleteUserEnrollment() {
+export default function useDeleteEnrollment() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError]     = useState('');
 
-  const deleteUserEnrollment = async (id) => {
+  const deleteEnrollment = async (id) => {
     setLoading(true);
     setSuccess(false);
     setError('');
@@ -30,5 +30,5 @@ export default function useDeleteUserEnrollment() {
     setError('');
   };
 
-  return { deleteUserEnrollment, loading, success, error, reset };
+  return { deleteEnrollment, loading, success, error, reset };
 }

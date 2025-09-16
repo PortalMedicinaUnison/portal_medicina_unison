@@ -59,24 +59,11 @@ function EnrollmentForm() {
               <dd className="item-text">
                 <input
                   className="form-input--half"
-                  name="student_id"
+                  name="academic_id"
                   type="text"
                   value={formData.academic_id}
                   onChange={handleChange}
                   placeholder="Expediente del alumno"
-                />
-              </dd>
-            </div>
-            <div className="item-row">
-              <dt className="item-header">Estatus</dt>
-              <dd className="item-text">
-                <input
-                  className="form-input--half"
-                  name="is_enrolled"
-                  type="text"
-                  value={formData.is_enrolled}
-                  onChange={handleChange}
-                  placeholder="¿El alumno está inscrito?"
                 />
               </dd>
             </div>
