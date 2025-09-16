@@ -46,6 +46,11 @@ async def create_announcement_route(announcement: AnnouncementInput, db: Session
             detail="No se pudo encontrar el aviso")
     return announcement
 
+@announcement_router.get('/', response_model=List[AnnouncementOutput])
+async def get_announcements_route(db: Session = Depends(get_db)):
+    announcements =  get_all_announcements(db)
+    return announcements
+
 @announcement_router.get('/{announcement_id}', response_model=AnnouncementOutput)
 async def get_announcement_route(announcement_id: int, db: Session = Depends(get_db)):
     announcement = get_announcement(announcement_id, db)
@@ -82,15 +87,6 @@ async def delete_announcement_route(announcement_id: int, db: Session = Depends(
             detail="Aviso no encontrado")
     return announcement
 
-@announcement_router.get('/', response_model=List[AnnouncementOutput])
-async def get_announcements_route(db: Session = Depends(get_db)):
-    announcements =  get_all_announcements(db)
-    if not announcements:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-        detail="Avisos no encontrados")
-    return announcements
-
 # ----------------------  Survey  ----------------------
 
 survey_router = APIRouter(prefix="/surveys", tags=["Encuestas"])
@@ -103,6 +99,11 @@ async def create_survey_route(survey: SurveyInput, db: Session = Depends(get_db)
             status_code=status.HTTP_400_BAD_REQUEST, 
             detail="No se pudo encontrar la encuesta")
     return survey
+
+@survey_router.get('/', response_model=List[SurveyOutput])
+async def get_surveys_route(db: Session = Depends(get_db)):
+    surveys =  get_all_surveys(db)
+    return surveys
 
 @survey_router.get('/{survey_id}', response_model=SurveyOutput)
 async def get_survey_route(survey_id: int, db: Session = Depends(get_db)):
@@ -120,15 +121,6 @@ async def get_surveys_by_mandatory_route(mandatory: bool, db: Session = Depends(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Encuesta no encontrada")
-    return surveys
-
-@survey_router.get('/', response_model=List[SurveyOutput])
-async def get_surveys_route(db: Session = Depends(get_db)):
-    surveys =  get_all_surveys(db)
-    if not surveys:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Encuestas no encontradas")
     return surveys
 
 @survey_router.patch('/{survey_id}', response_model=SurveyOutput)

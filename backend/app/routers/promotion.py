@@ -38,19 +38,17 @@ async def create_promotion_route(payload: PromotionInput, db: Session = Depends(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No se pudo crear la promoción")
     return promotion
 
+@promotion_router.get("/", response_model=List[PromotionOutput])
+async def get_promotions_route(db: Session = Depends(get_db)):
+    promotions = get_all_promotions(db)
+    return promotions
+
 @promotion_router.get("/{promotion_id}", response_model=PromotionInput)
 async def get_promotion_route(promotion_id: int, db: Session = Depends(get_db)):
     promotion = get_promotion(promotion_id, db)
     if not promotion:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Promoción no encontrada")
     return promotion
-
-@promotion_router.get("/", response_model=List[PromotionOutput])
-async def get_promotions_route(db: Session = Depends(get_db)):
-    promotions = get_all_promotions(db)
-    if not promotions:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No hay promociones")
-    return promotions
 
 @promotion_router.patch("/{promotion_id}", response_model=PromotionInput)
 async def update_promotion_route(promotion_id: int, promotion: PromotionInputUpdate, db: Session = Depends(get_db)):
@@ -78,19 +76,17 @@ async def create_promotion_site_detail_route(psd: PromotionSiteDetailInput, db: 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No se pudo crear el detalle de promoción")
     return psd
 
+@psd_router.get("/", response_model=List[PromotionSiteDetailOutput])
+async def get_all_psd_route(db: Session = Depends(get_db)):
+    psds = get_all_promotion_site_details(db)
+    return psds
+
 @psd_router.get("/{psd_id}", response_model=PromotionSiteDetailOutput)
 async def get_psd_route(psd_id: int, db: Session = Depends(get_db)):
     psd = get_promotion_site_detail(psd_id, db)
     if not psd:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Detalle de promoción no encontrado")
     return psd
-
-@psd_router.get("/", response_model=List[PromotionSiteDetailOutput])
-async def get_all_psd_route(db: Session = Depends(get_db)):
-    psds = get_all_promotion_site_details(db)
-    if not psds:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No hay detalles de promoción")
-    return psds
 
 @psd_router.get("/by-promotion/{promotion_id}", response_model=List[PromotionSiteDetailOutput])
 async def get_psd_by_promotion_route(promotion_id: int, db: Session = Depends(get_db)):

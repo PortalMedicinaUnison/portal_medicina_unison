@@ -43,6 +43,11 @@ async def create_internship_route(internship: InternshipInput, db: Session = Dep
             detail="No se pudo crear el internado")
     return internship
 
+@internship_router.get('/', response_model=List[InternshipOutput])
+async def get_internships_route(db: Session = Depends(get_db)):
+    internships = get_all_internships(db)
+    return internships
+
 @internship_router.get('/{internship_id}', response_model=InternshipOutput)
 async def get_internship_route(internship_id: int, db: Session = Depends(get_db)):
     internship = get_internship(internship_id, db)
@@ -51,15 +56,6 @@ async def get_internship_route(internship_id: int, db: Session = Depends(get_db)
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Internado no encontrado")
     return internship
-
-@internship_router.get('/', response_model=List[InternshipOutput])
-async def get_internships_route(db: Session = Depends(get_db)):
-    internships = get_all_internships(db)
-    if not internships:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Internado no encontrado")
-    return internships
 
 @internship_router.get('/{student_id}', response_model=List[InternshipOutput])
 async def get_internships_by_student_route(student_id: int, db: Session = Depends(get_db)):
@@ -113,10 +109,6 @@ async def create_internship_application_route(internship_application: Internship
 @internship_application_router.get('/', response_model=List[InternshipApplicationOutput])
 async def get_all_internship_applications_route(db: Session = Depends(get_db)):
     applications = get_all_internship_applications(db)
-    if not applications:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No se encontraron aplicaciones al internado")
     return applications
 
 @internship_application_router.get('/{student_id}', response_model=List[InternshipApplicationOutput])
@@ -171,10 +163,6 @@ async def create_internship_document_route(internship_document: InternshipDocume
 @internship_document_router.get('/', response_model=List[InternshipDocumentOutput])
 async def get_internship_documents_route(db: Session = Depends(get_db)):
     internship_documents = get_all_internship_documents(db)
-    if not internship_documents:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No se encontraron documentos de internados")
     return internship_documents
 
 @internship_document_router.get('/{internship_id}', response_model=List[InternshipDocumentOutput])
