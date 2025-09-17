@@ -35,6 +35,7 @@ import EnrollmentsListPage from '../admin/features/users/enrollments/pages/Enrol
 import ReportsListPage from '../admin/features/reports/pages/ReportsListPage.jsx';
 import ReportInfoPage from '../admin/features/reports/pages/ReportInfoPage.jsx';
 
+
 function AdminRoutes() {
   return (
     <Routes>
@@ -74,8 +75,8 @@ function AdminRoutes() {
         {/* <Route path="surveys/:surveyId/edit" element={<SurveyUpdatePage />} /> */}
 
         {/* User enrollments */}
-        <Route path="user/enrollments" element={<EnrollmentsListPage />} />
-        <Route path="user/enrollments/create" element={<EnrollmentFormPage />} />
+        <Route path="enrollments" element={<EnrollmentsListPage />} />
+        <Route path="enrollments/create" element={<EnrollmentFormPage />} />
 
         {/* Reports */}
         <Route path="reports" element={<ReportsListPage />} />

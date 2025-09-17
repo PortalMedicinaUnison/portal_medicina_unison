@@ -20,7 +20,6 @@ export const ROUTES = {
         REMOVE_USER: '/delete-account',
         CHANGE_PASSWORD: '/reset-password',
         
-        // Reports routes
         REPORTS_LIST: '/reports',
         REPORT_CREATE: '/reports/create',
         REPORT_INFO: (reportId) => `/reports/${reportId}`,
@@ -30,14 +29,14 @@ export const ROUTES = {
     ADMIN: {
         USER_LIST: '/users',
         USER_DETAIL: (userId) => `/users/${userId}`,
-        USER_DETAIL_ACADEMIC: (academicId) => `/users/academic/${academicId}`,
-        UPLOAD_PROFILE_PICTURE: (userId) => `/users/${userId}/upload-profile-picture`,
+        USER_DETAIL_ACADEMIC: (academicId) => `/users?academicId=${academicId}`,
+        UPLOAD_PROFILE_PICTURE: (userId) => `/users/${userId}/profile-picture`,
 
-        USER_ENROLLMENT_LIST: '/user/enrollments',
-        USER_ENROLLMENT_CREATE: '/user/enrollments/create',
-        USER_ENROLLMENT_DETAIL: (enrollmentId) => `/user/enrollments/${enrollmentId}`,
-        USER_ENROLLMENT_EDIT: (enrollmentId) => `/user/enrollments/${enrollmentId}/edit`,
-        USER_ENROLLMENT_DELETE: (enrollmentId) => `/user/enrollments/${enrollmentId}/delete`,
+        USER_ENROLLMENT_LIST: '/enrollments',
+        USER_ENROLLMENT_CREATE: '/enrollments/create',
+        USER_ENROLLMENT_DETAIL: (enrollmentId) => `/enrollments/${enrollmentId}`,
+        USER_ENROLLMENT_EDIT: (enrollmentId) => `/enrollments/${enrollmentId}/edit`,
+        USER_ENROLLMENT_DELETE: (enrollmentId) => `/enrollments/${enrollmentId}/delete`,
 
         SITE_LIST: '/sites',
         SITE_CREATE: '/sites/create',
@@ -51,11 +50,11 @@ export const ROUTES = {
         PROMOTION_EDIT: (promotionId) => `/promotions/${promotionId}/edit`,
         PROMOTION_DELETE: (promotionId) => `/promotions/${promotionId}/delete`,
 
-        PSD_LIST: '/psd',
-        PSD_CREATE: '/psd/create',
-        PSD_DETAIL: (psdId) => `/psd/${psdId}`,
-        PSD_EDIT: (psdId) => `/psd/${psdId}/edit`,
-        PSD_DELETE: (psdId) => `/psd/${psdId}/delete`,
+        PSD_LIST: '/promotion-site-details',
+        PSD_CREATE: '/promotion-site-details/create',
+        PSD_DETAIL: (psdId) => `/promotion-site-details/${psdId}`,
+        PSD_EDIT: (psdId) => `/promotion-site-details/${psdId}/edit`,
+        PSD_DELETE: (psdId) => `/promotion-site-details/${psdId}/delete`,
 
         REPORT_LIST: '/reports',
         REPORT_CREATE: '/reports/create',
@@ -87,16 +86,16 @@ export const ROUTES = {
         INTERNSHIP_EDIT: (internshipId) => `/internships/${internshipId}/edit`,
         INTERNSHIP_DELETE: (internshipId) => `/internships/${internshipId}/delete`,
 
-        INTERNSHIP_APPLICATION_LIST: '/internship/applications',
-        INTERNSHIP_APPLICATION_CREATE: '/internship/applications/create',
-        INTERNSHIP_APPLICATION_DETAIL: (applicationId) => `/internship/applications/${applicationId}`,
-        INTERNSHIP_APPLICATION_EDIT: (applicationId) => `/internship/applications/${applicationId}/edit`,
-        INTERNSHIP_APPLICATION_DELETE: (applicationId) => `/internship/applications/${applicationId}/delete`,
+        INTERNSHIP_APPLICATION_LIST: '/internship-applications',
+        INTERNSHIP_APPLICATION_CREATE: '/internship-applications/create',
+        INTERNSHIP_APPLICATION_DETAIL: (applicationId) => `/internship-applications/${applicationId}`,
+        INTERNSHIP_APPLICATION_EDIT: (applicationId) => `/internship-applications/${applicationId}/edit`,
+        INTERNSHIP_APPLICATION_DELETE: (applicationId) => `/internship-applications/${applicationId}/delete`,
 
-        INTERNSHIP_DOCUMENT_LIST: '/internship/documents',
-        INTERNSHIP_DOCUMENT_CREATE: '/internship/documents/create',
-        INTERNSHIP_DOCUMENT_DETAIL: (documentId) => `/internship/documents/${documentId}`,
-        INTERNSHIP_DOCUMENT_EDIT: (documentId) => `/internship/documents/${documentId}/edit`,
-        INTERNSHIP_DOCUMENT_DELETE: (documentId) => `/internship/documents/${documentId}/delete`,
-        }
+        INTERNSHIP_DOCUMENT_LIST: (internshipId) => `/internships/${internshipId}/documents`,
+        INTERNSHIP_DOCUMENT_CREATE: (internshipId) => `/internships/${internshipId}/documents/create`,
+        INTERNSHIP_DOCUMENT_DETAIL: (internshipId, documentId) => `/internships/${internshipId}/documents/${documentId}`,
+        INTERNSHIP_DOCUMENT_EDIT: (internshipId, documentId) => `/internships/${internshipId}/documents/${documentId}/edit`,
+        INTERNSHIP_DOCUMENT_DELETE: (internshipId, documentId) => `/internships/${internshipId}/documents/${documentId}/delete`,
+    }
 }
