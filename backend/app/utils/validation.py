@@ -70,3 +70,10 @@ def is_valid_capacity(capacity: int) -> None:
     """
     if capacity < 0:
         raise ValueError("La capacidad debe ser un número entero positivo.")
+    
+def is_valid_other_type_report(other_type: str, report_type: str) -> None:
+    """
+    Valida que el campo de tipo personalizado no exceda los 50 caracteres
+    """
+    if len(other_type) > 25:
+        raise ValueError("El tipo personalizado no puede exceder 50 caracteres")

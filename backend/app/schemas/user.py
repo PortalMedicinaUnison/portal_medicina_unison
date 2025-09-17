@@ -3,7 +3,8 @@ from typing import Optional
 from utils.validation import is_valid_academic_id, is_valid_password, is_valid_email
 
 
-# -------------- ENROLLMENTS ------------------
+# ---------------------- ENROLLMENTS ----------------------
+
 class UserEnrollmentInput(BaseModel):
     academic_id: str
     is_enrolled: bool = False
@@ -21,7 +22,8 @@ class UserEnrollmentOutput(BaseModel):
     academic_id: str
     is_enrolled: bool = False
     
-# -------------- USERS ------------------
+# ---------------------- USERS ----------------------
+
 class UserInput(BaseModel):
     academic_id: str
     first_name: str
@@ -29,7 +31,7 @@ class UserInput(BaseModel):
     second_last_name: Optional[str] = None
     email: str
     phone_number: Optional[str] = None
-    password: Optional[str] = None
+    password: str
     profile_photo: str
     is_admin: bool = False
     is_super_admin: bool = False
@@ -65,26 +67,7 @@ class UserInputUpdate(BaseModel):
             is_valid_email(email)
         return email
 
-class UserOutput(BaseModel):
-    user_id: int
-    academic_id: str
-    first_name: str
-    last_name: str
-    second_last_name: Optional[str] = None
-    email: str
-    profile_photo: str
-    phone_number: Optional[str] = None
-    is_admin: bool = False
-    is_super_admin: bool = False
-    is_active: bool = False
-
-class UserAdminInputUpdate(UserInputUpdate):
-    is_admin: Optional[bool]
-
-class UserSuperAdminInputUpdate(UserInputUpdate):
-    is_super_admin: Optional[bool]
-
-class UserPasswordInput(BaseModel):
+class UserPasswordUpdate(BaseModel):
     current_password: str
     new_password: str
     confirm_password: str
@@ -99,3 +82,18 @@ class UserPasswordInput(BaseModel):
         is_valid_password(new_password)
         return new_password
 
+class UserInputUpdateByAdmin(BaseModel):
+    is_admin: Optional[bool] = None
+
+class UserOutput(BaseModel):
+    user_id: int
+    academic_id: str
+    first_name: str
+    last_name: str
+    second_last_name: Optional[str] = None
+    email: str
+    profile_photo: str
+    phone_number: Optional[str] = None
+    is_admin: bool = False
+    is_super_admin: bool = False
+    is_active: bool = False

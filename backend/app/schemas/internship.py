@@ -2,7 +2,8 @@ from pydantic import BaseModel
 from models.internship import DocumentTypeEnum, InternshipStatusEnum
 
 
-# -------------- APPLICATIONS ------------------
+# ---------------------- INTERNSHIP APPLICATION ----------------------
+
 class InternshipApplicationInput(BaseModel):
     student_id: int
     is_accepted: bool
@@ -15,7 +16,8 @@ class InternshipApplicationOutput(BaseModel):
     student_id: int
     is_accepted: bool
 
-# -------------- INTERNSHIPS ------------------
+# ---------------------- INTERNSHIP ----------------------
+
 class InternshipInput(BaseModel):
     promotion_id: int
     application_id: int
@@ -38,7 +40,8 @@ class InternshipOutput(BaseModel):
     site_id: int
     status: InternshipStatusEnum
 
-# -------------- DOCUMENTS ------------------
+# ---------------------- INTERNSHIP DOCUMENT ----------------------
+
 class InternshipDocumentInput(BaseModel):
     internship_id: int
     document_type: DocumentTypeEnum
@@ -48,7 +51,9 @@ class InternshipDocumentInput(BaseModel):
 class InternshipDocumentUpdate(BaseModel):
     document_type: DocumentTypeEnum = None
     path: str = None
-    is_verified: bool = None
+
+class InternshipDocumentUpdateByAdmin(BaseModel):
+    is_verified: bool
 
 class InternshipDocumentOutput(BaseModel):
     document_id: int
