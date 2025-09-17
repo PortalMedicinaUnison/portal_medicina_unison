@@ -4,9 +4,10 @@ from .base import BaseModel
 import typing
 from typing import List
 
-
 if typing.TYPE_CHECKING:
     from .promotion import PromotionSiteDetail
+
+# ----------------------  INSTITUTION  ----------------------
 
 class Institution(BaseModel):
     __tablename__ = 'institutions'
@@ -17,6 +18,7 @@ class Institution(BaseModel):
     def __repr__(self):
         return f"<Institution(name={self.name}, is_active={self.is_active})>"
 
+# ----------------------  SITE  ----------------------
 
 class Site(BaseModel):
     __tablename__ = 'sites'

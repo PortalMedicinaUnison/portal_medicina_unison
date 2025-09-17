@@ -3,7 +3,9 @@ from sqlalchemy import Boolean, Integer, String, Index, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 from .base import BaseModel
 
-    
+
+# ----------------------  USER ENROLLMENT  ----------------------
+
 class UserEnrollment(BaseModel):
     """
     Estudiantes inscritos por el administrador habilitados para registrarse
@@ -19,6 +21,8 @@ class UserEnrollment(BaseModel):
 
     def __repr__(self):
         return f"<UserEnrollment(academic_id={self.academic_id}, assigned_year={self.assigned_year}, is_active={self.is_active})>"
+
+# ----------------------  USER  ----------------------
 
 class User(BaseModel):
     __tablename__ = 'users'

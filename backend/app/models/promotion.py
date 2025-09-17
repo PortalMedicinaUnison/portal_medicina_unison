@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .site import Site         
 
+# ----------------------  PROMOTION  ----------------------
+
 class Promotion(BaseModel):
     __tablename__ = 'promotions'
     
@@ -17,6 +19,8 @@ class Promotion(BaseModel):
     def __repr__(self):
         return f"<Promotion(promotion_id={self.promotion_id}, year={self.year}, period={self.period}, is_finished={self.is_finished})>"
     
+# ----------------------  PROMOTION SITE DETAIL  ----------------------
+
 class PromotionSiteDetail(BaseModel):
     __tablename__ = 'promotion_site_details'
 

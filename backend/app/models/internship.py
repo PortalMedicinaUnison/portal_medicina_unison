@@ -5,6 +5,8 @@ from .base import BaseModel
 from .types import IntEnumType
 
 
+# ----------------------  INTERNSHIP APPLICATION  ----------------------
+
 class DocumentTypeEnum(IntEnum):
     BITACORA = 1
     COMPLETION_LETTER = 2
@@ -30,6 +32,8 @@ class InternshipApplication(BaseModel):
     def __repr__(self):
         return f"<InternshipApplication(student_id={self.student_id}, is_accepted={self.is_accepted})>"
 
+# ----------------------  INTERNSHIP  ----------------------
+
 class Internship(BaseModel):
     __tablename__ = 'internships'
     __table_args__ = (
@@ -46,6 +50,8 @@ class Internship(BaseModel):
 
     def __repr__(self):
         return (f"<Internship(student_id={self.student_id}, site_id={self.site_id}, promotion_id={self.promotion_id}, status={self.status.name})>")
+
+# ----------------------  INTERNSHIP DOCUMENT  ----------------------
 
 class InternshipDocument(BaseModel):
     __tablename__ = 'internship_documents'
