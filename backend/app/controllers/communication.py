@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status, UploadFile
 from repos.communication import AnnouncementRepo, SurveyRepo
 from models.communication import Announcement, Survey
-from schemas.communication import AnnouncementInput, SurveyInput
+from schemas.communication import (
+    AnnouncementInput, AnnouncementInputUpdate,
+    SurveyInput, SurveyInputUpdate)
 from utils.utils import orm_to_dict, map_to_model
 
 
@@ -31,7 +32,7 @@ def get_announcement(announcement_id: int, db: Session):
     announcement_response = orm_to_dict(announcement)
     return announcement_response
 
-def update_announcement(announcement_id: int, announcement: AnnouncementInput, db: Session):
+def update_announcement(announcement_id: int, announcement: AnnouncementInputUpdate, db: Session):
     update_data = announcement.dict(exclude_unset=True)
     announcement_repo = AnnouncementRepo(db)
     updated_announcement = announcement_repo.update(announcement_id, update_data)
@@ -69,7 +70,7 @@ def get_survey(survey_id: int, db: Session):
     survey_response = orm_to_dict(survey)
     return survey_response
 
-def update_survey(survey_id: int, survey: SurveyInput, db: Session):
+def update_survey(survey_id: int, survey: SurveyInputUpdate, db: Session):
     update_data = survey.dict(exclude_unset=True)
     survey_repo = SurveyRepo(db)
     updated_survey = survey_repo.update(survey_id, update_data)

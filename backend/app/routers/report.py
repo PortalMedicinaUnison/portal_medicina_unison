@@ -11,7 +11,6 @@ from controllers.report import (
     upload_evidence_file,
 )
 
-
 # ----------------------  REPORT  ----------------------
 
 report_router = APIRouter(prefix="/reports", tags=["Reportes"])
@@ -25,6 +24,11 @@ async def create_report_route(report: ReportInput, student_id: int, db: Session 
             detail="No se pudo crear el reporte")
     return report
 
+@report_router.get('/', response_model=List[ReportOutput])
+async def get_student_reports_route(student_id: int, db: Session = Depends(get_db)):
+    reports = get_all_student_reports(student_id, db)
+    return reports
+
 @report_router.get('/{report_id}', response_model=ReportOutput)
 async def get_report_route(report_id: int, student_id: int, db: Session = Depends(get_db)):
     report = get_report(report_id, student_id, db)
@@ -33,11 +37,6 @@ async def get_report_route(report_id: int, student_id: int, db: Session = Depend
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Reporte no encontrado")
     return report
-
-@report_router.get('/', response_model=List[ReportOutput])
-async def get_student_reports_route(student_id: int, db: Session = Depends(get_db)):
-    reports = get_all_student_reports(student_id, db)
-    return reports
 
 @report_router.patch('/{report_id}', response_model=ReportOutput)
 async def update_report_route(report_id: int, report_update: ReportInputUpdate, student_id: int, db: Session = Depends(get_db)):
@@ -48,7 +47,7 @@ async def update_report_route(report_id: int, report_update: ReportInputUpdate, 
             detail="Reporte no encontrado")
     return report
 
-@report_router.post('/{report_id}/upload-evidence', response_model=ReportOutput)
+@report_router.post('/{report_id}/evidence', response_model=ReportOutput)
 async def upload_evidence_route(report_id: int, student_id: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
     report = upload_evidence_file(report_id, student_id, file, db)
     if not report:
