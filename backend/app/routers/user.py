@@ -48,7 +48,7 @@ def get_user_router(user_id: int, db: Session = Depends(get_db)):
             detail="Usuario no encontrado")
     return user
 
-@user_router.get("/academic/{academic_id}", response_model=UserOutput)
+@user_router.get("?academicId={academic_id}", response_model=UserOutput)
 def get_user_router(academic_id: str, db: Session = Depends(get_db)):
     print("Antes de llamar a get_user:")
     user = get_user_by_academic_id(academic_id, db)
@@ -76,13 +76,13 @@ def delete_user_router(user_id: int, db: Session = Depends(get_db)):
             detail="Usuario no encontrado")
     return deleted
 
-@user_router.post("/{user_id}/upload-profile-picture")
+@user_router.post("/{user_id}/profile-picture")
 def upload_profile_picture_router(user_id: int, image: UploadFile = File(...), db: Session = Depends(get_db)):
     pass
 
 # ----------------------  USER ENROLLMENT  ----------------------
 
-user_enrollment_router = APIRouter(prefix="/user/enrollments", tags=["User Enrollments"])
+user_enrollment_router = APIRouter(prefix="/enrollments", tags=["User Enrollments"])
 
 @user_enrollment_router.post("/", status_code=status.HTTP_201_CREATED)
 def create_user_enrollment_router(user_input: UserEnrollmentInput, db: Session = Depends(get_db)):

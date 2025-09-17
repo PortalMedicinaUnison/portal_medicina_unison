@@ -1,4 +1,3 @@
-from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from repos.user import UserRepo, UserEnrollmentRepo
 from models.user import User, UserEnrollment
