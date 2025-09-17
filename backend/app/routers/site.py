@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Form, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List, Union
-from schemas.site import SiteInput, SiteOutput, InstitutionInput, InstitutionOutput
 from core.dependencies import get_db
+from typing import List
+from schemas.site import SiteInput, SiteOutput, InstitutionInput, InstitutionOutput
 from controllers.site import (
     create_site,
     update_site,
@@ -18,7 +18,8 @@ from controllers.site import (
     delete_institution
 )
 
-#---------------SITE-------------------
+# ----------------------  SITE  ----------------------
+
 
 site_router = APIRouter(prefix="/sites", tags=["Sitios"])
 
@@ -62,6 +63,9 @@ async def delete_site_route(site_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Sitio no encontrado")
     return site
+
+
+# ----------------------  INSTITUTION  ----------------------
 
 institution_router = APIRouter(prefix="/institutions", tags=["Instituciones"])
 
