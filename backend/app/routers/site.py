@@ -20,7 +20,6 @@ from controllers.site import (
 
 # ----------------------  SITE  ----------------------
 
-
 site_router = APIRouter(prefix="/sites", tags=["Sitios"])
 
 @site_router.post('/', response_model=SiteInput)

@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
 from repos.site import SiteRepo, InstitutionRepo
 from models.site import Site, Institution
 from schemas.site import (
@@ -9,7 +8,7 @@ from schemas.site import (
 from utils.utils import orm_to_dict, map_to_model
 
 
-#---------------SITE-------------------
+# ---------------------- SITE ----------------------
 
 def create_site(site: SiteInput, db: Session):
     new_site = map_to_model(site, Site)
@@ -47,7 +46,7 @@ def delete_site(site_id: int, db: Session):
     site_repo = SiteRepo(db)
     return site_repo.delete(site_id)
 
-#---------------INSTITUTION-------------------
+# ---------------------- INSTITUTION ----------------------
 
 def create_institution(institution: InstitutionInput, db: Session):
     new_institution = map_to_model(institution, Institution)
