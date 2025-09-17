@@ -43,12 +43,8 @@ def update_promotion(promotion_id: int, promotion_input: PromotionInputUpdate, d
     updated_promotion = promotion_repo.update(promotion_id, update_data)
     if not updated_promotion:
         return None
-    return {
-        "promotion_id": updated_promotion.promotion_id,
-        "year": updated_promotion.year,
-        "period": updated_promotion.period,
-        "is_finished": updated_promotion.is_finished,
-    }
+    promotion_response = orm_to_dict(updated_promotion)
+    return promotion_response
 
 def delete_promotion(promotion_id: int, db: Session):
     promotion_repo = PromotionRepo(db)
@@ -88,12 +84,8 @@ def update_promotion_site_detail(psd_id: int, psd_input: PromotionSiteDetailInpu
     updated_psd = psd_repo.update(psd_id, update_data)
     if not updated_psd:
         return None
-    return {
-        "psd_id": updated_psd.psd_id,
-        "promotion_id": updated_psd.promotion_id,
-        "site_id": updated_psd.site_id,
-        "capacity": updated_psd.capacity,
-    }
+    psd_response = orm_to_dict(updated_psd)
+    return psd_response
 
 def delete_promotion_site_detail(psd_id: int, db: Session):
     psd_repo = PromotionSiteDetailRepo(db)

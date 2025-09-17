@@ -45,19 +45,8 @@ def update_site(site_id: int, site_input: SiteInput, db: Session):
     updated_site = site_repo.update(site_id, update_data)
     if not updated_site:
         return None
-    return {
-        "site_id": updated_site.site_id,
-        "name": updated_site.name,
-        "institution_id": updated_site.institution_id,
-        "address": updated_site.address,
-        "city": updated_site.city,
-        "teaching_head_name": updated_site.teaching_head_name,
-        "teaching_head_email": updated_site.teaching_head_email,
-        "teaching_head_phone": updated_site.teaching_head_phone,
-        "teaching_deputy_name": updated_site.teaching_deputy_name,
-        "teaching_deputy_email": updated_site.teaching_deputy_email,
-        "teaching_deputy_phone": updated_site.teaching_deputy_phone,
-    }
+    site_response = orm_to_dict(updated_site)
+    return site_response
     
 def delete_site(site_id: int, db: Session):
     site_repo = SiteRepo(db)
@@ -94,10 +83,8 @@ def update_institution(institution_id: int, institution: InstitutionInput, db: S
     updated_institution = institution_repo.update(institution_id, update_data)
     if not updated_institution:
         return None
-    return {
-        "institution_id": updated_institution.institution_id,
-        "name": updated_institution.name
-    }
+    institution_response = orm_to_dict(updated_institution)
+    return institution_response
 
 def delete_institution(institution_id: int, db: Session):
     institution_repo = InstitutionRepo(db)

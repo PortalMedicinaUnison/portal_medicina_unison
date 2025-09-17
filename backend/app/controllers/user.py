@@ -36,11 +36,8 @@ def update_user_enrollment(enrollment_id: int, user_input: UserEnrollmentInputUp
     updated_user = user_enrollment_repo.update(enrollment_id, update_data)
     if not updated_user:
         return None
-    return {
-        "enrollment_id": updated_user.enrollment_id,
-        "academic_id": updated_user.academic_id,
-        "is_enrolled": updated_user.is_enrolled,
-    }
+    user_enrollment_response = orm_to_dict(updated_user)
+    return user_enrollment_response
 
 def delete_user_enrollment(enrollment_id: int, db: Session) -> bool:
     user_enrollment_repo = UserEnrollmentRepo(db)
@@ -103,16 +100,8 @@ def update_user(user_id: int, user_input: UserInputUpdate, db: Session) -> dict:
     updated_user = user_repo.update(user_id, update_data)
     if not updated_user:
         return None
-    return {
-        "user_id": updated_user.user_id,
-        "first_name": updated_user.first_name,
-        "last_name": updated_user.last_name,
-        "second_last_name": updated_user.second_last_name,
-        "email": updated_user.email,
-        "profile_photo": updated_user.profile_photo,
-        "is_admin": updated_user.is_admin,
-        "is_super_admin": updated_user.is_super_admin,
-    }
+    user_response = orm_to_dict(updated_user)
+    return user_response
 
 def delete_user(user_id: int, db: Session) -> bool:
     user_repo = UserRepo(db)
