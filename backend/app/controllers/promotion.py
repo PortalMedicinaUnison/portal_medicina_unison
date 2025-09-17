@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
 from models.promotion import Promotion, PromotionSiteDetail
 from repos.promotion import PromotionRepo, PromotionSiteDetailRepo
 from schemas.promotion import (

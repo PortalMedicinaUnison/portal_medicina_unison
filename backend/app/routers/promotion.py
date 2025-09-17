@@ -76,7 +76,7 @@ async def delete_promotion_route(promotion_id: int, db: Session = Depends(get_db
 
 # ----------------------  PROMOTION SITE DETAIL  ----------------------
 
-psd_router = APIRouter(prefix="/psd", tags=["Detalles de Promoción"])
+psd_router = APIRouter(prefix="/promotion-site-details", tags=["Detalles de Promoción"])
 
 @psd_router.post("/", response_model=PromotionSiteDetailInput)
 async def create_promotion_site_detail_route(psd: PromotionSiteDetailInput, db: Session = Depends(get_db)):
@@ -103,7 +103,7 @@ async def get_psd_route(psd_id: int, db: Session = Depends(get_db)):
         )
     return psd
 
-@psd_router.get("/by-promotion/{promotion_id}", response_model=List[PromotionSiteDetailOutput])
+@psd_router.get("?promotionId={promotion_id}", response_model=List[PromotionSiteDetailOutput])
 async def get_psd_by_promotion_route(promotion_id: int, db: Session = Depends(get_db)):
     psds = get_promotion_site_details_by_promotion(promotion_id, db)
     return psds
