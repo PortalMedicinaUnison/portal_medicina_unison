@@ -1,14 +1,16 @@
 from fastapi import HTTPException, status, Depends, Request
 from sqlalchemy.orm import Session
-from core.dependencies import get_db
 from repos.user import UserRepo, UserEnrollmentRepo
 from models.user import User, UserEnrollment
-from schemas.user import UserInput, UserEnrollmentInput, UserInputUpdate, UserEnrollmentInputUpdate
+from schemas.user import (
+    UserEnrollmentInput, UserEnrollmentInputUpdate, UserEnrollmentOutput,
+    UserInput, UserInputUpdate, UserInputUpdateByAdmin, UserPasswordUpdate, UserOutput
+)
 from utils.security import hash_password
 from utils.utils import orm_to_dict
 
 
-# ----------------------  USER ENROLLMENT  ----------------------
+# ---------------------- USER ENROLLMENTS ----------------------
 
 def create_user_enrollment(user_input: UserEnrollmentInput, db: Session) -> dict:
     new_user_enrollment = UserEnrollment(
@@ -19,6 +21,14 @@ def create_user_enrollment(user_input: UserEnrollmentInput, db: Session) -> dict
     created_user_enrollment = user_enrollment_repo.create(new_user_enrollment)
     user_enrollment_response = orm_to_dict(created_user_enrollment)
     return user_enrollment_response
+
+def get_all_user_enrollments(db: Session):
+    user_enrollment_repo = UserEnrollmentRepo(db)
+    user_enrollments = user_enrollment_repo.get_all()
+    if not user_enrollments:
+        return None
+    user_enrollments_response = [orm_to_dict(user) for user in user_enrollments]
+    return user_enrollments_response
 
 def get_user_enrollment(enrollment_id: int, db: Session) -> dict:
     user_enrollment_repo = UserEnrollmentRepo(db)
@@ -43,24 +53,9 @@ def delete_user_enrollment(enrollment_id: int, db: Session) -> bool:
     user_enrollment_repo = UserEnrollmentRepo(db)
     return user_enrollment_repo.delete(enrollment_id)
 
-def get_all_user_enrollments(db: Session):
-    user_enrollment_repo = UserEnrollmentRepo(db)
-    user_enrollments = user_enrollment_repo.get_all()
-
-    if not user_enrollments:
-        return None
-
-    user_enrollments_response = [orm_to_dict(user) for user in user_enrollments]
-    return user_enrollments_response
-
-# ----------------------  Users  ----------------------
+# ---------------------- USERS ----------------------
 
 def create_user(user_input: UserInput, db: Session) -> dict:
-    """
-    Transforma el objeto Pydantic validado en un modelo ORM, llama al Repository para crear
-    el usuario y luego transforma el objeto ORM resultante en un diccionario para la respuesta.
-    """
-    # Pydantic --> ORM
     hashed_password = hash_password(user_input.password)
     new_user = User(
         academic_id=user_input.academic_id,

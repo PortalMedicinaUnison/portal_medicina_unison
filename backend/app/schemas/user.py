@@ -3,7 +3,7 @@ from typing import Optional
 from utils.validation import is_valid_academic_id, is_valid_password, is_valid_email
 
 
-# ---------------------- ENROLLMENTS ----------------------
+# ---------------------- USER ENROLLMENTS ----------------------
 
 class UserEnrollmentInput(BaseModel):
     academic_id: str
