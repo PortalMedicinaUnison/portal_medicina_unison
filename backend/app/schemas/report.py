@@ -1,7 +1,7 @@
 from pydantic import BaseModel, field_validator
 from typing import Optional
 from datetime import date
-from models.communication import ReportTypeEnum
+from models.report import ReportTypeEnum
 from utils.validation import is_valid_other_type_report
 
 

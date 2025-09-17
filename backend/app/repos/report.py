@@ -3,7 +3,7 @@ import shutil
 from datetime import datetime
 from fastapi import UploadFile
 from .base import BaseRepo
-from models.report import Report, ReportTypeEnum
+from models.report import Report
 
 
 class ReportRepo(BaseRepo):    
