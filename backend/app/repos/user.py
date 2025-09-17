@@ -14,7 +14,8 @@ class UserEnrollmentRepo(BaseRepo):
     
     def get_all(self) -> list[UserEnrollment]:
         return self.session.query(UserEnrollment).filter(
-                UserEnrollment.is_active == True).all()
+                UserEnrollment.is_active == True
+            ).all()
 
     def get_by_id(self, enrollment_id: int) -> UserEnrollment:
         return self.session.query(UserEnrollment).filter(
@@ -45,6 +46,8 @@ class UserEnrollmentRepo(BaseRepo):
             self.session.commit()
             return True
         return False
+    
+# ----------------------  USER  ----------------------
 
 class UserRepo(BaseRepo):
     def create(self, data: User) -> User:
@@ -55,7 +58,8 @@ class UserRepo(BaseRepo):
 
     def get_all(self) -> list[User]:
         return self.session.query(User).filter(
-                User.is_active == True).all()
+                User.is_active == True
+            ).all()
 
     def get_by_id(self, user_id: int) -> User:
         return self.session.query(User).filter(
@@ -95,22 +99,15 @@ class UserRepo(BaseRepo):
 
     def upload_profile_picture(self, user_id: int, image: UploadFile) -> User:
         import os
-
+        
+        if not os.path.exists("profile_images"):
+            os.makedirs("profile_images")
         file_location = os.path.join("profile_images", f"{user_id}.jpg")
-
         with open(file_location, "wb") as buffer:
             buffer.write(image.file.read())
-
         user = self.get_by_id(user_id)
         if user:
             user.profile_photo = file_location
             self.session.commit()
             self.session.refresh(user)
-            
         return user
-
-class AdminRepo(UserRepo):
-    pass
-
-class StudentRepo(UserRepo):
-    pass

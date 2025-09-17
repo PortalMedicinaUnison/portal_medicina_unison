@@ -1,7 +1,7 @@
 from .base import BaseRepo
 from models.site import Site, Institution
 
-# ---------------  SITE  ----------------------
+# ----------------------  SITE  ----------------------
 
 class SiteRepo(BaseRepo):
     def create(self, data: Site) -> Site:
@@ -12,7 +12,8 @@ class SiteRepo(BaseRepo):
     
     def get_all(self) -> list[Site]:
         return self.session.query(Site).filter(
-                Site.is_active == True).all()
+                Site.is_active == True
+            ).all()
     
     def get_by_id(self, site_id: int) -> Site:
         return self.session.query(Site).filter(
@@ -38,7 +39,7 @@ class SiteRepo(BaseRepo):
             return True
         return False
 
-# ---------------  INSTITUTION  ----------------------
+# ----------------------  INSTITUTION  ----------------------
 
 class InstitutionRepo(BaseRepo):
     def create(self, data: Institution) -> Institution:
@@ -49,7 +50,8 @@ class InstitutionRepo(BaseRepo):
     
     def get_all(self) -> list[Institution]:
         return self.session.query(Institution).filter(
-                Institution.is_active == True).all()
+                Institution.is_active == True
+            ).all()
     
     def get_by_id(self, institution_id: int) -> Institution:
         return self.session.query(Institution).filter(

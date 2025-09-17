@@ -3,6 +3,8 @@ from models.internship import  InternshipApplication, Internship, InternshipDocu
 from typing import List, Optional
 
 
+# ----------------------  INTERNSHIP  ----------------------
+
 class InternshipRepo(BaseRepo):
     def create(self, data: Internship) -> Internship:
         self.session.add(data)
@@ -30,6 +32,12 @@ class InternshipRepo(BaseRepo):
     def get_by_site_id(self, site_id: int) -> List[Internship]:
         return self.session.query(Internship).filter(
             Internship.site_id == site_id,
+            Internship.is_active == True
+        ).all()
+    
+    def get_by_promotio_id(self, promotion_id: int) -> List[Internship]:
+        return self.session.query(Internship).filter(
+            Internship.promotion_id == promotion_id,
             Internship.is_active == True
         ).all()
 
@@ -70,18 +78,6 @@ class InternshipApplicationRepo(BaseRepo):
             InternshipApplication.application_id == application_id,
             InternshipApplication.is_active == True
         ).first())
-
-    def get_by_student_id(self, student_id: int) -> List[InternshipApplication]:
-        return self.session.query(InternshipApplication).filter(
-            InternshipApplication.student_id == student_id,
-            InternshipApplication.is_active == True
-        ).all()
-
-    def get_by_status(self, is_accepted: bool) -> List[InternshipApplication]:
-        return self.session.query(InternshipApplication).filter(
-            InternshipApplication.is_accepted == is_accepted,
-            InternshipApplication.is_active == True
-        ).all()
     
     def update(self, application_id: int, data: dict) -> Optional[InternshipApplication]:
         application = self.get_by_id(application_id)

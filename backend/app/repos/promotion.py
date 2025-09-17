@@ -43,7 +43,6 @@ class PromotionRepo(BaseRepo):
 # ---------------  PROMOTION SITE DETAIL  ----------------------
 
 class PromotionSiteDetailRepo(BaseRepo):
-    
     def create(self, data: PromotionSiteDetail) -> PromotionSiteDetail:
         self.session.add(data)
         self.session.commit()
