@@ -30,10 +30,7 @@ def get_site(site_id: int, db: Session):
     site_repo = SiteRepo(db)
     read_site = site_repo.get_by_id(site_id)
     if not read_site:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Site not found"
-        )
+        return None
     site_response = orm_to_dict(read_site)
     return site_response
 
@@ -42,10 +39,7 @@ def update_site(site_id: int, site_input: SiteInputUpdate, db: Session):
     site_repo = SiteRepo(db)
     updated_site = site_repo.update(site_id, update_data)
     if not updated_site:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Site not found"
-        )
+        return None
     site_response = orm_to_dict(updated_site)
     return site_response
     
@@ -74,10 +68,7 @@ def get_institution(institution_id: int, db: Session):
     institution_repo = InstitutionRepo(db)
     read_institution = institution_repo.get_by_id(institution_id)
     if not read_institution:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Institution not found"
-        )
+        return None
     institution_response = orm_to_dict(read_institution)
     return institution_response
 
@@ -86,10 +77,7 @@ def update_institution(institution_id: int, institution: InstitutionInputUpdate,
     institution_repo = InstitutionRepo(db)
     updated_institution = institution_repo.update(institution_id, update_data)
     if not updated_institution:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Institution not found"
-        )
+        return None
     institution_response = orm_to_dict(updated_institution)
     return institution_response
 

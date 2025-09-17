@@ -27,10 +27,7 @@ def get_announcement(announcement_id: int, db: Session):
     announcement_repo = AnnouncementRepo(db)
     announcement = announcement_repo.get_by_id(announcement_id)
     if not announcement:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail="Announcement not found"
-        )
+        return None
     announcement_response = orm_to_dict(announcement)
     return announcement_response
 
@@ -39,10 +36,7 @@ def update_announcement(announcement_id: int, announcement: AnnouncementInput, d
     announcement_repo = AnnouncementRepo(db)
     updated_announcement = announcement_repo.update(announcement_id, update_data)
     if not updated_announcement:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Announcement not found"
-        )
+        return None
     updated_announcement_response = orm_to_dict(updated_announcement)
     return updated_announcement_response
     
@@ -71,10 +65,7 @@ def get_survey(survey_id: int, db: Session):
     survey_repo = SurveyRepo(db)
     survey = survey_repo.get_by_id(survey_id)
     if not survey:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail="Survey not found"
-        )
+        return None
     survey_response = orm_to_dict(survey)
     return survey_response
 
@@ -83,10 +74,7 @@ def update_survey(survey_id: int, survey: SurveyInput, db: Session):
     survey_repo = SurveyRepo(db)
     updated_survey = survey_repo.update(survey_id, update_data)
     if not updated_survey:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Survey not found"
-        )
+        return None
     updated_survey_response = orm_to_dict(updated_survey)
     return updated_survey_response
     

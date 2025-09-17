@@ -30,10 +30,7 @@ def get_promotion(promotion_id: int, db: Session):
     promotion_repo = PromotionRepo(db)
     promotion = promotion_repo.get_by_id(promotion_id)
     if not promotion:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Promotion not found"
-        )
+        return None
     promotion_response = orm_to_dict(promotion)
     return promotion_response
 
@@ -42,10 +39,7 @@ def update_promotion(promotion_id: int, promotion_input: PromotionInputUpdate, d
     promotion_repo = PromotionRepo(db)
     updated_promotion = promotion_repo.update(promotion_id, update_data)
     if not updated_promotion:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Promotion not found"
-        )
+        return None
     promotion_response = orm_to_dict(updated_promotion)
     return promotion_response
 
@@ -75,10 +69,7 @@ def get_promotion_site_detail(psd_id: int, db: Session):
     psd_repo = PromotionSiteDetailRepo(db)
     psd = psd_repo.get_by_id(psd_id)
     if not psd:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Promotion site detail not found"
-        )
+        return None
     # psd_response = orm_to_dict(psd)
     return psd
 
@@ -95,10 +86,7 @@ def update_promotion_site_detail(psd_id: int, psd_input: PromotionSiteDetailInpu
     psd_repo = PromotionSiteDetailRepo(db)
     updated_psd = psd_repo.update(psd_id, update_data)
     if not updated_psd:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Promotion site detail not found"
-        )
+        return None
     psd_response = orm_to_dict(updated_psd)
     return psd_response
 

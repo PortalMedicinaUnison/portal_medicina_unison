@@ -32,10 +32,7 @@ def get_internship(internship_id: int, db: Session):
     internship_repo = InternshipRepo(db)
     internship = internship_repo.get_by_id(internship_id)
     if not internship:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Internship not found"
-        )
+        return None
     internship_response = orm_to_dict(internship)
     return internship_response
 
@@ -60,10 +57,7 @@ def update_internship(internship_id: int, internship_input: InternshipInput, db:
     internship_repo = InternshipRepo(db)
     updated_internship = internship_repo.update(internship_id, update_data)
     if not updated_internship:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Internship not found"
-        )
+        return None
     updated_internship_response = orm_to_dict(updated_internship)
     return updated_internship_response
 
@@ -92,38 +86,16 @@ def get_internship_application(application_id: int, db: Session):
     internship_application_repo = InternshipApplicationRepo(db)
     internship_application = internship_application_repo.get_by_id(application_id)
     if not internship_application:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Internship application not found"
-        )
+        return None
     internship_application_response = orm_to_dict(internship_application)
     return internship_application_response
-
-def get_internship_applications_by_student(student_id: int, db: Session):
-    internship_application_repo = InternshipApplicationRepo(db)
-    internship_applications = internship_application_repo.get_by_student_id(student_id)
-    if not internship_applications:
-        return []
-    internship_applications_response = [orm_to_dict(internship_application) for internship_application in internship_applications]
-    return internship_applications_response
-
-def get_internship_applications_by_status(status: bool, db: Session):
-    internship_application_repo = InternshipApplicationRepo(db)
-    internship_applications = internship_application_repo.get_by_status(status)
-    if not internship_applications:
-        return []
-    internship_applications_response = [orm_to_dict(internship_application) for internship_application in internship_applications]
-    return internship_applications_response
 
 def update_internship_application(application_id: int, internship_application_input: InternshipApplicationUpdate, db: Session):
     update_data = internship_application_input.dict(exclude_unset=True)
     internship_application_repo = InternshipApplicationRepo(db)
     updated_internship_application = internship_application_repo.update(application_id, update_data)
     if not updated_internship_application:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Internship application not found"
-        )
+        return None
     updated_internship_application_response = orm_to_dict(updated_internship_application)
     return updated_internship_application_response
 
@@ -152,10 +124,7 @@ def get_internship_documents_by_id(document_id: str, db: Session):
     internship_document_repo = InternshipDocumentRepo(db)
     internship_document = internship_document_repo.get_by_id(document_id)
     if not internship_document:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Internship document not found"
-        )
+        return None
     internship_document_response = orm_to_dict(internship_document)
     return internship_document_response
 
@@ -172,10 +141,7 @@ def update_internship_document(document_id: str, internship_document_input: Inte
     internship_document_repo = InternshipDocumentRepo(db)
     updated_internship_document = internship_document_repo.update(document_id, update_data)
     if not updated_internship_document:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Internship document not found"
-        )
+        return None
     updated_internship_document_response = orm_to_dict(updated_internship_document)
     return updated_internship_document_response
 

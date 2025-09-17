@@ -31,10 +31,7 @@ def get_user_enrollment(enrollment_id: int, db: Session) -> dict:
     user_enrollment_repo = UserEnrollmentRepo(db)
     user_enrollment = user_enrollment_repo.get_by_id(enrollment_id)
     if not user_enrollment:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Academic record not found"
-        )
+        return None
     user_enrollment_response = orm_to_dict(user_enrollment)
     return user_enrollment_response
 
@@ -43,10 +40,7 @@ def update_user_enrollment(enrollment_id: int, user_input: UserEnrollmentInputUp
     user_enrollment_repo = UserEnrollmentRepo(db)
     updated_user = user_enrollment_repo.update(enrollment_id, update_data)
     if not updated_user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Academic record not found"
-        )
+        return None
     user_enrollment_response = orm_to_dict(updated_user)
     return user_enrollment_response
 
@@ -76,10 +70,7 @@ def get_user(user_id: int, db: Session) -> dict:
     user_repo = UserRepo(db)
     user = user_repo.get_by_id(user_id)
     if not user:
-        raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="User not found"
-    )
+        return None
     user_response = orm_to_dict(user)
     return user_response
 
@@ -87,10 +78,7 @@ def get_user_by_academic_id(academic_id: int, db: Session):
     user_repo = UserRepo(db)
     user = user_repo.get_by_academic_id(academic_id)
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
-        )
+        return None
     user_response = orm_to_dict(user)
     return user_response
 
@@ -99,10 +87,7 @@ def update_user(user_id: int, user_input: UserInputUpdate, db: Session) -> dict:
     user_repo = UserRepo(db)
     updated_user = user_repo.update(user_id, update_data)
     if not updated_user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Expediente no encontrado"
-        )
+        return None
     user_response = orm_to_dict(updated_user)
     return user_response
 

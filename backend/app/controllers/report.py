@@ -26,10 +26,7 @@ def get_report(report_id: int, db: Session):
     report_repo = ReportRepo(db)
     report = report_repo.get_by_id(report_id)
     if not report:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Report not found"
-        )
+        return None
     report_response = orm_to_dict(report)
     return report_response
 
@@ -38,10 +35,7 @@ def update_report(report_id: int, report_input: ReportInputUpdate, db: Session):
     report_repo = ReportRepo(db)
     updated_report = report_repo.update(report_id, update_data)
     if not updated_report:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Report not found"
-        )
+        return None
     report_response = orm_to_dict(updated_report)
     return report_response
 
