@@ -1,5 +1,5 @@
 from .base import BaseRepo
-from models.communication import Announcement, Survey, Report, AnnouncementTypeEnum, ReportTypeEnum
+from models.communication import Announcement, Survey
 
 
 # ----------------------  ANNOUNCEMENT  ----------------------

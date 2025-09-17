@@ -24,7 +24,6 @@ from controllers.promotion import (
     update_promotion_site_detail,
     delete_promotion_site_detail,
     get_promotion_site_details_by_promotion,
-    get_promotion_site_details_by_site,
 )
 
 # ----------------------  Promotions  ----------------------

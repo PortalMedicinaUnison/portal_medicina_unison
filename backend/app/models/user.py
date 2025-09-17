@@ -20,7 +20,7 @@ class UserEnrollment(BaseModel):
     is_enrolled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
     def __repr__(self):
-        return f"<UserEnrollment(academic_id={self.academic_id}, assigned_year={self.assigned_year}, is_active={self.is_active})>"
+        return f"<UserEnrollment(academic_id={self.academic_id}, is_enrolled={self.is_enrolled}, is_active={self.is_active})>"
 
 # ----------------------  USER  ----------------------
 
