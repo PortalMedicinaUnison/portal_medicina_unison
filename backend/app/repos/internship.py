@@ -79,6 +79,12 @@ class InternshipApplicationRepo(BaseRepo):
             InternshipApplication.is_active == True
         ).first())
     
+    def get_by_student_id(self, student_id: int) -> List[InternshipApplication]:
+        return (self.session.query(InternshipApplication).filter(
+            InternshipApplication.student_id == student_id,
+            InternshipApplication.is_active == True
+        ).all())
+    
     def update(self, application_id: int, data: dict) -> Optional[InternshipApplication]:
         application = self.get_by_id(application_id)
         if application:
@@ -106,22 +112,18 @@ class InternshipDocumentRepo(BaseRepo):
         self.session.refresh(data)
         return data
     
-    def get_all(self) -> List[InternshipDocument]:
+    def get_all(self, internship_id: int) -> List[InternshipDocument]:
         return self.session.query(InternshipDocument).filter(
+            InternshipDocument.internship_id == internship_id,
             InternshipDocument.is_active == True
         ).all()
 
-    def get_by_id(self, document_id: int) -> Optional[InternshipDocument]:
+    def get_by_id(self, internship_id: int, document_id: int) -> Optional[InternshipDocument]:
         return (self.session.query(InternshipDocument).filter(
+            InternshipDocument.internship_id == internship_id,
             InternshipDocument.document_id == document_id,
             InternshipDocument.is_active == True
         ).first())
-
-    def get_by_internship(self, internship_id: int) -> List[InternshipDocument]:
-        return (self.session.query(InternshipDocument).filter(
-            InternshipDocument.internship_id == internship_id,
-            InternshipDocument.is_active == True
-        ).all())
 
     def update(self, document_id: int, data: dict) -> Optional[InternshipDocument]:
         doc = self.get_by_id(document_id)
