@@ -18,7 +18,7 @@ function UserInfoAdminPage() {
   return (
       <Layout>
         <PageLayout 
-          title={ userAdmin.first_name + ' ' + userAdmin.last_name + ' ' + userAdmin.second_last_name }
+          title={ '🎓 ' + userAdmin.first_name + ' ' + userAdmin.last_name + ' ' + userAdmin.second_last_name }
         >
           <UserDetail/>
         </PageLayout>
