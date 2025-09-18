@@ -1,32 +1,21 @@
-import { useState, useEffect} from "react";
+import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import useCreateAnnouncement from '../hooks/useCreateAnnouncement';
-import useGetAnnouncements from '../hooks/useGetAnnouncements';
 import { ROUTES, adminAbs } from '../../../../config';
+import useCreateAnnouncement from '../hooks/useCreateAnnouncement';
 
 function AnnouncementForm() {
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
-    
-    const [formData, setFormData] = useState({
+    const { createAnnouncement, loading, error, success } = useCreateAnnouncement();
+
+    form = {
         title: '',
         description: '',
         announcement_type: 0,
-        created_by: user?.id || 1,
-    })
-    
-    const getUser = async () => {
-        try {
-            const response = await fetch('/api/user/');
-            setUser(response.data);
-        } catch (error) {
-            console.error("Failed to fetch user", error);
-        }
+        created_by: '',
     }
-    
-    const { createAnnouncement, error, success } = useCreateAnnouncement();
-    const { announcements, loading: announcementsLoading, error: announcementsError } = useGetAnnouncements();
-    
+
+    const [formData, setFormData] = useState(formData);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevData => ({
@@ -38,30 +27,17 @@ function AnnouncementForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Copiamos formData y convertimos announcement_type a número
-        const payload = {
-            ...formData,
-            announcement_type: Number(formData.announcement_type)
-        };
-
-        const isCreated = await createAnnouncement(payload);
-        if (isCreated) {
-            console.log('Anuncio registrado exitosamente');
-
-            setFormData({
-                title: '',
-                description: '',
-                announcement_type: 0,
-                created_by: user?.id || 1,
-            });
-
+        try {
+            await createAnnouncement(formData);
+            setFormData(form);
             navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST));
+        } catch (error) {   
+            console.error('Error creating announcement:', error);
         }
     };
     
     return (
         <form className="component-container" onSubmit={handleSubmit}>
-
             {success && (
                 <div className="alert-success-text">
                     Anuncio registrado exitosamente.
@@ -76,7 +52,6 @@ function AnnouncementForm() {
             )}
 
             <div className="info-container">
-                
                 <div className="item-container">
                     <dl className="item-list">
                         <div className="item-row">
@@ -88,12 +63,11 @@ function AnnouncementForm() {
                                     type="text"
                                     value={formData.title}
                                     onChange={handleChange}
-                                    placeholder="Título del anuncio"
+                                    placeholder="Título"
                                     required
                                 />
                             </dd>
                         </div>
-
                         <div className="item-row">
                             <dt className="item-header">Contenido</dt>
                             <dd className="item-text">
@@ -102,7 +76,7 @@ function AnnouncementForm() {
                                     name="description"
                                     value={formData.description}
                                     onChange={handleChange}
-                                    placeholder="Contenido del anuncio"
+                                    placeholder="Descripción"
                                     rows="4"
                                     required
                                 />
@@ -124,7 +98,6 @@ function AnnouncementForm() {
                                 </select>
                             </dd>
                         </div>
-
                     </dl>
                 </div>
 
@@ -133,6 +106,7 @@ function AnnouncementForm() {
                         type="button" 
                         className="btn-secondary" 
                         onClick={() => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST))}
+                        disabled={loading}
                     >
                         Cancelar
                     </button>
@@ -140,7 +114,7 @@ function AnnouncementForm() {
                         type="submit" 
                         className="btn-primary"
                     >
-                        Guardar
+                        {loading ? 'Guardando...' : 'Guardar'}
                     </button>
                 </div>
             </div>

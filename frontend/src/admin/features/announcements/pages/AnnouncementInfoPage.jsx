@@ -1,7 +1,7 @@
 import AnnouncementInfo from "../components/AnnouncementInfo";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES, adminAbs } from "../../../../config";
-import { useAnnouncement } from "../hooks/useAnnouncement";
+import { useAnnouncement } from '../hooks/useAnnouncement';
 import Layout from "../../../../Layout";
 import PageLayout from '../../../../components/PageLayout';
 

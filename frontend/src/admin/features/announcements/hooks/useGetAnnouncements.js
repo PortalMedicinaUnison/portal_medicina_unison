@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../../../api';
+import { getAllAnnouncementsRequest } from '../../../../services/announcementService'
 
 const useGetAnnouncements = () => {
     const [announcements, setAnnouncements] = useState([]);
@@ -11,7 +11,7 @@ const useGetAnnouncements = () => {
         setError(null);
         
         try {
-        const response = await api.get('/announcements/');
+        const response = await getAllAnnouncementsRequest();
         setAnnouncements(response.data);
         } catch (err) {
         setError(err.message);
