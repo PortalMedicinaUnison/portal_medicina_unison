@@ -54,7 +54,7 @@ def get_current_user(token: str, db: Session) -> User:
         )
     return user
 
-def autorize_user(user: User, role: str):
+def authorize_user(user: User, role: str):
     """
     Verifica si el usuario tiene el rol necesario para acceder a un recurso.
     """
