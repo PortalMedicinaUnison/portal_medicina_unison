@@ -27,7 +27,7 @@ function UserList() {
 
   const handleViewButton = (id) => {
     navigate(adminAbs(ROUTES.ADMIN.USER_DETAIL_ACADEMIC(id)));
-    };
+  };
 
   if (listLoading) return <LoadingSpinner />;
   if (listError) return <p>Error es: {String(listError)}</p>;
@@ -38,12 +38,10 @@ function UserList() {
         <input
           type="text"
           className="form-input--sm mr-auto"
-          placeholder="Buscar por nombre o expediente"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          aria-label="Buscar por nombre o expediente"
+          placeholder="Buscar por nombre o expediente"
         />
-
         <select
           className="btn-tertiary--light"
           value={statusFilter}
@@ -61,12 +59,9 @@ function UserList() {
           <thead>
             <tr>
               <th>Expediente</th>
-              <th>Nombre</th>
-              <th>Correo</th>
+              <th colSpan={3}>Nombre</th>
+              <th colSpan={2}>Correo</th>
               <th>Rol</th>
-              <th></th>
-              <th></th>
-              <th></th>
               <th></th>
             </tr>
           </thead>
@@ -79,13 +74,10 @@ function UserList() {
               filtered.map((item) => (
               <tr key={item.user_id || item.academic_id}>
                 <td>{item.academic_id}</td>
-                <td>{item.first_name} {item.last_name} {item.second_last_name}</td>
-                <td>{item.email}</td>
+                <td colSpan={3}>{item.first_name} {item.last_name} {item.second_last_name}</td>
+                <td colSpan={2}>{item.email}</td>
                 <td>{item.is_admin ? 'Administrador' : 'Alumno'}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td className="text-right">
+                <td className="td-actions text-right">
                   <DropdownMenu
                     actions={[
                       { label: 'Ver', onClick: () => handleViewButton(item.academic_id) }

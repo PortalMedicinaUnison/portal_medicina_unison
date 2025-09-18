@@ -59,13 +59,9 @@ function SitesList() {
         <table className="table">
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th>Institución</th>
+              <th colSpan={3}>Nombre</th>
+              <th colSpan={3}>Institución</th>
               <th>Ciudad</th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
               <th></th>
             </tr>
           </thead>
@@ -77,14 +73,10 @@ function SitesList() {
             ) : (
               filtered.map((item) => (
                 <tr key={item.site_id}>
-                  <td>{item.name}</td>
-                  <td>{item.institution_id}</td>
+                  <td colSpan={3} className='text-left'>{item.name}</td>
+                  <td colSpan={3} className='text-left'>{item.institution_id}</td>
                   <td>{item.city}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td className="text-right">
+                  <td className="td-actions text-right">
                     <DropdownMenu
                       actions={[
                         { label: 'Ver', onClick: () => handleViewButton(item.site_id) },

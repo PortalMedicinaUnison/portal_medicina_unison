@@ -129,7 +129,7 @@ function PromotionsList() {
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td className="text-right">
+                  <td className="td-actions text-right">
                     <DropdownMenu actions={
                       [
                         { label: 'Ver', onClick: () => handleViewButton(item.promotion_id) },

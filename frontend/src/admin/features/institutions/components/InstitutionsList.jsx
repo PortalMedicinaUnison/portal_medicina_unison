@@ -78,14 +78,11 @@ function InstitutionsList() {
             ) : (
               filtered.map((item) => (
                 <tr key={item.institution_id}>
-                  <td>{item.name}</td>
+                  <td colSpan={4} className='text-left'>{item.name}</td>
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td className="text-right">
+                  <td className="td-actions text-right">
                     <DropdownMenu actions={
                       [
                         { label: 'Ver', onClick: () => handleViewButton(item.institution_id) },

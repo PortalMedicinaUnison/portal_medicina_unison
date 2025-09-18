@@ -86,7 +86,7 @@ function EnrollmentsList() {
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td className="text-right">
+                  <td className="td-actions text-right">
                     <DropdownMenu
                       actions={[
                         { label: 'Eliminar', onClick: () => handleDeleteButton(item.enrollment_id), className: 'text-red-600' },
