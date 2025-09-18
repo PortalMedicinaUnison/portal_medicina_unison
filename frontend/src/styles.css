@@ -609,6 +609,7 @@
         text-sm 
         rtl:text-right
         border-collapse
+        table-fixed 
     }
 
     .table thead { @apply 
@@ -626,6 +627,11 @@
         py-1
         text-gray-900
         whitespace-nowrap
+        truncate
+    }
+
+    .table td.td-actions { @apply 
+        overflow-visible
     }
 
     .table th { @apply 
