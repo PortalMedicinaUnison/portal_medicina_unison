@@ -48,9 +48,8 @@ def get_user_router(user_id: int, db: Session = Depends(get_db)):
             detail="Usuario no encontrado")
     return user
 
-@user_router.get("?academicId={academic_id}", response_model=UserOutput)
-def get_user_router(academic_id: str, db: Session = Depends(get_db)):
-    print("Antes de llamar a get_user:")
+@user_router.get("/academicId/{academic_id}", response_model=UserOutput)
+def get_user_router_by_academic(academic_id: str, db: Session = Depends(get_db)):
     user = get_user_by_academic_id(academic_id, db)
     if not user:
         raise HTTPException(

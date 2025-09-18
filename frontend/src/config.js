@@ -29,7 +29,7 @@ export const ROUTES = {
     ADMIN: {
         USER_LIST: '/users',
         USER_DETAIL: (userId) => `/users/${userId}`,
-        USER_DETAIL_ACADEMIC: (academicId) => `/users?academicId=${academicId}`,
+        USER_DETAIL_ACADEMIC: (academicId) => `/users/academicId/${academicId}`,
         UPLOAD_PROFILE_PICTURE: (userId) => `/users/${userId}/profile-picture`,
 
         USER_ENROLLMENT_LIST: '/enrollments',
@@ -44,6 +44,12 @@ export const ROUTES = {
         SITE_EDIT: (siteId) => `/sites/${siteId}/edit`,
         SITE_DELETE: (siteId) => `/sites/${siteId}/delete`,
 
+        INSTITUTION_LIST: '/institutions',
+        INSTITUTION_CREATE: '/institutions/create',
+        INSTITUTION_DETAIL: (institutionId) => `/institutions/${institutionId}`,
+        INSTITUTION_EDIT: (institutionId) => `/institutions/${institutionId}/edit`,
+        INSTITUTION_DELETE: (institutionId) => `/institutions/${institutionId}/delete`,
+
         PROMOTION_LIST: '/promotions',
         PROMOTION_CREATE: '/promotions/create',
         PROMOTION_DETAIL: (promotionId) => `/promotions/${promotionId}`,
@@ -55,30 +61,6 @@ export const ROUTES = {
         PSD_DETAIL: (psdId) => `/promotion-site-details/${psdId}`,
         PSD_EDIT: (psdId) => `/promotion-site-details/${psdId}/edit`,
         PSD_DELETE: (psdId) => `/promotion-site-details/${psdId}/delete`,
-
-        REPORT_LIST: '/reports',
-        REPORT_CREATE: '/reports/create',
-        REPORT_DETAIL: (reportId) => `/reports/${reportId}`,
-        REPORT_EDIT: (reportId) => `/reports/${reportId}/edit`,
-        REPORT_DELETE: (reportId) => `/reports/${reportId}/delete`,
-
-        ANNOUNCEMENTS_LIST: '/announcements',
-        ANNOUNCEMENT_CREATE: '/announcements/create',
-        ANNOUNCEMENT_DETAIL: (announcementId) => `/announcements/${announcementId}`,
-        ANNOUNCEMENT_EDIT: (announcementId) => `/announcements/${announcementId}/edit`,
-        ANNOUNCEMENT_DELETE: (announcementId) => `/announcements/${announcementId}/delete`,
-
-        INSTITUTION_LIST: '/institutions',
-        INSTITUTION_CREATE: '/institutions/create',
-        INSTITUTION_DETAIL: (institutionId) => `/institutions/${institutionId}`,
-        INSTITUTION_EDIT: (institutionId) => `/institutions/${institutionId}/edit`,
-        INSTITUTION_DELETE: (institutionId) => `/institutions/${institutionId}/delete`,
-
-        SURVEY_LIST: '/surveys',
-        SURVEY_CREATE: '/surveys/create',
-        SURVEY_DETAIL: (surveyId) => `/surveys/${surveyId}`,
-        SURVEY_EDIT: (surveyId) => `/surveys/${surveyId}/edit`,
-        SURVEY_DELETE: (surveyId) => `/surveys/${surveyId}/delete`,
 
         INTERNSHIP_LIST: '/internships',
         INTERNSHIP_CREATE: '/internships/create',
@@ -97,5 +79,23 @@ export const ROUTES = {
         INTERNSHIP_DOCUMENT_DETAIL: (internshipId, documentId) => `/internships/${internshipId}/documents/${documentId}`,
         INTERNSHIP_DOCUMENT_EDIT: (internshipId, documentId) => `/internships/${internshipId}/documents/${documentId}/edit`,
         INTERNSHIP_DOCUMENT_DELETE: (internshipId, documentId) => `/internships/${internshipId}/documents/${documentId}/delete`,
+
+        ANNOUNCEMENTS_LIST: '/announcements',
+        ANNOUNCEMENT_CREATE: '/announcements/create',
+        ANNOUNCEMENT_DETAIL: (announcementId) => `/announcements/${announcementId}`,
+        ANNOUNCEMENT_EDIT: (announcementId) => `/announcements/${announcementId}/edit`,
+        ANNOUNCEMENT_DELETE: (announcementId) => `/announcements/${announcementId}/delete`,
+
+        SURVEY_LIST: '/surveys',
+        SURVEY_CREATE: '/surveys/create',
+        SURVEY_DETAIL: (surveyId) => `/surveys/${surveyId}`,
+        SURVEY_EDIT: (surveyId) => `/surveys/${surveyId}/edit`,
+        SURVEY_DELETE: (surveyId) => `/surveys/${surveyId}/delete`,
+
+        REPORT_LIST: '/reports',
+        REPORT_CREATE: '/reports/create',
+        REPORT_DETAIL: (reportId) => `/reports/${reportId}`,
+        REPORT_EDIT: (reportId) => `/reports/${reportId}/edit`,
+        REPORT_DELETE: (reportId) => `/reports/${reportId}/delete`,
     }
 }

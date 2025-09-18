@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { ROUTES } from '../config.js';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 
 import UserListPage from '../admin/features/users/pages/UserListPage.jsx';
@@ -35,6 +36,7 @@ import EnrollmentsListPage from '../admin/features/users/enrollments/pages/Enrol
 import ReportsListPage from '../admin/features/reports/pages/ReportsListPage.jsx';
 import ReportInfoPage from '../admin/features/reports/pages/ReportInfoPage.jsx';
 
+const toRel = (absPath) => absPath.replace(/^\//, '');
 
 function AdminRoutes() {
   return (
@@ -42,7 +44,7 @@ function AdminRoutes() {
       <Route element={<ProtectedRoute />}>
         {/* Users */}
         <Route path="users" element={<UserListPage />} />
-        <Route path="users/academic/:academicId" element={<UserInfoAdminPage />} />
+        <Route path="users/academicId/:academicId" element={<UserInfoAdminPage />} />
 
         {/* Promotions */}
         <Route path="promotions" element={<PromotionListPage />} />

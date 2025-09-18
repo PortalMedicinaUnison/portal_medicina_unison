@@ -57,12 +57,12 @@ async def get_internship_route(internship_id: int, db: Session = Depends(get_db)
             detail="Internado no encontrado")
     return internship
 
-@internship_router.get('?studentId={student_id}', response_model=List[InternshipOutput])
+@internship_router.get('/studentId={student_id}', response_model=List[InternshipOutput])
 async def get_internships_by_student_route(student_id: int, db: Session = Depends(get_db)):
     internships = get_internships_by_student(student_id, db)
     return internships
 
-@internship_router.get('?siteId={site_id}', response_model=List[InternshipOutput])
+@internship_router.get('/siteId={site_id}', response_model=List[InternshipOutput])
 async def get_internships_by_site_route(site_id: int, db: Session = Depends(get_db)):
     internships = get_internships_by_site(site_id, db)
     return internships
@@ -112,7 +112,7 @@ async def get_internship_application_route(application_id: int, db: Session = De
             detail="Aplicación no encontrada")
     return application
 
-@internship_application_router.get('?studentId={student_id}', response_model=List[InternshipApplicationOutput])
+@internship_application_router.get('/studentId={student_id}', response_model=List[InternshipApplicationOutput])
 async def get_internship_applications_by_student_route(student_id: int, db: Session = Depends(get_db)):
     applications = get_internship_applications_by_student(student_id, db)
     return applications
