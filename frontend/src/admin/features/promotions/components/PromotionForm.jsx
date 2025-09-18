@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useCreatePromotion from "../hooks/useCreatePromotion.js";
 import { ROUTES, adminAbs } from "../../../../config.js";
+import useCreatePromotion from "../hooks/useCreatePromotion.js";
 
 function PromotionForm() {
   const navigate = useNavigate();
