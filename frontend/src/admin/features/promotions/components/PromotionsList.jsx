@@ -31,6 +31,7 @@ function PromotionsList() {
     return promotions.filter((promotion) => {
       if (yearFilter && String(promotion.year) !== yearFilter) 
         return false;
+      
       if (statusFilter !== '') {
         const isFinished = statusFilter === 'true';
         if (promotion.is_finished !== isFinished) 

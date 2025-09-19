@@ -1,61 +1,84 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useGetAnnouncements from '../hooks/useGetAnnouncements';
+import useDeleteAnnouncement from '../hooks/useDeleteAnnouncement';
 import DropdownMenu from '../../../../utils/ui/DropdownMenu';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 
 function AnnouncementsList() {
   const navigate = useNavigate();
-  const { announcements, loading: listLoading, error: listError, refetch } = useGetAnnouncements();
+  const { announcements, loading: fetching, error: fetchError, refetch } = useGetAnnouncements();
+  const { deleteAnnouncement, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteAnnouncement();
 
+
+// ---------------------- FILTERS AND SEARCH ----------------------
+ 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   
+  const ANNOUNCEMENT_TYPES = {
+    1: 'General',
+    2: 'Pasantía'
+  };
+
   const getAnnouncementTypeName = (typeEnum) => {
-    if (typeEnum === 1) return 'General';
-    if (typeEnum === 2) return 'Pasantía';
+    return ANNOUNCEMENT_TYPES[typeEnum] || 'Desconocido';
   };
 
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
     return announcements.filter((announcement) => {
-      if (typeFilter !== '') {
-        const typeFilterNum = Number(typeFilter);
-        if (announcement.announcement_type !== typeFilterNum)
-          return false;
-      }
-      
-      if (statusFilter !== '') {
-        const isVisible = statusFilter === 'true';
-        if (announcement.is_visible !== isVisible) 
-          return false;
-      }
-
+      if (typeFilter !== '' && announcement.announcement_type !== Number(typeFilter)) return false;
+      if (statusFilter !== '' && announcement.is_visible !== (statusFilter === 'true')) return false;
       if (!searchQuery) return true;
-      return (
-        String(announcement.title).toLowerCase().includes(searchQuery) ||
-        String(announcement.description).toLowerCase().includes(searchQuery)
-      );
+
+      const title = String(announcement.title).toLowerCase();
+      const description = String(announcement.description).toLowerCase();
+      return title.includes(searchQuery) || description.includes(searchQuery);
     });
-  }, [announcements, searchQuery, statusFilter]);
+  }, [announcements, searchQuery, statusFilter, typeFilter]);
 
-  const handleViewButton = (id) => {
-    navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DETAIL(id)));
-  };
-    
-  const handleEditButton = (id) => {
-    navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_EDIT(id)));
-  };
-    
+
+// ---------------------- HANDLERS ----------------------
+
+  const handleViewButton = (id) => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DETAIL(id)));
+  const handleEditButton = (id) => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_EDIT(id)));
   const handleDeleteButton = (id) => {
-    navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DELETE(id)));
+    const userConfirmation = window.confirm('Este aviso se eliminará. ¿Deseas continuar?');
+    if (!userConfirmation) return;
+    deleteAnnouncement(id);
   };
 
-  if (listLoading) return <LoadingSpinner />;
-  if (listError) return <p>Error es: {String(listError)}</p>;
+// ---------------------- EFFECTS ----------------------
 
+  useEffect(() => {
+    if (deleted) {
+      refetch();
+      reset();
+    }
+  }, [deleted, refetch, reset]);
+
+  useEffect(() => {
+    if (deleteError) {
+      alert(`Error al eliminar el aviso: ${deleteError}`);
+      reset();
+    }
+  }, [deleteError, reset]);
+
+// ---------------------- LOADING & ERROR STATES ----------------------
+
+  if (fetching || deleting) {
+    return <LoadingSpinner />;
+  }
+
+  if (fetchError) {
+      alert(`Error al cargar los avisos: ${fetchError}. Favor de recargar la página para intentar de nuevo.`);
+  }
+  
+
+// ---------------------- RENDER ----------------------
   return (
     <div className="table-container">
       <div className="table-container-actions">
@@ -64,15 +87,15 @@ function AnnouncementsList() {
           className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por titulo o descripción"
+          placeholder="Buscar por título o descripción"
         />
          <select
           className="btn-tertiary--light"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
           aria-label="Filtrar ambito"
         >
-          <option value="">Ambito</option>
+          <option value="">Ámbito</option>
           <option value="1">General</option>
           <option value="2">Internado</option>
         </select>
@@ -92,23 +115,28 @@ function AnnouncementsList() {
         <table className="table">
           <thead>
             <tr>
-              <th colSpan={2}>Titulo</th>
-              <th colSpan={3}>Descripción</th>
-              <th>Ambito</th>
+              <th colSpan={3}>Título</th>
+              <th colSpan={4}>Descripción</th>
+              <th>Ámbito</th>
               <th>Estatus</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-          {filtered.length === 0 ? (
+            {filtered.length === 0 ? (
               <tr>
-                <td colSpan="8">No se encontraron avisos.</td>
+                <td colSpan="10">
+                  {search || statusFilter || typeFilter 
+                    ? 'No se encontraron avisos que coincidan con los filtros.' 
+                    : 'No hay avisos disponibles.'
+                  }
+                </td>
               </tr>
             ) : (
               filtered.map((item) => (
               <tr key={item.announcement_id}>
-                <td colSpan={2}>{item.title}</td>
-                <td colSpan={3} className='text-left'>{item.description}</td>
+                <td colSpan={3}>{item.title}</td>
+                <td colSpan={4} className="text-left">{item.description}</td>
                 <td>{getAnnouncementTypeName(item.announcement_type)}</td>
                 <td>{item.is_visible ? 'Activo' : 'Inactivo'}</td>
                 <td className="td-actions text-right">
@@ -118,6 +146,7 @@ function AnnouncementsList() {
                       { label: 'Editar', onClick: () => handleEditButton(item.announcement_id) },
                       { label: 'Eliminar', onClick: () => handleDeleteButton(item.announcement_id), className: 'text-red-600' },
                     ]}
+                    disabled={deleting}
                   />
                 </td>
               </tr>
