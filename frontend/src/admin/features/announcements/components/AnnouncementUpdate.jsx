@@ -4,6 +4,7 @@ import { ROUTES, adminAbs } from '../../../../config';
 import { useAnnouncement } from '../hooks/useAnnouncement';
 import useUpdateAnnouncement from '../hooks/useUpdateAnnouncement'
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../utils/ui/DataLoadError';
 
 
 const INITIAL_FORM = {
@@ -16,7 +17,7 @@ const INITIAL_FORM = {
 function AnnouncementUpdate() {
   const navigate = useNavigate();
   const { announcementId } = useParams();
-  const { announcement, loading: fetching, error: fetchError } = useAnnouncement(announcementId);
+  const { announcement, loading: fetching, error: fetchError, refetch } = useAnnouncement(announcementId);
   const { updateAnnouncement, loading: saving, error: saveError, success: saved, reset } = useUpdateAnnouncement();
 
   const [formData, setFormData] = useState(INITIAL_FORM);

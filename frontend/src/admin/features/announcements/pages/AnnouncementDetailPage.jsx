@@ -3,7 +3,7 @@
   import { useAnnouncement } from '../hooks/useAnnouncement';
   import Layout from "../../../../Layout";
   import PageLayout from '../../../../components/PageLayout';
-  import AnnouncementInfo from "../components/AnnouncementInfo";
+  import AnnouncementDetail from "../components/AnnouncementDetail";
 
 
   function AnnouncementPage() {
@@ -36,7 +36,7 @@
             title={pageTitle}
             actions={announcementActions}
           >
-            <AnnouncementInfo
+            <AnnouncementDetail
               announcement={announcement}
               fetching={fetching}
               fetchError={fetchError}
