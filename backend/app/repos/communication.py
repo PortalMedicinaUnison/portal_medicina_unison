@@ -25,7 +25,6 @@ class AnnouncementRepo(BaseRepo):
     def update(self, announcement_id: int, data: dict) -> Announcement:
         announcement = self.get_by_id(announcement_id)
         if announcement:
-            data = data.dict(exclude_unset=True)
             for key, value in data.items():
                 if hasattr(announcement, key):
                     setattr(announcement, key, value)

@@ -1,9 +1,8 @@
-// AnnouncementUpdate.jsx
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
+import { useAnnouncement } from '../hooks/useAnnouncement';
 import useUpdateAnnouncement from '../hooks/useUpdateAnnouncement'
-import useAnnouncement from '../hooks/useAnnouncement';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 
 
@@ -32,7 +31,7 @@ function AnnouncementUpdate() {
             [name]: type === 'checkbox' ? checked : value,
         }));
 
-        if (validationError) return setValidationError('');
+        if (validationError) setValidationError('');
             
     }, [validationError]);
 
@@ -190,4 +189,4 @@ function AnnouncementUpdate() {
     );
 }
 
-export default AnnouncementForm;
+export default AnnouncementUpdate;

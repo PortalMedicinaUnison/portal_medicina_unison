@@ -57,7 +57,7 @@ def get_user_router_by_academic(academic_id: str, db: Session = Depends(get_db))
             detail="Usuario no encontrado")
     return user
 
-@user_router.put("/{user_id}", response_model=UserOutput)
+@user_router.patch("/{user_id}", response_model=UserOutput)
 def update_user_router(user_id: int, user_input: UserInputUpdate, db: Session = Depends(get_db)):
     user = update_user(user_id, user_input, db)
     if not user:

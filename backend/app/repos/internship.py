@@ -88,9 +88,9 @@ class InternshipApplicationRepo(BaseRepo):
     def update(self, application_id: int, data: dict) -> Optional[InternshipApplication]:
         application = self.get_by_id(application_id)
         if application:
-            for k, v in data.items():
-                if hasattr(application, k):
-                    setattr(application, k, v)
+            for key, value in data.items():
+                if hasattr(application, key):
+                    setattr(application, key, value)
             self.session.commit()
             self.session.refresh(application)
         return application
@@ -128,9 +128,9 @@ class InternshipDocumentRepo(BaseRepo):
     def update(self, document_id: int, data: dict) -> Optional[InternshipDocument]:
         doc = self.get_by_id(document_id)
         if doc:
-            for k, v in data.items():
-                if hasattr(doc, k):
-                    setattr(doc, k, v)
+            for key, value in data.items():
+                if hasattr(doc, key):
+                    setattr(doc, key, value)
             self.session.commit()
             self.session.refresh(doc)
         return doc

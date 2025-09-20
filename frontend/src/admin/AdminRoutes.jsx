@@ -23,7 +23,7 @@ import InstitutionFormPage from '../admin/features/institutions/pages/Institutio
 import AnnouncementsListPage from '../admin/features/announcements/pages/AnnouncementsListPage.jsx';
 import AnnouncementFormPage from '../admin/features/announcements/pages/AnnouncementFormPage.jsx';
 import AnnouncementInfoPage from '../admin/features/announcements/pages/AnnouncementInfoPage.jsx';
-// import AnnouncementUpdatePage from '../admin/features/announcements/pages/AnnouncementUpdatePage.jsx';
+import AnnouncementUpdatePage from '../admin/features/announcements/pages/AnnouncementUpdatePage.jsx';
 
 import SurveysListPage from '../admin/features/surveys/pages/SurveysListPage.jsx';
 import SurveyFormPage from '../admin/features/surveys/pages/SurveysFormPage.jsx';
@@ -68,7 +68,7 @@ function AdminRoutes() {
         <Route path="announcements" element={<AnnouncementsListPage />} />
         <Route path="announcements/create" element={<AnnouncementFormPage />} />
         <Route path="announcements/:announcementId" element={<AnnouncementInfoPage />} />
-        {/* <Route path="announcements/:announcementId/edit" element={<AnnouncementUpdatePage />} /> */}
+        <Route path="announcements/:announcementId/edit" element={<AnnouncementUpdatePage />} />
 
         {/* Surveys */}
         <Route path="surveys" element={<SurveysListPage />} />
