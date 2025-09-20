@@ -1,61 +1,93 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import { useUser } from '../../../../contexts/UserContext';
 import useCreateAnnouncement from '../hooks/useCreateAnnouncement';
+import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 
+
+const form = {
+    title: '',
+    description: '',
+    announcement_type: 0,
+    is_visible: true,
+};
 
 function AnnouncementForm() {
     const navigate = useNavigate();
-    const { user, loading: userLoading, error: userError } = useUser();
-    const { createAnnouncement, loading: saving, error: saveError, success } = useCreateAnnouncement();
-
-    const form = {
-        title: '',
-        description: '',
-        announcement_type: 0,
-        is_visible: true,
-    }
+    const { user, loading: fetching, error: fetchError } = useUser();
+    const { createAnnouncement, loading: saving, success: saved, error: saveError, reset } = useCreateAnnouncement();
 
     const [formData, setFormData] = useState(form);
+    const [validationError, setValidationError] = useState('');
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+// ---------------------- HANDLERS ----------------------
+
+    const handleChange = useCallback((e) => {
+        const { name, value, type, checked } = e.target;
         setFormData(prevData => ({
             ...prevData,
-            [name]: value
+            [name]: type === 'checkbox' ? checked : value,
         }));
-    };
-    
+
+        if (validationError) return setValidationError('');
+            
+    }, [validationError]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!user) return;
-        
-        try {
-            await createAnnouncement({
-                ...formData,
-                created_by: user.user_id,
-        });
-            setFormData(form);
-            navigate(adminAbs(ROUTES.ADMIN.PROMOTION_LIST));
-        } catch (err) {   
-            console.error('Error creating announcement:', err);
+        if (fetching || !user) return;
+
+        const data = {
+            ...formData,
+            announcement_type: Number(formData.announcement_type),
+            created_by: user.user_id,
+        };
+
+        if (data.announcement_type === 0) {
+            setValidationError('Seleccione un tipo de anuncio válido.');
+            return;
         }
+
+        setValidationError('');
+        
+        await createAnnouncement(data);
     };
+// ---------------------- EFFECTS ----------------------
+
+    useEffect(() => {
+        if (saved) {
+            const redirectTimeout = setTimeout(() => {
+                setFormData(form);
+                reset();
+                navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST));
+            }, 1500);
+            return () => clearTimeout(redirectTimeout);
+        }
+    }, [saved, navigate, reset]);
+
+// ---------------------- LOADING & ERROR STATES ----------------------
+
+    if (fetching) return <LoadingSpinner />;
     
+// ---------------------- RENDER ----------------------
+
     return (
         <form className="component-container" onSubmit={handleSubmit}>
-            {success && (
-                <div className="alert-success-text">
+            {saved && (
+                <div className="alert-success">
                     Anuncio registrado exitosamente.
                 </div>
             )}
 
-            {(saveError || userError) && (
-                <div className="alert-footer-text">
+            {(validationError || saveError || fetchError ) && (
+
+                <div className="alert-error">
                     <strong className="font-bold">Error: </strong>
-                    <span className="block sm:inline">{saveError || userError}</span>
+                    <span className="block sm:inline">
+                        {validationError || saveError || fetchError}
+                    </span>
                 </div>
             )}
 
@@ -66,11 +98,11 @@ function AnnouncementForm() {
                             <dt className="item-header">Título</dt>
                             <dd className="item-text">
                                 <input
-                                    className="form-input--half"
-                                    name="title"
                                     type="text"
+                                    name="title"
                                     value={formData.title}
                                     onChange={handleChange}
+                                    className="form-input--half"
                                     placeholder="Título"
                                     disabled={saving}
                                     required
@@ -81,25 +113,25 @@ function AnnouncementForm() {
                             <dt className="item-header">Contenido</dt>
                             <dd className="item-text">
                                 <textarea
-                                    className="form-input--half"
                                     name="description"
                                     value={formData.description}
                                     onChange={handleChange}
-                                    placeholder="Descripción"
                                     rows="4"
+                                    className="form-input--half"
+                                    placeholder="Descripción"
                                     disabled={saving}
                                     required
                                 />
                             </dd>
                         </div>
                         <div className="item-row">
-                            <dt className="item-header">Alcance del anuncio</dt>
+                            <dt className="item-header">Ambito</dt>
                             <dd className="item-text">
                                 <select
-                                    className="form-input--half"
                                     name="announcement_type"
                                     value={formData.announcement_type}
                                     onChange={handleChange}
+                                    className="form-input--half"
                                     disabled={saving}
                                     required
                                 >
@@ -113,18 +145,17 @@ function AnnouncementForm() {
                             <dt className="item-header">Visible</dt>
                             <dd className="item-text">
                                 <input
-                                    className="form-checkbox"
-                                    name="is_visible"
                                     type="checkbox"
+                                    name="is_visible"
                                     checked={formData.is_visible}
                                     onChange={handleChange}
+                                    className="form-checkbox"
                                     disabled={saving}
                                 />
                             </dd>
                         </div>
                     </dl>
                 </div>
-
                 <div className="button-group">
                     <button 
                         type="button" 
@@ -137,6 +168,7 @@ function AnnouncementForm() {
                     <button 
                         type="submit" 
                         className="btn-primary"
+                        disabled={saving}
                     >
                         {saving ? 'Guardando...' : 'Guardar'}
                     </button>
