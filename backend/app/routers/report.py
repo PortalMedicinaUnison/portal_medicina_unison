@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
 from core.dependencies import get_db
 from typing import List
-from schemas.report import ReportInput, ReportOutput, ReportInputUpdate
+from schemas.report import ReportInput, ReportInputUpdate, ReportOutput
 from controllers.report import (
     create_report,
     get_report,
@@ -15,7 +15,7 @@ from controllers.report import (
 
 report_router = APIRouter(prefix="/reports", tags=["Reportes"])
 
-@report_router.post('/', response_model=ReportOutput, status_code=status.HTTP_201_CREATED)
+@report_router.post('/', response_model=ReportOutput)
 async def create_report_route(report: ReportInput, student_id: int, db: Session = Depends(get_db)):
     report = create_report(report, student_id, db)
     if not report:

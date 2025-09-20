@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from core.dependencies import get_db
 from typing import List
 from schemas.user import (
-    UserInput, UserEnrollmentInput, UserEnrollmentOutput,
-    UserInputUpdate, UserEnrollmentInputUpdate, UserOutput
+    UserInput, UserInputUpdate, UserOutput,
+    UserEnrollmentInput, UserEnrollmentInputUpdate, UserEnrollmentOutput
 )
 from controllers.user import (
     create_user,
@@ -25,7 +25,7 @@ from controllers.user import (
 
 user_router = APIRouter(prefix="/users", tags=["Usuarios"])
 
-@user_router.post("/", status_code=status.HTTP_201_CREATED)
+@user_router.post("/", response_model=UserOutput)
 def create_user_router(user_input: UserInput, db: Session = Depends(get_db)):
     user = create_user(user_input, db)
     if not user:
@@ -66,7 +66,7 @@ def update_user_router(user_id: int, user_input: UserInputUpdate, db: Session = 
             detail="Usuario no encontrado")
     return user
 
-@user_router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+@user_router.delete("/{user_id}")
 def delete_user_router(user_id: int, db: Session = Depends(get_db)):
     deleted = delete_user(user_id, db)
     if not deleted:
@@ -83,7 +83,7 @@ def upload_profile_picture_router(user_id: int, image: UploadFile = File(...), d
 
 user_enrollment_router = APIRouter(prefix="/enrollments", tags=["User Enrollments"])
 
-@user_enrollment_router.post("/", status_code=status.HTTP_201_CREATED)
+@user_enrollment_router.post("/", response_model=UserEnrollmentOutput)
 def create_user_enrollment_router(user_input: UserEnrollmentInput, db: Session = Depends(get_db)):
     user = create_user_enrollment(user_input, db)
     if not user:
@@ -106,7 +106,7 @@ def get_user_enrollment_router(enrollment_id: int, db: Session = Depends(get_db)
             detail="User enrollment no encontrado")
     return user
 
-@user_enrollment_router.put("/{enrollment_id}", response_model=UserEnrollmentOutput)
+@user_enrollment_router.patch("/{enrollment_id}", response_model=UserEnrollmentOutput)
 def update_user_enrollment_router(enrollment_id: int, user_input: UserEnrollmentInputUpdate, db: Session = Depends(get_db)):
     user = update_user_enrollment(enrollment_id, user_input, db)
     if not user:
@@ -115,7 +115,7 @@ def update_user_enrollment_router(enrollment_id: int, user_input: UserEnrollment
             detail="User enrollment no encontrado")
     return user
 
-@user_enrollment_router.delete("/{enrollment_id}", status_code=status.HTTP_204_NO_CONTENT)
+@user_enrollment_router.delete("/{enrollment_id}")
 def delete_user_enrollment_router(enrollment_id: int, db: Session = Depends(get_db)):
     deleted = delete_user_enrollment(enrollment_id, db)
     if not deleted:

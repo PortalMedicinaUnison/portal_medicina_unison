@@ -2,7 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from core.dependencies import get_db
 from typing import List
-from schemas.site import SiteInput, SiteOutput, InstitutionInput, InstitutionOutput
+from schemas.site import (
+    SiteInput, SiteInputUpdate, SiteOutput, 
+    InstitutionInput, InstitutionInputUpdate, InstitutionOutput
+)
 from controllers.site import (
     create_site,
     update_site,
@@ -20,9 +23,9 @@ from controllers.site import (
 
 # ----------------------  SITE  ----------------------
 
-site_router = APIRouter(prefix="/sites", tags=["Sitios"])
+site_router = APIRouter(prefix="/sites", tags=["Sites"])
 
-@site_router.post('/', response_model=SiteInput)
+@site_router.post('/', response_model=SiteOutput)
 async def create_site_route(site: SiteInput, db: Session = Depends(get_db)):
     site = create_site(site, db)
     if not site:
@@ -36,7 +39,7 @@ async def get_sites_route(db: Session = Depends(get_db)):
     sites =  get_all_sites(db)
     return sites
 
-@site_router.get('/{site_id}')
+@site_router.get('/{site_id}', response_model=SiteOutput)
 async def get_site_route(site_id: int, db: Session = Depends(get_db)):
     site =  get_site(site_id, db)
     if not site:
@@ -45,8 +48,8 @@ async def get_site_route(site_id: int, db: Session = Depends(get_db)):
             detail="Sitio no encontrado")
     return site
 
-@site_router.patch('/{site_id}', response_model=SiteInput)
-async def update_site_route(site_id: int, site: SiteInput, db: Session = Depends(get_db)):
+@site_router.patch('/{site_id}', response_model=SiteOutput)
+async def update_site_route(site_id: int, site: SiteInputUpdate, db: Session = Depends(get_db)):
     site =  update_site(site_id, site, db)
     if not site:
         raise HTTPException(
@@ -68,7 +71,7 @@ async def delete_site_route(site_id: int, db: Session = Depends(get_db)):
 
 institution_router = APIRouter(prefix="/institutions", tags=["Instituciones"])
 
-@institution_router.post('/', response_model=InstitutionInput)
+@institution_router.post('/', response_model=InstitutionOutput)
 async def create_institution_route(institution: InstitutionInput, db: Session = Depends(get_db)):
     institution = create_institution(institution, db)
     if not institution:
@@ -82,7 +85,7 @@ async def get_institutions_route(db: Session = Depends(get_db)):
     institutions =  get_all_institutions(db)
     return institutions
 
-@institution_router.get('/{institution_id}')
+@institution_router.get('/{institution_id}', response_model=InstitutionOutput)
 async def get_institution_route(institution_id: int, db: Session = Depends(get_db)):
     institution =  get_institution(institution_id, db)
     if not institution:
@@ -91,8 +94,8 @@ async def get_institution_route(institution_id: int, db: Session = Depends(get_d
             detail="Institución no encontrada")
     return institution
 
-@institution_router.patch('/{institution_id}', response_model=InstitutionInput)
-async def update_institution_route(institution_id: int, institution: InstitutionInput, db: Session = Depends(get_db)):
+@institution_router.patch('/{institution_id}', response_model=InstitutionOutput)
+async def update_institution_route(institution_id: int, institution: InstitutionInputUpdate, db: Session = Depends(get_db)):
     institution =  update_institution(institution_id, institution, db)
     if not institution:
         raise HTTPException(

@@ -34,7 +34,7 @@ from controllers.internship import (
 
 internship_router = APIRouter(prefix="/internships", tags=["Internados"])
 
-@internship_router.post('/', response_model=InternshipInput)
+@internship_router.post('/', response_model=InternshipOutput)
 async def create_internship_route(internship: InternshipInput, db: Session = Depends(get_db)):
     created_internship = create_internship(internship, db)
     if not created_internship:
@@ -67,8 +67,8 @@ async def get_internships_by_site_route(site_id: int, db: Session = Depends(get_
     internships = get_internships_by_site(site_id, db)
     return internships
 
-@internship_router.patch('/{internship_id}', response_model=InternshipUpdate)
-async def update_internship_route(internship_id: int, internship: InternshipInput, db: Session = Depends(get_db)):
+@internship_router.patch('/{internship_id}', response_model=InternshipOutput)
+async def update_internship_route(internship_id: int, internship: InternshipUpdate, db: Session = Depends(get_db)):
     updated_internship = update_internship(internship_id, internship, db)
     if not updated_internship:
         raise HTTPException(
@@ -89,7 +89,7 @@ async def delete_internship_route(internship_id: int, db: Session = Depends(get_
 
 internship_application_router = APIRouter(prefix="/internship-applications", tags=["Internship Applications"])
 
-@internship_application_router.post('/', response_model=InternshipApplicationInput)
+@internship_application_router.post('/', response_model=InternshipApplicationOutput)
 async def create_internship_application_route(internship_application: InternshipApplicationInput, db: Session = Depends(get_db)):
     created_application = create_internship_application(internship_application, db)
     if not created_application:
@@ -117,8 +117,8 @@ async def get_internship_applications_by_student_route(student_id: int, db: Sess
     applications = get_internship_applications_by_student(student_id, db)
     return applications
 
-@internship_application_router.patch('/{application_id}', response_model=InternshipApplicationUpdate)
-async def update_internship_application_route(application_id: int, application: InternshipApplicationInput, db: Session = Depends(get_db)):
+@internship_application_router.patch('/{application_id}', response_model=InternshipApplicationOutput)
+async def update_internship_application_route(application_id: int, application: InternshipApplicationUpdate, db: Session = Depends(get_db)):
     updated_application = update_internship_application(application_id, application, db)
     if not updated_application:
         raise HTTPException(
@@ -139,7 +139,7 @@ async def delete_internship_application_route(application_id: int, db: Session =
 
 internship_document_router = APIRouter(prefix="/internships", tags=["Documentos"])
 
-@internship_document_router.post('/{internship_id}/documents', response_model=InternshipDocumentInput)
+@internship_document_router.post('/{internship_id}/documents', response_model=InternshipDocumentOutput)
 async def create_internship_document_route(internship_document: InternshipDocumentInput, db: Session = Depends(get_db)):
     created_internship_document = create_internship_document(internship_document, db)
     if not created_internship_document:
@@ -162,8 +162,8 @@ async def get_internship_documents_by_id_route(internship_id: int, document_id: 
             detail="Documento de internado no encontrado")
     return internship_document
 
-@internship_document_router.patch('/{internship_id}/documents/{document_id}', response_model=InternshipDocumentUpdate)
-async def update_internship_document_route(internship_id: int, document_id: int, document: InternshipDocumentInput, db: Session = Depends(get_db)):
+@internship_document_router.patch('/{internship_id}/documents/{document_id}', response_model=InternshipDocumentOutput)
+async def update_internship_document_route(internship_id: int, document_id: int, document: InternshipDocumentUpdate, db: Session = Depends(get_db)):
     updated_document = update_internship_document(internship_id, document_id, document, db)
     if not updated_document:
         raise HTTPException(

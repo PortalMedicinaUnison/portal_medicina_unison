@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from core.dependencies import get_db
 from typing import List
 from schemas.communication import (
-    AnnouncementInput, AnnouncementOutput,
-    SurveyInput, SurveyOutput
+    AnnouncementInput, AnnouncementInputUpdate, AnnouncementOutput,
+    SurveyInput, SurveyInputUpdate, SurveyOutput
 )
 from controllers.communication import (
     create_announcement,
@@ -47,8 +47,8 @@ async def get_announcement_route(announcement_id: int, db: Session = Depends(get
             detail="Aviso no encontrado")
     return announcement
 
-@announcement_router.patch('/{announcement_id}', response_model=AnnouncementInput)
-async def update_announcement_route(announcement_id: int, announcement: AnnouncementInput, db: Session = Depends(get_db)):
+@announcement_router.patch('/{announcement_id}', response_model=AnnouncementOutput)
+async def update_announcement_route(announcement_id: int, announcement: AnnouncementInputUpdate, db: Session = Depends(get_db)):
     updated_announcement = update_announcement(announcement_id, announcement, db)
     if not updated_announcement:
         raise HTTPException(
@@ -93,7 +93,7 @@ async def get_survey_route(survey_id: int, db: Session = Depends(get_db)):
     return survey
 
 @survey_router.patch('/{survey_id}', response_model=SurveyOutput)
-async def update_survey_route(survey_id: int, survey: SurveyInput, db: Session = Depends(get_db)):
+async def update_survey_route(survey_id: int, survey: SurveyInputUpdate, db: Session = Depends(get_db)):
     updated_survey = update_survey(survey_id, survey, db)
     if not updated_survey:
         raise HTTPException(
