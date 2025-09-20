@@ -47,9 +47,7 @@ function AnnouncementDetail() {
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
-  if (fetching || deleting) {
-    return <LoadingSpinner />;
-  }
+  if (fetching) return <LoadingSpinner />;
 
   if (fetchError) {
     return (
@@ -105,7 +103,7 @@ function AnnouncementDetail() {
           className='btn-tertiary'
           onClick={handleDeleteButton}
         >
-          Eliminar Anuncio
+          {deleting ? 'Eliminando...' : 'Eliminar anuncio'}
         </button>
       </div>
     </div>        

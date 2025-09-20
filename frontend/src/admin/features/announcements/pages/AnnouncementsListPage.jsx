@@ -1,8 +1,8 @@
-import AnnouncementsList from '../components/AnnouncementsList';
-import Layout from '../../../../Layout';
-import PageLayout from '../../../../components/PageLayout';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
+import Layout from '../../../../Layout';
+import PageLayout from '../../../../components/PageLayout';
+import AnnouncementsList from '../components/AnnouncementsList';
 
 function AnnouncementsListPage() {
     const navigate = useNavigate();
