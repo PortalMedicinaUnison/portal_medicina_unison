@@ -1,4 +1,3 @@
-// AnnouncementsForm.jsx
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
@@ -30,6 +29,7 @@ function AnnouncementForm() {
         }));
 
         if (validationError) return setValidationError('');
+        if (saveError) return reset();
             
     }, [validationError]);
 
@@ -41,12 +41,17 @@ function AnnouncementForm() {
             announcement_type: Number(formData.announcement_type),
         };
 
-        if (data.announcement_type === 0) {
-            setValidationError('Seleccione un tipo de anuncio válido.');
+        // ---------------------- VALIDATIONS ----------------------
+        const errors = [];
+  
+        if (!data.title.trim()) errors.push('El título es requerido.');
+        if (!data.description.trim()) errors.push('La descripción es requerida.');
+        if (data.announcement_type === 0) errors.push('Seleccione un tipo de anuncio válido.');
+        
+        if (errors.length > 0) {
+            setValidationError(errors.join(' | '));
             return;
         }
-
-        setValidationError('');
         
         await createAnnouncement(data);
     };
@@ -58,13 +63,14 @@ function AnnouncementForm() {
                 setFormData(form);
                 reset();
                 navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST));
-            }, 1500);
+            }, 1000);
             return () => clearTimeout(redirectTimeout);
         }
     }, [saved, navigate, reset]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
+    if (saving) <LoadingSpinner message="Guardando anuncio..." />;
     
 // ---------------------- RENDER ----------------------
 
@@ -98,7 +104,7 @@ function AnnouncementForm() {
                                     value={formData.title}
                                     onChange={handleChange}
                                     className="form-input--half"
-                                    placeholder="Título"
+                                    placeholder="Título del anuncio"
                                     disabled={saving}
                                     required
                                 />
@@ -113,7 +119,7 @@ function AnnouncementForm() {
                                     onChange={handleChange}
                                     rows="4"
                                     className="form-input--half"
-                                    placeholder="Descripción"
+                                    placeholder="Descripción del anuncio"
                                     disabled={saving}
                                     required
                                 />
@@ -132,7 +138,7 @@ function AnnouncementForm() {
                                 >
                                     <option value={0}>Seleccione un tipo</option>
                                     <option value={1}>General</option>
-                                    <option value={2}>Internship</option>
+                                    <option value={2}>Internado</option>
                                 </select>
                             </dd>
                         </div>
