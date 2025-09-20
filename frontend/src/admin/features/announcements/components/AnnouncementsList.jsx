@@ -5,11 +5,16 @@ import useDeleteAnnouncement from '../hooks/useDeleteAnnouncement';
 import DropdownMenu from '../../../../utils/ui/DropdownMenu';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
+import Modal from '../../../../utils/ui/Modal';
+import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 
 
 function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
   const { deleteAnnouncement, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteAnnouncement();
+  
+  const [item, setItem] = useState(null);
+  const [showDialog, setShowDialog] = useState(false);
 
 // ---------------------- FILTERS AND SEARCH ----------------------
  
@@ -19,7 +24,7 @@ function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
   
   const ANNOUNCEMENT_TYPES = {
     1: 'General',
-    2: 'Pasantía'
+    2: 'Internado'
   };
 
   const getAnnouncementTypeName = (typeEnum) => {
@@ -45,9 +50,18 @@ function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
   const handleViewButton = (id) => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DETAIL(id)));
   const handleEditButton = (id) => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_EDIT(id)));
   const handleDeleteButton = (id) => {
-    const userConfirmation = window.confirm('Este aviso se eliminará. ¿Deseas continuar?');
-    if (!userConfirmation) return;
-    deleteAnnouncement(id);
+    setItem(id)
+    setShowDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    await deleteAnnouncement(item);
+    handleClose();
+  };
+
+  const handleClose = () => {
+    setShowDialog(false);
+    setItem(null);
   };
 
 // ---------------------- EFFECTS ----------------------
@@ -175,6 +189,19 @@ function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
           </tbody>
         </table>
       </div>
+
+      <Modal open={showDialog} onClose={handleClose}>
+        <ConfirmDialogContent
+          title="Confirmar eliminación"
+          message="¿Estás seguro de que deseas eliminar este anuncio?"
+          onConfirm={handleConfirmDelete}
+          primaryLabel="Eliminar"
+          secondaryLabel="Cancelar"
+          onCancel={handleClose}
+          danger
+        />
+      </Modal>
+      
     </div>
   );
 }

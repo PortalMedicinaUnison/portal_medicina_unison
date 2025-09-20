@@ -1,14 +1,16 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAnnouncement } from '../hooks/useAnnouncement';
 import useDeleteAnnouncement from '../hooks/useDeleteAnnouncement';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
+import Modal from '../../../../utils/ui/Modal';
+import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 
 
 const ANNOUNCEMENT_TYPES = {
   1: 'General',
-  2: 'Pasantía'
+  2: 'Internado'
 };
 
 const getAnnouncementTypeName = (typeEnum) => {
@@ -20,24 +22,31 @@ function AnnouncementDetail() {
   const { announcementId } = useParams();
   const { announcement, loading: fetching, error: fetchError, refetch } = useAnnouncement(announcementId);
   const { deleteAnnouncement, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteAnnouncement();
+  const [showDialog, setShowDialog] = useState(false);
 
 // ---------------------- HANDLERS ----------------------
 
-  const handleDeleteButton = () => {
-    const userConfirmation = window.confirm('Este aviso se eliminará. ¿Deseas continuar?');
-    if (!userConfirmation) return;
-    deleteAnnouncement(announcementId);
+  const handleDeleteButton = () => setShowDialog(true);
+
+  const handleConfirmDelete = async () => {
+    await deleteAnnouncement(announcementId);
+    handleClose();
   };
 
-// ---------------------- EFFECTS ----------------------
+  const handleClose = () => {
+    setShowDialog(false);
+  };  
 
+// ---------------------- EFFECTS ----------------------
+    
   useEffect(() => {
     if (deleted) {
       reset();
       navigate(-1);
     }
-  }, [deleted, refetch, reset]);
-    
+  }
+  , [deleted, navigate, reset]);
+
   useEffect(() => {
     if (deleteError) {
       alert(`Error al eliminar el aviso: ${deleteError}`);
@@ -96,6 +105,18 @@ function AnnouncementDetail() {
           </div>
         </dl>
       </div>
+
+      <Modal open={showDialog} onClose={handleClose}>
+        <ConfirmDialogContent
+          title="Confirmar eliminación"
+          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar este anuncio?"
+          onConfirm={handleConfirmDelete}
+          primaryLabel="Eliminar"
+          secondaryLabel="Cancelar"
+          onCancel={handleClose}
+          danger
+        />
+      </Modal>
 
       <div className="info-actions mt-16">
         <button 
