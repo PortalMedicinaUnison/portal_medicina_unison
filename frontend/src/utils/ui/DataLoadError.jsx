@@ -2,6 +2,7 @@ import React from 'react';
 
 function DataLoadError({
   title = 'No se pudieron cargar los datos',
+  titleClassName,
   message = 'Ocurrió un problema al obtener la información.',
   onRetry,                 // opcional: () => void
   retryLabel = 'Reintentar',
@@ -17,10 +18,11 @@ function DataLoadError({
       <div className="grid place-items-center w-full">
         <div className="text-center">
           <p className="text-base font-semibold text-indigo-600">ERROR</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-balance text-gray-900">
+          <h1 className={`text-3xl font-bold tracking-tight text-balance text-gray-900 ${titleClassName}`}>
+
             {title}
           </h1>
-          <p className="mt-6 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
+          <p className="mt-4 text-base font-light text-pretty text-gray-500">
             {message}
           </p>
 

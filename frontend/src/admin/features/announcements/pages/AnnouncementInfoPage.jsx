@@ -1,17 +1,21 @@
   import { useNavigate, useParams } from "react-router-dom";
   import { ROUTES, adminAbs } from "../../../../config";
   import { useAnnouncement } from '../hooks/useAnnouncement';
-  import AnnouncementInfo from "../components/AnnouncementInfo";
   import Layout from "../../../../Layout";
   import PageLayout from '../../../../components/PageLayout';
-  import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
-  import DataLoadError from '../../../../utils/ui/DataLoadError';
+  import AnnouncementInfo from "../components/AnnouncementInfo";
 
 
   function AnnouncementPage() {
-    const { announcementId } = useParams();
-    const { announcement, loading, error } = useAnnouncement(announcementId);
     const navigate = useNavigate();
+    const { announcementId } = useParams();
+    const { announcement, loading: fetching, error: fetchError, refetch } = useAnnouncement(announcementId);
+
+    const pageTitle = fetching
+    ? 'Cargando anuncio...'
+    : announcement
+      ? `📢 ${announcement.title}`
+      : ' ';
 
     const announcementActions = (
       <span className="show-on-sm">
@@ -19,23 +23,26 @@
           type="button"
           className="btn-primary"
           onClick={() => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_EDIT(announcementId)))}
+          disabled={fetching || fetchError}
         >
           Editar
         </button>
       </span>
     );
 
-    if (loading) return <Layout><LoadingSpinner /></Layout>;
-    if (error) return <Layout><div>{error}</div></Layout>;
-    if (!announcement) return <Layout><div>No se encontró el anuncio.</div></Layout>;
-
     return (
         <Layout>
           <PageLayout 
-            title={'📢 ' + announcement.title}
+            title={pageTitle}
             actions={announcementActions}
           >
-            <AnnouncementInfo/>
+            <AnnouncementInfo
+              announcement={announcement}
+              fetching={fetching}
+              fetchError={fetchError}
+              refetch={refetch}
+              announcementId={announcementId}
+            />
           </PageLayout>
         </Layout>
     );

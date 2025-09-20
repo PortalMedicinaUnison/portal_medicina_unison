@@ -68,6 +68,7 @@ function UpdateUserAdmin({ academicId, onClose, onSuccess }) {
               type="button"
               onClick={onClose}
               className="btn-secondary_full"
+              disabled={submitting}
             >
               Cancelar
             </button>
