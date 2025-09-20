@@ -8,7 +8,7 @@ export const getPromotionByIdRequest = (id) =>
   api.get(API_ENDPOINTS.PROMOTIONS.GET(id));
 
 export const updatePromotionRequest = (id, data) =>
-  api.put(API_ENDPOINTS.PROMOTIONS.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.PROMOTIONS.UPDATE(id), data);
 
 export const deletePromotionRequest = (id) =>
   api.delete(API_ENDPOINTS.PROMOTIONS.DELETE(id));
@@ -25,7 +25,7 @@ export const getPsdByIdRequest = (id) =>
   api.get(API_ENDPOINTS.PSD.GET(id));
 
 export const updatePsdRequest = (id, data) =>
-  api.put(API_ENDPOINTS.PSD.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.PSD.UPDATE(id), data);
 
 export const deletePsdRequest = (id) =>
   api.delete(API_ENDPOINTS.PSD.DELETE(id));

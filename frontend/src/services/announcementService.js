@@ -11,7 +11,7 @@ export const getAnnouncementByIdRequest = (id) =>
     api.get(API_ENDPOINTS.ANNOUNCEMENTS.GET(id));
 
 export const updateAnnouncementRequest = (id, data) =>
-    api.put(API_ENDPOINTS.ANNOUNCEMENTS.UPDATE(id), data);
+    api.patch(API_ENDPOINTS.ANNOUNCEMENTS.UPDATE(id), data);
 
 export const deleteAnnouncementRequest = (id) =>
     api.delete(API_ENDPOINTS.ANNOUNCEMENTS.DELETE(id));

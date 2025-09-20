@@ -8,7 +8,7 @@ export const getSurveyByIdRequest = (id) =>
     api.get(API_ENDPOINTS.SURVEYS.GET(id));
 
 export const updateSurveyRequest = (id, data) =>
-    api.put(API_ENDPOINTS.SURVEYS.UPDATE(id), data);
+    api.patch(API_ENDPOINTS.SURVEYS.UPDATE(id), data);
 
 export const deleteSurveyRequest = (id) =>
     api.delete(API_ENDPOINTS.SURVEYS.DELETE(id));

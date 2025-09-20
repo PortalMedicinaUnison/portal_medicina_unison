@@ -15,7 +15,7 @@ export const getUserByIdRequest = (id) =>
   api.get(API_ENDPOINTS.USERS.GET(id));
 
 export const updateUserRequest = (id, data) =>
-  api.put(API_ENDPOINTS.USERS.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.USERS.UPDATE(id), data);
 
 export const deleteUserRequest = (id) =>
   api.delete(API_ENDPOINTS.USERS.DELETE(id));
@@ -32,7 +32,7 @@ export const getUserEnrollmentByIdRequest = (id) =>
   api.get(API_ENDPOINTS.USER_ENROLLMENTS.GET(id));
 
 export const updateUserEnrollmentRequest = (id, data) =>
-  api.put(API_ENDPOINTS.USER_ENROLLMENTS.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.USER_ENROLLMENTS.UPDATE(id), data);
 
 export const deleteUserEnrollmentRequest = (id) =>
   api.delete(API_ENDPOINTS.USER_ENROLLMENTS.DELETE(id));
