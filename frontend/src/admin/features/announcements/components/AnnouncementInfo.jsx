@@ -5,20 +5,21 @@ import useDeleteAnnouncement from '../hooks/useDeleteAnnouncement';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 
+
+const ANNOUNCEMENT_TYPES = {
+  1: 'General',
+  2: 'Pasantía'
+};
+
+const getAnnouncementTypeName = (typeEnum) => {
+  return ANNOUNCEMENT_TYPES[typeEnum] || 'Desconocido';
+};
+
 function AnnouncementDetail() {    
   const navigate = useNavigate();
   const { announcementId } = useParams();
   const { announcement, loading: fetching, error: fetchError, refetch } = useAnnouncement(announcementId);
   const { deleteAnnouncement, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteAnnouncement();
-    
-  const ANNOUNCEMENT_TYPES = {
-    1: 'General',
-    2: 'Pasantía'
-  };
-
-  const getAnnouncementTypeName = (typeEnum) => {
-    return ANNOUNCEMENT_TYPES[typeEnum] || 'Desconocido';
-  };
 
 // ---------------------- HANDLERS ----------------------
 
@@ -28,7 +29,7 @@ function AnnouncementDetail() {
     deleteAnnouncement(announcementId);
   };
 
-  // ---------------------- EFFECTS ----------------------
+// ---------------------- EFFECTS ----------------------
 
   useEffect(() => {
     if (deleted) {
@@ -94,11 +95,6 @@ function AnnouncementDetail() {
           <div className="item-row">
             <dt className="item-header">Tipo de Anuncio</dt>
             <dd className="item-text">{getAnnouncementTypeName(announcement.announcement_type)}</dd>
-          </div>
-
-           <div className="item-row">
-            <dt className="item-header">Creado por</dt>
-            <dd className="item-text">{announcement.created_by}</dd>
           </div>
         </dl>
       </div>

@@ -65,7 +65,8 @@
 
     .component-container_header { @apply
         lg:flex 
-        lg:justify-between;
+        lg:justify-between
+        lg:gap-24
     }
       
     .component-container_header-content { @apply 

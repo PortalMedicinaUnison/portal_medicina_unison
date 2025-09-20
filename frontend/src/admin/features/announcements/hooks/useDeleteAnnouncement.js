@@ -17,6 +17,7 @@ export default function useDeleteAnnouncement() {
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error deleting announcement');
+      setSuccess(false);
     } finally {
       setLoading(false);
     }
