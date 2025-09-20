@@ -25,6 +25,7 @@ export default function useCreateAnnouncement() {
             setSuccess(true);
         } catch (err) {
             setError(err.response?.data?.detail || 'Error creating announcement');
+            setSuccess(false);
         } finally {
             setLoading(false);
         }

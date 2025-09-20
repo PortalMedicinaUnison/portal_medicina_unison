@@ -1,7 +1,7 @@
+// AnnouncementsForm.jsx
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
-import { useUser } from '../../../../contexts/UserContext';
 import useCreateAnnouncement from '../hooks/useCreateAnnouncement';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 
@@ -15,7 +15,6 @@ const form = {
 
 function AnnouncementForm() {
     const navigate = useNavigate();
-    const { user, loading: fetching, error: fetchError } = useUser();
     const { createAnnouncement, loading: saving, success: saved, error: saveError, reset } = useCreateAnnouncement();
 
     const [formData, setFormData] = useState(form);
@@ -37,12 +36,9 @@ function AnnouncementForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (fetching || !user) return;
-
         const data = {
             ...formData,
             announcement_type: Number(formData.announcement_type),
-            created_by: user.user_id,
         };
 
         if (data.announcement_type === 0) {
@@ -69,7 +65,6 @@ function AnnouncementForm() {
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
-    if (fetching) return <LoadingSpinner />;
     
 // ---------------------- RENDER ----------------------
 
@@ -81,12 +76,12 @@ function AnnouncementForm() {
                 </div>
             )}
 
-            {(validationError || saveError || fetchError ) && (
+            {(validationError || saveError) && (
 
                 <div className="alert-error">
                     <strong className="font-bold">Error: </strong>
                     <span className="block sm:inline">
-                        {validationError || saveError || fetchError}
+                        {validationError || saveError}
                     </span>
                 </div>
             )}
