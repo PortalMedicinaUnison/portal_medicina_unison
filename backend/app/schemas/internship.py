@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from models.internship import DocumentTypeEnum, InternshipStatusEnum
+from typing import Optional
 
 
 # ---------------------- INTERNSHIP APPLICATION ----------------------
@@ -9,7 +10,7 @@ class InternshipApplicationInput(BaseModel):
     is_accepted: bool
 
 class InternshipApplicationUpdate(BaseModel):
-    is_accepted: bool = None
+    is_accepted: Optional[bool] = None
 
 class InternshipApplicationOutput(BaseModel):
     application_id: int
@@ -26,11 +27,11 @@ class InternshipInput(BaseModel):
     status: InternshipStatusEnum
 
 class InternshipUpdate(BaseModel):
-    promotion_id: int = None
-    application_id: int = None
-    student_id: int = None
-    site_id: int = None
-    status: InternshipStatusEnum = None
+    promotion_id: Optional[int] = None
+    application_id: Optional[int] = None
+    student_id: Optional[int] = None
+    site_id: Optional[int] = None
+    status: Optional[InternshipStatusEnum] = None
 
 class InternshipOutput(BaseModel):
     internship_id: int
@@ -49,11 +50,11 @@ class InternshipDocumentInput(BaseModel):
     is_verified: bool = False
 
 class InternshipDocumentUpdate(BaseModel):
-    document_type: DocumentTypeEnum = None
-    path: str = None
+    document_type: Optional[DocumentTypeEnum] = None
+    path: Optional[str] = None
 
 class InternshipDocumentUpdateByAdmin(BaseModel):
-    is_verified: bool
+    is_verified: Optional[bool]
 
 class InternshipDocumentOutput(BaseModel):
     document_id: int

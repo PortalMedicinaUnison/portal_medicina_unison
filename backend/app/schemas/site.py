@@ -91,7 +91,7 @@ class InstitutionInput(BaseModel):
     name: str
 
 class InstitutionInputUpdate(BaseModel):
-    name: str
+    name: Optional[str]
 
 class InstitutionOutput(BaseModel):
     institution_id: int
