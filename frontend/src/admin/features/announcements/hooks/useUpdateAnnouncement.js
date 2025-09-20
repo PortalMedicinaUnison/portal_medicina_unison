@@ -19,6 +19,7 @@ export default function useUpdateAnnouncement() {
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error updating promotion');
+      setSuccess(false);
     } finally {
       setLoading(false);
     }

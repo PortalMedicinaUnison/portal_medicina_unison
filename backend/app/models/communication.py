@@ -20,7 +20,6 @@ class Announcement(BaseModel):
     announcement_type: Mapped[AnnouncementTypeEnum] = mapped_column(IntEnumType(AnnouncementTypeEnum), nullable=False)
     description: Mapped[str] = mapped_column(Text)
     is_visible: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-    created_by: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="SET NULL"), nullable=False)
     
     def __repr__(self):
         return f"<Announcement(created_by={self.created_by}, title={self.title}, announcement_type={self.announcement_type.name})>"
@@ -36,7 +35,6 @@ class Survey(BaseModel):
     description: Mapped[str] = mapped_column(Text)
     expiration_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     mandatory: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    created_by: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="SET NULL"), nullable=False)
 
     def __repr__(self):
         return f"<Survey(created_by={self.created_by}, title={self.title}, mandatory={self.mandatory})>"

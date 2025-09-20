@@ -12,7 +12,6 @@ class AnnouncementInput(BaseModel):
     announcement_type: AnnouncementTypeEnum
     description: Optional[str] = None
     is_visible: bool = True
-    created_by: int
 
 class AnnouncementInputUpdate(BaseModel):
     title: Optional[str] = None
@@ -26,7 +25,6 @@ class AnnouncementOutput(BaseModel):
     announcement_type: AnnouncementTypeEnum
     description: Optional[str] = None
     is_visible: bool = True
-    created_by: int
 
 # ---------------------- SURVEY ----------------------
 
@@ -36,7 +34,6 @@ class SurveyInput(BaseModel):
     description: Optional[str] = None
     expiration_date: date
     mandatory: bool
-    created_by: int
 
     @field_validator("expiration_date")
     def validate_expiration_date(cls, input_date: date) -> date:
@@ -63,4 +60,3 @@ class SurveyOutput(BaseModel):
     description: Optional[str] = None
     expiration_date: date
     mandatory: bool
-    created_by: int
