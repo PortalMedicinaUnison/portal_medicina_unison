@@ -1,16 +1,15 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
-import useGetAnnouncements from '../hooks/useGetAnnouncements';
 import useDeleteAnnouncement from '../hooks/useDeleteAnnouncement';
 import DropdownMenu from '../../../../utils/ui/DropdownMenu';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../utils/ui/DataLoadError';
 
-function AnnouncementsList() {
+
+function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
-  const { announcements, loading: fetching, error: fetchError, refetch } = useGetAnnouncements();
   const { deleteAnnouncement, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteAnnouncement();
-
 
 // ---------------------- FILTERS AND SEARCH ----------------------
  
@@ -69,12 +68,33 @@ function AnnouncementsList() {
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
-  if (fetching || deleting) {
-    return <LoadingSpinner />;
-  }
+  if (fetching) return <LoadingSpinner />;
 
   if (fetchError) {
-      alert(`Error al cargar los avisos: ${fetchError}. Favor de recargar la página para intentar de nuevo.`);
+    return (
+      <DataLoadError
+        title="No se pudo cargar el anuncio"
+        message="Intenta recargar la página."
+        details={fetchError}
+        onRetry={refetch}
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
+    );
+  }
+  
+  if (!announcements) {
+    return (
+      <DataLoadError
+        title="404"
+        titleClassName="text-5xl"
+        message="No se encontraron avisos."
+        onRetry={refetch}
+        retryLabel='Recargar'
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
+    );
   }
   
 
