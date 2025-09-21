@@ -601,6 +601,8 @@
         gap-4
         relative
         sm:rounded-lg
+        flex-grow
+        /* bg-gray-200 */
     }
 
     .table-container-actions { @apply 

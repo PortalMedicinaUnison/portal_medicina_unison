@@ -63,17 +63,17 @@ function Layout({ children }) {
         <Sidebar toggleSidebar={toggleSidebar} openToggleButton={isSidebarOpen} />
       </aside>
 
-      <div className="relative z-0 flex h-full min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-10 bg-token-bg-primary">
+      <div className="relative z-0 flex h-full min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="sticky top-0 z-10 shrink-0">
           <Navbar toggleSidebar={toggleSidebar} openToggleButton={!isSidebarOpen} />
         </header>
 
         <main
           id="main"
-          className="relative flex-1 overflow-auto"
+          className="relative flex-1 overflow-x-hidden overflow-y-auto min-h-0"
         >
-          <div id="thread" className="h-full w-full">
-            <div className="h-full">
+          <div id="thread" className="h-full w-full max-w-full min-w-0">
+            <div className="h-full w-full min-w-0">
               {children}
             </div>
           </div>
