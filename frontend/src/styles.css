@@ -61,6 +61,12 @@
         flex
         flex-col
         gap-16
+        my-4
+        mb-16
+        mx-8
+        rounded-lg
+        border
+        border-dashed
     }
 
     .component-container_header { @apply
