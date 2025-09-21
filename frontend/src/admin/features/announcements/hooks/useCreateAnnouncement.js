@@ -22,8 +22,9 @@ export default function useCreateAnnouncement() {
 
     try {
       const cleanedFormData = cleanFormData(formData);
-      await createAnnouncementRequest(cleanedFormData);
+      const response = await createAnnouncementRequest(cleanedFormData);
       setSuccess(true);
+      return response;
     } catch (err) {
       setError(err.response?.data?.detail || 'Error creating announcement');
       setSuccess(false);

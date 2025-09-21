@@ -11,15 +11,13 @@ function AnnouncementsListPage() {
   const { announcements, loading: fetching, error: fetchError, refetch } = useGetAnnouncements();
     
   const actions = (
-    <span className="show-on-sm">
-      <button
-        type="button"
-        className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_CREATE))}
-      >
-        Crear
-      </button>
-    </span>
+    <button
+      type="button"
+      className="btn-primary"
+      onClick={() => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_CREATE))}
+    >
+      Crear
+    </button>
   );
     
   return (

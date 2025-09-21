@@ -24,7 +24,7 @@ from controllers.communication import (
 
 announcement_router = APIRouter(prefix="/announcements", tags=["Avisos"])
 
-@announcement_router.post('/', response_model=AnnouncementInput)
+@announcement_router.post('/', response_model=AnnouncementOutput)
 async def create_announcement_route(announcement: AnnouncementInput, db: Session = Depends(get_db)):
     created_announcement = create_announcement(announcement, db)
     if not created_announcement:

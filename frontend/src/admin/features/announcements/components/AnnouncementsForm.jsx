@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useCreateAnnouncement from '../hooks/useCreateAnnouncement';
 
@@ -16,6 +16,7 @@ function AnnouncementForm() {
   const { createAnnouncement, loading: saving, success: saved, error: saveError, reset } = useCreateAnnouncement();
 
   const [formData, setFormData] = useState(INITIAL_FORM);
+  const [createdId, setCreatedId] = useState(null);
   const [validationError, setValidationError] = useState('');
 
 // ---------------------- HANDLERS ----------------------
@@ -52,21 +53,24 @@ function AnnouncementForm() {
       return;
     }
     
-    await createAnnouncement(data);
+    const response = await createAnnouncement(data);
+    if (response && response.data.announcement_id) {
+      setCreatedId(response.data.announcement_id);
+    }
   };
 
 // ---------------------- EFFECTS ----------------------
 
   useEffect(() => {
     if (saved) {
-      const redirectTimeout = setTimeout(() => {
-        setFormData(INITIAL_FORM);
+      setFormData(INITIAL_FORM);
+
+      const alertTimeout = setTimeout(() => {
         reset();
-        navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST));
-      }, 1000);
-      return () => clearTimeout(redirectTimeout);
+      }, 10000);
+      return () => clearTimeout(alertTimeout);
     }
-  }, [saved, navigate, reset]);
+  }, [saved, reset]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -77,7 +81,15 @@ function AnnouncementForm() {
     <form className="component-container" onSubmit={handleSubmit}>
       {saved && (
         <div className="alert-success">
-          Anuncio registrado exitosamente.
+          Anuncio registrado exitosamente.{' '}
+          {createdId && (
+            <Link
+              to={adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DETAIL(createdId))}
+              className="font-bold underline"
+            >
+              Ver anuncio
+            </Link>
+          )}
         </div>
       )}
 

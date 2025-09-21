@@ -77,14 +77,9 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
 
   useEffect(() => {
     if (saved) {
-      const redirectTimeout = setTimeout(() => {
-        setFormData(INITIAL_FORM);
-        navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST));
-        reset();
-      }, 1000);
-      return () => clearTimeout(redirectTimeout);
+      navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DETAIL(announcementId)));
     }
-  }, [saved, navigate, reset]);
+  }, [saved, navigate]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -120,12 +115,6 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
 
 return (
     <form className="component-container" onSubmit={handleSubmit}>
-      {saved && (
-        <div className="alert-success">
-          Anuncio registrado exitosamente.
-        </div>
-      )}
-
       {(validationError || saveError) && (
         <div className="alert-error">
           <strong className="font-bold">Error: </strong>
