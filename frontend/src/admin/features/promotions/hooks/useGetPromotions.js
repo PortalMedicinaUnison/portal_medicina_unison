@@ -3,8 +3,8 @@ import { getAllPromotionsRequest } from '../../../../services/promotionService';
 
 const useGetPromotions = () => {
   const [promotions, setPromotions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading]       = useState(false);
+  const [error, setError]           = useState(null);
 
   const fetchPromotions = async () => {
     setLoading(true);

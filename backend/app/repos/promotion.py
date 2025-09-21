@@ -1,28 +1,35 @@
 from .base import BaseRepo
 from models.promotion import Promotion, PromotionSiteDetail
 
-# ---------------  PROMOTION  ----------------------
+
+# ----------------------  PROMOTION  ----------------------
 
 class PromotionRepo(BaseRepo):
-    
     def create(self, data: Promotion) -> Promotion:
         self.session.add(data)
         self.session.commit()
         self.session.refresh(data)
         return data
     
-    def get_by_id(self, promotion_id: int) -> Promotion:
-        return self.session.query(Promotion).filter(Promotion.promotion_id == promotion_id).first()
+    def get_all(self) -> list[Promotion]:
+        return self.session.query(Promotion).filter(
+                Promotion.is_active == True
+            ).all()
     
-    def get_all(self):
-        return self.session.query(Promotion).filter(Promotion.is_active == True).all()
+    def get_by_id(self, promotion_id: int) -> Promotion:
+        return self.session.query(Promotion).filter(
+                Promotion.promotion_id == promotion_id,
+                Promotion.is_active == True,
+            ).first()
     
     def update(self, promotion_id: int, data: dict) -> Promotion:
         promotion = self.get_by_id(promotion_id)
         if promotion:
             for key, value in data.items():
-                setattr(promotion, key, value)
+                if hasattr(promotion, key):
+                    setattr(promotion, key, value)
             self.session.commit()
+            self.session.refresh(promotion)
         return promotion
     
     def delete(self, promotion_id: int) -> bool:
@@ -36,13 +43,17 @@ class PromotionRepo(BaseRepo):
 # ---------------  PROMOTION SITE DETAIL  ----------------------
 
 class PromotionSiteDetailRepo(BaseRepo):
-    
     def create(self, data: PromotionSiteDetail) -> PromotionSiteDetail:
         self.session.add(data)
         self.session.commit()
         self.session.refresh(data)
         return data
-    
+
+    def get_all(self) -> list[PromotionSiteDetail]:
+        return self.session.query(PromotionSiteDetail).filter(
+                PromotionSiteDetail.is_active == True
+            ).all()
+
     def get_by_id(self, psd_id: int) -> PromotionSiteDetail:
         return self.session.query(PromotionSiteDetail).filter(
                 PromotionSiteDetail.psd_id == psd_id,
@@ -60,17 +71,15 @@ class PromotionSiteDetailRepo(BaseRepo):
                 PromotionSiteDetail.site_id == site_id,
                 PromotionSiteDetail.is_active == True
             ).all()
-
-    def get_all(self):
-        return self.session.query(PromotionSiteDetail).filter(
-            PromotionSiteDetail.is_active == True).all()
     
     def update(self, psd_id: int, data: dict) -> PromotionSiteDetail:
         psd = self.get_by_id(psd_id)
         if psd:
             for key, value in data.items():
-                setattr(psd, key, value)
+                if hasattr(psd, key):
+                    setattr(psd, key, value)
             self.session.commit()
+            self.session.refresh(psd)
         return psd
     
     def delete(self, psd_id: int) -> bool:

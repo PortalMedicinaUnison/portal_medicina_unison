@@ -1,21 +1,32 @@
-from .user import PreRegisteredUser, User
-from .site import Site
+from .user import UserEnrollment, User
+from .site import Institution, Site
 from .promotion import Promotion, PromotionSiteDetail
-from .medical_record import MedicalRecord
-from .internship import InternshipEnrollment, Internship, InternshipDocument
-from .communication import Announcement, Survey, Report
+from .internship import InternshipApplication, Internship, InternshipDocument
+from .communication import Announcement, Survey
+from .report import Report
 
 __all__ = [
-    'PreRegisteredUser',
+    # User
+    'UserEnrollment',
     'User',
+
+    # Site
+    'Institution',
     'Site',
+
+    # Promotion
     'Promotion',
-    'PromotionSiteDetail'
-    'MedicalRecord',
-    'InternshipEnrollment',
+    'PromotionSiteDetail',
+
+    # Internship
+    'InternshipApplication',
     'Internship',
     'InternshipDocument',
+
+    # Communication
     'Announcement',
     'Survey',
+
+    # Report
     'Report',
 ]

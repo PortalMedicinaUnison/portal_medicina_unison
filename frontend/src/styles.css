@@ -5,9 +5,7 @@
 
 /* ------------------------------------------ */
 
-
 @layer components {
-
     .show-on-sm { @apply 
         hidden 
         sm:block;
@@ -21,13 +19,10 @@
         background-color: #e1b73d; 
     }
 
-    
-
     /* ------------- NO SIDEBAR ------------- */
 
     .no-sidebar-container { @apply 
         w-[calc(100vw-14rem)]
-
         transition-all
         duration-500  
     }
@@ -65,12 +60,13 @@
     .component-container { @apply 
         flex
         flex-col
-        gap-8
+        gap-16
     }
 
     .component-container_header { @apply
         lg:flex 
-        lg:justify-between;
+        lg:justify-between
+        lg:gap-24
     }
       
     .component-container_header-content { @apply 
@@ -117,23 +113,28 @@
         text-gray-500;
     }
 
-    .alert-footer-text { @apply 
-        text-xs
-        text-red-500;
-    }
-
-    .alert-success-text { @apply 
-        bg-green-100
-        text-xs
+    .alert-container { @apply 
+        flex
+        justify-center
         border
-        border-green-400
-        text-green-700
-        px-4
-        py-3
+        gap-2
+        p-4
         rounded
         relative
         mb-4
-        text-center;
+    }
+
+    .alert-error { @apply 
+        alert-container
+        bg-red-100
+        text-red-500;
+    }
+
+    .alert-success { @apply 
+        alert-container
+        bg-green-100
+        border-green-400
+        text-green-700
     }
 
     .page-title-2 { @apply 
@@ -154,8 +155,6 @@
         sm:tracking-tight
     }
 
-    
-
     /* ------------- FORMS ------------- */
 
     .form-label { @apply 
@@ -168,7 +167,7 @@
     .form-input { @apply 
         block
         min-w-0
-        grow
+        flex-grow
         py-2
         pr-2
         pl-2
@@ -185,8 +184,11 @@
     .form-input--sm { @apply 
         form-input
         max-w-xs
-        lg:max-w-sm
-        w-full
+    }
+
+    .form-select--sm { @apply 
+        form-input
+        max-w-[8rem]
     }
 
     .form-input--half { @apply 
@@ -258,7 +260,6 @@
         py-1.5
         text-sm
         font-normal
-        text-sm
         text-gray-900 
         ring-1 
         ring-gray-300 
@@ -280,7 +281,7 @@
 
     .btn-tertiary--light { @apply 
         btn-tertiary
-        font-normal
+        font-light
         text-gray-700
         px-0
     }
@@ -298,7 +299,6 @@
         gap: 1rem; 
         margin-top: 6rem;
     }
-    
 
     /* ------------- NAVBAR ------------- */
 
@@ -313,7 +313,6 @@
         w-full
         bg-white
         border-b
-
         px-4
         py-2
         lg:px-5
@@ -452,9 +451,7 @@
         transition
         duration-75
         rounded-lg
-        group-hover:bg-gray-100
-        dark:hover:text-white
-        dark:hover:bg-gray-500
+        hover:bg-gray-100
         pl-11
     }
 
@@ -603,6 +600,7 @@
     .table-container-actions { @apply 
         flex 
         justify-end
+        items-end
         gap-4
     }
 
@@ -613,10 +611,15 @@
 
     .table { @apply 
         w-full 
+        text-center
         text-sm 
-        text-left
         rtl:text-right
         border-collapse
+        /* table-fixed  */
+    }
+
+    .table thead { @apply 
+        bg-gray-50
     }
 
     .table tr { @apply
@@ -625,10 +628,16 @@
     }
 
     .table th, .table td { @apply 
+        text-sm
         px-6
-        py-2
+        py-1
         text-gray-900
         whitespace-nowrap
+        truncate
+    }
+
+    .table td.td-actions { @apply 
+        overflow-visible
     }
 
     .table th { @apply 
@@ -724,3 +733,33 @@
         overflow-y-auto
     }
 }
+
+/* ------------- 404 ------------- */
+
+  .card {
+    @apply max-w-xl w-full bg-white border border-gray-200 rounded-2xl p-6 shadow;
+  }
+
+  .card-header {
+    @apply text-left;
+  }
+
+  .card-badge {
+    @apply inline-block px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-800 mb-2;
+  }
+
+  .card-title {
+    @apply text-xl font-bold mb-1;
+  }
+
+  .card-message {
+    @apply text-gray-700 mb-3;
+  }
+
+  .card-details {
+    @apply mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 text-xs whitespace-pre-wrap;
+  }
+
+  .card-actions {
+    @apply mt-4 flex gap-2;
+  }

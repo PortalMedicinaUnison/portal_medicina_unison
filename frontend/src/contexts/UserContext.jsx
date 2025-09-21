@@ -1,6 +1,7 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { verifyTokenRequest } from '../services/authService';
 import { getUserByIdRequest } from '../services/userService';
+import { getToken, removeToken } from '../utils/auth';
 
 
 const UserContext = createContext();
@@ -12,52 +13,73 @@ const getUserRole = (user) => {
 };
 
 export function UserProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser]         = useState(null);
   const [userRole, setUserRole] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [error, setError]       = useState(null);
+  const [loading, setLoading]   = useState(true);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = sessionStorage.getItem("access_token");
-
-      if (!token) {
-        setError("No access token found");
-        setLoading(false);
-        return;
-      }
-        
-      try {
-        const verifyResponse = await verifyTokenRequest(token);
-        const userId = verifyResponse.data.user_info.user_id;
-        const userResponse = await getUserByIdRequest(userId);
-        const userData = userResponse.data;
-        const role = getUserRole(userData);
-        setUser(userData);
-        setUserRole(role);
-      } catch (error) {
-        setError("User not found");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  const clearUser = () => {
+  const clearUser = useCallback(() => {
     setUser(null);
     setUserRole(null);
     setError(null);
     setLoading(false);
-  };
+  }, []);
 
-  const hasRole = (role) => {
-    return userRole === role;
-  };
+  const hasRole = useCallback((role) => {
+    return userRole === role
+  }, [userRole]);
+
+  const fetchUser = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    const token = getToken();
+    if (!token) {
+      setError("No access token found");
+      setLoading(false);
+      return;
+    }
+      
+    try {
+      const verifyResponse = await verifyTokenRequest(token);
+      const userId = verifyResponse.data.user_info.user_id;
+      const userResponse = await getUserByIdRequest(userId);
+      const userData = userResponse.data;
+      setUser(userData);
+
+      const role = getUserRole(userData);
+      setUserRole(role);
+    } catch (err) {
+      removeToken();
+      setUser(null);
+      setUserRole(null);
+      setError("User not found");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+  
+  const reload = useCallback(() => fetchUser(), [fetchUser]);
+  
+  const value = useMemo(
+    () => ({
+      user,
+      userRole,
+      error,
+      loading,
+      clearUser,
+      hasRole,
+      reload,
+    }),
+    [user, userRole, error, loading, clearUser, hasRole, reload]
+  );
 
   return (
-    <UserContext.Provider value={{ user, clearUser, userRole, hasRole, error, loading }}>
+    <UserContext.Provider value={value}>
       {children}
     </UserContext.Provider>
   );

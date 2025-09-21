@@ -1,12 +1,13 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { usePromotion } from '../hooks/usePromotion';
-import useDeletePromotion from '../hooks/useDeletePromotion';
 import { ROUTES, adminAbs } from '../../../../config';
+import useDeletePromotion from '../hooks/useDeletePromotion';
 import PsdListReadOnly from '../promotionDetailSite/components/PsdListReadOnly';
+import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 
 function PromotionDetail() {
-    const { promotionId } = useParams();
     const navigate = useNavigate();
+    const { promotionId } = useParams();
     const { promotion, loading, error, refetch } = usePromotion(parseInt(promotionId));
     const { deletePromotion, loading: deleting, success: deleteSuccess, error: deleteError } = useDeletePromotion();
 
@@ -18,28 +19,14 @@ function PromotionDetail() {
         navigate(adminAbs(ROUTES.ADMIN.PROMOTION_LIST), { replace: true });
       };
 
+    if (loading) return <LoadingSpinner />;
+    if (error) return <p>Error es: {String(error)}</p>;
+
     return (
         <div>
-            {loading && (
-                <span className="text-xs text-gray-500">Cargando información de la promoción...</span>
-            )}
-
-            {error && (
-                <div className="error-container">
-                    <div className="error-message">
-                        <h3>Error al cargar la promoción</h3>
-                        <p>{error}</p>
-                        <button 
-                            className="btn-primary" 
-                            onClick={() => navigate('/promotions')}
-                        >
-                            Volver a la lista
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {promotion ? (
+            {!promotion ? (
+                <p>No se encontró la promoción.</p>
+            ) : (
                 <div className="info-container">
                     <div className="item-container">
                         <dl className="item-list">
@@ -74,8 +61,6 @@ function PromotionDetail() {
                         </button>
                     </div>
                 </div>
-            ) : !loading && (
-                <span className="text-xs text-gray-500">Promoción no encontrada</span>
             )}
         </div>
     );

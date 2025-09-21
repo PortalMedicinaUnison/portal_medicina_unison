@@ -34,10 +34,12 @@ export default function Modal({ open, title, onClose, children }) {
         className="rounded-2xl p-0 border outline-none w-[min(92vw,40rem)] max-w-full"
       >
         <div className="p-6 space-y-6">
-          <h3 id={titleId} className="text-lg font-semibold">{title}</h3>
-  
-          <div>{children}</div>
-  
+          <h3 id={titleId} className="text-lg font-semibold">
+            {title}
+          </h3>
+          <div>
+            {children}
+          </div>
         </div>
       </dialog>
     );

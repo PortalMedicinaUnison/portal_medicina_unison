@@ -6,7 +6,7 @@ import usePromotionUpdate from "../hooks/useUpdatePromotion";
 import PsdList from '../promotionDetailSite/components/PsdList';
 
 import PsdForm from '../promotionDetailSite/components/PsdForm'
-import Modal from '../../../../utils/utils-components'
+import Modal from '../../../../utils/ui/Modal'
 
 function PromotionUpdate() {
   const navigate = useNavigate();

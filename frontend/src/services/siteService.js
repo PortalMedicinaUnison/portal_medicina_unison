@@ -8,7 +8,7 @@ export const getSiteByIdRequest = (id) =>
   api.get(API_ENDPOINTS.SITES.GET(id));
 
 export const updateSiteRequest = (id, data) =>
-  api.put(API_ENDPOINTS.SITES.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.SITES.UPDATE(id), data);
 
 export const deleteSiteRequest = (id) =>
   api.delete(API_ENDPOINTS.SITES.DELETE(id));
@@ -25,7 +25,7 @@ export const getInstitutionByIdRequest = (id) =>
   api.get(API_ENDPOINTS.INSTITUTIONS.GET(id));
 
 export const updateInstitutionRequest = (id, data) =>
-  api.put(API_ENDPOINTS.INSTITUTIONS.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.INSTITUTIONS.UPDATE(id), data);
 
 export const deleteInstitutionRequest = (id) =>
   api.delete(API_ENDPOINTS.INSTITUTIONS.DELETE(id));

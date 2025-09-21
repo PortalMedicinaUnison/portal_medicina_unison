@@ -37,12 +37,18 @@
               </tr>
             </thead>
             <tbody>
-              {filtered.map((item) => (
-                <tr key={item.psd_id}>
-                  <td>{item.site.name}</td>
-                  <td>{item.capacity}</td>
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan="8">No se encontraron instituciones.</td>
                 </tr>
-              ))}
+              ) : (
+                filtered.map((item) => (
+                  <tr key={item.psd_id}>
+                    <td>{item.site.name}</td>
+                    <td>{item.capacity}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

@@ -1,20 +1,32 @@
-from .user import PreRegisteredUserRepo, UserRepo, AdminRepo, StudentRepo
-from .site import SiteRepo
-from .internship import InternshipRepo, InternshipEnrollmentRepo
-from .communication import AnnouncementRepo, SurveyRepo, ReportRepo
+from .user import UserEnrollmentRepo, UserRepo
+from .site import SiteRepo, InstitutionRepo
 from .promotion import PromotionRepo, PromotionSiteDetailRepo
+from .internship import InternshipRepo, InternshipApplicationRepo, InternshipDocumentRepo
+from .communication import AnnouncementRepo, SurveyRepo
+from .report import ReportRepo
 
 __all__ = [
-    "PreRegisteredUserRepo",
+    # User
+    "UserEnrollmentRepo",
     "UserRepo",
-    "AdminRepo",
-    "StudentRepo",
+
+    # Site
     "SiteRepo",
+    "InstitutionRepo",
+
+    # Promotion
     "PromotionRepo",
     "PromotionSiteDetailRepo",
+
+    # Internship
     "InternshipRepo",
-    "InternshipEnrollmentRepo",
+    "InternshipApplicationRepo",
+    "InternshipDocumentRepo",
+
+    # Communication
     "AnnouncementRepo",
     "SurveyRepo",
+
+    # Report
     "ReportRepo",
 ]

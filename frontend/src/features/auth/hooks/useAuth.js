@@ -8,7 +8,7 @@ import { ROUTES } from '../../../config';
 export default function useAuth() {
   const [error, setError] = useState(null);
   const [authenticated, setAuthenticated] = useState(isAuthenticated());
-  const { clearUser } = useUser();
+  const { clearUser, reload } = useUser();
   const navigate = useNavigate();
 
   
@@ -18,6 +18,7 @@ export default function useAuth() {
     try {
       const response = await loginRequest(credentials);
       setToken(response.data.access_token);
+      await reload();
       setAuthenticated(true);
       navigate(ROUTES.HOME);
       return true;

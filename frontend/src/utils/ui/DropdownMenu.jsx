@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 
-function DropdownMenu({ actions }) {
+function DropdownMenu({ icon, actions }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -29,6 +29,15 @@ function DropdownMenu({ actions }) {
     setIsOpen(false);
   };
 
+  const DefaultIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+         fill="currentColor" className="h-5 w-5">
+      <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM18 10a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+  );
+
+  const triggerIcon = typeof icon === 'function' ? icon({ isOpen }) : icon;
+
   return (
     <div ref={menuRef} className="relative inline-block text-left">
       <button
@@ -36,12 +45,10 @@ function DropdownMenu({ actions }) {
         onClick={() => setIsOpen(prev => !prev)}
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        className="p-2 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
-        title="Acciones"
+        className="p-2 rounded hover:bg-gray-100"
+        title="Drop menu"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
-          <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM18 10a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
+        {triggerIcon || <DefaultIcon />}
       </button>
 
       {isOpen && (
@@ -53,7 +60,7 @@ function DropdownMenu({ actions }) {
             <button
               key={index}
               role="menuitem"
-              className={`block w-full px-3 py-2 text-left text-sm ${action.className || 'hover:bg-gray-50'}`}
+              className={`block w-full px-3 py-2 text-left text-sm hover:bg-gray-50 ${action.className}`}
               onClick={() => handleActionClick(action.onClick)}
             >
               {action.label}

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../../../../api';
-
+import { getAllSitesRequest } from '../../../../../services/siteService'; 
 
 const useGetSites = () => {
   const [sites, setSites] = useState([]);
@@ -10,13 +9,13 @@ const useGetSites = () => {
   const fetchSites = async () => {
     setLoading(true);
     setError(null);
-    
     try {
-      const response = await api.get('/sites');
+      const response = await getAllSitesRequest();
       setSites(response.data);
     } catch (err) {
-      setError(err.message);
       console.error('Error fetching sites:', err);
+      setError(err?.message);
+      return false;
     } finally {
       setLoading(false);
     }
