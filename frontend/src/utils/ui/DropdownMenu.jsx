@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 
-function DropdownMenu({ icon, actions }) {
+function DropdownMenu({ icon, actions, hover = true }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -45,7 +45,7 @@ function DropdownMenu({ icon, actions }) {
         onClick={() => setIsOpen(prev => !prev)}
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        className="p-2 rounded hover:bg-gray-100"
+        className={`p-2 rounded ${hover ? 'hover:bg-gray-100' : ''}`}
         title="Drop menu"
       >
         {triggerIcon || <DefaultIcon />}
@@ -60,7 +60,7 @@ function DropdownMenu({ icon, actions }) {
             <button
               key={index}
               role="menuitem"
-              className={`block w-full px-3 py-2 text-left text-sm hover:bg-gray-50 ${action.className}`}
+              className={`block w-full px-3 py-2 text-left text-xs hover:bg-gray-50 ${action.className}`}
               onClick={() => handleActionClick(action.onClick)}
             >
               {action.label}
