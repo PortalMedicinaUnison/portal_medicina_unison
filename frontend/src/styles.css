@@ -19,84 +19,6 @@
         background-color: #e1b73d; 
     }
 
-    /* ------------- NO SIDEBAR ------------- */
-
-    .no-sidebar-container { @apply 
-        w-[calc(100vw-14rem)]
-        transition-all
-        duration-500  
-    }
-
-    .main-container { @apply 
-        h-full
-        right-0
-        transition-all
-        duration-500
-    }
-
-    .main-content { @apply 
-        flex
-        flex-col
-        my-4
-        mb-16
-        mx-8        
-        rounded-lg
-        text-sm/6
-        font-light
-        /* border */
-        /* border-dashed */
-        /* text-[13px] */
-    }
-
-    .main-content-header { @apply 
-        p-4 
-        border-b
-    }
-
-    .main-content-body { @apply 
-        p-4
-    }
-
-    .component-container { @apply 
-        flex
-        flex-col
-        gap-16
-        my-4
-        mb-16
-        mx-8
-        rounded-lg
-        border
-        border-dashed
-    }
-
-    .component-container_header { @apply
-        lg:flex 
-        lg:justify-between
-        lg:gap-24
-    }
-      
-    .component-container_header-content { @apply 
-        min-w-0 
-        flex-1
-    }
-
-    .component-container-pretitle { @apply 
-        mt-1 
-        flex 
-        flex-col 
-        sm:mt-0 
-        sm:flex-row 
-        sm:flex-wrap 
-        sm:space-x-6
-    }
-
-    .component-container_actions { @apply 
-        flex
-        lg:mt-0 
-        lg:ml-4
-        items-end
-    }
-
     .login-title { @apply 
         text-center
         text-3xl
@@ -141,24 +63,6 @@
         bg-green-100
         border-green-400
         text-green-700
-    }
-
-    .page-title-2 { @apply 
-        text-2xl
-        font-semibold
-        text-gray-900
-        sm:truncate
-        sm:text-2xl
-        sm:tracking-tight
-    }
-
-    .page-title-1 { @apply 
-        text-2xl/7 
-        font-bold 
-        text-gray-900 
-        sm:truncate 
-        sm:text-3xl 
-        sm:tracking-tight
     }
 
     /* ------------- FORMS ------------- */
@@ -599,10 +503,7 @@
         flex
         flex-col
         gap-4
-        relative
-        sm:rounded-lg
-        flex-grow
-        /* bg-gray-200 */
+        bg-gray-200
     }
 
     .table-container-actions { @apply 
