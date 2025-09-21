@@ -149,28 +149,28 @@ function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
         <table className="table">
           <thead>
             <tr>
-              <th colSpan={3}>Título</th>
-              <th colSpan={4}>Descripción</th>
-              <th>Ámbito</th>
-              <th>Estatus</th>
-              <th></th>
+              <th className='w-3/12'>Título</th>
+              <th className='w-4/12'>Descripción</th>
+              <th className='w-2/12'>Ámbito</th>
+              <th className='w-2/12'>Estatus</th>
+              <th className='w-1/12'></th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan="10">
-                  {search || statusFilter || typeFilter 
-                    ? 'No se encontraron avisos que coincidan con los filtros.' 
-                    : 'No hay avisos disponibles.'
+                <td colSpan={5} className="text-center py-6">
+                {search || statusFilter || typeFilter 
+                  ? 'No se encontraron avisos que coincidan con los filtros.' 
+                  : 'No hay avisos disponibles.'
                   }
                 </td>
               </tr>
             ) : (
               filtered.map((item) => (
               <tr key={item.announcement_id}>
-                <td colSpan={3}>{item.title}</td>
-                <td colSpan={4} className="text-left">{item.description}</td>
+                <td>{item.title}</td>
+                <td className="text-left">{item.description}</td>
                 <td>{getAnnouncementTypeName(item.announcement_type)}</td>
                 <td>{item.is_visible ? 'Activo' : 'Inactivo'}</td>
                 <td className="td-actions text-right">
