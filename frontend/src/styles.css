@@ -615,7 +615,7 @@
         text-sm 
         rtl:text-right
         border-collapse
-        table-fixed 
+        /* table-fixed  */
     }
 
     .table thead { @apply 
