@@ -30,7 +30,7 @@ function AnnouncementForm() {
     if (validationError) return setValidationError('');
     if (saveError) return reset();
             
-  }, [validationError]);
+  }, [validationError, saveError, reset]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +60,7 @@ function AnnouncementForm() {
   useEffect(() => {
     if (saved) {
       const redirectTimeout = setTimeout(() => {
-        setFormData(form);
+        setFormData(INITIAL_FORM);
         reset();
         navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST));
       }, 1000);
