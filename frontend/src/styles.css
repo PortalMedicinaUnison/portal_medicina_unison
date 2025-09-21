@@ -500,10 +500,8 @@
 
 
     .table-container { @apply 
-        flex
-        flex-col
-        gap-4
-        bg-gray-200
+        w-full min-w-0 max-w-full
+        flex flex-col gap-4      
     }
 
     .table-container-actions { @apply 
@@ -514,21 +512,21 @@
     }
 
     .table-container-body { @apply 
-        text-sm
-        text-gray-900
+        overflow-x-auto overflow-y-hidden
+        text-sm text-gray-900
     }
 
     .table { @apply 
-        w-full 
-        text-center
-        text-sm 
-        rtl:text-right
+        w-full
+        text-sm text-center
         border-collapse
-        /* table-fixed  */
+        md:table-fixed
     }
 
     .table thead { @apply 
         bg-gray-50
+        sticky top-0 z-10
+        font-semibold
     }
 
     .table tr { @apply
@@ -537,28 +535,11 @@
     }
 
     .table th, .table td { @apply 
-        text-sm
         px-6
         py-1
-        text-gray-900
-        whitespace-nowrap
         truncate
-    }
-
-    .table td.td-actions { @apply 
-        overflow-visible
-    }
-
-    .table th { @apply 
-        font-semibold
-    }
-
-    .table-action { @apply 
-        font-medium
-        text-blue-600 
-        dark:text-blue-500 
-        hover:underline
-    }
+        max-w-xs
+    } 
 
     .dropdown-menu { @apply 
         absolute 
