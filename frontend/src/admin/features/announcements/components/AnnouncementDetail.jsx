@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAnnouncement } from '../hooks/useAnnouncement';
+import { useNavigate } from 'react-router-dom';
 import useDeleteAnnouncement from '../hooks/useDeleteAnnouncement';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
@@ -17,11 +16,10 @@ const getAnnouncementTypeName = (typeEnum) => {
   return ANNOUNCEMENT_TYPES[typeEnum] || 'Desconocido';
 };
 
-function AnnouncementDetail() {    
+function AnnouncementDetail({ announcement, fetching, fetchError, refetch, announcementId }) {    
   const navigate = useNavigate();
-  const { announcementId } = useParams();
-  const { announcement, loading: fetching, error: fetchError, refetch } = useAnnouncement(announcementId);
   const { deleteAnnouncement, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteAnnouncement();
+  
   const [showDialog, setShowDialog] = useState(false);
 
 // ---------------------- HANDLERS ----------------------

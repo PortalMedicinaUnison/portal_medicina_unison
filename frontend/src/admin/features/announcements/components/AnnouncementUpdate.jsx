@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
-import { useAnnouncement } from '../hooks/useAnnouncement';
 import useUpdateAnnouncement from '../hooks/useUpdateAnnouncement'
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
@@ -14,10 +13,8 @@ const INITIAL_FORM = {
   is_visible: true,
 };
 
-function AnnouncementUpdate() {
+function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, announcementId }) {
   const navigate = useNavigate();
-  const { announcementId } = useParams();
-  const { announcement, loading: fetching, error: fetchError, refetch } = useAnnouncement(announcementId);
   const { updateAnnouncement, loading: saving, error: saveError, success: saved, reset } = useUpdateAnnouncement();
 
   const [formData, setFormData] = useState(INITIAL_FORM);
@@ -35,7 +32,7 @@ function AnnouncementUpdate() {
     if (validationError) return setValidationError('');
     if (saveError) return reset();
             
-  }, [validationError]);
+  }, [validationError, saveError, reset]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,8 +69,8 @@ function AnnouncementUpdate() {
       setFormData({
         title: announcement.title || '',
         description: announcement.description || '',
-        announcement_type: announcement.announcement_type || 0,
-        is_visible: announcement.is_visible || true,
+        announcement_type: announcement.announcement_type ?? 0,
+        is_visible: announcement.is_visible ?? true,
       });
     }
   }, [announcement]);
@@ -81,9 +78,9 @@ function AnnouncementUpdate() {
   useEffect(() => {
     if (saved) {
       const redirectTimeout = setTimeout(() => {
-        setFormData(form);
-        reset();
+        setFormData(INITIAL_FORM);
         navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST));
+        reset();
       }, 1000);
       return () => clearTimeout(redirectTimeout);
     }
