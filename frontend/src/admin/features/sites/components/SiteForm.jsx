@@ -209,7 +209,6 @@ function SiteForm() {
                   value={formData.teachingDeputyName}
                   onChange={handleChange}
                   placeholder="Nombre"
-                  required
                 />
               </dd>
             </div>

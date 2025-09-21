@@ -1,133 +1,84 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
-from repos.communication import AnnouncementRepo, SurveyRepo, ReportRepo
-from models.communication import Announcement, Survey, Report, AnnouncementTypeEnum
-from schemas.communication import AnnouncementInput, SurveyInput, ReportInput
-from utils.utils import orm_to_dict
+from repos.communication import AnnouncementRepo, SurveyRepo
+from models.communication import Announcement, Survey
+from schemas.communication import (
+    AnnouncementInput, AnnouncementInputUpdate,
+    SurveyInput, SurveyInputUpdate)
+from utils.utils import orm_to_dict, map_to_model
 
-# ----------------------  Announcement  ----------------------
+
+# ---------------------- ANNOUCEMENT ----------------------
 
 def create_announcement(announcement: AnnouncementInput, db: Session):
-    new_announcement = Announcement(
-        title = announcement.title,
-        announcement_type = announcement.announcement_type,
-        description = announcement.description,
-        created_by = announcement.created_by
-    )
+    new_announcement = map_to_model(announcement, Announcement)
     announcement_repo = AnnouncementRepo(db)
     created_announcement = announcement_repo.create(new_announcement)
     announcement_response = orm_to_dict(created_announcement)
     return announcement_response
 
+def get_all_announcements(db: Session):
+    announcement_repo = AnnouncementRepo(db)
+    announcements = announcement_repo.get_all()
+    if not announcements:
+        return []
+    announcements_response = [orm_to_dict(announcement) for announcement in announcements]
+    return announcements_response
+
 def get_announcement(announcement_id: int, db: Session):
     announcement_repo = AnnouncementRepo(db)
     announcement = announcement_repo.get_by_id(announcement_id)
-    if announcement is None:
+    if not announcement:
         return None
     announcement_response = orm_to_dict(announcement)
     return announcement_response
 
-def get_announcements_by_type(announcement_type: AnnouncementTypeEnum, db: Session):
+def update_announcement(announcement_id: int, announcement: AnnouncementInputUpdate, db: Session):
+    update_data = announcement.dict(exclude_unset=True)
     announcement_repo = AnnouncementRepo(db)
-    announcements = announcement_repo.get_by_type(announcement_type)
-    announcements_response = [orm_to_dict(announcement) for announcement in announcements]
-    return announcements_response
-
-def get_all_announcements(db: Session):
-    announcement_repo = AnnouncementRepo(db)
-    announcements = announcement_repo.get_all()
-    announcements_response = [orm_to_dict(announcement) for announcement in announcements]
-    return announcements_response
-
-def update_announcement(announcement_id: int, announcement: AnnouncementInput, db: Session):
-    pass
+    updated_announcement = announcement_repo.update(announcement_id, update_data)
+    if not updated_announcement:
+        return None
+    updated_announcement_response = orm_to_dict(updated_announcement)
+    return updated_announcement_response
     
 def delete_announcement(announcement_id: int, db: Session):
     announcement_repo = AnnouncementRepo(db)
     return announcement_repo.delete(announcement_id)
 
-# ----------------------  Survey  ----------------------
+# ---------------------- SURVEY ----------------------
 
 def create_survey(survey: SurveyInput, db: Session):
-    new_survey = Survey(
-        created_by = survey.created_by,
-        title = survey.title,
-        web_link = str(survey.web_link),
-        description = survey.description,
-        expiration_date = survey.expiration_date,
-        mandatory = survey.mandatory
-    )
+    new_survey = map_to_model(survey, Survey)
     survey_repo = SurveyRepo(db)
     created_survey = survey_repo.create(new_survey)
     survey_response = orm_to_dict(created_survey)
     return survey_response
 
+def get_all_surveys(db: Session):
+    survey_repo = SurveyRepo(db)
+    surveys = survey_repo.get_all()
+    if not surveys:
+        return []
+    surveys_response = [orm_to_dict(survey) for survey in surveys]
+    return surveys_response
+
 def get_survey(survey_id: int, db: Session):
     survey_repo = SurveyRepo(db)
     survey = survey_repo.get_by_id(survey_id)
-    if survey is None:
+    if not survey:
         return None
     survey_response = orm_to_dict(survey)
     return survey_response
 
-def get_surveys_by_mandatory(mandatory: bool, db: Session):
+def update_survey(survey_id: int, survey: SurveyInputUpdate, db: Session):
+    update_data = survey.dict(exclude_unset=True)
     survey_repo = SurveyRepo(db)
-    surveys = survey_repo.get_by_mandatory(mandatory)
-    surveys_response = [orm_to_dict(survey) for survey in surveys]
-    return surveys_response
-
-def get_all_surveys(db: Session):
-    survey_repo = SurveyRepo(db)
-    surveys = survey_repo.get_all()
-    surveys_response = [orm_to_dict(survey) for survey in surveys]
-    return surveys_response
-
-def update_survey(survey_id: int, survey: SurveyInput, db: Session):
-    pass
+    updated_survey = survey_repo.update(survey_id, update_data)
+    if not updated_survey:
+        return None
+    updated_survey_response = orm_to_dict(updated_survey)
+    return updated_survey_response
     
 def delete_survey(survey_id: int, db: Session):
     survey_repo = SurveyRepo(db)
     return survey_repo.delete(survey_id)
-
-
-# ----------------------  Report  ----------------------
-
-def create_report(report: ReportInput, db: Session):
-    new_report = Report(
-        student_id = report.student_id,
-        internship_id = report.internship_id,
-        date = report.date,
-        site = report.site,
-        report_type = report.report_type,
-        other_type = report.other_type,
-        description = report.description,
-        evidence = report.evidence,
-        anonymity = report.anonymity,
-        is_open = report.is_open,
-        admin_comment = report.admin_comment
-    )
-    report_repo = ReportRepo(db)
-    created_report = report_repo.create(new_report)
-    report_response = orm_to_dict(created_report)
-    return report_response
-
-def get_report(report_id: int, db: Session):
-    report_repo = ReportRepo(db)
-    report = report_repo.get_by_id(report_id)
-    if report is None:
-        return None
-    report_response = orm_to_dict(report)
-    return report_response
-
-def get_reports_by_mandatory(mandatory: bool, db: Session):
-    report_repo = ReportRepo(db)
-    reports = report_repo.get_by_mandatory(mandatory)
-    reports_response = [orm_to_dict(report) for report in reports]
-    return reports_response
-
-def update_report(report_id: int, report: ReportInput, db: Session):
-    pass
-    
-def delete_report(report_id: int, db: Session):
-    report_repo = ReportRepo(db)
-    return report_repo.delete(report_id)

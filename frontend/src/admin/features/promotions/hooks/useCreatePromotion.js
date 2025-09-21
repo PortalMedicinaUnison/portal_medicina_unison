@@ -22,8 +22,7 @@ export default function useCreatePromotion() {
       setSuccess(true);
       return true;
     } catch (err) {
-      console.error("Register failed", err);
-      setError('Error al registrar la promoción. Por favor, intenta nuevamente.');
+      setError('Register failed');
       return false;
     }
   };

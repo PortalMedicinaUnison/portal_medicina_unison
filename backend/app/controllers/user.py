@@ -1,92 +1,81 @@
-from fastapi import HTTPException, status, Depends, Request
 from sqlalchemy.orm import Session
-from core.dependencies import get_db
-from repos.user import UserRepo, PreRegisteredUserRepo
-from models.user import User, PreRegisteredUser
-from schemas.user import UserInput, PreRegisteredUserInput, UserInputUpdate, PreRegisteredUserInputUpdate
+from repos.user import UserRepo, UserEnrollmentRepo
+from models.user import User, UserEnrollment
+from schemas.user import (
+    UserEnrollmentInput, UserEnrollmentInputUpdate,
+    UserInput, UserInputUpdate
+)
 from utils.security import hash_password
-from utils.utils import orm_to_dict
+from utils.utils import orm_to_dict, map_to_model
 
 
-# ----------------------  Pre-Registered Users  ----------------------
+# ---------------------- USER ENROLLMENT ----------------------
 
-def create_pre_registered_user(user_input: PreRegisteredUserInput, db: Session) -> dict:
-    academic_id_int = int(user_input.academic_id)
-    new_pre_user = PreRegisteredUser(
-        academic_id=academic_id_int,
-        assigned_year=user_input.assigned_year,
-        assigned_period=user_input.assigned_period,
-    )
-    pre_registered_repo = PreRegisteredUserRepo(db)
-    created_pre_user = pre_registered_repo.create(new_pre_user)
-    pre_user_response = orm_to_dict(created_pre_user)
-    return pre_user_response
+def create_user_enrollment(user_input: UserEnrollmentInput, db: Session) -> dict:
+    new_user_enrollment = map_to_model(user_input, UserEnrollment)
+    user_enrollment_repo = UserEnrollmentRepo(db)
+    created_user_enrollment = user_enrollment_repo.create(new_user_enrollment)
+    user_enrollment_response = orm_to_dict(created_user_enrollment)
+    return user_enrollment_response
 
-def get_pre_registered_user(academic_id: int, db: Session) -> dict:
-    pre_registered_repo = PreRegisteredUserRepo(db)
-    pre_user = pre_registered_repo.get_by_academic_id(academic_id)
-    if not pre_user:
+def get_all_user_enrollments(db: Session):
+    user_enrollment_repo = UserEnrollmentRepo(db)
+    user_enrollments = user_enrollment_repo.get_all()
+    if not user_enrollments:
+        return []
+    user_enrollments_response = [orm_to_dict(user) for user in user_enrollments]
+    return user_enrollments_response
+
+def get_user_enrollment(enrollment_id: int, db: Session) -> dict:
+    user_enrollment_repo = UserEnrollmentRepo(db)
+    user_enrollment = user_enrollment_repo.get_by_id(enrollment_id)
+    if not user_enrollment:
         return None
-    pre_user_response = orm_to_dict(pre_user)
-    return pre_user_response
+    user_enrollment_response = orm_to_dict(user_enrollment)
+    return user_enrollment_response
 
-def update_pre_registered_user(academic_id: int, user_input: PreRegisteredUserInputUpdate, db: Session) -> dict:
-    all_data = user_input.dict()
-    update_data = {key: value for key, value in all_data.items() if value is not None}
-
-    pre_registered_repo = PreRegisteredUserRepo(db)
-    updated_user = pre_registered_repo.update(academic_id, update_data)
+def update_user_enrollment(enrollment_id: int, user_input: UserEnrollmentInputUpdate, db: Session) -> dict:
+    update_data = user_input.dict(exclude_unset=True)
+    user_enrollment_repo = UserEnrollmentRepo(db)
+    updated_user = user_enrollment_repo.update(enrollment_id, update_data)
     if not updated_user:
         return None
-    return {
-        "pre_registered_id": updated_user.pre_registered_id,
-        "academic_id": updated_user.academic_id,
-        "assigned_year": updated_user.assigned_year,
-        "assigned_period": updated_user.assigned_period,
-    }
+    user_enrollment_response = orm_to_dict(updated_user)
+    return user_enrollment_response
 
-def delete_pre_registered_user(academic_id: int, db: Session) -> bool:
-    pre_registered_repo = PreRegisteredUserRepo(db)
-    return pre_registered_repo.delete(academic_id)
+def delete_user_enrollment(enrollment_id: int, db: Session) -> bool:
+    user_enrollment_repo = UserEnrollmentRepo(db)
+    return user_enrollment_repo.delete(enrollment_id)
 
-def get_all_pre_registered_users(db: Session):
-    user_pre_registered_repo = PreRegisteredUserRepo(db)
-    pre_registered_users = user_pre_registered_repo.get_all()
-
-    if not pre_registered_users:
-        return None
-
-    pre_registered_users_reponse = [orm_to_dict(user) for user in pre_registered_users]
-    return pre_registered_users_reponse
-
-# ----------------------  Users  ----------------------
+# ---------------------- USER ----------------------
 
 def create_user(user_input: UserInput, db: Session) -> dict:
-    """
-    Transforma el objeto Pydantic validado en un modelo ORM, llama al Repository para crear
-    el usuario y luego transforma el objeto ORM resultante en un diccionario para la respuesta.
-    """
-    # Pydantic --> ORM
-    hashed_password = hash_password(user_input.password)
-    new_user = User(
-        academic_id=user_input.academic_id,
-        first_name=user_input.first_name,
-        last_name=user_input.last_name,
-        second_last_name=user_input.second_last_name,
-        email=user_input.email,
-        password=hashed_password,
-        profile_photo=user_input.profile_photo,
-        is_admin=user_input.is_admin,
-        is_super_admin=user_input.is_super_admin,
-    )
+    user_input.password = hash_password(user_input.password)
+    new_user = map_to_model(user_input, User)
     user_repo = UserRepo(db)
     created_user = user_repo.create(new_user)
     user_response = orm_to_dict(created_user, exclude=["password"])
     return user_response
 
+def get_all_users(db: Session):
+    user_repo = UserRepo(db)
+    users = user_repo.get_all()
+    if not users:
+        return []
+    user_reponse = [orm_to_dict(user) for user in users]
+    return user_reponse
+
 def get_user(user_id: int, db: Session) -> dict:
     user_repo = UserRepo(db)
     user = user_repo.get_by_id(user_id)
+    if not user:
+        return None
+    user_response = orm_to_dict(user)
+    return user_response
+
+def get_user_by_academic_id(academic_id: int, db: Session):
+    user_repo = UserRepo(db)
+    user = user_repo.get_by_academic_id(academic_id)
     if not user:
         return None
     user_response = orm_to_dict(user)
@@ -98,26 +87,11 @@ def update_user(user_id: int, user_input: UserInputUpdate, db: Session) -> dict:
     updated_user = user_repo.update(user_id, update_data)
     if not updated_user:
         return None
-    return {
-        "user_id": updated_user.user_id,
-        "first_name": updated_user.first_name,
-        "last_name": updated_user.last_name,
-        "second_last_name": updated_user.second_last_name,
-        "email": updated_user.email,
-        "profile_photo": updated_user.profile_photo,
-        "is_admin": updated_user.is_admin,
-        "is_super_admin": updated_user.is_super_admin,
-    }
+    user_response = orm_to_dict(updated_user)
+    return user_response
 
 def delete_user(user_id: int, db: Session) -> bool:
     user_repo = UserRepo(db)
     return user_repo.delete(user_id)
 
-def get_all_users(db: Session):
-    user_repo = UserRepo(db)
-    users = user_repo.get_all()
-    if not users:
-        return None
-    user_reponse = [orm_to_dict(user) for user in users]
-    return user_reponse
     

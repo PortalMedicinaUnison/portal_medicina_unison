@@ -1,50 +1,47 @@
 from pydantic import BaseModel
 from models.internship import DocumentTypeEnum, InternshipStatusEnum
-from utils.validation import is_valid_period, is_valid_year
-from typing import Optional, List
+from typing import Optional
 
 
-#-------------- ENROLLMENTS ------------------
+# ---------------------- INTERNSHIP APPLICATION ----------------------
 
-class InternshipEnrollmentInput(BaseModel):
+class InternshipApplicationInput(BaseModel):
     student_id: int
     is_accepted: bool
 
-class InternshipEnrollmentUpdate(BaseModel):
-    is_accepted: bool = None
+class InternshipApplicationUpdate(BaseModel):
+    is_accepted: Optional[bool] = None
 
-class InternshipEnrollmentOutput(BaseModel):
-    enrollment_id: int
+class InternshipApplicationOutput(BaseModel):
+    application_id: int
     student_id: int
     is_accepted: bool
 
-
-#-------------- INTERNSHIPS ------------------
+# ---------------------- INTERNSHIP ----------------------
 
 class InternshipInput(BaseModel):
     promotion_id: int
-    enrollment_id: int
+    application_id: int
     student_id: int
     site_id: int
     status: InternshipStatusEnum
 
 class InternshipUpdate(BaseModel):
-    promotion_id: int = None
-    enrollment_id: int = None
-    student_id: int = None
-    site_id: int = None
-    status: InternshipStatusEnum = None
+    promotion_id: Optional[int] = None
+    application_id: Optional[int] = None
+    student_id: Optional[int] = None
+    site_id: Optional[int] = None
+    status: Optional[InternshipStatusEnum] = None
 
 class InternshipOutput(BaseModel):
     internship_id: int
     promotion_id: int
-    enrollment_id: int
+    application_id: int
     student_id: int
     site_id: int
     status: InternshipStatusEnum
 
-
-#-------------- DOCUMENTS ------------------
+# ---------------------- INTERNSHIP DOCUMENT ----------------------
 
 class InternshipDocumentInput(BaseModel):
     internship_id: int
@@ -53,9 +50,11 @@ class InternshipDocumentInput(BaseModel):
     is_verified: bool = False
 
 class InternshipDocumentUpdate(BaseModel):
-    document_type: DocumentTypeEnum = None
-    path: str = None
-    is_verified: bool = None
+    document_type: Optional[DocumentTypeEnum] = None
+    path: Optional[str] = None
+
+class InternshipDocumentUpdateByAdmin(BaseModel):
+    is_verified: Optional[bool]
 
 class InternshipDocumentOutput(BaseModel):
     document_id: int

@@ -1,96 +1,106 @@
-  import { useState } from 'react';
-  import { useNavigate } from 'react-router-dom';
-  import { ROUTES, adminAbs } from '../../../../../config';
-  import useGetPsds from '../hooks/useGetPsds';
-  import useDeletePsd from '../hooks/useDeletePsd';
+import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES, adminAbs } from '../../../../../config';
+import useGetPsds from '../hooks/useGetPsds';
+import useDeletePsd from '../hooks/useDeletePsd';
+import DropdownMenu from '../../../../../utils/ui/DropdownMenu';
+import LoadingSpinner from '../../../../../utils/ui/LoadingSpinner';
 
-  function PsdList() {
-    const navigate = useNavigate();
-    const { psds, loading: listLoading, error: listError, refetch } = useGetPsds();
-    const { deletePsd, loading: deleting, success: deleteSuccess, error: deleteError } = useDeletePsd();
-    const [search, setSearch] = useState('');
 
-    const handleViewButton = (id) => {
-      navigate(adminAbs(ROUTES.ADMIN.PSD_DETAIL(id)));
-    };
+function PsdList() {
+  const navigate = useNavigate();
+  const { psds, loading: listLoading, error: listError, refetch } = useGetPsds();
+  const { deletePsd, loading: deleting, success: deleteSuccess, error: deleteError } = useDeletePsd();
+  
+  const [search, setSearch] = useState('');
 
-    const handleEditButton = (id) => {
-      navigate(adminAbs(ROUTES.ADMIN.PSD_EDIT(id)));
-    };
-
-    const handleDeleteButton = async (id) => {
-      const userConfirmation = window.confirm('Este registro se eliminará. ¿Deseas continuar?');
-      if (!userConfirmation) return;
-
-      await deletePsd(id);
-      await refetch();
-    };
-
-    const filtered = psds.filter((psd) => {
-      const searchQuery = search.trim().toLowerCase();
-      if (!searchQuery) return true;
-      return (
-        String(psd.site_id).toLowerCase().includes(searchQuery)
-      );
-    });
-
-    if (listLoading) return <p>Cargando registros…</p>;
-    if (listError) return <p>Error es: {String(listError)}</p>;
-
+  const searchQuery = search.trim().toLowerCase();
+  const filtered = useMemo(() => {
+    return psds.filter((psd) => {
+    if (!searchQuery) return true;
     return (
-      <div className="table-container">
-        <div className="table-container-actions">
-          <input
-            className="form-input--sm"
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por sede"
-          />
-        </div>
+      String(psd.site.name).toLowerCase().includes(searchQuery)
+    );
+  });
+  }, [psds, searchQuery]);
 
-        <div className="table-container-body">
-          <table className="table">
-            <thead className="text-xs text-gray-700 bg-gray-50">
+  const handleViewButton = (id) => {
+    navigate(adminAbs(ROUTES.ADMIN.PSD_DETAIL(id)));
+  };
+
+  const handleEditButton = (id) => {
+    navigate(adminAbs(ROUTES.ADMIN.PSD_EDIT(id)));
+  };
+
+  const handleDeleteButton = async (id) => {
+    const userConfirmation = window.confirm('Este registro se eliminará. ¿Deseas continuar?');
+    if (!userConfirmation) return;
+    await deletePsd(id);
+    await refetch();
+  };
+
+  if (listLoading) return <LoadingSpinner />;
+  if (listError) return <p>Error es: {String(listError)}</p>;
+
+  return (
+    <div className="table-container">
+      <div className="table-container-actions">
+        <input
+          type="text"
+          className="form-input--sm"
+          placeholder="Buscar sede"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          aria-label="Buscar"
+        />
+      </div>
+
+      <div className="table-container-body">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Sede</th>
+              <th>Capacidad</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 ? (
               <tr>
-                <th>Sede</th>
-                <th>Capacidad</th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <td colSpan="8">No se encontraron instituciones.</td>
               </tr>
-            </thead>
-            <tbody>
-              {filtered.map((item) => (
+            ) : (
+              filtered.map((item) => (
                 <tr key={item.psd_id}>
                   <td>{item.site.name}</td>
                   <td>{item.capacity}</td>
-                  <td>
-                    <button className="item-link" onClick={() => handleViewButton(item.psd_id)}>
-                      Ver
-                    </button>
-                  </td>
-                  <td>
-                    <button className="item-link" onClick={() => handleEditButton(item.psd_id)}>
-                      Editar
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      className="table-action"
-                      onClick={() => handleDeleteButton(item.psd_id)}
-                      disabled={deleting}
-                    >
-                      {deleting ? 'Borrando…' : 'Borrar'}
-                    </button>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td className="td-actions text-right">
+                    <DropdownMenu actions={
+                      [
+                        { label: 'Ver', onClick: () => handleViewButton(item.promotion_id) },
+                        { label: 'Editar', onClick: () => handleEditButton(item.promotion_id) },
+                        { label: 'Eliminar', onClick: () => handleDeleteButton(item.promotion_id), className: 'text-red-600' },
+                      ]
+                    } />
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-  export default PsdList;
+export default PsdList;

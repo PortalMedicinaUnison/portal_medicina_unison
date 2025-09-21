@@ -1,4 +1,4 @@
-from fastapi import Request, Depends, HTTPException
+from fastapi import Request, HTTPException
 from datetime import timedelta, datetime, timezone
 import jwt
 from core.settings import settings

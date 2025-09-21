@@ -1,112 +1,98 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../../../api';
 import { ROUTES, adminAbs } from '../../../../config.js';
-
+import useGetSites from '../hooks/useGetSites';
+import useDeleteSite from '../hooks/useDeleteSite';
+import DropdownMenu from '../../../../utils/ui/DropdownMenu';
+import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 
 function SitesList() {
-    const [search, setSearch] = useState('');
-    const [statusFilter, setStatusFilter] = useState('available');
-    const [sites, setSites] = useState([]);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { sites, loading: listLoading, error: listError, refetch } = useGetSites();
+  const { deleteSite, loading: deleting, success: deleteSuccess, error: deleteError } = useDeleteSite();
 
+  const [search, setSearch] = useState('');
 
-    const getSites = async () => {
-        try {
-            const response = await api.get("/sites/");
-            setSites(response.data);
-            console.log("Sites loaded successfully", response.data);
-        } catch (error) {
-            console.error("Error loading sites", error);
-        }
-    };
-    
-    useEffect(() => {
-        getSites();
-    }, []);
-    
-    const handleViewButton = (siteId) => {
-        navigate(adminAbs(ROUTES.ADMIN.SITE_DETAIL(siteId)));
-    };
-    
-    const handleEditButton = (siteId) => {
-        console.log('Edit site:', siteId);
-    };
-    
-    const handleDeleteButton = (siteId) => {
-        const deleteSite = async () => {
-            try {
-                const response = await api.delete(`/sites/${siteId}`);
-                await getSites();
-            } catch (error) {
-                console.error("Delete failed", error);
-            }
-        };
+  const searchQuery = search.trim().toLowerCase();
+  const filtered = useMemo(() => {
+    return sites.filter((item) => {
+      if (!searchQuery) return true;
+      return (
+        String(item.site_id).includes(searchQuery) ||
+        (item.name && item.name.toLowerCase().includes(searchQuery))
+      );
+    });
+  }, [sites, searchQuery]);
 
-        const userConfirmed = confirm('Este sitio se eliminará. ¿Deseas continuar?');
-        if (userConfirmed) {
-            deleteSite();
-        }
-    };
+  const handleViewButton = (id) => {
+    navigate(adminAbs(ROUTES.ADMIN.SITE_DETAIL(id)));
+  };
 
-    return (
-        <div className="table-container">
-            <div className="table-container-actions">
-                <input className='form-input--sm'
-                    type="text"
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder='Buscar sitio'
-                />
-            </div>
+  const handleEditButton = (id) => {
+    navigate(adminAbs(ROUTES.ADMIN.SITE_EDIT(id)));
+  };
 
-            <div className='table-container-body'>
-            <table className='table'>
-                <thead className="text-xs text-gray-700 bg-gray-50 ">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Institución</th>
-                        <th>Ciudad</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                
-                <tbody>
-                    {sites.filter((item) => {
-                        return (search.toLowerCase() === '' 
-                            || item.name.toLowerCase().includes(search.toLowerCase())
-                            || String(item.id).includes(search))
-                    }).map((item) => (
-                        <tr key={item.site_id}>
-                            <td>{item.site_id}</td>
-                            <td>{item.name}</td>
-                            <td>{item.institution_id}</td>
-                            <td>{item.city}</td>
-                            <td>
-                                <button className='item-link' onClick={e => handleViewButton(item.site_id)}>
-                                    Ver
-                                </button>
-                            </td>
-                            <td>
-                                <button className='item-link' onClick={e => handleEditButton(item.site_id)}>
-                                    Editar
-                                </button>
-                            </td>
-                            {(statusFilter != 'unavailable') && (
-                                <td>
-                                    <button className='table-action' onClick={e => handleDeleteButton(item.site_id)}>
-                                        Borrar
-                                    </button>
-                                </td>
-                            )}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            </div>
-        </div>
-    );
+  const handleDeleteButton = async (id) => {
+    const userConfirmation = window.confirm('Este sitio se eliminará. ¿Deseas continuar?');
+    if (!userConfirmation) return;
+    await deleteSite(id);
+    await refetch();
+  };
+
+  if (listLoading) return <LoadingSpinner />;
+  if (listError) return <p>Error es: {String(listError)}</p>;
+
+  return (
+    <div className="table-container">
+      <div className="table-container-actions">
+        <input
+          type="text"
+          className="form-input--sm mr-auto"
+          placeholder="Buscar sede"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          aria-label="Buscar sede"
+        />
+      </div>
+
+      <div className="table-container-body">
+        <table className="table">
+          <thead>
+            <tr>
+              <th colSpan={3}>Nombre</th>
+              <th colSpan={3}>Institución</th>
+              <th>Ciudad</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan="8">No se encontraron instituciones.</td>
+              </tr>
+            ) : (
+              filtered.map((item) => (
+                <tr key={item.site_id}>
+                  <td colSpan={3} className='text-left'>{item.name}</td>
+                  <td colSpan={3} className='text-left'>{item.institution_id}</td>
+                  <td>{item.city}</td>
+                  <td className="td-actions text-right">
+                    <DropdownMenu
+                      actions={[
+                        { label: 'Ver', onClick: () => handleViewButton(item.site_id) },
+                        { label: 'Editar', onClick: () => handleEditButton(item.site_id) },
+                        { label: 'Eliminar', onClick: () => handleDeleteButton(item.site_id), className: 'text-red-600' },
+                      ]}
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }
 
 export default SitesList;

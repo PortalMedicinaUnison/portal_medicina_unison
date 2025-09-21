@@ -3,7 +3,9 @@ from typing import List, Optional
 from utils.validation import is_valid_email
 from utils.constants import MUNICIPALITY_SET
 
-#---------------SITE-------------------
+
+# ---------------------- SITE ----------------------
+
 class SiteInput(BaseModel):
     institution_id: int
     name: str
@@ -61,7 +63,6 @@ class SiteInputUpdate(BaseModel):
     @field_validator("city")
     @classmethod
     def validate_city(cls, v: str):
-        # Normaliza espacios y capitalización básica si quieres
         if v not in MUNICIPALITY_SET:
             raise ValueError("Municipio inválido")
         return v
@@ -84,9 +85,13 @@ class SiteBasicOutput(BaseModel):
     name: str
     city: str
 
-#---------------INSTITUTION-------------------
+# ---------------------- INSTITUTION ----------------------
+
 class InstitutionInput(BaseModel):
     name: str
+
+class InstitutionInputUpdate(BaseModel):
+    name: Optional[str]
 
 class InstitutionOutput(BaseModel):
     institution_id: int

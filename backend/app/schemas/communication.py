@@ -1,29 +1,34 @@
 from pydantic import BaseModel, field_validator, HttpUrl
 from typing import Optional
 from datetime import date
-from models.communication import ReportTypeEnum, AnnouncementTypeEnum
-from utils.validation import is_valid_future_date, is_valid_past_date
+from models.communication import AnnouncementTypeEnum
+from utils.validation import is_valid_future_date
 
 
-# ---------------  Announcement  ----------------------
+# ---------------------- ANNOUNCEMENT ----------------------
 
 class AnnouncementInput(BaseModel):
-    created_by: int
     title: str
     announcement_type: AnnouncementTypeEnum
     description: Optional[str] = None
+    is_visible: bool = True
+
+class AnnouncementInputUpdate(BaseModel):
+    title: Optional[str] = None
+    announcement_type: Optional[AnnouncementTypeEnum] = None
+    description: Optional[str] = None
+    is_visible: Optional[bool] = None
 
 class AnnouncementOutput(BaseModel):
     announcement_id: int
     title: str
     announcement_type: AnnouncementTypeEnum
     description: Optional[str] = None
-    is_active: bool = True
+    is_visible: bool = True
 
-# ---------------  Survey  ----------------------
+# ---------------------- SURVEY ----------------------
 
 class SurveyInput(BaseModel):
-    created_by: int
     title: str
     web_link: HttpUrl
     description: Optional[str] = None
@@ -35,6 +40,19 @@ class SurveyInput(BaseModel):
         is_valid_future_date(input_date)
         return input_date
 
+class SurveyInputUpdate(BaseModel):
+    title: Optional[str] = None
+    web_link: Optional[HttpUrl] = None
+    description: Optional[str] = None
+    expiration_date: Optional[date] = None
+    mandatory: Optional[bool] = None
+
+    @field_validator("expiration_date")
+    def validate_expiration_date(cls, input_date: Optional[date]) -> Optional[date]:
+        if input_date:
+            is_valid_future_date(input_date)
+        return input_date
+
 class SurveyOutput(BaseModel):
     survey_id: int
     title: str
@@ -42,23 +60,3 @@ class SurveyOutput(BaseModel):
     description: Optional[str] = None
     expiration_date: date
     mandatory: bool
-    is_active: bool = True
-
-# ---------------  Report  ----------------------
-class ReportInput(BaseModel):
-    student_id: int
-    internship_id: int
-    date: date
-    site: str
-    report_type: ReportTypeEnum
-    other_type: Optional[str] = None
-    description: str
-    evidence: Optional[str] = None
-    anonymity: bool
-    is_open: bool = True
-    admin_comment: Optional[str] = None
-
-    @field_validator("date")
-    def validate_date(cls, date: date) -> date:
-        is_valid_past_date(date)
-        return date

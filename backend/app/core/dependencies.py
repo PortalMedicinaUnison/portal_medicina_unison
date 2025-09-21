@@ -1,4 +1,3 @@
-from fastapi import Depends
 from sqlalchemy.orm import Session
 from typing import Generator
 from db.database import SessionLocal

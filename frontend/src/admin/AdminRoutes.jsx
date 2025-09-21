@@ -1,5 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
+import { ROUTES } from '../config.js';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
+
+import UserListPage from '../admin/features/users/pages/UserListPage.jsx';
+import UserInfoAdminPage from '../admin/features/users/pages/UserInfoAdmin.jsx';
 
 import PromotionListPage from '../admin/features/promotions/pages/PromotionsListPage.jsx';
 import PromotionFormPage from '../admin/features/promotions/pages/PromotionFormPage.jsx';
@@ -11,28 +15,37 @@ import SiteFormPage from '../admin/features/sites/pages/SiteFormPage.jsx';
 import SiteInfoPage from '../admin/features/sites/pages/SiteInfoPage.jsx';
 // import SiteUpdatePage from '../admin/features/sites/pages/SiteUpdatePage.jsx';
 
-import InstitutionsListPage from '../admin/features/institutions/pages/InstitutionsListPage.jsx'
+import InstitutionsListPage from '../admin/features/institutions/pages/InstitutionsListPage.jsx';
 import InstitutionFormPage from '../admin/features/institutions/pages/InstitutionsFormPage.jsx';
 // import InstitutionInfoPage from '../admin/features/institutions/pages/InstitutionsInfoPage.jsx';
 // import InstitutionUpdatePage from '../admin/features/institutions/pages/InstitutionsUpdatePage.jsx';
 
 import AnnouncementsListPage from '../admin/features/announcements/pages/AnnouncementsListPage.jsx';
 import AnnouncementFormPage from '../admin/features/announcements/pages/AnnouncementFormPage.jsx';
-import AnnouncementInfoPage from '../admin/features/announcements/pages/AnnouncementInfoPage.jsx';
-// import AnnouncementUpdatePage from '../admin/features/announcements/pages/AnnouncementUpdatePage.jsx';
+import AnnouncementDetailPage from '../admin/features/announcements/pages/AnnouncementDetailPage.jsx';
+import AnnouncementUpdatePage from '../admin/features/announcements/pages/AnnouncementUpdatePage.jsx';
 
 import SurveysListPage from '../admin/features/surveys/pages/SurveysListPage.jsx';
 import SurveyFormPage from '../admin/features/surveys/pages/SurveysFormPage.jsx';
 import SurveyInfoPage from '../admin/features/surveys/pages/SurveyInfoPage.jsx';
 // import SurveyUpdatePage from '../admin/features/surveys/pages/SurveyUpdatePage.jsx';
 
-import EnrollmentFormPage from '../admin/features/enrollments/pages/EnrollmentFormPage.jsx';
-import EnrollmentsListPage from '../admin/features/enrollments/pages/EnrollmentsListPage.jsx';
+import EnrollmentFormPage from '../admin/features/users/enrollments/pages/EnrollmentFormPage.jsx';
+import EnrollmentsListPage from '../admin/features/users/enrollments/pages/EnrollmentsListPage.jsx';
+
+import ReportsListPage from '../admin/features/reports/pages/ReportsListPage.jsx';
+import ReportInfoPage from '../admin/features/reports/pages/ReportInfoPage.jsx';
+
+const toRel = (absPath) => absPath.replace(/^\//, '');
 
 function AdminRoutes() {
   return (
     <Routes>
       <Route element={<ProtectedRoute />}>
+        {/* Users */}
+        <Route path="users" element={<UserListPage />} />
+        <Route path="users/academicId/:academicId" element={<UserInfoAdminPage />} />
+
         {/* Promotions */}
         <Route path="promotions" element={<PromotionListPage />} />
         <Route path="promotions/create" element={<PromotionFormPage />} />
@@ -54,8 +67,8 @@ function AdminRoutes() {
         {/* Announcements */}
         <Route path="announcements" element={<AnnouncementsListPage />} />
         <Route path="announcements/create" element={<AnnouncementFormPage />} />
-        <Route path="announcements/:announcementId" element={<AnnouncementInfoPage />} />
-        {/* <Route path="announcements/:announcementId/edit" element={<AnnouncementUpdatePage />} /> */}
+        <Route path="announcements/:announcementId" element={<AnnouncementDetailPage />} />
+        <Route path="announcements/:announcementId/edit" element={<AnnouncementUpdatePage />} />
 
         {/* Surveys */}
         <Route path="surveys" element={<SurveysListPage />} />
@@ -63,9 +76,13 @@ function AdminRoutes() {
         <Route path="surveys/:surveyId" element={<SurveyInfoPage />} />
         {/* <Route path="surveys/:surveyId/edit" element={<SurveyUpdatePage />} /> */}
 
-        {/* Internship nrollments */}
-        <Route path="internship_enrollments" element={<EnrollmentsListPage />} />
-        <Route path="internship_enrollments/create" element={<EnrollmentFormPage />} />
+        {/* User enrollments */}
+        <Route path="enrollments" element={<EnrollmentsListPage />} />
+        <Route path="enrollments/create" element={<EnrollmentFormPage />} />
+
+        {/* Reports */}
+        <Route path="reports" element={<ReportsListPage />} />
+        <Route path="reports/:reportId" element={<ReportInfoPage />} />
       </Route>
     </Routes>
   );

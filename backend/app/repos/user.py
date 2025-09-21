@@ -1,73 +1,85 @@
 from fastapi import UploadFile
 from .base import BaseRepo
-from models.user import  User, PreRegisteredUser
+from models.user import  User, UserEnrollment
 
 
-class PreRegisteredUserRepo(BaseRepo):
+# ----------------------  USER ENROLLMENT  ----------------------
 
-    def create(self, data: PreRegisteredUser) -> PreRegisteredUser:
-        """ Crea un nuevo usuario pre-registrado. """
+class UserEnrollmentRepo(BaseRepo):
+    def create(self, data: UserEnrollment) -> UserEnrollment:
         self.session.add(data)
         self.session.commit()
+        self.session.refresh(data)
         return data
     
-    def get_by_id(self, pre_registered_id: int) -> PreRegisteredUser:
-        """ Obtiene un usuario pre-registrado por su ID. """
-        return self.session.query(PreRegisteredUser).filter_by(pre_registered_id=pre_registered_id).first()
+    def get_all(self) -> list[UserEnrollment]:
+        return self.session.query(UserEnrollment).filter(
+                UserEnrollment.is_active == True
+            ).all()
 
-    def get_by_academic_id(self, academic_id: int) -> PreRegisteredUser:
-        """ Obtiene un usuario pre-registrado por su ID académico. """
-        return self.session.query(PreRegisteredUser).filter_by(academic_id=academic_id).first()
+    def get_by_id(self, enrollment_id: int) -> UserEnrollment:
+        return self.session.query(UserEnrollment).filter(
+                UserEnrollment.enrollment_id == enrollment_id,
+                UserEnrollment.is_active == True,
+            ).first()
 
-    def get_all(self):
-        """ Obtiene todos los usuarios pre-registrados. """
-        return self.session.query(PreRegisteredUser).filter(PreRegisteredUser.is_active == True).all()
+    def get_by_academic_id(self, academic_id: int) -> UserEnrollment:
+        return self.session.query(UserEnrollment).filter(
+                UserEnrollment.academic_id == academic_id,
+                UserEnrollment.is_active == True,
+            ).first()
 
-    def update(self, academic_id: int, data: dict) -> PreRegisteredUser:
-        """ Actualiza la información de un usuario pre-registrado. """
-        user = self.get_by_academic_id(academic_id)
+    def update(self, enrollment_id: int, data: dict) -> UserEnrollment:
+        user = self.get_by_id(enrollment_id)
         if user:
             for key, value in data.items():
-                setattr(user, key, value)
+                if hasattr(user, key):
+                    setattr(user, key, value)
             self.session.commit()
+            self.session.refresh(user)
         return user
 
-    def delete(self, user_id: int) -> bool:
-        """ Desactiva un usuario por su ID. Retorna True si se desactivó. """
-        user = self.get_by_academic_id(user_id)
+    def delete(self, enrollment_id: int) -> bool:
+        user = self.get_by_id(enrollment_id)
         if user:
             user.is_active = False
             self.session.commit()
             return True
         return False
+    
+# ----------------------  USER  ----------------------
 
 class UserRepo(BaseRepo):
-
     def create(self, data: User) -> User:
-        """ Crea un nuevo usuario en la base de datos. """
         self.session.add(data)
         self.session.commit()
         self.session.refresh(data)
         return data
 
+    def get_all(self) -> list[User]:
+        return self.session.query(User).filter(
+                User.is_active == True
+            ).all()
+
     def get_by_id(self, user_id: int) -> User:
-        """ Obtiene un usuario por su ID. """
-        return self.session.query(User).filter(User.user_id == user_id).first()
+        return self.session.query(User).filter(
+                User.user_id == user_id,
+                User.is_active == True,
+            ).first()
 
     def get_by_academic_id(self, academic_id: int) -> User:
-        """ Obtiene un usuario por su ID académico. """
-        return self.session.query(User).filter(User.academic_id == academic_id).first()
+        return self.session.query(User).filter(
+                User.academic_id == academic_id,
+                User.is_active == True,
+            ).first()
 
     def get_by_email(self, email: str) -> User:
-        """ Obtiene un usuario por su correo electrónico. """
-        return self.session.query(User).filter(User.email == email).first()
-
-    def get_all(self):
-        """ Obtiene todos los usuarios. """
-        return self.session.query(User).filter(User.is_active == True).all()
+        return self.session.query(User).filter(
+                User.email == email,
+                User.is_active == True,
+            ).first()
 
     def update(self, user_id: int, data: dict) -> User:
-        """ Actualiza los datos de un usuario. """
         user = self.get_by_id(user_id)
         if user:
             for key, value in data.items():
@@ -78,7 +90,6 @@ class UserRepo(BaseRepo):
         return user
 
     def delete(self, user_id: int) -> bool:
-        """ Desactiva un usuario por su ID. Retorna True si se desactivó. """
         user = self.get_by_id(user_id)
         if user:
             user.is_active = False
@@ -86,25 +97,17 @@ class UserRepo(BaseRepo):
             return True
         return False
 
-
     def upload_profile_picture(self, user_id: int, image: UploadFile) -> User:
         import os
-
+        
+        if not os.path.exists("profile_images"):
+            os.makedirs("profile_images")
         file_location = os.path.join("profile_images", f"{user_id}.jpg")
-
         with open(file_location, "wb") as buffer:
             buffer.write(image.file.read())
-
         user = self.get_by_id(user_id)
         if user:
             user.profile_photo = file_location
             self.session.commit()
             self.session.refresh(user)
-            
         return user
-
-class AdminRepo(UserRepo):
-    pass
-
-class StudentRepo(UserRepo):
-    pass

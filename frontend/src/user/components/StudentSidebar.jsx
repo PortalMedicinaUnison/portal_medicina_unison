@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import useAuth from '../../features/auth/hooks/useAuth';
-import { ROUTES } from '../../config';
+import { ROUTES, userAbs } from '../../config';
 import { Link, NavLink } from 'react-router-dom';
 
 
@@ -28,7 +28,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
 
                 <div className="sidebar-header">
                         <Link to={ROUTES.HOME} className="ms-5 md:me-15">
-                            <img src="unison-letters.svg" className="h-8 me-3" alt="unison logo" />
+                            <img src="/unison-letters.svg" className="h-8 me-3" alt="unison logo" />
                         </Link>
                         <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
                             <svg
@@ -75,7 +75,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </NavLink>
                         </div>
                         <div>
-                            <Link to="#" className="sidebar-item-group group">
+                            <Link to={ROUTES.USER.REPORTS_LIST} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
