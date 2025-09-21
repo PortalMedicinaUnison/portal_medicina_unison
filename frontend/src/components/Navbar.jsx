@@ -2,26 +2,24 @@ import '../styles.css';
 import { useUser } from '../contexts/UserContext';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../config';
+import DropdownMenu from '../utils/ui/DropdownMenu';
 
 function Navbar({ toggleSidebar, openToggleButton }) {
     const { user, loading } = useUser();
 
     return (        
-        <nav className="navbar">
+        <nav className="top-0 h-16 right-0 w-full bg-white border-b px-4 py-2 lg:px-5 lg:pl-3">
             <div className="flex items-center justify-between">
-                <div className="flex justify-start rtl:justify-end">
+                <div className="flex justify-start">
                     <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="sidebar-item-icon"
-                            viewBox="-1 -1 23 23"
-                            aria-hidden="true"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
+                            width="32" 
+                            height="32" 
+                            viewBox="0 -4 22 22"
                         >
-                            <path d="M4.5 6.5h12m-12.002 4h11.997M4.5 14.5h11.995"/>
+                            <path fill="currentColor" d="M4 17.27v-1h16v1zm0-4.77v-1h16v1zm0-4.77v-1h16v1z"/>
                         </svg>
                     </button>
                 </div>
