@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllAnnouncementsRequest } from '../../../../services/announcementService'
 
-const useGetAnnouncements = () => {
+
+export default function useGetAnnouncements () {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading]             = useState(false);
   const [error, setError]                 = useState(null);
 
-  const fetchAnnouncements = useCallback(async () => {
+  const getAnnouncements = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -19,13 +20,11 @@ const useGetAnnouncements = () => {
     } finally {
       setLoading(false);
     }
-}, []);
+  }, []);
     
   useEffect(() => {
-    fetchAnnouncements();
-  }, [fetchAnnouncements]);
+    getAnnouncements();
+  }, [getAnnouncements]);
     
-  return { announcements, loading, error, refetch: fetchAnnouncements };
+  return { announcements, loading, error, refetch: getAnnouncements };
 };
-
-export default useGetAnnouncements;
