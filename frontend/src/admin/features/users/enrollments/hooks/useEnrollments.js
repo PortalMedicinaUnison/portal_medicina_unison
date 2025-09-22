@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getUserEnrollmentByIdRequest } from '../../../../services/communicationService';
+import { getUserEnrollmentByIdRequest } from '../../../../../services/userService';
 
 
 export default function useEnrollments(id) {
   const [enrollment, setEnrollment] = useState(null);
-  const [loading, setLoading]           = useState(false);
-  const [error, setError]               = useState(null);
+  const [loading, setLoading]       = useState(false);
+  const [error, setError]           = useState(null);
 
   const getEnrollment = useCallback(async (id) => {
     if (!id) return Promise.resolve();

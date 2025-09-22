@@ -4,8 +4,8 @@ import { getInternshipByIdRequest } from '../../../../services/internshipService
 
 export default function useInternship(id) {
   const [internship, setInternship] = useState(null);
-  const [loading, setLoading]         = useState(false);
-  const [error, setError]             = useState(null);
+  const [loading, setLoading]       = useState(false);
+  const [error, setError]           = useState(null);
 
   const getInternship = useCallback(async (id) => {
     if (!id) return Promise.resolve();

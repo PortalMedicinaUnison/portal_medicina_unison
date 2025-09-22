@@ -3,9 +3,9 @@ import { getUserByAcademicIdRequest } from '../../../../services/userService';
 
 
 export default function useUserAdmin(academicId) {
-  const [user, setUserAdmin] = useState(null);
-  const [loading, setLoading]           = useState(false);
-  const [error, setError]               = useState(null);
+  const [user, setUserAdmin]  = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
 
   const getUserAdmin = useCallback(async (academicId) => {
     if (!academicId) return Promise.resolve();
