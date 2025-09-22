@@ -1,12 +1,9 @@
 import { Link, NavLink } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../config';
-import useAuth from '../../features/auth/hooks/useAuth';
 import SidebarCollapse from '../../utils/ui/CollapseMenu';
 
 
 function Sidebar({ toggleSidebar, openToggleButton }) {
-    const { logout, authenticated } = useAuth();
-
     return (
         <div id="sidebar">
             <aside 

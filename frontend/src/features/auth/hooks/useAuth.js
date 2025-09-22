@@ -1,42 +1,53 @@
-import { useState } from 'react';
-import { setToken, removeToken, isAuthenticated } from '../../../utils/auth';
-import { useUser } from '../../../contexts/UserContext';
-import { loginRequest } from '../../../services/authService';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../config';
+import { useUser } from '../../../contexts/UserContext';
+import { loginRequest } from '../../../services/authService';
+import { setToken, removeToken } from '../../../utils/auth';
 
 export default function useAuth() {
-  const [error, setError] = useState(null);
-  const [authenticated, setAuthenticated] = useState(isAuthenticated());
-  const { clearUser, reload } = useUser();
   const navigate = useNavigate();
+  const { reload, clearUser, isAuthenticated } = useUser();
 
-  
-  const login = async (credentials) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  const reset = useCallback(() => {
+    setLoading(false);
     setError(null);
-    
-    try {
-      const response = await loginRequest(credentials);
-      setToken(response.data.access_token);
-      await reload();
-      setAuthenticated(true);
-      navigate(ROUTES.HOME);
-      return true;
-    } catch (err) {
-      setError(err.response?.data?.message || "Error al iniciar sesión.");
-      console.error("Login failed", err);
-      setAuthenticated(false);
-      return false;
-    }
-  };
+    setSuccess(false);
+  }, []);
 
-  const logout = () => {
+  const login = useCallback(async (credentials) => {
+    if (loading) return;
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      const { data } = await loginRequest(credentials);
+      const token = data?.access_token;
+      if (!token) throw new Error('Access token does not received');
+      
+      setToken(token);
+      await reload();
+      setSuccess(true);
+      navigate(ROUTES.HOME);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error al iniciar sesión.');
+      setSuccess(false);
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, navigate, reload]);
+
+  const logout = useCallback(() => {
     removeToken();
     clearUser();
-    setAuthenticated(false);
-    setError(null);
+    reset();
     navigate(ROUTES.AUTH.LOGIN);
-  };
-  
-  return { login, logout, error, authenticated };
+  }, [navigate, clearUser, reset]);
+
+  return { login, logout, loading, error, success, isAuthenticated, reset }
 }
