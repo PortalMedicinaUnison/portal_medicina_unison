@@ -11,7 +11,8 @@ from controllers.report import (
     get_reports_by_internship,
     get_reports_by_site,
     update_report,
-    upload_evidence_file,
+    delete_report,
+    upload_evidence_file
 )
 
 # ----------------------  REPORT  ----------------------
@@ -73,3 +74,13 @@ async def upload_evidence_route(report_id: int, student_id: int, file: UploadFil
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Reporte no encontrado")
     return report
+
+@report_router.post("/{report_id}")
+def delete_report_router(report_id: int, db: Session = Depends(get_db)):
+    deleted = delete_report(report_id, db)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Reporte no econtrado")
+    return deleted    
+        

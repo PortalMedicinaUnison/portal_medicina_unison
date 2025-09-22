@@ -1,7 +1,7 @@
 import api from '../api';
 import { API_ENDPOINTS } from '../config/apiEndpoints';
 
-// ------------ Reports (Usuarios) ------------
+// ------------ Reports ------------
 
 export const createReportRequest = (reportData, ) =>
   api.post(API_ENDPOINTS.REPORTS.CREATE, reportData);
@@ -23,6 +23,9 @@ export const getReportsByInternshipRequest = (internshipId) =>
 
 export const getReportsBySiteRequest = (siteId) =>
   api.get(API_ENDPOINTS.REPORTS.GET_BY_SITE(siteId));
+
+export const deleteReportRequest = (id) =>
+  api.delete(API_ENDPOINTS.REPORTS.DELETE(id));
 
 export const uploadEvidenceRequest = (reportId, file) => {
   const formData = new FormData();

@@ -107,6 +107,7 @@ export const API_ENDPOINTS = {
     GET_BY_INTERNSHIP: (internshipId) => `/reports/internshipId/${internshipId}`,
     GET_BY_SITE: (siteId) => `/reports/siteId/${siteId}`,
     UPDATE: (id) => `/reports/${id}`,
+    DELETE: (id) => `/reports/${id}`,
     UPLOAD_EVIDENCE: (id) => `/reports/${id}/evidence`,
   },
 };
