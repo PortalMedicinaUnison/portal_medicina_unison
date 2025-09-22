@@ -169,11 +169,11 @@ function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
             ) : (
               filtered.map((item) => (
               <tr key={item.announcement_id}>
-                <td>{item.title}</td>
+                <td className="text-left">{item.title}</td>
                 <td className="text-left">{item.description}</td>
                 <td>{getAnnouncementTypeName(item.announcement_type)}</td>
                 <td>{item.is_visible ? 'Activo' : 'Inactivo'}</td>
-                <td className="td-actions text-right">
+                <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[
                       { label: 'Ver', onClick: () => handleViewButton(item.announcement_id) },

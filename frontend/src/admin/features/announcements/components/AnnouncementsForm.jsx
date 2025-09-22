@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
+import { cleanFormData } from "../../../../utils/utils";
 import useCreateAnnouncement from '../hooks/useCreateAnnouncement';
 
 
@@ -36,16 +37,16 @@ function AnnouncementForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = {
+    const data = cleanFormData({
       ...formData,
       announcement_type: Number(formData.announcement_type),
-    };
+    });
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
 
-    if (!data.title.trim()) errors.push('El título es requerido.');
-    if (!data.description.trim()) errors.push('La descripción es requerida.');
+    if (!data.title) errors.push('El título es requerido.');
+    if (!data.description) errors.push('La descripción es requerida.');
     if (data.announcement_type === 0) errors.push('Seleccione un tipo de anuncio válido.');
     
     if (errors.length > 0) {
@@ -109,8 +110,8 @@ function AnnouncementForm() {
               <dt className="item-header">Título</dt>
               <dd className="item-text">
                 <input
-                  type="text"
                   name="title"
+                  type="text"
                   value={formData.title}
                   onChange={handleChange}
                   className="form-input--half"
@@ -156,8 +157,8 @@ function AnnouncementForm() {
               <dt className="item-header">Visible</dt>
               <dd className="item-text">
                 <input
-                  type="checkbox"
                   name="is_visible"
+                  type="checkbox"
                   checked={formData.is_visible}
                   onChange={handleChange}
                   className="form-checkbox"
