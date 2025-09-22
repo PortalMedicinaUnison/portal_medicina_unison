@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useUser } from './contexts/UserContext';
 import LoadingSpinner from './utils/ui/LoadingSpinner';
 
@@ -10,7 +10,6 @@ import Navbar from './components/Navbar';
 function Layout({ children }) {
   const { userRole, loading, error } = useUser();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
 
   if (loading) return <LoadingSpinner />;
   if (error) return <div>Error: {error.message}</div>;
