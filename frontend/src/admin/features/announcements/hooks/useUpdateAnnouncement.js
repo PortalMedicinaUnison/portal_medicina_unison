@@ -15,8 +15,7 @@ export default function useUpdateAnnouncement() {
     setSuccess(false);
 
     try {
-      const cleanedFormData = cleanFormData(formData);
-      await updateAnnouncementRequest(announcementID, cleanedFormData);
+      await updateAnnouncementRequest(announcementID, formData);
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error updating announcement');

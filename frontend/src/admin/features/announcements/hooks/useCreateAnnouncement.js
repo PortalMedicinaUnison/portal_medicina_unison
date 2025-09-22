@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { cleanFormData } from '../../../../utils/utils';
 import { createAnnouncementRequest } from '../../../../services/announcementService';
 
 
@@ -21,8 +20,7 @@ export default function useCreateAnnouncement() {
     setSuccess(false);
 
     try {
-      const cleanedFormData = cleanFormData(formData);
-      const response = await createAnnouncementRequest(cleanedFormData);
+      const response = await createAnnouncementRequest(formData);
       setSuccess(true);
       return response;
     } catch (err) {

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
-import { cleanFormData } from "../../../../utils/utils";
 import useCreateAnnouncement from '../hooks/useCreateAnnouncement';
+import { cleanFormData } from "../../../../utils/utils";
 
 
 const INITIAL_FORM = {
@@ -44,11 +44,9 @@ function AnnouncementForm() {
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-
     if (!data.title) errors.push('El título es requerido.');
     if (!data.description) errors.push('La descripción es requerida.');
     if (data.announcement_type === 0) errors.push('Seleccione un tipo de anuncio válido.');
-    
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;

@@ -50,11 +50,9 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-
     if (!data.title) errors.push('El título es requerido.');
     if (!data.description) errors.push('La descripción es requerida.');
     if (data.announcement_type === 0) errors.push('Seleccione un tipo de anuncio válido.');
-    
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
