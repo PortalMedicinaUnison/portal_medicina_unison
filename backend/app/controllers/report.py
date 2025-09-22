@@ -14,7 +14,7 @@ def create_report(report: ReportInput, db: Session):
     report_response = orm_to_dict(created_report)
     return report_response
 
-def get_all_student_reports(db: Session):
+def get_all_reports(db: Session):
     report_repo = ReportRepo(db)
     reports = report_repo.get_all()
     if not reports:
@@ -29,6 +29,30 @@ def get_report(report_id: int, db: Session):
         return None
     report_response = orm_to_dict(report)
     return report_response
+
+def get_reports_by_student(student_id: int, db: Session):
+    report_repo = ReportRepo(db)
+    reports = report_repo.get_by_student_id(student_id)
+    if not reports:
+        return []
+    reports_response = [orm_to_dict(report) for report in reports]
+    return reports_response
+
+def get_reports_by_internship(internship_id: int, db: Session):
+    report_repo = ReportRepo(db)
+    reports = report_repo.get_by_internship_id(internship_id)
+    if not reports:
+        return []
+    reports_response = [orm_to_dict(report) for report in reports]
+    return reports_response
+
+def get_reports_by_site(site_id: int, db: Session):
+    report_repo = ReportRepo(db)
+    reports = report_repo.get_by_site_id(site_id)
+    if not reports:
+        return []
+    reports_response = [orm_to_dict(report) for report in reports]
+    return reports_response
 
 def update_report(report_id: int, report_input: ReportInputUpdate, db: Session):
     update_data = report_input.dict(exclude_unset=True)

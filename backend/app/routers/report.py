@@ -5,8 +5,11 @@ from typing import List
 from schemas.report import ReportInput, ReportInputUpdate, ReportOutput
 from controllers.report import (
     create_report,
+    get_all_reports,
     get_report,
-    get_all_student_reports,
+    get_reports_by_student,
+    get_reports_by_internship,
+    get_reports_by_site,
     update_report,
     upload_evidence_file,
 )
@@ -16,7 +19,7 @@ from controllers.report import (
 report_router = APIRouter(prefix="/reports", tags=["Reportes"])
 
 @report_router.post('/', response_model=ReportOutput)
-async def create_report_route(report: ReportInput, student_id: int, db: Session = Depends(get_db)):
+async def create_report_route(student_id: int, report: ReportInput, db: Session = Depends(get_db)):
     report = create_report(report, student_id, db)
     if not report:
         raise HTTPException(
@@ -25,8 +28,8 @@ async def create_report_route(report: ReportInput, student_id: int, db: Session 
     return report
 
 @report_router.get('/', response_model=List[ReportOutput])
-async def get_student_reports_route(student_id: int, db: Session = Depends(get_db)):
-    reports = get_all_student_reports(student_id, db)
+async def get_reports_route(db: Session = Depends(get_db)):
+    reports = get_all_reports(db)
     return reports
 
 @report_router.get('/{report_id}', response_model=ReportOutput)
@@ -37,6 +40,21 @@ async def get_report_route(report_id: int, student_id: int, db: Session = Depend
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Reporte no encontrado")
     return report
+
+@report_router.get('/studentId/{student_id}', response_model=List[ReportOutput])
+async def get_reports_by_student_route(student_id: int, db: Session = Depends(get_db)):
+    reports = get_reports_by_student(student_id, db)
+    return reports
+
+@report_router.get('/internshipId/{internship_id}', response_model=List[ReportOutput])
+async def get_reports_by_internship_route(internship_id: int, db: Session = Depends(get_db)):
+    reports = get_reports_by_internship(internship_id, db)
+    return reports
+
+@report_router.get('/siteId/{site_id}', response_model=List[ReportOutput])
+async def get_reports_by_site_route(site_id: int, db: Session = Depends(get_db)):
+    reports = get_reports_by_site(site_id, db)
+    return reports
 
 @report_router.patch('/{report_id}', response_model=ReportOutput)
 async def update_report_route(report_id: int, report_update: ReportInputUpdate, student_id: int, db: Session = Depends(get_db)):
