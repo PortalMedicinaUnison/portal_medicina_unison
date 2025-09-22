@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { deleteAnnouncementRequest } from '../../../../services/announcementService';
+import { deleteAnnouncementRequest } from '../../../../services/communicationService';
 
 
 export default function useDeleteAnnouncement() {

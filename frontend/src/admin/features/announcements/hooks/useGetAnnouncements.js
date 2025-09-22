@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getAllAnnouncementsRequest } from '../../../../services/announcementService'
+import { getAllAnnouncementsRequest } from '../../../../services/communicationService'
 
 
 export default function useGetAnnouncements () {
