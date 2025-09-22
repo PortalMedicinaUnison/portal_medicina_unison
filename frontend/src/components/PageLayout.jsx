@@ -1,32 +1,33 @@
 
 function PageLayout({ title, actions, pretitle = "Ir atrás", children }) {
+
   return (
-    <div className="component-container">
-      <div className="component-container_header">
-        <div className="component-container_header-content">
+     <div className="flex flex-col gap-16 my-4 mb-16 mx-8 max-w-full min-w-0 ">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-end">
+        <div className="flex-col min-w-0">
           {pretitle && (
-            <div className="component-container_pretitle">
+            <div className="flex items-start">
               <button
                 onClick={() => window.history.back()}
-                className="btn-tertiary--light text-xs"
+                className="btn-tertiary--light text-sm"
               >
                 {pretitle}
               </button>
             </div>
           )}
-          <h2 className="page-title-1">
+          <h2 className="font-bold text-gray-900 text-3xl tracking-tight truncate">
             {title}
           </h2>
         </div>
         
         {actions && (
-          <div className="component-container_actions">
+          <div className="flex items-end">
             {actions}
           </div>
         )}
       </div>
       
-      <div className="component-container-content">
+      <div className="w-full min-w-0 max-w-full overflow-x-hidden">
         {children}
       </div>
     </div>

@@ -1,94 +1,48 @@
-import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
-import { verifyTokenRequest } from '../services/authService';
-import { getUserByIdRequest } from '../services/userService';
-import { getToken, removeToken } from '../utils/auth';
+import React, { createContext, useContext, useMemo, useCallback } from 'react';
+import useUserSession from '../features/auth/hooks/useUserSession';
 
-
-const UserContext = createContext();
+const UserContext = createContext(null);
 
 const getUserRole = (user) => {
+  if (!user) return null;
   if (user.is_super_admin) return 'super_admin';
   if (user.is_admin) return 'admin';
   return 'student';
 };
 
 export function UserProvider({ children }) {
-  const [user, setUser]         = useState(null);
-  const [userRole, setUserRole] = useState(null);
-  const [error, setError]       = useState(null);
-  const [loading, setLoading]   = useState(true);
+  const { user, loading, error, refresh, clear } = useUserSession();
 
-  const clearUser = useCallback(() => {
-    setUser(null);
-    setUserRole(null);
-    setError(null);
-    setLoading(false);
-  }, []);
+  const userRole = useMemo(() => getUserRole(user), [user]);
 
-  const hasRole = useCallback((role) => {
-    return userRole === role
-  }, [userRole]);
-
-  const fetchUser = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    
-    const token = getToken();
-    if (!token) {
-      setError("No access token found");
-      setLoading(false);
-      return;
-    }
-      
-    try {
-      const verifyResponse = await verifyTokenRequest(token);
-      const userId = verifyResponse.data.user_info.user_id;
-      const userResponse = await getUserByIdRequest(userId);
-      const userData = userResponse.data;
-      setUser(userData);
-
-      const role = getUserRole(userData);
-      setUserRole(role);
-    } catch (err) {
-      removeToken();
-      setUser(null);
-      setUserRole(null);
-      setError("User not found");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
-  
-  const reload = useCallback(() => fetchUser(), [fetchUser]);
-  
-  const value = useMemo(
-    () => ({
-      user,
-      userRole,
-      error,
-      loading,
-      clearUser,
-      hasRole,
-      reload,
-    }),
-    [user, userRole, error, loading, clearUser, hasRole, reload]
+  const hasRole = useCallback(
+    (role) => userRole === role,
+    [userRole]
   );
 
-  return (
-    <UserContext.Provider value={value}>
-      {children}
-    </UserContext.Provider>
-  );
+  const isAuthenticated = !!user;
+
+  const value = useMemo(() => ({
+    // states
+    user,
+    userRole,
+    loading,
+    error,
+
+    // helpers
+    isAuthenticated,
+    hasRole,
+
+    // acciones
+    reload: refresh,
+    clearUser: clear,
+  }), [user, userRole, loading, error, isAuthenticated, hasRole, refresh, clear]);
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
 
 export function useUser() {
-  const context = useContext(UserContext);
-  if (!context) {
-    throw new Error('useUser must be used within a UserProvider');
-  }
-  return context;
+  const ctx = useContext(UserContext);
+  if (!ctx) throw new Error('useUser must be used within a UserProvider');
+  return ctx;
 }

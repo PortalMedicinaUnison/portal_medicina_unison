@@ -1,64 +1,65 @@
-import '../styles.css';
-import { useUser } from '../contexts/UserContext';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../config';
+import { useUser } from '../contexts/UserContext';
+import useAuth from '../features/auth/hooks/useAuth';
+import DropdownMenu from '../utils/ui/DropdownMenu';
 
 function Navbar({ toggleSidebar, openToggleButton }) {
-    const { user, loading } = useUser();
+  const navigate = useNavigate();
+  const { user } = useUser();
+  const { logout } = useAuth();
 
-    return (        
-        <nav className="navbar">
-            <div className="flex items-center justify-between">
-                <div className="flex justify-start rtl:justify-end">
-                    <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="sidebar-item-icon"
-                            viewBox="-1 -1 23 23"
-                            aria-hidden="true"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M4.5 6.5h12m-12.002 4h11.997M4.5 14.5h11.995"/>
-                        </svg>
-                    </button>
+  return (        
+    <nav className="top-0 w-full border-b lg:px-2 ">
+      <div className="flex items-center justify-between">
+        <div className="flex">
+          <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="sidebar-item-icon"
+              width="32" 
+              height="32" 
+              viewBox="0 0 22 22"
+            >
+              <path fill="currentColor" d="M4 17.27v-1h16v1zm0-4.77v-1h16v1zm0-4.77v-1h16v1z"/>
+            </svg>
+          </button>
+        </div>
+
+        {user && (
+          <DropdownMenu
+            icon={({ isOpen }) => (
+              <div className="flex items-center justify-end gap-2">
+                <div className="flex flex-col px-3 text-right">
+                  <span className="text-xs font-semibold text-gray-900">
+                  {user.first_name} {user.last_name}
+                  </span>
+                  <span className="text-[10px] text-gray-900">{user.email}</span>
                 </div>
-                <Link to={ROUTES.USER.PROFILE} className="flex items-center justify-end">
-                    {user ? (
-                        <>
-                            <button 
-                              type="button" 
-                              className="flex flex-col px-3 text-right" 
-                              aria-expanded="false">
-                                <span className="text-xs font-semibold text-gray-900">
-                                    {user.first_name} {user.last_name}
-                                </span>
-                                <span className="text-[10px] text-gray-900">{user.email}</span>
-                            </button>
-                            <button 
-                              type="button" 
-                              className="rounded-full focus:ring-0 focus:ring-gray-200 focus:ring-offset-1 focus:ring-offset-gray-200" 
-                              aria-expanded="false">
-                                <img 
-                                    src={user.profile_photo || "/default-avatar.png"} 
-                                    alt="User Photo" 
-                                    className="size-10 rounded-full"
-                                    onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default-avatar.png";
-                                    }}
-                                />
-                            </button>
-                            </>
-                        ) : (
-                            <span className="text-xs text-gray-500">Cargando usuario...</span>
-                        )}
-                </Link>
-            </div>
-        </nav>
-    );
+
+                <img
+                  src={user.profile_photo || "/default-avatar.png"}
+                  alt="User Photo"
+                  className={`size-10 rounded-full ring-1 ${
+                    isOpen ? 'ring-gray-300' : 'ring-transparent'
+                  }`}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "/default-avatar.png";
+                  }}
+                />
+              </div>
+            )}
+            actions={[
+                {label: 'Ver perfil', onClick: () => navigate(ROUTES.USER.PROFILE)},
+                {label: 'Cerrar sesión', onClick: logout, className: 'text-red-600'},
+            ]}
+            hover={false}
+          />
+        )}
+      </div>
+    </nav>
+  );
 }
 
 export default Navbar;

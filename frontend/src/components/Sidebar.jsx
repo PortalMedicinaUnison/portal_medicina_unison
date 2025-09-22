@@ -1,12 +1,9 @@
 import { useState } from 'react';
-import useAuth from '../features/auth/hooks/useAuth';
 import { ROUTES } from '../config';
 import { Link, NavLink } from 'react-router-dom';
 
 
 function Sidebar({ toggleSidebar, openToggleButton }) {
-    const { logout, authenticated } = useAuth();
-
     const [openInternshipDropdown, setOpenInternshipDropdown] = useState(false);
     const [openSocialServiceDropdown, setOpenSocialServiceDropdown] = useState(false);
 
