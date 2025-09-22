@@ -437,7 +437,7 @@
     }
 
     .table-container-body { @apply 
-        overflow-x-auto overflow-y-hidden
+        overflow-x-auto overflow-hidden
         text-sm text-gray-900
     }
 
@@ -465,6 +465,11 @@
         truncate
         max-w-xs
     } 
+
+    .table th:last-child,
+    .table td:last-child { @apply 
+        overflow-visible
+    }
 
     /* ------------- MODAL ------------- */
 
