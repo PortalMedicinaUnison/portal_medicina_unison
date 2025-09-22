@@ -1,23 +1,23 @@
 import { useState, useCallback } from 'react';
-import { deleteInstitutionRequest } from '../../../../services/siteService';
+import { deleteUserRequest } from '../../../../services/userService';
 
 
-export default function useDeleteApplication() {
+export default function useDeleteUser() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const deleteApplication = useCallback(async (id) => {
+  const deleteUser = useCallback(async (id) => {
     if (loading) return;
     setLoading(true);
     setSuccess(false);
     setError(null);
 
     try {
-      await deleteInstitutionRequest(id);
+      await deleteUserRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error deleting institution');
+      setError(err.response?.data?.detail || 'Error deleting user');
       setSuccess(false);
     } finally {
       setLoading(false);
@@ -30,5 +30,5 @@ export default function useDeleteApplication() {
     setError(null);
   }, []);
 
-  return { deleteApplication, loading, success, error, reset };
+  return { deleteUser, loading, success, error, reset };
 };

@@ -1,34 +1,34 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { deleteSiteRequest } from '../../../../services/siteService';
+
 
 export default function useDeleteSite() {
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess]   = useState(false);
-  const [error, setError]       = useState('');
+  const [error, setError]     = useState(null);
+  const [success, setSuccess] = useState(false);
 
-  const deleteSite = async (id) => {
+  const deleteSite = useCallback(async (id) => {
+    if (loading) return;
     setLoading(true);
     setSuccess(false);
-    setError('');
+    setError(null);
 
     try {
       await deleteSiteRequest(id);
       setSuccess(true);
-      return true;
     } catch (err) {
-      console.error('Delete failed', err);
-      setError(err.message);
-      return false;
+      setError(err.response?.data?.detail || 'Error deleting site');
+      setSuccess(false);
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading]);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setLoading(false);
     setSuccess(false);
-    setError('');
-  };
+    setError(null);
+  }, []);
 
   return { deleteSite, loading, success, error, reset };
-}
+};

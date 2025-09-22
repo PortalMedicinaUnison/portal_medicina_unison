@@ -1,34 +1,34 @@
-import { useState } from 'react';
-import { deleteUserEnrollmentRequest } from '../../../../../services/userService';
+import { useState, useCallback } from 'react';
+import { deleteUserEnrollmentRequest } from '../../../../services/communicationService';
+
 
 export default function useDeleteEnrollment() {
   const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
-  const [error, setError]     = useState('');
 
-  const deleteEnrollment = async (id) => {
+  const deleteEnrollment = useCallback(async (id) => {
+    if (loading) return;
     setLoading(true);
     setSuccess(false);
-    setError('');
+    setError(null);
 
     try {
       await deleteUserEnrollmentRequest(id);
       setSuccess(true);
-      return true;
     } catch (err) {
-      console.error('Delete failed', err);
-      setError(err.message);
-      return false;
+      setError(err.response?.data?.detail || 'Error deleting user enrollment');
+      setSuccess(false);
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading]);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setLoading(false);
     setSuccess(false);
-    setError('');
-  };
+    setError(null);
+  }, []);
 
   return { deleteEnrollment, loading, success, error, reset };
-}
+};
