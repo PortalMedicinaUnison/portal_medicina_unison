@@ -47,7 +47,6 @@ function SignUpForm() {
     
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    
     if (!data.firstName) errors.push('El nombre es requerido.');
     if (!data.lastName) errors.push('El apellido paterno es requerido.');
     if (!data.academicId) errors.push('El número de expediente es requerido.');
@@ -55,7 +54,6 @@ function SignUpForm() {
     if (data.email !== data.confirmEmail) errors.push('Los correos no coinciden.');
     if (!data.password) errors.push('La contraseña es requerida.');
     if (data.password !== data.confirmPassword) errors.push('Las contraseñas no coinciden.');
-    
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;

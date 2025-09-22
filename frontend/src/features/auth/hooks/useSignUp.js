@@ -21,8 +21,7 @@ export default function useSignUp() {
     setSuccess(false);    
 
     try {
-      const cleanedFormData = cleanFormData(formData);
-      const response = await createUserRequest(cleanFormData);
+      const response = await createUserRequest(formData);
       setSuccess(true);
       return response;
     } catch (err) {
