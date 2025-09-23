@@ -1,31 +1,35 @@
-import { useState } from 'react';
-import { cleanFormData } from '../../../../utils/utils';
+import { useState, useCallback } from 'react';
 import { createPromotionRequest } from '../../../../services/promotionService';
 
+
 export default function useCreatePromotion() {
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
+  const [success, setSuccess] = useState(false);    
 
-  const createPromotion = async (formData) => {  
-    const cleanedData = cleanFormData(formData);
+  const reset = useCallback(() => {
+    setLoading(false);
+    setError(null);
+    setSuccess(false);
+  }, []);
 
-    setError('');
-    
-    const promotion = {
-      year: cleanedData.year,
-      period: cleanedData.period,
-      is_finished: cleanedData.is_finished,
-    };
+  const createPromotion = useCallback(async (formData) => {
+    if (loading) return false;
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
 
     try {
-      await createPromotionRequest(promotion);
+      const response = await createPromotionRequest(formData);
       setSuccess(true);
-      return true;
+      return response;
     } catch (err) {
-      setError('Register failed');
-      return false;
+      setError(err.response?.data?.detail || 'Error creating promotion');
+      setSuccess(false);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [loading]);
 
-  return { createPromotion, error, success };
+  return { createPromotion, loading, error, success, reset };
 }
