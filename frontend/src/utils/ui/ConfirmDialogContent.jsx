@@ -71,13 +71,15 @@ export default function ConfirmDialogContent({
             {primaryLabel}
           </button>
 
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="btn-secondary_full"
-          >
-            {secondaryLabel}
-          </button>
+          {onCancel && (
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="btn-secondary_full"
+            >
+              {secondaryLabel}
+            </button>
+          )}
         </div>
       </div>
     </div>

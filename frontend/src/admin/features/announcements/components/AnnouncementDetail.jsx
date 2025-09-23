@@ -20,25 +20,29 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
   const navigate = useNavigate();
   const { deleteAnnouncement, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteAnnouncement();
   
-  const [showDialog, setShowDialog] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
 
 // ---------------------- HANDLERS ----------------------
 
-  const handleDeleteButton = () => setShowDialog(true);
+  const handleDeleteButton = () => setShowConfirmDelete(true);
 
   const handleConfirmDelete = async () => {
+    if (!announcementId) return;
     await deleteAnnouncement(announcementId);
-    handleClose();
   };
+  const handleCloseConfirm = () => setShowConfirmDelete(false);
 
-  const handleClose = () => {
-    setShowDialog(false);
-  };  
+  const handleCloseError = () => {
+    setShowErrorDialog(false);
+    reset();
+  };
 
 // ---------------------- EFFECTS ----------------------
     
   useEffect(() => {
     if (deleted) {
+      setShowConfirmDelete(false);
       reset();
       navigate(-1);
     }
@@ -47,10 +51,10 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
 
   useEffect(() => {
     if (deleteError) {
-      alert(`Error al eliminar el aviso: ${deleteError}`);
-      reset();
+      setShowConfirmDelete(false);
+      setShowErrorDialog(true);
     }
-  }, [deleteError, reset]);
+  }, [deleteError]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -104,15 +108,24 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
         </dl>
       </div>
 
-      <Modal open={showDialog} onClose={handleClose}>
+      <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>
         <ConfirmDialogContent
           title="Confirmar eliminación"
           message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar este anuncio?"
           onConfirm={handleConfirmDelete}
           primaryLabel="Eliminar"
           secondaryLabel="Cancelar"
-          onCancel={handleClose}
+          onCancel={handleCloseConfirm}
           danger
+        />
+      </Modal>
+
+      <Modal open={showErrorDialog} onClose={handleCloseError}>
+        <ConfirmDialogContent
+          title="Ha ocurrido un error"
+          message="Ocurrió un problema al eliminar el anuncio"
+          onConfirm={handleCloseError}
+          primaryLabel="Aceptar"
         />
       </Modal>
 
@@ -121,6 +134,7 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
           type="button" 
           className='btn-tertiary'
           onClick={handleDeleteButton}
+          disabled={deleting}
         >
           {deleting ? 'Eliminando...' : 'Eliminar anuncio'}
         </button>
