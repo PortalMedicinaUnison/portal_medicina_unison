@@ -1,7 +1,7 @@
 import SiteInfo from "../components/SiteInfo.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES, adminAbs } from "../../../../config.js";
-import { useSite } from "../hooks/useSite.js";
+import useSite from "../hooks/useSite.js";
 import Layout from "../../../../Layout.jsx";
 import PageLayout from '../../../../components/PageLayout.jsx';
 

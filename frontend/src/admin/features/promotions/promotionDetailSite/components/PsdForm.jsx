@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { usePromotion } from "../../hooks/usePromotion";
+import usePromotion from "../../hooks/usePromotion";
 import useCreatePsd from "../hooks/useCreatePsd";
 import useGetSites from "../hooks/useGetSites"
 

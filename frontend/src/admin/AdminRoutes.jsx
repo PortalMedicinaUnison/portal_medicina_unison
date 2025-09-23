@@ -3,7 +3,7 @@ import { ROUTES } from '../config.js';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 
 import UserListPage from '../admin/features/users/pages/UserListPage.jsx';
-import UserInfoAdminPage from '../admin/features/users/pages/UserInfoAdmin.jsx';
+import UserInfoAdminPage from './features/users/pages/UserDetailAdmin.jsx';
 
 import PromotionListPage from '../admin/features/promotions/pages/PromotionsListPage.jsx';
 import PromotionFormPage from '../admin/features/promotions/pages/PromotionFormPage.jsx';

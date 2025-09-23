@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { usePromotion } from '../hooks/usePromotion';
+import usePromotion from '../hooks/usePromotion';
 import { ROUTES, adminAbs } from '../../../../config';
 import useDeletePromotion from '../hooks/useDeletePromotion';
 import PsdListReadOnly from '../promotionDetailSite/components/PsdListReadOnly';

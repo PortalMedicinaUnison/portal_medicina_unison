@@ -1,7 +1,7 @@
 import SurveyInfo from "../components/SurveyInfo";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES, adminAbs } from "../../../../config";
-import { useSurvey } from "../hooks/useSurvey";
+import useSurvey from "../hooks/useSurvey";
 import Layout from "../../../../Layout";
 import PageLayout from '../../../../components/PageLayout';
 

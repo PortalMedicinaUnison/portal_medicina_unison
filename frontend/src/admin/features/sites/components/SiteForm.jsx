@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useCreateSite from "../hooks/useCreateSite";
-import useGetInstitutions from "../hooks/useGetInstitutions";
+import useGetInstitutions from "../../institutions/hooks/useGetInstitutions.js";
 import { ROUTES, adminAbs } from "../../../../config";
 import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
 import { isValidCity } from "../../../../utils/validations.js";

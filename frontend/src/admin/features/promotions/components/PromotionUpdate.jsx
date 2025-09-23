@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES, adminAbs } from "../../../../config";
-import { usePromotion } from "../hooks/usePromotion";
+import usePromotion from "../hooks/usePromotion";
 import usePromotionUpdate from "../hooks/useUpdatePromotion";
 import PsdList from '../promotionDetailSite/components/PsdList';
 

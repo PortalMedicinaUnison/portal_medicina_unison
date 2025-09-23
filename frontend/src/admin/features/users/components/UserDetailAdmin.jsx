@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
-import { useUserAdmin } from '../hooks/useUserAdmin';
+import useUserAdmin from '../hooks/useUserAdmin';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
-import UpdateUserAdmin from './UpdateUserAdmin';
+import useUpdateUser from '../hooks/useUpdateUserAdmin';
 
 import Modal from '../../../../utils/ui/Modal';
 
 function UserDetail() {
     const { academicId } = useParams();
-    const { userAdmin, loading, error, refetch } = useUserAdmin(academicId);
+    const { user, loading, error, refetch } = useUserAdmin(academicId);
 
     const [open, setOpen] = useState(false);
     const [localError, setLocalError] = useState("");    
@@ -23,13 +23,13 @@ function UserDetail() {
 
     return (
         <div>
-            {!userAdmin ? (
+            {!user ? (
                 <p>No se encontró el usuario.</p>
             ) : (
               <div className="info-container">
                 <div className="user-info-photo">
                     <img 
-                    src={userAdmin.profile_photo || "/default-avatar.png"} 
+                    src={user.profile_photo || "/default-avatar.png"} 
                     alt="Foto de perfil" 
                     className="user-profile-photo"
                     onError={(e) => {
@@ -44,27 +44,27 @@ function UserDetail() {
                     <div className="item-row">
                         <dt className="item-header">Nombre completo</dt>
                         <dd className="item-text">
-                        {userAdmin.first_name} {userAdmin.last_name} {userAdmin.second_last_name}
+                        {user.first_name} {user.last_name} {user.second_last_name}
                         </dd>
                     </div>
 
                     <div className="item-row">
                         <dt className="item-header">Correo electrónico</dt>
-                        <dd className="item-text">{userAdmin.email}</dd>
+                        <dd className="item-text">{user.email}</dd>
                     </div>
 
                     <div className="item-row">
                         <dt className="item-header">Expediente</dt>
-                        <dd className="item-text">{userAdmin.academic_id}</dd>
+                        <dd className="item-text">{user.academic_id}</dd>
                     </div>
 
                     <div className="item-row">
                         <dt className="item-header">Teléfono</dt>
-                        <dd className="item-text">{userAdmin.phone_number}</dd>
+                        <dd className="item-text">{user.phone_number}</dd>
                     </div>
                     <div className="item-row">
                         <dt className="item-header">Rol</dt>
-                        <dd className="item-text">{userAdmin.is_admin ? 'Administrador' : 'Alumno'}</dd>
+                        <dd className="item-text">{user.is_admin ? 'Administrador' : 'Alumno'}</dd>
                     </div>
                     </dl>
                 </div>

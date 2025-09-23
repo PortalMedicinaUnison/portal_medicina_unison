@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSite } from '../hooks/useSite';
+import useSite from '../hooks/useSite';
 
 function SiteDetail() {
     const { siteId } = useParams();

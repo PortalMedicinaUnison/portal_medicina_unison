@@ -1,7 +1,7 @@
 import PromotionInfo from "../components/PromotionInfo.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES, adminAbs } from "../../../../config.js";
-import { usePromotion } from "../hooks/usePromotion.js";
+import usePromotion from "../hooks/usePromotion.js";
 import Layout from "../../../../Layout.jsx";
 import PageLayout from '../../../../components/PageLayout.jsx';
 
