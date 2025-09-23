@@ -86,7 +86,7 @@ function AnnouncementForm() {
               to={adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DETAIL(createdId))}
               className="font-bold underline"
             >
-              Ver anuncio
+              Ver
             </Link>
           )}
         </div>
@@ -145,7 +145,7 @@ function AnnouncementForm() {
                     disabled={saving}
                     required
                   >
-                    <option value={0}>Seleccione un tipo</option>
+                    <option value={0}>Seleccionar tipo</option>
                     <option value={1}>General</option>
                     <option value={2}>Internado</option>
                   </select>

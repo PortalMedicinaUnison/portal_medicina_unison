@@ -3,10 +3,10 @@ import { ROUTES, adminAbs } from '../../../../config';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
 import useGetAnnouncements from '../hooks/useGetAnnouncements';
-import AnnouncementsList from '../components/AnnouncementsList';
+import AnnouncementList from '../components/AnnouncementList';
 
 
-function AnnouncementsListPage() {
+function AnnouncementListPage() {
   const navigate = useNavigate();
   const { announcements, loading: fetching, error: fetchError, refetch } = useGetAnnouncements();
     
@@ -26,7 +26,7 @@ function AnnouncementsListPage() {
         title="Lista de anuncios"
         actions={actions}
       >
-        <AnnouncementsList
+        <AnnouncementList
           announcements={announcements}
           fetching={fetching}
           fetchError={fetchError}
@@ -37,4 +37,4 @@ function AnnouncementsListPage() {
   );
 }
 
-export default AnnouncementsListPage;
+export default AnnouncementListPage;

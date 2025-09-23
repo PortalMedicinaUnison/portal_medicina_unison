@@ -9,7 +9,7 @@ import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 
 
-function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
+function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
   const { deleteAnnouncement, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteAnnouncement();
   
@@ -44,7 +44,6 @@ function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
       return title.includes(searchQuery) || description.includes(searchQuery);
     });
   }, [announcements, searchQuery, statusFilter, typeFilter]);
-
 
 // ---------------------- HANDLERS ----------------------
 
@@ -135,7 +134,7 @@ function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
           className="btn-tertiary--light"
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          aria-label="Filtrar ambito"
+          aria-label="Filtrar por ambito"
         >
           <option value="">Ámbito</option>
           <option value="1">General</option>
@@ -201,7 +200,7 @@ function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>
         <ConfirmDialogContent
           title="Confirmar eliminación"
-          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar este anuncio?"
+          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar?"
           onConfirm={handleConfirmDelete}
           primaryLabel="Eliminar"
           secondaryLabel="Cancelar"
@@ -212,7 +211,7 @@ function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
 
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
-          title="Ha ocurrido un error"
+          title="Ops... Ha ocurrido un error"
           message="Ocurrió un problema al eliminar el anuncio"
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
@@ -223,4 +222,4 @@ function AnnouncementsList( { announcements, fetching, fetchError, refetch }) {
   );
 }
     
-export default AnnouncementsList;
+export default AnnouncementList;
