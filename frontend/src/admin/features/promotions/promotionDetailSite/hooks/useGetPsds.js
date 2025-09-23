@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
-import { getAllPsdsRequest } from '../../../../../services/promotionService';
+import { useState, useEffect, useCallback } from 'react';
+import { getAllPsdsRequest } from '../../../../../services/promotionService'
 
-const useGetPsds = () => {
+
+export default function useGetPsds () {
   const [psds, setPsds] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading]             = useState(false);
+  const [error, setError]                 = useState(null);
 
-  const fetchPsds = async () => {
+  const getPsds = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -14,19 +15,16 @@ const useGetPsds = () => {
       const response = await getAllPsdsRequest();
       setPsds(response.data);
     } catch (err) {
-      console.error('Error fetching promotion site details:', err);
-      setError(err.message);
-      return false;
+      setError(err.response?.data?.detail || 'Error fetching promotion site details');
+      setPsds([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchPsds();
   }, []);
-
-  return { psds, loading, error, refetch: fetchPsds };
+    
+  useEffect(() => {
+    getPsds();
+  }, [getPsds]);
+    
+  return { psds, loading, error, refetch: getPsds };
 };
-
-export default useGetPsds;
