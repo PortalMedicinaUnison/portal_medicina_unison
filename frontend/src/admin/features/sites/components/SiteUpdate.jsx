@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
-import useCreateSite from "../hooks/useCreateSite";
+import useUpdateSite from "../hooks/useUpdateSite.js";
 import useGetInstitutions from "../../institutions/hooks/useGetInstitutions.js";
 import { cleanFormData } from "../../../../utils/utils";
 import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
 import { isValidCity } from "../../../../utils/validations.js";
-
+import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../utils/ui/DataLoadError';
 
 const INITIAL_FORM = {
   name: '',
@@ -21,13 +22,12 @@ const INITIAL_FORM = {
   teachingDeputyPhone: '',
 };
 
-function SiteForm() {
+function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
   const navigate = useNavigate();
-  const { createSite, loading: saving, success: saved, error: saveError, reset } = useCreateSite();
+  const { updateSite, loading: saving, success: saved, error: saveError, reset } = useUpdateSite();
   const { institutions, loading: fetchingInstitutions, error: institutionsError } = useGetInstitutions();
 
   const [formData, setFormData] = useState(INITIAL_FORM);
-  const [createdId, setCreatedId] = useState(null);
   const [validationError, setValidationError] = useState('');
 
 // ---------------------- HANDLERS ----------------------
@@ -63,46 +63,68 @@ function SiteForm() {
       return;
     }
     
-    const response = await createSite(data);
-    if (response && response.data.site_id) {
-      setCreatedId(response.data.site_id);
-    }
+    await updateSite(siteId, data);
   };
 
 // ---------------------- EFFECTS ----------------------
 
-  useEffect(() => {
-    if (saved) {
-      setFormData(INITIAL_FORM);
+useEffect(() => {
+  if (site) {
+    setFormData({
+      name: site.name || '',
+      institutionId: site.institutionId || '',
+      address: site.address || '',
+      city: site.city || '',
+      teachingHeadName: site.teachingHeadName || '',
+      teachingHeadEmail: site.teachingHeadEmail || '',
+      teachingHeadPhone: site.teachingHeadPhone || '',
+      teachingDeputyName: site.teachingDeputyName || '',
+      teachingDeputyEmail: site.teachingDeputyEmail || '',
+      teachingDeputyPhone: site.teachingDeputyPhone || '',
+    });
+  }
+}, [site]);
 
-      const alertTimeout = setTimeout(() => {
-        reset();
-      }, 10000);
-      return () => clearTimeout(alertTimeout);
-    }
-  }, [saved, reset]);
+useEffect(() => {
+  if (saved) {
+    navigate(adminAbs(ROUTES.ADMIN.SITE_DETAIL(siteId)));
+  }
+}, [saved, navigate]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
+if (fetching) return <LoadingSpinner/>;
+
+  if (fetchError) {
+    return (
+      <DataLoadError
+        title="No se pudo cargar la sede"
+        message="Intenta recargar o vuelve a la lista."
+        details={fetchError}
+        onRetry={refetch}
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
+    );
+  }
+  
+  if (!site) {
+    return (
+      <DataLoadError
+        title="Sede no disponible"
+        message="No encontramos información para esta sede."
+        onRetry={refetch}
+        retryLabel='Recargar'
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
+    );
+  }
     
 // ---------------------- RENDER ----------------------
 
   return (
     <form className="component-container" onSubmit={handleSubmit}>
-      {saved && (
-        <div className="alert-success">
-          Sede registrada exitosamente.{' '}
-          {createdId && (
-            <Link
-              to={adminAbs(ROUTES.ADMIN.SITE_DETAIL(createdId))}
-              className="font-bold underline"
-            >
-              Ver
-            </Link>
-          )}
-        </div>
-      )}
-
       {(validationError || saveError) && (
         <div className="alert-error">
           <strong className="font-bold">Error: </strong>
@@ -309,4 +331,4 @@ function SiteForm() {
   );
 }
 
-export default SiteForm;
+export default SiteUpdate;

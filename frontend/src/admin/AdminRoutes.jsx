@@ -10,17 +10,17 @@ import PromotionFormPage from '../admin/features/promotions/pages/PromotionFormP
 import PromotionInfoPage from '../admin/features/promotions/pages/PromotionInfoPage.jsx';
 import PromotionUpdatePage from '../admin/features/promotions/pages/PromotionUpdatePage.jsx';
 
-import SitesListPage from '../admin/features/sites/pages/SitesListPage.jsx';
+import SiteListPage from '../admin/features/sites/pages/SiteListPage.jsx';
 import SiteFormPage from '../admin/features/sites/pages/SiteFormPage.jsx';
-import SiteInfoPage from '../admin/features/sites/pages/SiteInfoPage.jsx';
-// import SiteUpdatePage from '../admin/features/sites/pages/SiteUpdatePage.jsx';
+import SiteDetailPage from '../admin/features/sites/pages/SiteDetailPage.jsx';
+import SiteUpdatePage from '../admin/features/sites/pages/SiteUpdatePage.jsx';
 
 import InstitutionsListPage from '../admin/features/institutions/pages/InstitutionsListPage.jsx';
 import InstitutionFormPage from '../admin/features/institutions/pages/InstitutionsFormPage.jsx';
 // import InstitutionInfoPage from '../admin/features/institutions/pages/InstitutionsInfoPage.jsx';
 // import InstitutionUpdatePage from '../admin/features/institutions/pages/InstitutionsUpdatePage.jsx';
 
-import AnnouncementsListPage from '../admin/features/announcements/pages/AnnouncementsListPage.jsx';
+import AnnouncementListPage from '../admin/features/announcements/pages/AnnouncementListPage.jsx';
 import AnnouncementFormPage from '../admin/features/announcements/pages/AnnouncementFormPage.jsx';
 import AnnouncementDetailPage from '../admin/features/announcements/pages/AnnouncementDetailPage.jsx';
 import AnnouncementUpdatePage from '../admin/features/announcements/pages/AnnouncementUpdatePage.jsx';
@@ -53,10 +53,10 @@ function AdminRoutes() {
         <Route path="promotions/:promotionId/edit" element={<PromotionUpdatePage />} />
 
         {/* Sites */}
-        <Route path="sites" element={<SitesListPage />} />
+        <Route path="sites" element={<SiteListPage />} />
         <Route path="sites/create" element={<SiteFormPage />} />
-        <Route path="sites/:siteId" element={<SiteInfoPage />} />
-        {/* <Route path="sites/:siteId/edit" element={<SiteUpdatePage />} /> */}
+        <Route path="sites/:siteId" element={<SiteDetailPage />} />
+        <Route path="sites/:siteId/edit" element={<SiteUpdatePage />} />
 
         {/* Institutions */}
         <Route path="institutions" element={<InstitutionsListPage />} />
@@ -65,7 +65,7 @@ function AdminRoutes() {
         {/* <Route path="institutions/:institutionId/edit" element={<InstitutionUpdatePage />} /> */}
 
         {/* Announcements */}
-        <Route path="announcements" element={<AnnouncementsListPage />} />
+        <Route path="announcements" element={<AnnouncementListPage />} />
         <Route path="announcements/create" element={<AnnouncementFormPage />} />
         <Route path="announcements/:announcementId" element={<AnnouncementDetailPage />} />
         <Route path="announcements/:announcementId/edit" element={<AnnouncementUpdatePage />} />
