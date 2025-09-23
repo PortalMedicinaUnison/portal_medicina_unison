@@ -1,13 +1,13 @@
-import InstitutionForm from "../components/InstitutionForm.jsx";
-import Layout from "../../../../Layout.jsx";
+import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout.jsx';
+import InstitutionForm from '../components/InstitutionForm.jsx';
 
 
 function InstitutionFormPage() {
   return ( 
     <Layout>
       <PageLayout 
-        title="Registrar nueva sede" 
+        title="Registrar nueva sede"
       >
         <InstitutionForm/>
       </PageLayout>

@@ -118,7 +118,7 @@ function InstitutionForm() {
           <button 
             type="button" 
             className="btn-secondary" 
-            onClick={() => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST))}
+            onClick={() => navigate(adminAbs(ROUTES.ADMIN.INSTITUTION_LIST))}
             disabled={saving}
           >
             Cancelar

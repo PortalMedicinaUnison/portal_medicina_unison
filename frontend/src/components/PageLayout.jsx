@@ -2,7 +2,7 @@
 function PageLayout({ title, actions, pretitle = "Ir atrás", children }) {
 
   return (
-     <div className="flex flex-col gap-16 my-4 mb-16 mx-8 max-w-full min-w-0 ">
+     <div className="flex flex-col gap-16 my-4 mx-8 max-w-full min-w-0">
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-end">
         <div className="flex-col min-w-0">
           {pretitle && (
@@ -27,7 +27,7 @@ function PageLayout({ title, actions, pretitle = "Ir atrás", children }) {
         )}
       </div>
       
-      <div className="w-full min-w-0 max-w-full overflow-x-hidden">
+      <div className="w-full min-w-0 max-w-full mb-16  overflow-x-hidden">
         {children}
       </div>
     </div>

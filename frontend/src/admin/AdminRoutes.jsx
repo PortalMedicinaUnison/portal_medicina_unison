@@ -15,8 +15,8 @@ import SiteFormPage from '../admin/features/sites/pages/SiteFormPage.jsx';
 import SiteDetailPage from '../admin/features/sites/pages/SiteDetailPage.jsx';
 import SiteUpdatePage from '../admin/features/sites/pages/SiteUpdatePage.jsx';
 
-import InstitutionsListPage from '../admin/features/institutions/pages/InstitutionsListPage.jsx';
-import InstitutionFormPage from '../admin/features/institutions/pages/InstitutionsFormPage.jsx';
+import InstitutionListPage from '../admin/features/institutions/pages/InstitutionListPage.jsx';
+import InstitutionFormPage from '../admin/features/institutions/pages/InstitutionFormPage.jsx';
 // import InstitutionInfoPage from '../admin/features/institutions/pages/InstitutionsInfoPage.jsx';
 // import InstitutionUpdatePage from '../admin/features/institutions/pages/InstitutionsUpdatePage.jsx';
 
@@ -59,7 +59,7 @@ function AdminRoutes() {
         <Route path="sites/:siteId/edit" element={<SiteUpdatePage />} />
 
         {/* Institutions */}
-        <Route path="institutions" element={<InstitutionsListPage />} />
+        <Route path="institutions" element={<InstitutionListPage />} />
         <Route path="institutions/create" element={<InstitutionFormPage />} />
         {/* <Route path="institutions/:institutionId" element={<InstitutionInfoPage />} /> */}
         {/* <Route path="institutions/:institutionId/edit" element={<InstitutionUpdatePage />} /> */}
