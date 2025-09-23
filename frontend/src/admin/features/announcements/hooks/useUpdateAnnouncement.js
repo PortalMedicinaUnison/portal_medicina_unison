@@ -7,14 +7,14 @@ export default function useUpdateAnnouncement() {
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updateAnnouncement = useCallback(async (announcementID, formData) => {  
+  const updateAnnouncement = useCallback(async (id, formData) => {  
     if (loading) return;
     setLoading(true);
     setError(null);
     setSuccess(false);
 
     try {
-      await updateAnnouncementRequest(announcementID, formData);
+      await updateAnnouncementRequest(id, formData);
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error updating announcement');

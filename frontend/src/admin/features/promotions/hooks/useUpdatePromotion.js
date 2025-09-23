@@ -1,33 +1,34 @@
-import { useState } from 'react';
-import { cleanFormData } from '../../../../utils/utils';
+import { useState, useCallback } from 'react';
 import { updatePromotionRequest } from '../../../../services/promotionService';
 
-export default function usePromotionUpdate() {
-  const [error, setError] = useState('');
+
+export default function useUpdatePromotion() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updatePromotion = async (formData, promotionId) => {  
-    const cleanedData = cleanFormData(formData);
-    
-    setError('');
-    
-    const promotion = {
-        year: cleanedData.year,
-        period: cleanedData.period,
-        is_finished: cleanedData.is_finished,
-    };
+  const updatePromotion = useCallback(async (id, formData) => {  
+    if (loading) return;
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
 
     try {
-      await updatePromotionRequest(promotionId, promotion);
-      console.log('Promotion updated successfully');
+      await updatePromotionRequest(id, formData);
       setSuccess(true);
-      return true;
     } catch (err) {
-      console.error("Update failed", err);
-      setError('Error al actualizar la promoción. Por favor, intenta nuevamente.');
-      return false;
+      setError(err.response?.data?.detail || 'Error updating promotion');
+      setSuccess(false);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [loading]);
 
-  return { updatePromotion, error, success };
+  const reset = useCallback(() => {
+    setLoading(false);
+    setError(null);
+    setSuccess(false);
+  }, []);
+
+  return { updatePromotion, loading, error, success, reset };
 }
