@@ -426,7 +426,7 @@
 
     .table-container { @apply 
         w-full min-w-0 max-w-full
-        flex flex-col gap-4      
+        flex flex-col gap-4
     }
 
     .table-container-actions { @apply 
@@ -437,7 +437,7 @@
     }
 
     .table-container-body { @apply 
-        overflow-x-auto overflow-hidden
+        overflow-y-visible overflow-x-visible
         text-sm text-gray-900
     }
 
