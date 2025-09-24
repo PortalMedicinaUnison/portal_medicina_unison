@@ -5,6 +5,10 @@
 
 /* ------------------------------------------ */
 
+body {
+    @apply text-sm
+}
+
 @layer components {
     .show-on-sm { @apply 
         hidden 

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES } from '../../../config';
 import useSignUp from '../hooks/useSignUp';
 import { cleanFormData } from "../../../utils/utils";
+import { DEFAULT_PROFILE_IMAGE } from '../../../config';
 
 
 const INITIAL_FORM = {
@@ -43,23 +44,36 @@ function SignUpForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = cleanFormData(formData);
+    const cleanData = cleanFormData(formData);
     
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!data.firstName) errors.push('El nombre es requerido.');
-    if (!data.lastName) errors.push('El apellido paterno es requerido.');
-    if (!data.academicId) errors.push('El número de expediente es requerido.');
-    if (!data.email) errors.push('El correo es requerido.');
-    if (data.email !== data.confirmEmail) errors.push('Los correos no coinciden.');
-    if (!data.password) errors.push('La contraseña es requerida.');
-    if (data.password !== data.confirmPassword) errors.push('Las contraseñas no coinciden.');
+    if (!cleanData.firstName) errors.push('El nombre es requerido.');
+    if (!cleanData.lastName) errors.push('El apellido paterno es requerido.');
+    if (!cleanData.academicId) errors.push('El número de expediente es requerido.');
+    if (!cleanData.email) errors.push('El correo es requerido.');
+    if (cleanData.email !== cleanData.confirmEmail) errors.push('Los correos no coinciden.');
+    if (!cleanData.password) errors.push('La contraseña es requerida.');
+    if (cleanData.password !== cleanData.confirmPassword) errors.push('Las contraseñas no coinciden.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
 
-    await signUpUser(data);
+    const user = {
+      academic_id: formData.academicId,
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      second_last_name: formData.secondLastName || '',
+      email: formData.email,
+      phone_number: '',
+      password: formData.password,
+      profile_photo: DEFAULT_PROFILE_IMAGE || '',
+      is_admin: false,
+      is_super_admin: false
+    }
+
+    await signUpUser(user);
   };
 
 // ---------------------- EFFECTS ----------------------
