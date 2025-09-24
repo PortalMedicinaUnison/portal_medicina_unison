@@ -10,8 +10,8 @@ import DataLoadError from '../../../../utils/ui/DataLoadError';
 const INITIAL_FORM = {
   title: '',
   description: '',
-  announcement_type: 0,
-  is_visible: true,
+  announcementType: 0,
+  isVisible: true,
 };
 
 function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, announcementId }) {
@@ -43,20 +43,27 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
         return;
     }
 
-    const data = cleanFormData({
+    const cleanData = cleanFormData({
       ...formData,
-      announcement_type: Number(formData.announcement_type),
+      announcementType: Number(formData.announcementType),
     });
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!data.title) errors.push('El título es requerido.');
-    if (!data.description) errors.push('La descripción es requerida.');
-    if (data.announcement_type === 0) errors.push('Seleccione un tipo de anuncio válido.');
+    if (!cleanData.title) errors.push('El título es requerido.');
+    if (!cleanData.description) errors.push('La descripción es requerida.');
+    if (cleanData.announcementType === 0) errors.push('Seleccione un tipo de anuncio válido.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
+
+    const payload = {
+      title: cleanData.title,
+      description: cleanData.description,
+      announcement_type: cleanData.announcementType,
+      is_visible: cleanData.isVisible,
+    };
     
     await updateAnnouncement(announcementId, data);
   };
@@ -68,8 +75,8 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
       setFormData({
         title: announcement.title || '',
         description: announcement.description || '',
-        announcement_type: announcement.announcement_type ?? 0,
-        is_visible: announcement.is_visible ?? true,
+        announcementType: announcement.announcement_type ?? 0,
+        isVisible: announcement.is_visible ?? true,
       });
     }
   }, [announcement]);
@@ -160,8 +167,8 @@ return (
                 <dt className="item-header">Ambito</dt>
                 <dd className="item-text">
                   <select
-                    name="announcement_type"
-                    value={formData.announcement_type}
+                    name="announcementType"
+                    value={formData.announcementType}
                     onChange={handleChange}
                     className="form-input--half"
                     disabled={saving}
@@ -177,9 +184,9 @@ return (
               <dt className="item-header">Visible</dt>
               <dd className="item-text">
                 <input
-                  name="is_visible"
+                  name="isVisible"
                   type="checkbox"
-                  checked={formData.is_visible}
+                  checked={formData.isVisible}
                   onChange={handleChange}
                   className="form-checkbox"
                   disabled={saving}

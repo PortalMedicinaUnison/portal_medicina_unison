@@ -60,20 +60,20 @@ function SignUpForm() {
       return;
     }
 
-    const user = {
-      academic_id: formData.academicId,
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      second_last_name: formData.secondLastName || '',
-      email: formData.email,
+    const payload = {
+      academic_id: cleanData.academicId,
+      first_name: cleanData.firstName,
+      last_name: cleanData.lastName,
+      second_last_name: cleanData.secondLastName ?? '',
+      email: cleanData.email,
       phone_number: '',
-      password: formData.password,
+      password: cleanData.password,
       profile_photo: DEFAULT_PROFILE_IMAGE || '',
       is_admin: false,
       is_super_admin: false
     }
 
-    await signUpUser(user);
+    await signUpUser(payload);
   };
 
 // ---------------------- EFFECTS ----------------------
