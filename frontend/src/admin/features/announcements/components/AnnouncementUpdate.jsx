@@ -65,7 +65,14 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
       is_visible: cleanData.isVisible,
     };
     
-    await updateAnnouncement(announcementId, data);
+    const payload = {
+      title: cleanData.title,
+      description: cleanData.description,
+      announcement_type: cleanData.announcementType,
+      is_visible: cleanData.isVisible,
+    };
+
+    await updateAnnouncement(announcementId, payload);
   };
 
 // ---------------------- EFFECTS ----------------------
@@ -75,8 +82,8 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
       setFormData({
         title: announcement.title || '',
         description: announcement.description || '',
-        announcementType: announcement.announcement_type ?? 0,
-        isVisible: announcement.is_visible ?? true,
+        announcementType: announcement.announcementType ?? 0,
+        isVisible: announcement.isVisible ?? true,
       });
     }
   }, [announcement]);

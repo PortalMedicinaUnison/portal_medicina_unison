@@ -51,14 +51,14 @@ function AnnouncementForm() {
       setValidationError(errors.join(' | '));
       return;
     }
-    
+
     const payload = {
       title: cleanData.title,
       description: cleanData.description,
       announcement_type: cleanData.announcementType,
       is_visible: cleanData.isVisible,
     };
-
+    
     const response = await createAnnouncement(payload);
     if (response && response.data.announcement_id) {
       setCreatedId(response.data.announcement_id);

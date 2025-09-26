@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from 'react-router-dom';
-import { ROUTES } from '../../../config';
+import { DEFAULT_PROFILE_IMAGE, ROUTES } from '../../../config';
 import useSignUp from '../hooks/useSignUp';
 import { cleanFormData } from "../../../utils/utils";
 import { DEFAULT_PROFILE_IMAGE } from '../../../config';
@@ -61,17 +61,17 @@ function SignUpForm() {
     }
 
     const payload = {
-      academic_id: cleanData.academicId,
       first_name: cleanData.firstName,
       last_name: cleanData.lastName,
-      second_last_name: cleanData.secondLastName ?? '',
+      second_last_name: cleanData.secondLastName || '',
+      academic_id: cleanData.academicId,
       email: cleanData.email,
       phone_number: '',
+      profile_photo: DEFAULT_PROFILE_IMAGE,
       password: cleanData.password,
-      profile_photo: DEFAULT_PROFILE_IMAGE || '',
       is_admin: false,
-      is_super_admin: false
-    }
+      is_super_admin: false,
+    };
 
     await signUpUser(payload);
   };

@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { cleanFormData } from '../../../utils/utils';
 import { createUserRequest } from '../../../services/userService';
 
 
@@ -14,14 +13,14 @@ export default function useSignUp() {
     setSuccess(false);
   }, []);
 
-  const signUpUser = useCallback(async (formData) => {
+  const signUpUser = useCallback(async (payload) => {
     if (loading) return false;
     setLoading(true);
     setError(null);
     setSuccess(false);    
 
     try {
-      const response = await createUserRequest(formData);
+      const response = await createUserRequest(payload);
       setSuccess(true);
       return response;
     } catch (err) {

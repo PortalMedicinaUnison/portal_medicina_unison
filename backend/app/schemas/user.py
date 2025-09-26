@@ -32,7 +32,7 @@ class UserInput(BaseModel):
     email: str
     phone_number: Optional[str] = None
     password: str
-    profile_photo: str
+    profile_photo: Optional[str] = None
     is_admin: bool = False
     is_super_admin: bool = False
 
