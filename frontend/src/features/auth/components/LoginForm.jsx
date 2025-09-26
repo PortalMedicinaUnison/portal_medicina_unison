@@ -32,17 +32,23 @@ function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = cleanFormData(formData);
+    const cleanedData = cleanFormData(formData);
     
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!data.email) errors.push('El correo es requerido.');
-    if (!data.password) errors.push('La contraseña es requerida.');
+    if (!cleanedData.email) errors.push('El correo es requerido.');
+    if (!cleanedData.password) errors.push('La contraseña es requerida.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
-    await login(data);
+
+    const payload = {
+      email: cleanedData.email,
+      password: cleanedData.password,
+    };
+
+    await login(payload);
   };
 
 // ---------------------- EFFECTS ----------------------

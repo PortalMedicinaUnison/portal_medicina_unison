@@ -34,17 +34,21 @@ function InstitutionForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = cleanFormData(formData);
+    const cleanedData = cleanFormData(formData);
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!data.name) errors.push('El nombre es obligatorio');
+    if (!cleanedData.name) errors.push('El nombre es obligatorio');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
+
+    const payload = {
+      name: cleanedData.name,
+    };
     
-    const response = await createInstitution(data);
+    const response = await createInstitution(payload);
     if (response && response.data.institution_id) {
       setCreatedId(response.data.institution_id);
     }

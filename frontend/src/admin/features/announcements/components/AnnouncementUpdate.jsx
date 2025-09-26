@@ -43,35 +43,28 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
         return;
     }
 
-    const cleanData = cleanFormData({
+    const cleanedData = cleanFormData({
       ...formData,
       announcementType: Number(formData.announcementType),
     });
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanData.title) errors.push('El título es requerido.');
-    if (!cleanData.description) errors.push('La descripción es requerida.');
-    if (cleanData.announcementType === 0) errors.push('Seleccione un tipo de anuncio válido.');
+    if (!cleanedData.title) errors.push('El título es requerido.');
+    if (!cleanedData.description) errors.push('La descripción es requerida.');
+    if (cleanedData.announcementType === 0) errors.push('Seleccione un tipo de anuncio válido.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
 
     const payload = {
-      title: cleanData.title,
-      description: cleanData.description,
-      announcement_type: cleanData.announcementType,
-      is_visible: cleanData.isVisible,
+      title: cleanedData.title,
+      description: cleanedData.description,
+      announcement_type: cleanedData.announcementType,
+      is_visible: cleanedData.isVisible,
     };
     
-    const payload = {
-      title: cleanData.title,
-      description: cleanData.description,
-      announcement_type: cleanData.announcementType,
-      is_visible: cleanData.isVisible,
-    };
-
     await updateAnnouncement(announcementId, payload);
   };
 

@@ -43,32 +43,31 @@ function SignUpForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const cleanData = cleanFormData(formData);
+    const cleanedData = cleanFormData(formData);
     
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanData.firstName) errors.push('El nombre es requerido.');
-    if (!cleanData.lastName) errors.push('El apellido paterno es requerido.');
-    if (!cleanData.academicId) errors.push('El número de expediente es requerido.');
-    if (!cleanData.email) errors.push('El correo es requerido.');
-    if (cleanData.email !== cleanData.confirmEmail) errors.push('Los correos no coinciden.');
-    if (!cleanData.password) errors.push('La contraseña es requerida.');
-    if (cleanData.password !== cleanData.confirmPassword) errors.push('Las contraseñas no coinciden.');
+    if (!cleanedData.firstName) errors.push('El nombre es requerido.');
+    if (!cleanedData.lastName) errors.push('El apellido paterno es requerido.');
+    if (!cleanedData.academicId) errors.push('El número de expediente es requerido.');
+    if (!cleanedData.email) errors.push('El correo es requerido.');
+    if (cleanedData.email !== cleanedData.confirmEmail) errors.push('Los correos no coinciden.');
+    if (!cleanedData.password) errors.push('La contraseña es requerida.');
+    if (cleanedData.password !== cleanedData.confirmPassword) errors.push('Las contraseñas no coinciden.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
 
     const payload = {
-      first_name: cleanData.firstName,
-      last_name: cleanData.lastName,
-      second_last_name: cleanData.secondLastName || '',
-      academic_id: cleanData.academicId,
-      email: cleanData.email,
+      first_name: cleanedData.firstName,
+      last_name: cleanedData.lastName,
+      second_last_name: cleanedData.secondLastName || '',
+      academic_id: cleanedData.academicId,
+      email: cleanedData.email,
       phone_number: '',
       profile_photo: DEFAULT_PROFILE_IMAGE,
-      password: cleanData.password,
+      password: cleanedData.password,
       is_admin: false,
       is_super_admin: false,
     };
