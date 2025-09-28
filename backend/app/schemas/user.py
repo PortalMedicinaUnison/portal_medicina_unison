@@ -7,7 +7,6 @@ from utils.validation import is_valid_academic_id, is_valid_password, is_valid_e
 
 class UserEnrollmentInput(BaseModel):
     academic_id: str
-    is_enrolled: bool = False
 
     @field_validator("academic_id")
     def validate_academic_id(cls, academic_id):

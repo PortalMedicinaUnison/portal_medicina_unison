@@ -30,7 +30,7 @@ class AnnouncementOutput(BaseModel):
 
 class SurveyInput(BaseModel):
     title: str
-    web_link: HttpUrl
+    url: HttpUrl
     description: Optional[str] = None
     expiration_date: date
     mandatory: bool
@@ -42,7 +42,7 @@ class SurveyInput(BaseModel):
 
 class SurveyInputUpdate(BaseModel):
     title: Optional[str] = None
-    web_link: Optional[HttpUrl] = None
+    url: Optional[HttpUrl] = None
     description: Optional[str] = None
     expiration_date: Optional[date] = None
     mandatory: Optional[bool] = None
@@ -56,7 +56,7 @@ class SurveyInputUpdate(BaseModel):
 class SurveyOutput(BaseModel):
     survey_id: int
     title: str
-    web_link: HttpUrl
+    url: HttpUrl
     description: Optional[str] = None
     expiration_date: date
     mandatory: bool
