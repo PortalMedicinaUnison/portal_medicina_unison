@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { createAnnouncementRequest } from '../../../../services/announcementService';
+import { createAnnouncementRequest } from '../../../../services/communicationService';
 
 
 export default function useCreateAnnouncement() {

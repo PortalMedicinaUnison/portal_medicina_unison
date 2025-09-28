@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { DEFAULT_PROFILE_IMAGE, ROUTES } from '../../../config';
 import useSignUp from '../hooks/useSignUp';
 import { cleanFormData } from "../../../utils/utils";
-import { DEFAULT_PROFILE_IMAGE } from '../../../config';
 
 
 const INITIAL_FORM = {
