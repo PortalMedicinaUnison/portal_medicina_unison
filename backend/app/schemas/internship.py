@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from models.internship import DocumentTypeEnum, InternshipStatusEnum
 from typing import Optional
+from datetime import datetime
 
 
 # ---------------------- INTERNSHIP APPLICATION ----------------------
@@ -16,6 +17,7 @@ class InternshipApplicationOutput(BaseModel):
     application_id: int
     student_id: int
     is_accepted: bool
+    created_at: datetime
 
 # ---------------------- INTERNSHIP ----------------------
 

@@ -1,17 +1,18 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
-import useCreateInstitution from '../hooks/useCreateInstitution';
+import useCreateApplication from '../hooks/useCreateApplication';
 import { cleanFormData } from "../../../../utils/utils";
 
 
 const INITIAL_FORM = {
-  name: '',
+  student_id: '',
+  isAccepted: false,
 };
 
-function InstitutionForm() {
+function ApplicationForm() {
   const navigate = useNavigate();
-  const { createInstitution, loading: saving, success: saved, error: saveError, reset } = useCreateInstitution();
+  const { createApplication, loading: saving, success: saved, error: saveError, reset } = useCreateApplication();
 
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [createdId, setCreatedId] = useState(null);
@@ -38,19 +39,17 @@ function InstitutionForm() {
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.name) errors.push('El nombre es obligatorio');
+    if (!cleanedData.isAccepted) errors.push('Debe aceptar los términos y condiciones');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
 
-    const payload = {
-      name: cleanedData.name,
-    };
+    const payload = { ...cleanedData };
     
-    const response = await createInstitution(payload);
-    if (response && response.data.institution_id) {
-      setCreatedId(response.data.institution_id);
+    const response = await createApplication(payload);
+    if (response && response.data.student_id) {
+      setCreatedId(response.data.student_id);
     }
   };
 
@@ -67,16 +66,19 @@ function InstitutionForm() {
     }
   }, [saved, reset]);
 
+// ---------------------- LOADING & ERROR STATES ----------------------
+
+    
 // ---------------------- RENDER ----------------------
 
   return (
     <form className="component-container" onSubmit={handleSubmit}>
       {saved && (
         <div className="alert-success">
-          Institución registrada exitosamente.{' '}
+          Tu aplicación se registró exitosamente.{' '}
           {createdId && (
             <Link
-              to={adminAbs(ROUTES.ADMIN.INSTITUTION_DETAIL(createdId))}
+              to={adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_DETAIL(createdId))}
               className="font-bold underline"
             >
               Ver
@@ -98,17 +100,15 @@ function InstitutionForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razon social</dt>
+              <dt className="item-header">Confirmar mi intención al internado</dt>
               <dd className="item-text">
                 <input
-                  name="name"
-                  type="text"
-                  value={formData.name}
+                  name="isAccepted"
+                  type="checkbox"
+                  checked={formData.isAccepted}
                   onChange={handleChange}
-                  className="form-input--half"
-                  placeholder="Razon social de la institución"
+                  className="form-checkbox"
                   disabled={saving}
-                  required
                 />
               </dd>
             </div>
@@ -119,7 +119,7 @@ function InstitutionForm() {
           <button 
             type="button" 
             className="btn-secondary" 
-            onClick={() => navigate(adminAbs(ROUTES.ADMIN.INSTITUTION_LIST))}
+            onClick={() => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_LIST))}
             disabled={saving}
           >
             Cancelar
@@ -137,4 +137,4 @@ function InstitutionForm() {
   );
 }
 
-export default InstitutionForm;
+export default ApplicationForm;
