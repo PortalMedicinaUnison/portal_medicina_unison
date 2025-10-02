@@ -2,19 +2,19 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
-import useGetPromotions from '../hooks/useGetPromotions';
-import PromotionsList from '../components/PromotionsList';
+import useGetApplications from '../hooks/useGetApplications';
+import ApplicationList from '../components/ApplicationList';
 
 
-function PromotionListPage() {
+function ApplicationListPage() {
   const navigate = useNavigate();
-  const { promotions, loading: fetching, error: fetchError, refetch } = useGetPromotions();
+  const { applications, loading: fetching, error: fetchError, refetch } = useGetApplications();
     
   const actions = (
     <button
       type="button"
       className="btn-primary"
-      onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_CREATE))}
+      onClick={() => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_CREATE))}
     >
       Crear
     </button>
@@ -23,11 +23,11 @@ function PromotionListPage() {
   return (
     <Layout>
       <PageLayout 
-        title="Lista de promociones"
+        title="Lista de aplicaciones a internado"
         actions={actions}
       >
-        <PromotionsList
-          promotions={promotions}
+        <ApplicationList
+          applications={applications}
           fetching={fetching}
           fetchError={fetchError}
           refetch={refetch}
@@ -37,4 +37,4 @@ function PromotionListPage() {
   );
 }
 
-export default PromotionListPage;
+export default ApplicationListPage;

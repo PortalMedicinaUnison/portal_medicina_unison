@@ -1,20 +1,20 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES, adminAbs } from "../../../../config";
-import useAnnouncement from '../hooks/useAnnouncement';
+import useInstitution from '../hooks/useInstitution';
 import Layout from "../../../../Layout";
 import PageLayout from '../../../../components/PageLayout';
-import AnnouncementDetail from "../components/AnnouncementDetail";
+import InstitutionDetail from "../components/InstitutionDetail";
 
 
-function AnnouncementPage() {
+function InstitutionPage() {
   const navigate = useNavigate();
-  const { announcementId } = useParams();
-  const { announcement, loading: fetching, error: fetchError, refetch } = useAnnouncement(announcementId);
+  const { institutionId } = useParams();
+  const { institution, loading: fetching, error: fetchError, refetch } = useInstitution(institutionId);
 
   const pageTitle = fetching
   ? 'Cargando anuncio...'
-  : announcement
-    ? `📢 ${announcement.title}`
+  : institution
+    ? `📢 ${institution.name}`
     : ' ';
 
   const actions = (
@@ -22,7 +22,7 @@ function AnnouncementPage() {
       <button
         type="button"
         className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_EDIT(announcementId)))}
+        onClick={() => navigate(adminAbs(ROUTES.ADMIN.INSTITUTION_EDIT(institutionId)))}
         disabled={fetching || fetchError}
       >
         Editar
@@ -36,16 +36,16 @@ function AnnouncementPage() {
         title={pageTitle}
         actions={actions}
       >
-        <AnnouncementDetail
-          announcement={announcement}
+        <InstitutionDetail
+          institution={institution}
           fetching={fetching}
           fetchError={fetchError}
           refetch={refetch}
-          announcementId={announcementId}
+          institutionId={institutionId}
         />
       </PageLayout>
     </Layout>
   );
 }
 
-export default AnnouncementPage;
+export default InstitutionPage;

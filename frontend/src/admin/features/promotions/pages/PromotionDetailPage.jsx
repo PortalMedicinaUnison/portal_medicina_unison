@@ -1,20 +1,20 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES, adminAbs } from "../../../../config";
-import useAnnouncement from '../hooks/useAnnouncement';
+import usePromotion from '../hooks/usePromotion';
 import Layout from "../../../../Layout";
 import PageLayout from '../../../../components/PageLayout';
-import AnnouncementDetail from "../components/AnnouncementDetail";
+import PromotionDetail from "../components/PromotionDetail";
 
 
-function AnnouncementPage() {
+function PromotionPage() {
   const navigate = useNavigate();
-  const { announcementId } = useParams();
-  const { announcement, loading: fetching, error: fetchError, refetch } = useAnnouncement(announcementId);
+  const { promotionId } = useParams();
+  const { promotion, loading: fetching, error: fetchError, refetch } = usePromotion(promotionId);
 
   const pageTitle = fetching
-  ? 'Cargando anuncio...'
-  : announcement
-    ? `📢 ${announcement.title}`
+  ? 'Cargando promoción...'
+  : promotion
+    ? `📢 ${promotion.year} - ${promotion.period}`
     : ' ';
 
   const actions = (
@@ -22,7 +22,7 @@ function AnnouncementPage() {
       <button
         type="button"
         className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_EDIT(announcementId)))}
+        onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_EDIT(promotionId)))}
         disabled={fetching || fetchError}
       >
         Editar
@@ -36,16 +36,16 @@ function AnnouncementPage() {
         title={pageTitle}
         actions={actions}
       >
-        <AnnouncementDetail
-          announcement={announcement}
+        <PromotionDetail
+          promotion={promotion}
           fetching={fetching}
           fetchError={fetchError}
           refetch={refetch}
-          announcementId={announcementId}
+          promotionId={promotionId}
         />
       </PageLayout>
     </Layout>
   );
 }
 
-export default AnnouncementPage;
+export default PromotionPage;

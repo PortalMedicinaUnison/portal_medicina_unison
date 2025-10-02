@@ -1,81 +1,131 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ROUTES, adminAbs } from "../../../../config";
-import usePromotion from "../hooks/usePromotion";
-import usePromotionUpdate from "../hooks/useUpdatePromotion";
-import PsdList from '../promotionDetailSite/components/PsdList';
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from 'react-router-dom';
+import { ROUTES, adminAbs } from '../../../../config';
+import useUpdatePromotion from '../hooks/useUpdatePromotion'
+import { cleanFormData } from "../../../../utils/utils";
+import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../utils/ui/DataLoadError';
 
-import PsdForm from '../promotionDetailSite/components/PsdForm'
-import Modal from '../../../../utils/ui/Modal'
 
-function PromotionUpdate() {
+const INITIAL_FORM = {
+  year: '',
+  period: '',
+  isFinished: false,
+};
+
+function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId }) {
   const navigate = useNavigate();
-  const { promotionId } = useParams();
+  const { updatePromotion, loading: saving, error: saveError, success: saved, reset } = useUpdatePromotion();
 
-  const { promotion, loading: loadingPromotion, error: loadError } = usePromotion(promotionId);
-  const { updatePromotion, error: updateError, success, saving } = usePromotionUpdate();
+  const [formData, setFormData] = useState(INITIAL_FORM);
+  const [validationError, setValidationError] = useState('');
 
-  const [open, setOpen] = useState(false);
-  const [localError, setLocalError] = useState("");
+// ---------------------- HANDLERS ----------------------
 
-  const [formData, setFormData] = useState({
-    year: 2025,
-    period: "",
-    is_finished: false,
-  });
+  const handleChange = useCallback((e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+
+    if (validationError) return setValidationError('');
+    if (saveError) return reset();
+            
+  }, [validationError, saveError, reset]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!promotionId) {
+        setValidationError('ID de anuncio no proporcionado.');
+        return;
+    }
+
+    const cleanedData = cleanFormData({
+      year: Number(formData.year),
+      period: Number(formData.period),
+      isFinished: formData.isFinished,
+    });
+
+    // ---------------------- VALIDATIONS ----------------------
+    const errors = [];
+    if (!cleanedData.year) errors.push('El año es obligatorio');
+    if (cleanedData.year < 2025) errors.push('El año debe ser mayor o igual a 2025');
+    if (!cleanedData.period) errors.push('El periodo es obligatorio');
+    if (cleanedData.period < 1 || cleanedData.period > 2) errors.push('El periodo debe ser 1 o 2');
+    if (errors.length > 0) {
+      setValidationError(errors.join(' | '));
+      return;
+    }
+
+    const payload = {
+      year: cleanedData.year,
+      period: cleanedData.period,
+      is_finished: cleanedData.isFinished,
+    };
+    
+    await updatePromotion(promotionId, payload);
+  };
+
+// ---------------------- EFFECTS ----------------------
 
   useEffect(() => {
     if (promotion) {
       setFormData({
-        year: Number(promotion.year) || 2025,
-        period: String(promotion.period ?? ""),
-        is_finished: Boolean(promotion.is_finished),
+        year: promotion.year || '',
+        period: promotion.period || '',
+        isFinished: promotion.is_finished || false,
       });
     }
   }, [promotion]);
 
-  const handleChange = (e) => {
-    const { name, type, value, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const validate = () => {
-    if (!formData.year || Number(formData.year) < 2025) {
-      setLocalError("Ingresa un año válido (≥ 2025).");
-      return false;
+  useEffect(() => {
+    if (saved) {
+      navigate(adminAbs(ROUTES.ADMIN.PROMOTION_DETAIL(promotionId)));
     }
-    if (!String(formData.period).trim()) {
-      setLocalError("Selecciona un periodo.");
-      return false;
-    }
-    setLocalError("");
-    return true;
-  };
+  }, [saved, navigate]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!promotionId) {
-      setLocalError("No se puede actualizar: falta el ID de la promoción.");
-      return;
-    }
-    if (!validate()) return;
+// ---------------------- LOADING & ERROR STATES ----------------------
 
-    await updatePromotion(formData, promotionId);
-  };
+  if (fetching) return <LoadingSpinner/>;
 
-  return (
+  if (fetchError) {
+    return (
+      <DataLoadError
+        title="No se pudo cargar el anuncio"
+        message="Intenta recargar o vuelve a la lista."
+        details={fetchError}
+        onRetry={refetch}
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
+    );
+  }
+  
+  if (!promotion) {
+    return (
+      <DataLoadError
+        title="404"
+        message="No encontramos información para este anuncio."
+        onRetry={refetch}
+        retryLabel='Recargar'
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
+    );
+  }
+    
+// ---------------------- RENDER ----------------------
+
+return (
     <form className="component-container" onSubmit={handleSubmit}>
-      {success && (
-        <div className="alert-success-text">Promoción actualizada exitosamente.</div>
-      )}
-
-      {(localError || loadError || updateError) && (
-        <div className="alert-footer-text">
+      {(validationError || saveError) && (
+        <div className="alert-error">
           <strong className="font-bold">Error: </strong>
-          <span className="block sm:inline">{localError || loadError || updateError}</span>
+            <span className="block sm:inline">
+              {validationError || saveError}
+            </span>
         </div>
       )}
 
@@ -86,89 +136,54 @@ function PromotionUpdate() {
               <dt className="item-header">Año</dt>
               <dd className="item-text">
                 <input
-                  className="form-input--half"
                   name="year"
                   type="number"
                   value={formData.year}
                   onChange={handleChange}
+                  className="form-input--half"
+                  placeholder="Año de la promoción"
                   min={2025}
-                  disabled={loadingPromotion || saving}
+                  disabled={saving}
+                  required
                 />
               </dd>
             </div>
-
             <div className="item-row">
               <dt className="item-header">Periodo</dt>
               <dd className="item-text">
                 <select
-                  className="form-input--half"
                   name="period"
                   value={formData.period}
                   onChange={handleChange}
+                  className="form-input--half"
+                  placeholder="Periodo de la promoción"
+                  disabled={saving}
                   required
-                  disabled={loadingPromotion || saving}
                 >
-                  <option value="">Seleccionar periodo</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
+                  <option value={0}>Seleccionar periodo</option>
+                  <option value={1}>1</option>
+                  <option value={2}>2</option>
                 </select>
-              </dd>
-            </div>
-
-            <div className="item-row">
-              <dt className="item-header">¿Promoción finalizada?</dt>
-              <dd className="item-text">
-                <input
-                  className="form-checkbox"
-                  name="is_finished"
-                  type="checkbox"
-                  checked={formData.is_finished}
-                  onChange={handleChange}
-                  disabled={loadingPromotion || saving}
-                />
               </dd>
             </div>
           </dl>
         </div>
 
-        <div className="mt-16"> 
-          <PsdList />
-        </div>
-
-        <Modal
-          open={open}
-          title="Añadir cupos a una sede"
-          onClose={() => setOpen(false)}
-        >
-          <PsdForm 
-            onClose={() => setOpen(false)}
-            onSuccess={() => setOpen(false)} 
-          />
-        </Modal>
-
         <div className="button-group">
           <button 
             type="button" 
-            className="btn-tertiary"
-            onClick={() => setOpen(true)}
-
-          >
-            Añadir sede
-          </button>
-          <button
-            type="button"
-            className="btn-secondary"
+            className="btn-secondary" 
             onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_LIST))}
             disabled={saving}
           >
             Cancelar
           </button>
-          <button
-            type="submit"
+          <button 
+            type="submit" 
             className="btn-primary"
-            disabled={loadingPromotion || saving}
+            disabled={saving}
           >
-            {saving ? "Guardando..." : "Guardar"}
+            {saving ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
       </div>

@@ -1,20 +1,20 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES, adminAbs } from "../../../../config";
-import useAnnouncement from '../hooks/useAnnouncement';
+import useApplication from '../hooks/useApplication';
 import Layout from "../../../../Layout";
 import PageLayout from '../../../../components/PageLayout';
-import AnnouncementDetail from "../components/AnnouncementDetail";
+import ApplicationDetail from "../components/ApplicationDetail";
 
 
-function AnnouncementPage() {
+function ApplicationPage() {
   const navigate = useNavigate();
-  const { announcementId } = useParams();
-  const { announcement, loading: fetching, error: fetchError, refetch } = useAnnouncement(announcementId);
+  const { applicationId } = useParams();
+  const { application, loading: fetching, error: fetchError, refetch } = useApplication(applicationId);
 
   const pageTitle = fetching
   ? 'Cargando anuncio...'
-  : announcement
-    ? `📢 ${announcement.title}`
+  : application
+    ? `📢 ${application.title}`
     : ' ';
 
   const actions = (
@@ -22,7 +22,7 @@ function AnnouncementPage() {
       <button
         type="button"
         className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_EDIT(announcementId)))}
+        onClick={() => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_EDIT(applicationId)))}
         disabled={fetching || fetchError}
       >
         Editar
@@ -36,16 +36,16 @@ function AnnouncementPage() {
         title={pageTitle}
         actions={actions}
       >
-        <AnnouncementDetail
-          announcement={announcement}
+        <ApplicationDetail
+          application={application}
           fetching={fetching}
           fetchError={fetchError}
           refetch={refetch}
-          announcementId={announcementId}
+          applicationId={applicationId}
         />
       </PageLayout>
     </Layout>
   );
 }
 
-export default AnnouncementPage;
+export default ApplicationPage;

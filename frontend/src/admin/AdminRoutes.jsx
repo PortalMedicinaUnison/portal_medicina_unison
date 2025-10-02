@@ -2,12 +2,15 @@ import { Routes, Route } from 'react-router-dom';
 import { ROUTES } from '../config.js';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 
+import ApplicationDetailPage from '../admin/features/applications/pages/ApplicationDetailPage.jsx';
+import ApplicationListPage from '../admin/features/applications/pages/ApplicationListPage.jsx';
+
 import UserListPage from '../admin/features/users/pages/UserListPage.jsx';
 import UserInfoAdminPage from './features/users/pages/UserDetailAdmin.jsx';
 
 import PromotionListPage from '../admin/features/promotions/pages/PromotionsListPage.jsx';
 import PromotionFormPage from '../admin/features/promotions/pages/PromotionFormPage.jsx';
-import PromotionInfoPage from '../admin/features/promotions/pages/PromotionInfoPage.jsx';
+import PromotionDetailPage from '../admin/features/promotions/pages/PromotionDetailPage.jsx';
 import PromotionUpdatePage from '../admin/features/promotions/pages/PromotionUpdatePage.jsx';
 
 import SiteListPage from '../admin/features/sites/pages/SiteListPage.jsx';
@@ -17,8 +20,8 @@ import SiteUpdatePage from '../admin/features/sites/pages/SiteUpdatePage.jsx';
 
 import InstitutionListPage from '../admin/features/institutions/pages/InstitutionListPage.jsx';
 import InstitutionFormPage from '../admin/features/institutions/pages/InstitutionFormPage.jsx';
-// import InstitutionInfoPage from '../admin/features/institutions/pages/InstitutionsInfoPage.jsx';
-// import InstitutionUpdatePage from '../admin/features/institutions/pages/InstitutionsUpdatePage.jsx';
+import InstitutionDetailPage from '../admin/features/institutions/pages/InstitutionDetailPage.jsx';
+import InstitutionUpdatePage from '../admin/features/institutions/pages/InstitutionUpdatePage.jsx';
 
 import AnnouncementListPage from '../admin/features/announcements/pages/AnnouncementListPage.jsx';
 import AnnouncementFormPage from '../admin/features/announcements/pages/AnnouncementFormPage.jsx';
@@ -42,6 +45,10 @@ function AdminRoutes() {
   return (
     <Routes>
       <Route element={<ProtectedRoute />}>
+        {/* Applications */}
+        <Route path="applications" element={<ApplicationListPage />} />
+        <Route path="applications/:applicationId" element={<ApplicationDetailPage />} />
+
         {/* Users */}
         <Route path="users" element={<UserListPage />} />
         <Route path="users/academicId/:academicId" element={<UserInfoAdminPage />} />
@@ -49,7 +56,7 @@ function AdminRoutes() {
         {/* Promotions */}
         <Route path="promotions" element={<PromotionListPage />} />
         <Route path="promotions/create" element={<PromotionFormPage />} />
-        <Route path="promotions/:promotionId" element={<PromotionInfoPage />} />
+        <Route path="promotions/:promotionId" element={<PromotionDetailPage />} />
         <Route path="promotions/:promotionId/edit" element={<PromotionUpdatePage />} />
 
         {/* Sites */}
@@ -61,8 +68,8 @@ function AdminRoutes() {
         {/* Institutions */}
         <Route path="institutions" element={<InstitutionListPage />} />
         <Route path="institutions/create" element={<InstitutionFormPage />} />
-        {/* <Route path="institutions/:institutionId" element={<InstitutionInfoPage />} /> */}
-        {/* <Route path="institutions/:institutionId/edit" element={<InstitutionUpdatePage />} /> */}
+        <Route path="institutions/:institutionId" element={<InstitutionDetailPage />} />
+        <Route path="institutions/:institutionId/edit" element={<InstitutionUpdatePage />} />
 
         {/* Announcements */}
         <Route path="announcements" element={<AnnouncementListPage />} />
