@@ -212,7 +212,7 @@ const handleCloseError = () => {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar la sede"
+          message="Ocurrió un problema al eliminar el registro"
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />

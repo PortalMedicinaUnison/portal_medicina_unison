@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
-import useDeletePromotion from '../hooks/useDeletePromotion';
+import useDeleteApplication from '../hooks/useDeleteApplication';
 import DropdownMenu from '../../../../utils/ui/DropdownMenu';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
@@ -9,9 +9,9 @@ import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 
 
-function PromotionList({ promotions, fetching, fetchError, refetch }) {
+function ApplicationList({ applications, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
-  const { deletePromotion, loading: deleting, success: deleted,  error: deleteError, reset } = useDeletePromotion();
+  const { deleteApplication, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteApplication();
   
   const [item, setItem] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -19,20 +19,23 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
 
 // ---------------------- FILTERS AND SEARCH ----------------------
  
-  const [yearFilter, setTypeFilter] = useState('');
-  const [periodFilter, setPeriodFilter] = useState('');
+  const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
+  const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
-    return promotions.filter((item) => {
-      if (statusFilter !== '' && item.is_finished !== (statusFilter === 'true')) return false;
+    return applications.filter((item) => {
+      if (statusFilter !== '' && String(item.isOpen).toLowerCase() !== statusFilter.toLowerCase()) return false;
+      if (!searchQuery) return true;
+
+      const student = String(item.student_id).toLowerCase();
     });
-  }, [promotions, statusFilter, yearFilter, periodFilter]);
+  }, [applications, searchQuery, statusFilter, typeFilter]);
 
 // ---------------------- HANDLERS ----------------------
 
-  const handleViewButton = (id) => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_DETAIL(id)));
-  const handleEditButton = (id) => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_EDIT(id)));
+  const handleViewButton = (id) => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_DETAIL(id)));
+  const handleEditButton = (id) => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_EDIT(id)));
   const handleDeleteButton = (id) => {
     setItem(id)
     setShowConfirmDelete(true);
@@ -40,7 +43,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
 
   const handleConfirmDelete = async () => {
     if (item == null) return
-    await deletePromotion(item);
+    await deleteApplication(item);
   };
 
   const handleCloseConfirm = () => {
@@ -78,7 +81,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
   if (fetchError) {
     return (
       <DataLoadError
-        title="No se pudo cargar la lista de promociones"
+        title="No se pudo cargar la lista de aplicaciones"
         message="Intenta recargar la página."
         details={fetchError}
         onRetry={refetch}
@@ -88,12 +91,12 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
     );
   }
   
-  if (!promotions) {
+  if (!applications) {
     return (
       <DataLoadError
         title="404"
         titleClassName="text-5xl"
-        message="No se encontraron promociones."
+        message="No se encontraron aplicaciones."
         onRetry={refetch}
         retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
@@ -106,26 +109,13 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
   return (
     <div className="table-container">
       <div className="table-container-actions">
-        <select
-          className="btn-tertiary--light"
-          value={yearFilter}
-          onChange={(e) => setYearFilter(e.target.value)}
-          aria-label="Filtrar por año"
-        >
-          <option value="">Año</option>
-          <option value="1">General</option>
-          <option value="2">Internado</option>
-        </select>
-        <select
-          className="btn-tertiary--light"
-          value={typeFilter}
-          onChange={(e) => setPeriodFilter(e.target.value)}
-          aria-label="Filtrar por periodo"
-        >
-          <option value="">Periodo</option>
-          <option value="1">General</option>
-          <option value="2">Internado</option>
-        </select>
+        <input
+          type="text"
+          className="form-input--sm mr-auto"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Buscar por expediente"
+        />
         <select
           className="btn-tertiary--light"
           value={statusFilter}
@@ -133,8 +123,8 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
           aria-label="Filtrar por estado"
         >
           <option value="">Estatus</option>
-          <option value="true">Activa</option>
-          <option value="false">Inactiva</option>
+          <option value="true">Aceptado</option>
+          <option value="false">Declinado</option>
         </select>
       </div>
 
@@ -142,9 +132,8 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
         <table className="table">
           <thead>
             <tr>
-              <th className='w-3/12'>Año</th>
-              <th className='w-3/12'>Periodo</th>
-              <th className='w-5/12'>Estatus</th>
+              <th className='w-4/12'>Expediente</th>
+              <th className='w-7/12'>Estatus</th>
               <th className='w-1/12'></th>
             </tr>
           </thead>
@@ -153,23 +142,22 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
               <tr>
                 <td colSpan={5} className="text-center py-6">
                 {search || statusFilter || typeFilter 
-                  ? 'No se encontraron promociones que coincidan con los filtros.' 
-                  : 'No hay promociones disponibles.'
+                  ? 'No se encontraron aplicaciones que coincidan con los filtros.' 
+                  : 'No hay aplicaciones disponibles.'
                   }
                 </td>
               </tr>
             ) : (
               filtered.map((item) => (
-              <tr key={item.promotion_id}>
-                <td className="text-left">{item.year}</td>
-                <td className="text-left">{item.period}</td>
-                <td>{item.is_finished ? 'Activa' : 'Inactiva'}</td>
+              <tr key={item.application_id}>
+                <td className="text-left">{item.student_id}</td>
+                <td>{item.is_accepted ? 'Aceptado' : 'Declinado'}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[
-                      { label: 'Ver', onClick: () => handleViewButton(item.promotion_id) },
-                      { label: 'Editar', onClick: () => handleEditButton(item.promotion_id) },
-                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.promotion_id), className: 'text-red-600' },
+                      { label: 'Ver', onClick: () => handleViewButton(item.application_id) },
+                      { label: 'Editar', onClick: () => handleEditButton(item.application_id) },
+                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.application_id), className: 'text-red-600' },
                     ]}
                     disabled={deleting}
                   />
@@ -196,7 +184,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro."
+          message="Ocurrió un problema al eliminar la aplicación"
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />
@@ -206,4 +194,4 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
   );
 }
     
-export default PromotionList;
+export default ApplicationList;

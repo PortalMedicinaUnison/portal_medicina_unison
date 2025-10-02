@@ -1,22 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
-import useUpdateAnnouncement from '../hooks/useUpdateAnnouncement'
+import useUpdateSurvey from '../hooks/useUpdateSurvey';
 import { cleanFormData } from "../../../../utils/utils";
-import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
-import DataLoadError from '../../../../utils/ui/DataLoadError';
 
 
 const INITIAL_FORM = {
   title: '',
+  url: '',
   description: '',
-  announcementType: 0,
-  isVisible: true,
+  expirationDate: '',
+  mandatory: false,
 };
 
-function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, announcementId }) {
+function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
   const navigate = useNavigate();
-  const { updateAnnouncement, loading: saving, error: saveError, success: saved, reset } = useUpdateAnnouncement();
+  const { updateSurvey, loading: saving, success: saved, error: saveError, reset } = useUpdateSurvey();
 
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [validationError, setValidationError] = useState('');
@@ -38,21 +37,23 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!announcementId) {
-        setValidationError('ID de anuncio no proporcionado.');
+    if (!surveyId) {
+        setValidationError('ID de encuesta no proporcionado.');
         return;
     }
 
-    const cleanedData = cleanFormData({
-      ...formData,
-      announcementType: Number(formData.announcementType),
-    });
+    const cleanedData = cleanFormData(formData);
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.title) errors.push('El título es requerido.');
-    if (!cleanedData.description) errors.push('La descripción es requerida.');
-    if (cleanedData.announcementType === 0) errors.push('Seleccione un tipo de anuncio válido.');
+    if (!cleanedData.title) errors.push('El título es obligatorio.');
+    if (!cleanedData.url) errors.push('La URL de la encuesta es obligatoria.');
+    if (!cleanedData.description) errors.push('La descripción es obligatoria.');
+    if (!cleanedData.expirationDate) errors.push('La fecha de expiración es obligatoria.');
+    if (new Date(cleanedData.expirationDate) <= new Date()) errors.push('La fecha de expiración debe ser una fecha futura.');
+    if (cleanedData.mandatory === undefined || cleanedData.mandatory === null) {
+        errors.push('Debe indicar si la encuesta es obligatoria o no.');
+      }            
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -60,30 +61,32 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
 
     const payload = {
       title: cleanedData.title,
+      url: cleanedData.url,
       description: cleanedData.description,
-      announcement_type: cleanedData.announcementType,
-      is_visible: cleanedData.isVisible,
+      expiration_date: cleanedData.expirationDate,
+      mandatory: cleanedData.mandatory,  
     };
     
-    await updateAnnouncement(announcementId, payload);
+    await updateSurvey(surveyId, payload);
   };
 
 // ---------------------- EFFECTS ----------------------
 
   useEffect(() => {
-    if (announcement) {
+    if (survey) {
       setFormData({
-        title: announcement.title || '',
-        description: announcement.description || '',
-        announcementType: announcement.announcementType ?? 0,
-        isVisible: announcement.isVisible ?? true,
+        title: survey.title || '',
+        url: survey.url || '',
+        description: survey.description || '',
+        expirationDate: survey.expirationDate ? survey.expirationDate.split('T')[0] : '',
+        mandatory: survey.mandatory ?? false,
       });
     }
   }, [announcement]);
 
   useEffect(() => {
     if (saved) {
-      navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DETAIL(announcementId)));
+      navigate(adminAbs(ROUTES.ADMIN.SURVEY_DETAIL(surveyId)));
     }
   }, [saved, navigate]);
 
@@ -94,7 +97,7 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
   if (fetchError) {
     return (
       <DataLoadError
-        title="No se pudo cargar el anuncio"
+        title="No se pudo cargar la encuesta"
         message="Intenta recargar o vuelve a la lista."
         details={fetchError}
         onRetry={refetch}
@@ -103,12 +106,12 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
       />
     );
   }
-  
-  if (!announcement) {
+
+  if (!survey) {
     return (
       <DataLoadError
         title="404"
-        message="No encontramos información para este anuncio."
+        message="No encontramos información para esta encuesta."
         onRetry={refetch}
         retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
@@ -119,7 +122,7 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
     
 // ---------------------- RENDER ----------------------
 
-return (
+  return (
     <form className="component-container" onSubmit={handleSubmit}>
       {(validationError || saveError) && (
         <div className="alert-error">
@@ -142,51 +145,63 @@ return (
                   value={formData.title}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="Título del anuncio"
+                  placeholder="Título de la encuesta"
                   disabled={saving}
                   required
                 />
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Contenido</dt>
+              <dt className="item-header">URL</dt>
+              <dd className="item-text">
+                <input
+                  name="url"
+                  type="url"
+                  value={formData.url}
+                  onChange={handleChange}
+                  className="form-input--half"
+                  placeholder="https://ejemplo.com/encuesta"
+                  disabled={saving}
+                  required
+                />
+              </dd>
+            </div>
+            <div className="item-row">
+              <dt className="item-header">Descripción</dt>
               <dd className="item-text">
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  rows="4"
+                  rows="2"
                   className="form-input--half"
-                  placeholder="Descripción del anuncio"
+                  placeholder="Descripción de la encuesta"
                   disabled={saving}
                   required
                 />
               </dd>
             </div>
             <div className="item-row">
-                <dt className="item-header">Ambito</dt>
+                <dt className="item-header">Fecha de vencimiento</dt>
                 <dd className="item-text">
-                  <select
-                    name="announcementType"
-                    value={formData.announcementType}
+                  <input
+                    name="expirationDate"
+                    type="date"
+                    value={formData.expirationDate}
                     onChange={handleChange}
                     className="form-input--half"
                     disabled={saving}
                     required
-                  >
-                    <option value={0}>Seleccione un tipo</option>
-                    <option value={1}>General</option>
-                    <option value={2}>Internado</option>
-                  </select>
+                  />
                 </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Visible</dt>
+              <dt className="item-header">¿Obligatoria?</dt>
               <dd className="item-text">
                 <input
-                  name="isVisible"
+                  name="mandatory"
                   type="checkbox"
-                  checked={formData.isVisible}
+                  checked={formData.mandatory}
                   onChange={handleChange}
                   className="form-checkbox"
                   disabled={saving}
@@ -200,7 +215,7 @@ return (
           <button 
             type="button" 
             className="btn-secondary" 
-            onClick={() => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST))}
+            onClick={() => navigate(adminAbs(ROUTES.ADMIN.SURVEY_LIST))}
             disabled={saving}
           >
             Cancelar
@@ -218,4 +233,4 @@ return (
   );
 }
 
-export default AnnouncementUpdate;
+export default SurveyUpdate;

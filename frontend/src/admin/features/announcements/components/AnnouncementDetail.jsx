@@ -63,7 +63,7 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
   if (fetchError) {
     return (
       <DataLoadError
-        title="No se pudo cargar el anuncio"
+        title="No se pudo cargar la información"
         message="Intenta recargar o vuelve a la lista."
         details={fetchError}
         onRetry={refetch}
@@ -76,7 +76,7 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
   if (!announcement) {
     return (
       <DataLoadError
-        title="Anuncio no disponible"
+        title="404"
         message="No encontramos información para este anuncio."
         onRetry={refetch}
         retryLabel='Recargar'
@@ -122,7 +122,7 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el anuncio"
+          message="Ocurrió un problema al eliminar el registro"
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />
@@ -135,7 +135,7 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
           onClick={handleDeleteButton}
           disabled={deleting}
         >
-          {deleting ? 'Eliminando...' : 'Eliminar anuncio'}
+          {deleting ? 'Eliminando...' : 'Eliminar'}
         </button>
       </div>
     </div>        

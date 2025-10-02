@@ -111,7 +111,7 @@ if (fetching) return <LoadingSpinner/>;
   if (!site) {
     return (
       <DataLoadError
-        title="Sede no disponible"
+        title="404"
         message="No encontramos información para esta sede."
         onRetry={refetch}
         retryLabel='Recargar'

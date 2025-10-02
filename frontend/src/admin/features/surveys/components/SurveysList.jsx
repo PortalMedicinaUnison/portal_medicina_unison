@@ -1,101 +1,206 @@
-// SurveysList.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../../../api';
 import { ROUTES, adminAbs } from '../../../../config';
+import useDeleteSurvey from '../hooks/useDeleteSurvey';
+import DropdownMenu from '../../../../utils/ui/DropdownMenu';
+import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../utils/ui/DataLoadError';
+import Modal from '../../../../utils/ui/Modal';
+import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 
-function SurveysList() {
-    const [search, setSearch] = useState('');
-    const [surveys, setSurveys] = useState([]);
-    const navigate = useNavigate();
 
-    const getSurveys = async () => {
-        try {
-            const response = await api.get("/surveys/");
-            setSurveys(response.data);
-            console.log("Surveys loaded successfully", response.data);
-        } catch (error) {
-            console.error("Error loading surveys", error);
-        }
-    };
-    
-    useEffect(() => {
-        getSurveys();
-    }, []);
-    
-    const handleViewButton = (surveyId) => {
-        // Navega al detalle de la encuesta
-        navigate(adminAbs(ROUTES.ADMIN.SURVEY_DETAIL(surveyId)));
-    };
-    
-    const handleDeleteButton = (surveyId) => {
-        const deleteSurvey = async () => {
-            try {
-                await api.delete(`/surveys/${surveyId}`);
-                await getSurveys(); // Refresca la lista después de borrar
-            } catch (error) {
-                console.error("Delete failed", error);
-            }
-        };
+function SurveyList({ surveys, fetching, fetchError, refetch }) {
+  const navigate = useNavigate();
+  const { deleteSurvey, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteSurvey();
+  
+  const [item, setItem] = useState(null);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
 
-        const userConfirmed = confirm('Esta encuesta se eliminará. ¿Deseas continuar?');
-        if (userConfirmed) {
-            deleteSurvey();
-        }
-    };
+// ---------------------- FILTERS AND SEARCH ----------------------
+ 
+  const [search, setSearch] = useState('');
+  const [mandatoryStatus, setMandatoryStatus] = useState('');
+  
+  const searchQuery = search.trim().toLowerCase();
+  const filtered = useMemo(() => {
+    return surveys.filter((item) => {
+      if (mandatoryStatus !== '' && item.mandatory !== (mandatoryStatus === 'true')) return false;
+      if (!searchQuery) return true;
 
-    // Formatea la fecha para mejor legibilidad
-    const formatDate = (dateString) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
-    };
+      const title = String(item.title).toLowerCase();
+      const url = String(item.url).toLowerCase();
+      const description = String(item.description).toLowerCase();
+      return title.includes(searchQuery) || url.includes(searchQuery) || description.includes(searchQuery);
+    });
+  }, [surveys, searchQuery, mandatoryStatus]);
 
+// ---------------------- HANDLERS ----------------------
+
+  const handleViewButton = (id) => navigate(adminAbs(ROUTES.ADMIN.SURVEY_DETAIL(id)));
+  const handleEditButton = (id) => navigate(adminAbs(ROUTES.ADMIN.SURVEY_EDIT(id)));
+  const handleDeleteButton = (id) => {
+    setItem(id)
+    setShowConfirmDelete(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (item == null) return
+    await deleteSurvey(item);
+  };
+
+  const handleCloseConfirm = () => {
+    setShowConfirmDelete(false);
+    setItem(null);
+  }
+
+  const handleCloseError = () => {
+    setShowErrorDialog(false);
+    reset();
+  };
+
+// ---------------------- EFFECTS ----------------------
+
+  useEffect(() => {
+    if (deleted) {
+      setShowConfirmDelete(false);
+      setItem(null);
+      refetch();
+      reset();
+    }
+  }, [deleted, refetch, reset]);
+
+  useEffect(() => {
+    if (deleteError) {
+      setShowConfirmDelete(false);
+      setShowErrorDialog(true);
+    }
+  }, [deleteError]);
+
+// ---------------------- LOADING & ERROR STATES ----------------------
+
+  if (fetching) return <LoadingSpinner />;
+
+  if (fetchError) {
     return (
-        <div className="table-container">
-            <div className="table-container-actions">
-                <input className='form-input--sm'
-                    type="text"
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder='Buscar por título'
-                />
-            </div>
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>Título</th>
-                        <th>Enlace</th>
-                        <th>Fecha de Expiración</th>
-                        <th>Obligatoria</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {surveys.filter((survey) => {
-                        return survey.title.toLowerCase().includes(search.toLowerCase());
-                        })
-                        .map((survey) => (
-                            <tr key={survey.survey_id}>
-                                <td>{survey.title}</td>
-                                <td><a href={survey.web_link} target="_blank" rel="noopener noreferrer" className="item-link">Abrir enlace</a></td>
-                                <td>{formatDate(survey.expiration_date)}</td>
-                                <td>{survey.mandatory ? 'Sí' : 'No'}</td>
-                                <td className="flex gap-4">
-                                    <button className='item-link' onClick={() => handleViewButton(survey.survey_id)}>
-                                        Ver
-                                    </button>
-                                </td>
-                                <td>
-                                    <button className='item-link-danger' onClick={() => handleDeleteButton(survey.survey_id)}>
-                                        Borrar
-                                    </button>
-                                </td>
-                            </tr>
-                        ))
-                    }
-                </tbody>
-            </table>
-        </div>
+      <DataLoadError
+        title="No se pudo cargar el anuncio"
+        message="Intenta recargar la página."
+        details={fetchError}
+        onRetry={refetch}
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
     );
-}
+  }
+  
+  if (!surveys) {
+    return (
+      <DataLoadError
+        title="404"
+        titleClassName="text-5xl"
+        message="No se encontraron encuestas."
+        onRetry={refetch}
+        retryLabel='Recargar'
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
+    );
+  }
 
-export default SurveysList;
+// ---------------------- RENDER ----------------------
+  return (
+    <div className="table-container">
+      <div className="table-container-actions">
+        <input
+          type="text"
+          className="form-input--sm mr-auto"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Buscar por título, url o descripción"
+        />
+        <select
+          className="btn-tertiary--light"
+          value={mandatoryStatus}
+          onChange={(e) => setMandatoryStatus(e.target.value)}
+          aria-label="Filtrar por estado"
+        >
+          <option value="">Obligatoriedad</option>
+          <option value="true">Obligatoria</option>
+          <option value="false">Opcional</option>
+        </select>
+      </div>
+
+      <div className="table-container-body">
+        <table className="table">
+          <thead>
+            <tr>
+              <th className='w-2/12'>Título</th>
+              <th className='w-2/12'>Enlace</th>
+              <th className='w-3/12'>Descripción</th>
+              <th className='w-2/12'>Fecha de vencimiento</th>
+              <th className='w-2/12'>Obligatoriedad</th>
+              <th className='w-1/12'></th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="text-center py-6">
+                {search || mandatoryStatus 
+                  ? 'No se encontraron encuestas que coincidan con los filtros.' 
+                  : 'No hay encuestas disponibles.'
+                  }
+                </td>
+              </tr>
+            ) : (
+              filtered.map((item) => (
+              <tr key={item.survey_id}>
+                <td className="text-left">{item.title}</td>
+                <td className="text-left">{item.url}</td>
+                <td className="text-left">{item.description}</td>
+                <td>{item.expiration_date}</td>
+                <td>{item.mandatory ? 'Obligatoria' : 'Opcional'}</td>
+                <td className="overflow-visible text-right">
+                  <DropdownMenu
+                    actions={[
+                      { label: 'Ver', onClick: () => handleViewButton(item.survey_id) },
+                      { label: 'Editar', onClick: () => handleEditButton(item.survey_id) },
+                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.survey_id), className: 'text-red-600' },
+                    ]}
+                    disabled={deleting}
+                  />
+                </td>
+              </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>
+        <ConfirmDialogContent
+          title="Confirmar eliminación"
+          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar?"
+          onConfirm={handleConfirmDelete}
+          primaryLabel="Eliminar"
+          secondaryLabel="Cancelar"
+          onCancel={handleCloseConfirm}
+          danger
+        />
+      </Modal>
+
+      <Modal open={showErrorDialog} onClose={handleCloseError}>
+        <ConfirmDialogContent
+          title="Ops... Ha ocurrido un error"
+          message="Ocurrió un problema al eliminar la encuesta"
+          onConfirm={handleCloseError}
+          primaryLabel="Aceptar"
+        />
+      </Modal>
+      
+    </div>
+  );
+}
+    
+export default SurveyList;

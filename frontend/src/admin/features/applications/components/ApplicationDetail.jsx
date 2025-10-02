@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useDeleteSite from '../hooks/useDeleteSite';
+import useDeleteApplication from '../hooks/useDeleteApplication';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 
 
-function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {    
+function ApplicationDetail({ application, fetching, fetchError, refetch, applicationId }) {    
   const navigate = useNavigate();
-  const { deleteSite, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteSite();
+  const { deleteApplication, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteApplication();
   
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
@@ -19,8 +19,8 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
   const handleDeleteButton = () => setShowConfirmDelete(true);
 
   const handleConfirmDelete = async () => {
-    if (!siteId) return;
-    await deleteSite(siteId);
+    if (!applicationId) return;
+    await deleteApplication(applicationId);
   };
   const handleCloseConfirm = () => setShowConfirmDelete(false);
 
@@ -64,11 +64,11 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
     );
   }
   
-  if (!site) {
+  if (!application) {
     return (
       <DataLoadError
         title="404"
-        message="No encontramos información para esta sede."
+        message="No encontramos información para este anuncio."
         onRetry={refetch}
         retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
@@ -84,66 +84,16 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
       <div className="item-container">
         <dl className="item-list">
           <div className="item-row">
-            <dt className="item-header">Nombre del sitio</dt>
-            <dd className="item-text">{site.name}</dd>
+            <dt className="item-header">Expediente del alumno</dt>
+            <dd className="item-text">{application.student_id}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Institución</dt>
-            <dd className="item-text">{site.institution_id}</dd>
+            <dt className="item-header">Estatus</dt>
+            <dd className="item-text">{application.is_accepted}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Ciudad</dt>
-            <dd className="item-text">{site.city}</dd>
-          </div>
-          <div className="item-row">
-            <dt className="item-header">Dirección</dt>
-            <dd className="item-text">{site.address}</dd>
-          </div>
-
-          <div className="item-row">
-            <dt className="item-header">Jefe de enseñanza</dt>
-            <dd className="item-text">{site.teaching_head_name}</dd>
-          </div>
-
-          <div className="item-row">
-            <dt className="item-header">Email del jefe de enseñanza</dt>
-            <dd className="item-text">
-              <a href={`mailto:${site.teaching_head_email}`} className="text-blue-600 hover:underline">
-                {site.teaching_head_email}
-              </a>
-            </dd>
-          </div>
-
-          <div className="item-row">
-            <dt className="item-header">Teléfono del jefe de enseñanza</dt>
-            <dd className="item-text">
-              <a href={`tel:${site.teaching_head_phone}`} className="text-blue-600 hover:underline">
-                {site.teaching_head_phone}
-              </a>
-            </dd>
-          </div>
-
-          <div className="item-row">
-            <dt className="item-header">Subjefe de enseñanza</dt>
-            <dd className="item-text">{site.teaching_deputy_name}</dd>
-          </div>
-
-          <div className="item-row">
-            <dt className="item-header">Email del suplente</dt>
-            <dd className="item-text">
-              <a href={`mailto:${site.teaching_deputy_email}`} className="text-blue-600 hover:underline">
-                {site.teaching_deputy_email}
-              </a>
-            </dd>
-          </div>
-
-          <div className="item-row">
-            <dt className="item-header">Teléfono del suplente</dt>
-            <dd className="item-text">
-              <a href={`tel:${site.teaching_deputy_phone}`} className="text-blue-600 hover:underline">
-                {site.teaching_deputy_phone}
-              </a>
-            </dd>
+            <dt className="item-header">Fecha de aceptación/desistimiento</dt>
+            <dd className="item-text">{application.created_at}</dd>
           </div>
         </dl>
       </div>
@@ -179,8 +129,8 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
           {deleting ? 'Eliminando...' : 'Eliminar'}
         </button>
       </div>
-    </div>
-);
+    </div>        
+  );
 }
 
-export default SiteDetail;
+export default ApplicationDetail;
