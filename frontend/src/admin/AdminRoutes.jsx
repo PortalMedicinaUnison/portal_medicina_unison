@@ -8,7 +8,7 @@ import ApplicationListPage from '../admin/features/applications/pages/Applicatio
 import UserListPage from '../admin/features/users/pages/UserListPage.jsx';
 import UserInfoAdminPage from './features/users/pages/UserDetailAdmin.jsx';
 
-import PromotionListPage from '../admin/features/promotions/pages/PromotionsListPage.jsx';
+import PromotionListPage from './features/promotions/pages/PromotionListPage.jsx';
 import PromotionFormPage from '../admin/features/promotions/pages/PromotionFormPage.jsx';
 import PromotionDetailPage from '../admin/features/promotions/pages/PromotionDetailPage.jsx';
 import PromotionUpdatePage from '../admin/features/promotions/pages/PromotionUpdatePage.jsx';
@@ -28,10 +28,10 @@ import AnnouncementFormPage from '../admin/features/announcements/pages/Announce
 import AnnouncementDetailPage from '../admin/features/announcements/pages/AnnouncementDetailPage.jsx';
 import AnnouncementUpdatePage from '../admin/features/announcements/pages/AnnouncementUpdatePage.jsx';
 
-import SurveysListPage from '../admin/features/surveys/pages/SurveysListPage.jsx';
-import SurveyFormPage from '../admin/features/surveys/pages/SurveysFormPage.jsx';
-import SurveyInfoPage from '../admin/features/surveys/pages/SurveyInfoPage.jsx';
-// import SurveyUpdatePage from '../admin/features/surveys/pages/SurveyUpdatePage.jsx';
+import SurveyListPage from '../admin/features/surveys/pages/SurveyListPage.jsx';
+import SurveyFormPage from '../admin/features/surveys/pages/SurveyFormPage.jsx';
+import SurveyDetailPage from '../admin/features/surveys/pages/SurveyDetailPage.jsx';
+import SurveyUpdatePage from '../admin/features/surveys/pages/SurveyUpdatePage.jsx';
 
 import EnrollmentFormPage from '../admin/features/users/enrollments/pages/EnrollmentFormPage.jsx';
 import EnrollmentsListPage from '../admin/features/users/enrollments/pages/EnrollmentsListPage.jsx';
@@ -78,10 +78,10 @@ function AdminRoutes() {
         <Route path="announcements/:announcementId/edit" element={<AnnouncementUpdatePage />} />
 
         {/* Surveys */}
-        <Route path="surveys" element={<SurveysListPage />} />
+        <Route path="surveys" element={<SurveyListPage />} />
         <Route path="surveys/create" element={<SurveyFormPage />} />
-        <Route path="surveys/:surveyId" element={<SurveyInfoPage />} />
-        {/* <Route path="surveys/:surveyId/edit" element={<SurveyUpdatePage />} /> */}
+        <Route path="surveys/:surveyId" element={<SurveyDetailPage />} />
+        <Route path="surveys/:surveyId/edit" element={<SurveyUpdatePage />} />
 
         {/* User enrollments */}
         <Route path="enrollments" element={<EnrollmentsListPage />} />

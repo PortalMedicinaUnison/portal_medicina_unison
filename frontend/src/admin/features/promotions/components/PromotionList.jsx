@@ -118,7 +118,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
         </select>
         <select
           className="btn-tertiary--light"
-          value={typeFilter}
+          value={periodFilter}
           onChange={(e) => setPeriodFilter(e.target.value)}
           aria-label="Filtrar por periodo"
         >
@@ -152,7 +152,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={5} className="text-center py-6">
-                {search || statusFilter || typeFilter 
+                {(yearFilter || periodFilter || statusFilter)
                   ? 'No se encontraron promociones que coincidan con los filtros.' 
                   : 'No hay promociones disponibles.'
                   }

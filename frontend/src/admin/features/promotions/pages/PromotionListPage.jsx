@@ -3,7 +3,7 @@ import { ROUTES, adminAbs } from '../../../../config';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
 import useGetPromotions from '../hooks/useGetPromotions';
-import PromotionsList from '../components/PromotionsList';
+import PromotionsList from '../components/PromotionList';
 
 
 function PromotionListPage() {
