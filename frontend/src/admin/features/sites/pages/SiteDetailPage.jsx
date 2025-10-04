@@ -12,9 +12,9 @@ function SitePage() {
   const { site, loading: fetching, error: fetchError, refetch } = useSite(siteId);
 
   const pageTitle = fetching
-  ? 'Cargando anuncio...'
+  ? 'Cargando...'
   : site
-    ? `🏨 ${site.name}`
+    ? `${site.name}`
     : ' ';
 
   const siteActions = (

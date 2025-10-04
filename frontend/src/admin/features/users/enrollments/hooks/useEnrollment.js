@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { getUserEnrollmentByIdRequest } from '../../../../../services/userService';
 
 
-export default function useEnrollments(id) {
+export default function useEnrollment(id) {
   const [enrollment, setEnrollment] = useState(null);
   const [loading, setLoading]       = useState(false);
   const [error, setError]           = useState(null);

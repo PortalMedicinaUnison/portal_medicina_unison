@@ -7,7 +7,7 @@ function SiteFormPage() {
   return ( 
     <Layout>
       <PageLayout 
-        title="🏨 Registrar nueva sede" 
+        title="Registrar nueva sede" 
       >
         <SiteForm/>
       </PageLayout>

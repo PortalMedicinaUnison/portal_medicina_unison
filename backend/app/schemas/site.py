@@ -74,11 +74,11 @@ class SiteOutput(BaseModel):
     address: str
     city: str
     teaching_head_name: str
-    teaching_head_email: Optional[str] = None
-    teaching_head_phone: Optional[str] = None
-    teaching_deputy_name: str = None
-    teaching_deputy_email: Optional[str] = None
-    teaching_deputy_phone: Optional[str] = None
+    teaching_head_email: str
+    teaching_head_phone: str
+    teaching_deputy_name: str
+    teaching_deputy_email: str
+    teaching_deputy_phone: str
 
 class SiteBasicOutput(BaseModel):
     site_id: int

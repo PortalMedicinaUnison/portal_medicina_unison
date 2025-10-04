@@ -12,9 +12,9 @@ function InstitutionPage() {
   const { institution, loading: fetching, error: fetchError, refetch } = useInstitution(institutionId);
 
   const pageTitle = fetching
-  ? 'Cargando anuncio...'
+  ? 'Cargando...'
   : institution
-    ? `📢 ${institution.name}`
+    ? `${institution.name}`
     : ' ';
 
   const actions = (

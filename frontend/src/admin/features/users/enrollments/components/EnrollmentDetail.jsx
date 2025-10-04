@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useDeleteInstitution from '../hooks/useDeleteInstitution';
-import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
-import DataLoadError from '../../../../utils/ui/DataLoadError';
-import Modal from '../../../../utils/ui/Modal';
-import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import useDeleteEnrollment from '../hooks/useDeleteEnrollment';
+import LoadingSpinner from '../../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../../utils/ui/DataLoadError';
+import Modal from '../../../../../utils/ui/Modal';
+import ConfirmDialogContent from '../../../../../utils/ui/ConfirmDialogContent';
 
 
-function InstitutionDetail({ institution, fetching, fetchError, refetch, institutionId }) {    
+function EnrollmentDetail({ enrollment, fetching, fetchError, refetch, enrollmentId }) {    
   const navigate = useNavigate();
-  const { deleteInstitution, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteInstitution();
+  const { deleteEnrollment, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteEnrollment();
   
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
@@ -19,8 +19,8 @@ function InstitutionDetail({ institution, fetching, fetchError, refetch, institu
   const handleDeleteButton = () => setShowConfirmDelete(true);
 
   const handleConfirmDelete = async () => {
-    if (!institutionId) return;
-    await deleteInstitution(institutionId);
+    if (!enrollmentId) return;
+    await deleteEnrollment(enrollmentId);
   };
   const handleCloseConfirm = () => setShowConfirmDelete(false);
 
@@ -64,11 +64,11 @@ function InstitutionDetail({ institution, fetching, fetchError, refetch, institu
     );
   }
   
-  if (!institution) {
+  if (!enrollment) {
     return (
       <DataLoadError
         title="404"
-        message="No encontramos información para esta institución."
+        message="No encontramos información para este pre-registro."
         onRetry={refetch}
         retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
@@ -84,8 +84,16 @@ function InstitutionDetail({ institution, fetching, fetchError, refetch, institu
       <div className="item-container">
         <dl className="item-list">
           <div className="item-row">
-            <dt className="item-header">Razon social</dt>
-            <dd className="item-text">{institution.name}</dd>
+            <dt className="item-header">Expediente</dt>
+            <dd className="item-text">{enrollment.academic_id}</dd>
+          </div>
+          <div className="item-row">
+            <dt className="item-header">Estatus</dt>
+            <dd className="item-text">{enrollment.is_enrolled ? 'Inscrito' : 'No inscrito'}</dd>
+          </div>
+          <div className="item-row">
+            <dt className="item-header">Ultima fecha de actualización</dt>
+            <dd className="item-text">{enrollment.updated_at}</dd>
           </div>
         </dl>
       </div>
@@ -125,4 +133,4 @@ function InstitutionDetail({ institution, fetching, fetchError, refetch, institu
   );
 }
 
-export default InstitutionDetail;
+export default EnrollmentDetail;

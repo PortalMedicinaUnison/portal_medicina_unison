@@ -1,35 +1,26 @@
-import { useNavigate } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../../../../config';
-import Layout from '../../../../Layout.jsx';
-import PageLayout from '../../../../components/PageLayout.jsx';
-import UsersList from '../components/UsersList.jsx';
+import Layout from '../../../../Layout';
+import PageLayout from '../../../../components/PageLayout';
+import useGetUsers from '../hooks/useGetUsers';
+import UserList from '../components/UserList';
 
 
-function UsersListPage() {
-  const navigate = useNavigate();
-
-  const usersActions = (
-    <span className="show-on-sm">
-      <button
-        type="button"
-        className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.ADMIN.USER_ENROLLMENT_CREATE))}
-      >
-        Crear
-      </button>
-    </span>
-  );
-
+function UserListPage() {
+  const { users, loading: fetching, error: fetchError, refetch } = useGetUsers();
+    
   return (
-      <Layout>
-        <PageLayout 
-          title="Lista de alumnos"
-          actions={usersActions}
-          >
-          <UsersList />
-        </PageLayout>
-      </Layout>
+    <Layout>
+      <PageLayout 
+        title="Lista de usuarios"
+      >
+        <UserList
+          users={users}
+          fetching={fetching}
+          fetchError={fetchError}
+          refetch={refetch}
+        />
+      </PageLayout>
+    </Layout>
   );
 }
 
-export default UsersListPage;
+export default UserListPage;

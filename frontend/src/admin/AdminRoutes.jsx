@@ -6,7 +6,7 @@ import ApplicationDetailPage from '../admin/features/applications/pages/Applicat
 import ApplicationListPage from '../admin/features/applications/pages/ApplicationListPage.jsx';
 
 import UserListPage from '../admin/features/users/pages/UserListPage.jsx';
-import UserInfoAdminPage from './features/users/pages/UserDetailAdmin.jsx';
+import UserDetailAdmin from './features/users/pages/UserDetailAdmin.jsx';
 
 import PromotionListPage from './features/promotions/pages/PromotionListPage.jsx';
 import PromotionFormPage from '../admin/features/promotions/pages/PromotionFormPage.jsx';
@@ -34,7 +34,8 @@ import SurveyDetailPage from '../admin/features/surveys/pages/SurveyDetailPage.j
 import SurveyUpdatePage from '../admin/features/surveys/pages/SurveyUpdatePage.jsx';
 
 import EnrollmentFormPage from '../admin/features/users/enrollments/pages/EnrollmentFormPage.jsx';
-import EnrollmentsListPage from '../admin/features/users/enrollments/pages/EnrollmentsListPage.jsx';
+import EnrollmentListPage from '../admin/features/users/enrollments/pages/EnrollmentListPage.jsx';
+import EnrollmentDetailPage from '../admin/features/users/enrollments/pages/EnrollmentDetailPage.jsx';
 
 import ReportsListPage from '../admin/features/reports/pages/ReportsListPage.jsx';
 import ReportInfoPage from '../admin/features/reports/pages/ReportInfoPage.jsx';
@@ -51,7 +52,7 @@ function AdminRoutes() {
 
         {/* Users */}
         <Route path="users" element={<UserListPage />} />
-        <Route path="users/academicId/:academicId" element={<UserInfoAdminPage />} />
+        <Route path="users/academicId/:academicId" element={<UserDetailAdmin />} />
 
         {/* Promotions */}
         <Route path="promotions" element={<PromotionListPage />} />
@@ -84,8 +85,9 @@ function AdminRoutes() {
         <Route path="surveys/:surveyId/edit" element={<SurveyUpdatePage />} />
 
         {/* User enrollments */}
-        <Route path="enrollments" element={<EnrollmentsListPage />} />
+        <Route path="enrollments" element={<EnrollmentListPage />} />
         <Route path="enrollments/create" element={<EnrollmentFormPage />} />
+        <Route path="enrollments/:enrollmentId" element={<EnrollmentDetailPage />} />
 
         {/* Reports */}
         <Route path="reports" element={<ReportsListPage />} />

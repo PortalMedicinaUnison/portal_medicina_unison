@@ -7,7 +7,7 @@ export default function useDeleteApplication() {
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const deleteApplication = useCallback(async (id) => {
+  const deleteInstitution = useCallback(async (id) => {
     if (loading) return;
     setLoading(true);
     setSuccess(false);
@@ -30,5 +30,5 @@ export default function useDeleteApplication() {
     setError(null);
   }, []);
 
-  return { deleteApplication, loading, success, error, reset };
+  return { deleteInstitution, loading, success, error, reset };
 };

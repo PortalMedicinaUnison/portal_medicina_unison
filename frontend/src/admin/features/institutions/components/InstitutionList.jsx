@@ -23,10 +23,10 @@ function InstitutionList({ institutions, fetching, fetchError, refetch }) {
 
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
-    return institutions.filter((institution) => {
+    return institutions.filter((item) => {
       if (!searchQuery) return true;
 
-      const name = String(institution.title).toLowerCase();
+      const name = String(item.name).toLowerCase();
       return name.includes(searchQuery);
     });
   }, [institutions, searchQuery]);
@@ -80,7 +80,7 @@ function InstitutionList({ institutions, fetching, fetchError, refetch }) {
   if (fetchError) {
     return (
       <DataLoadError
-        title="No se pudo cargar la institución"
+        title="No se pudo cargar la información"
         message="Intenta recargar la página."
         details={fetchError}
         onRetry={refetch}
@@ -139,7 +139,7 @@ function InstitutionList({ institutions, fetching, fetchError, refetch }) {
             ) : (
               filtered.map((item) => (
               <tr key={item.institution_id}>
-                <td className="text-left">{item.title}</td>
+                <td className="text-left">{item.name}</td>
                 <td></td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu

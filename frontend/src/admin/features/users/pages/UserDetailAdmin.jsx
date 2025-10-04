@@ -1,29 +1,34 @@
-import { useNavigate, useParams } from "react-router-dom";
-import useUserAdmin from "../hooks/useUserAdmin.js";
-import UserDetail from "../components/UserDetailAdmin.jsx";
-import { ROUTES, adminAbs } from "../../../../config.js";
-import Layout from "../../../../Layout.jsx";
-import PageLayout from '../../../../components/PageLayout.jsx';
+import useUserAdmin from '../hooks/useUserAdmin';
+import Layout from "../../../../Layout";
+import PageLayout from '../../../../components/PageLayout';
+import UserDetailAdmin from "../components/UserDetailAdmin";
 
 
-function UserInfoAdminPage() {
-  const navigate = useNavigate();
-  const { academicId } = useParams();
-  const { user, loading, error } = useUserAdmin(academicId);
+function UserPage() {
+  const { userId } = useParams();
+  const { user, loading: fetching, error: fetchError, refetch } = useUserAdmin(userId);
 
-  if (loading) return <div>Cargando...</div>;
-  if (error) return <div>{error}</div>;
-  if (!user) return <div>No se encontró el usuarioo.</div>;
+  const pageTitle = fetching
+  ? 'Cargando anuncio...'
+  : user
+    ? `${user.firs_name} ${user.last_name} ${user.second_last_name}`
+    : ' ';
 
   return (
-      <Layout>
-        <PageLayout 
-          title={ '🎓 ' + user.first_name + ' ' + user.last_name + ' ' + user.second_last_name }
-        >
-          <UserDetail/>
-        </PageLayout>
-      </Layout>
+    <Layout>
+      <PageLayout 
+        title={pageTitle}
+      >
+        <UserDetailAdmin
+          user={user}
+          fetching={fetching}
+          fetchError={fetchError}
+          refetch={refetch}
+          userId={userId}
+        />
+      </PageLayout>
+    </Layout>
   );
 }
 
-export default UserInfoAdminPage;
+export default UserPage;

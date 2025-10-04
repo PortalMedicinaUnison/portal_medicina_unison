@@ -10,6 +10,7 @@ import Modal from '../../../../utils/ui/Modal.jsx';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent.jsx';
 import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
 
+
 function SiteList({ sites, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
   const { deleteSite, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteSite();
@@ -20,10 +21,18 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
   const [showErrorDialog, setShowErrorDialog] = useState(false);
 
 // ---------------------- FILTERS AND SEARCH ----------------------
- 
+
+  const institutionNameById = useMemo(() => {
+    const map = new Map();
+    for (const it of institutions) map.set(Number(it.institution_id), it.name);
+    return map;
+  }, [institutions]);
+
+  const getInstitutionName = (id) => institutionNameById.get(Number(id)) ?? '—';
+
   const [search, setSearch] = useState('');
-  const [institutionFilter, setinstitutionFilter] = useState('');
-  const [cityFilter, setcityFilter] = useState('');
+  const [institutionFilter, setInstitutionFilter] = useState('');
+  const [cityFilter, setCityFilter] = useState('');
 
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
@@ -34,9 +43,10 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
       
       const name = String(site.name).toLowerCase();
       const teachingHeadName = String(site.teaching_head_name).toLowerCase();
-      return name.includes(searchQuery) || teachingHeadName.includes(searchQuery);
+      const institutionName = String(getInstitutionName(site.institution_id)).toLowerCase();
+      return name.includes(searchQuery) || teachingHeadName.includes(searchQuery) || institutionName.includes(searchQuery);
     });
-  }, [sites, searchQuery, institutionFilter, cityFilter]);
+  }, [sites, searchQuery, institutionFilter, cityFilter, institutionNameById]);
 
 // ---------------------- HANDLERS ----------------------
 
@@ -121,12 +131,12 @@ const handleCloseError = () => {
           className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por razon social"
+          placeholder="Buscar por razon social, institución o jefe"
         />
         <select
           className="btn-tertiary--light"
-          value={cityFilter}
-          onChange={(e) => setcityFilter(e.target.value)}
+          value={institutionFilter}
+          onChange={(e) => setInstitutionFilter(e.target.value)}
           aria-label="Filtrar por institución"
           disabled={fetchingInstitutions || institutionsError}
         >
@@ -139,12 +149,12 @@ const handleCloseError = () => {
         </select>
         <select
           className="btn-tertiary--light"
-          value={institutionFilter}
-          onChange={(e) => setinstitutionFilter(e.target.value)}
+          value={cityFilter}
+          onChange={(e) => setCityFilter(e.target.value)}
           aria-label="Filtrar por ciudad"
         >
           <option value="">Municipio</option>
-          {SONORA_MUNICIPALITIES.map(city => (
+          {SONORA_MUNICIPALITIES.map((city) => (
             <option key={city} value={city}>
               {city}
             </option>
@@ -177,10 +187,10 @@ const handleCloseError = () => {
               filtered.map((item) => (
               <tr key={item.site_id}>
                 <td className="text-left">{item.name}</td>
-                <td className="text-left">{item.institutionId}</td>
-                <td>(item.city)</td>
-                <td className="text-left">{item.teachingHeadName}</td>
-                <td className="overflow-visible text-right">
+                <td className="text-left">{getInstitutionName(item.institution_id)}</td>
+                <td>{item.city}</td>
+                <td className="text-left">{item.teaching_head_name}</td>
+                <td className="relative overflow-visible text-right">
                   <DropdownMenu
                     actions={[
                       { label: 'Ver', onClick: () => handleViewButton(item.site_id) },

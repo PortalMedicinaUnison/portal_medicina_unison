@@ -139,7 +139,7 @@ function UserList({ users, fetching, fetchError, refetch }) {
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={5} className="text-center py-6">
-                {search || statusFilter || typeFilter 
+                  {search
                   ? 'No se encontraron avisos que coincidan con los filtros.' 
                   : 'No hay avisos disponibles.'
                   }
@@ -148,9 +148,9 @@ function UserList({ users, fetching, fetchError, refetch }) {
             ) : (
               filtered.map((item) => (
               <tr key={item.announcement_id}>
-                <td className="text-left">{item.first_name}</td>
-                <td className="text-left">{item.academic_id}</td>
-                <td className="text-left">{item.email}</td>
+                <td className="text-left">{item.first_name} {item.last_name} {item.second_last_name}</td>
+                <td>{item.academic_id}</td>
+                <td>{item.email}</td>
                 <td>{item.internship_id ? 'Inscrito' : 'No inscrito'}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu

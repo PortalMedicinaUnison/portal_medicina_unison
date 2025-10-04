@@ -10,9 +10,9 @@ function SiteUpdatePage() {
   const { site, loading: fetching, error: fetchError, refetch } = useSite(siteId);
   
   const pageTitle = fetching
-  ? 'Cargando anuncio...'
+  ? 'Cargando...'
   : site
-    ? '📢 Actualizar anuncio'
+    ? 'Actualizar anuncio'
     : ' ';
   
   return ( 

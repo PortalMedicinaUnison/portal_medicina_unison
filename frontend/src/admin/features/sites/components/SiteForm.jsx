@@ -5,7 +5,6 @@ import useCreateSite from "../hooks/useCreateSite";
 import useGetInstitutions from "../../institutions/hooks/useGetInstitutions.js";
 import { cleanFormData } from "../../../../utils/utils";
 import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
-import { isValidCity } from "../../../../utils/validations.js";
 
 
 const INITIAL_FORM = {
@@ -39,7 +38,7 @@ function SiteForm() {
       [name]: type === 'checkbox' ? checked : value,
     }));
 
-    if (validationError) return setValidationError('');
+    if (validationError) setValidationError('');
     if (saveError) return reset();
             
   }, [validationError, saveError, reset]);
@@ -57,8 +56,7 @@ function SiteForm() {
     if (!cleanedData.name) errors.push('La razon social es requerida');
     if (!cleanedData.institutionId) errors.push('La institución es requerida');
     if (!cleanedData.address) errors.push('La dirección es requerida');
-    if (cleanedData.city) errors.push('La ciudad no es válida');
-    if (cleanedData.city && !isValidCity(cleanedData.city)) errors.push('La ciudad no es válida');
+    if (!cleanedData.city) errors.push('La ciudad es requerida');
     if (!cleanedData.teachingHeadName) errors.push('El nombre del jefe de enseñanza es requerido');
     if (!cleanedData.teachingDeputyName) errors.push('El nombre del subjefe de enseñanza es requerido');
     if (errors.length > 0) {
@@ -129,7 +127,7 @@ function SiteForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razon social</dt>
+              <dt className="item-header">Razon social *</dt>
               <dd className="item-text">
                 <input
                   name="name"
@@ -137,7 +135,8 @@ function SiteForm() {
                   value={formData.name}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="Razon social"
+                  placeholder="Hospital General Zona 2"
+                  maxLength={200}
                   disabled={saving}
                   required
                 />
@@ -145,7 +144,7 @@ function SiteForm() {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Institución</dt>
+              <dt className="item-header">Institución *</dt>
               <dd className="item-text">
                 <select
                   name="institutionId"
@@ -166,7 +165,7 @@ function SiteForm() {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Dirección</dt>
+              <dt className="item-header">Dirección *</dt>
               <dd className="item-text">
                 <input
                   name="address"
@@ -175,7 +174,8 @@ function SiteForm() {
                   onChange={handleChange}
                   rows="4"
                   className="form-input--half"
-                  placeholder="Dirección"
+                  placeholder="C. Benito Juárez 206, Modelo, 83190"
+                  maxLength={255}
                   disabled={saving}
                   required
                 />
@@ -183,7 +183,7 @@ function SiteForm() {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Ciudad</dt>
+              <dt className="item-header">Ciudad *</dt>
               <dd className="item-text">
                 <select
                   name="city"
@@ -204,16 +204,16 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza</dt>
+              <dt className="item-header">Jefe de enseñanza *</dt>
               <dd className="item-text">
                 <input
                   name="teachingHeadName"
                   type="text"
                   value={formData.teachingHeadName}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
-                  placeholder="Jefe de enseñanza"
+                  placeholder="Dr. Juan Pérez"
+                  maxLength={100}
                   disabled={saving}
                   required
                 />
@@ -227,9 +227,9 @@ function SiteForm() {
                   type="text"
                   value={formData.teachingHeadEmail}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
-                  placeholder="Correo electrónico del jefe de enseñanza"
+                  placeholder="juan.perez@imss.mx"
+                  maxLength={50}
                   disabled={saving}
                 />
               </dd>
@@ -242,24 +242,24 @@ function SiteForm() {
                   type="text"
                   value={formData.teachingHeadPhone}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
-                  placeholder="Teléfono del jefe de enseñanza"
+                  placeholder="6621234567"
+                  maxLength={15}
                   disabled={saving}
                 />
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza</dt>
+              <dt className="item-header">Subjefe de enseñanza *</dt>
               <dd className="item-text">
                 <input
                   name="teachingDeputyName"
                   type="text"
                   value={formData.teachingDeputyName}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
-                  placeholder="Subjefe de enseñanza"
+                  placeholder="Dra. María López"
+                  maxLength={100}
                   disabled={saving}
                   required
                 />
@@ -273,11 +273,10 @@ function SiteForm() {
                   type="text"
                   value={formData.teachingDeputyEmail}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
-                  placeholder="Correo electrónico del subjefe de enseñanza"
+                  placeholder="maria.lopez@unison.mx"
+                  maxLength={50}
                   disabled={saving}
-                  required
                 />
               </dd>
             </div>
@@ -291,9 +290,9 @@ function SiteForm() {
                   onChange={handleChange}
                   rows="4"
                   className="form-input--half"
-                  placeholder="Teléfono del subjefe de enseñanza"
+                  placeholder="+526621234567"
+                  maxLength={15}
                   disabled={saving}
-                  required
                 />
               </dd>
             </div>

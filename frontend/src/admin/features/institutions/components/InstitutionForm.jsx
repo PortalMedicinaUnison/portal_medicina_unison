@@ -98,7 +98,7 @@ function InstitutionForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razon social</dt>
+              <dt className="item-header">Razon social *</dt>
               <dd className="item-text">
                 <input
                   name="name"
@@ -106,7 +106,8 @@ function InstitutionForm() {
                   value={formData.name}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="Razon social de la institución"
+                  placeholder="IMSS Bienestar"
+                  maxLength={100}
                   disabled={saving}
                   required
                 />

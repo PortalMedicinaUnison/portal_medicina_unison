@@ -1,19 +1,20 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
-import useUpdateInstitution from '../hooks/useUpdateInstitution'
+import useUpdateApplication from '../hooks/useUpdateApplication'
 import { cleanFormData } from "../../../../utils/utils";
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 
 
 const INITIAL_FORM = {
-  name: '',
+  student_id: '',
+  isAccepted: false,
 };
 
-function InstitutionUpdate({ institution, fetching, fetchError, refetch, institutionId }) {
+function ApplicationUpdate({ announcement, fetching, fetchError, refetch, applicationId }) {
   const navigate = useNavigate();
-  const { updateInstitution, loading: saving, error: saveError, success: saved, reset } = useUpdateInstitution();
+  const { updateApplication, loading: saving, error: saveError, success: saved, reset } = useUpdateApplication();
 
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [validationError, setValidationError] = useState('');
@@ -35,8 +36,8 @@ function InstitutionUpdate({ institution, fetching, fetchError, refetch, institu
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!institutionId) {
-        setValidationError('ID de anuncio no proporcionado.');
+    if (!applicationId) {
+        setValidationError('ID de la aplicación al internado no proporcionado.');
         return;
     }
 
@@ -44,32 +45,31 @@ function InstitutionUpdate({ institution, fetching, fetchError, refetch, institu
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.name) errors.push('El nombre es obligatorio');
+    if (!cleanedData.isAccepted) errors.push('Debe aceptar los términos y condiciones');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
 
-    const payload = {
-      name: cleanedData.name,
-    };
+    const payload = { ...cleanedData };
     
-    await updateInstitution(institutionId, payload);
+    await updateApplication(applicationId, payload);
   };
 
 // ---------------------- EFFECTS ----------------------
 
   useEffect(() => {
-    if (institution) {
+    if (announcement) {
       setFormData({
-        name: institution.name || '',
+        student_id: announcement.student_id || '',
+        isAccepted: announcement.isAccepted || false,
       });
     }
-  }, [institution]);
+  }, [announcement]);
 
   useEffect(() => {
     if (saved) {
-      navigate(adminAbs(ROUTES.ADMIN.INSTITUTION_DETAIL(institutionId)));
+      navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DETAIL(applicationId)));
     }
   }, [saved, navigate]);
 
@@ -80,7 +80,7 @@ function InstitutionUpdate({ institution, fetching, fetchError, refetch, institu
   if (fetchError) {
     return (
       <DataLoadError
-        title="No se pudo cargar la institución"
+        title="No se pudo cargar el aplicación al internado"
         message="Intenta recargar o vuelve a la lista."
         details={fetchError}
         onRetry={refetch}
@@ -90,11 +90,11 @@ function InstitutionUpdate({ institution, fetching, fetchError, refetch, institu
     );
   }
   
-  if (!institution) {
+  if (!announcement) {
     return (
       <DataLoadError
         title="404"
-        message="No encontramos información para esta institución."
+        message="No encontramos información para esta aplicación al internado."
         onRetry={refetch}
         retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
@@ -116,22 +116,19 @@ return (
         </div>
       )}
 
-<div className="info-container">
+      <div className="info-container">
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razon social *</dt>
+              <dt className="item-header">Confirmar mi intención al internado</dt>
               <dd className="item-text">
                 <input
-                  name="name"
-                  type="text"
-                  value={formData.name}
+                  name="isAccepted"
+                  type="checkbox"
+                  checked={formData.isAccepted}
                   onChange={handleChange}
-                  className="form-input--half"
-                  placeholder="IMSS Bienestar"
-                  maxLength={100}
+                  className="form-checkbox"
                   disabled={saving}
-                  required
                 />
               </dd>
             </div>
@@ -142,7 +139,7 @@ return (
           <button 
             type="button" 
             className="btn-secondary" 
-            onClick={() => navigate(adminAbs(ROUTES.ADMIN.INSTITUTION_LIST))}
+            onClick={() => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_LIST))}
             disabled={saving}
           >
             Cancelar
@@ -160,4 +157,4 @@ return (
   );
 }
 
-export default InstitutionUpdate;
+export default ApplicationUpdate;
