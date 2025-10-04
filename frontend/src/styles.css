@@ -441,7 +441,7 @@ body {
     }
 
     .table-container-body { @apply 
-        overflow-x-auto overflow-y-visible
+        overflow-y-visible overflow-x-visible
         text-sm text-gray-900
     }
 
@@ -449,7 +449,7 @@ body {
         w-full
         text-sm text-center
         border-collapse
-        /* md:table-fixed */
+        md:table-fixed
     }
 
     .table thead { @apply 

@@ -27,7 +27,7 @@ function PageLayout({ title, actions, pretitle = "Ir atrás", children }) {
         )}
       </div>
       
-      <div className="w-full min-w-0 max-w-full mb-16  overflow-x-hidden">
+      <div className="w-full min-w-0 max-w-full pb-32 overflow-x-hidden overflow-y-visible">
         {children}
       </div>
     </div>
