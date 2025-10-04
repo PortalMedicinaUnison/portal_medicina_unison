@@ -288,7 +288,6 @@ function SiteForm() {
                   type="text"
                   value={formData.teachingDeputyPhone}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
                   placeholder="+526621234567"
                   maxLength={15}

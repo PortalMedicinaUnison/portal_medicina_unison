@@ -89,7 +89,7 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
           </div>
           <div className="item-row">
             <dt className="item-header">Institución</dt>
-            <dd className="item-text">{site.institution_id}</dd>
+            <dd className="item-text">{site.institution.name}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Ciudad</dt>

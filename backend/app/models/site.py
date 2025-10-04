@@ -15,6 +15,8 @@ class Institution(BaseModel):
     institution_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
 
+    sites: Mapped[list["Site"]] = relationship(back_populates="institution")
+
     def __repr__(self):
         return f"<Institution(name={self.name}, is_active={self.is_active})>"
 
@@ -39,6 +41,7 @@ class Site(BaseModel):
     teaching_deputy_phone: Mapped[str] = mapped_column(String(15), nullable=True)
 
     promotion_details: Mapped[List["PromotionSiteDetail"]] = relationship(back_populates="site")
+    institution: Mapped["Institution"] = relationship(back_populates="sites", lazy="joined")
 
     def __repr__(self):
         return f"<Site(name={self.name}, institution_id={self.institution_id}, is_active={self.is_active})>"

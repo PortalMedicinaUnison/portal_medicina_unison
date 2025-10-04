@@ -5,7 +5,6 @@ import useUpdateSite from "../hooks/useUpdateSite.js";
 import useGetInstitutions from "../../institutions/hooks/useGetInstitutions.js";
 import { cleanFormData } from "../../../../utils/utils";
 import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
-import { isValidCity } from "../../../../utils/validations.js";
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 
@@ -54,8 +53,7 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
     if (!data.name) errors.push('La razon social es requerida');
     if (!data.institutionId) errors.push('La institución es requerida');
     if (!data.address) errors.push('La dirección es requerida');
-    if (data.city) errors.push('La ciudad no es válida');
-    if (data.city && !isValidCity(data.city)) errors.push('La ciudad no es válida');
+    if (!data.city) errors.push('La ciudad es requerida');
     if (!data.teachingHeadName) errors.push('El nombre del jefe de enseñanza es requerido');
     if (!data.teachingDeputyName) errors.push('El nombre del subjefe de enseñanza es requerido');
     if (errors.length > 0) {
@@ -72,15 +70,15 @@ useEffect(() => {
   if (site) {
     setFormData({
       name: site.name || '',
-      institutionId: site.institutionId || '',
+      institutionId: site.institution_id || '',
       address: site.address || '',
       city: site.city || '',
-      teachingHeadName: site.teachingHeadName || '',
-      teachingHeadEmail: site.teachingHeadEmail || '',
-      teachingHeadPhone: site.teachingHeadPhone || '',
-      teachingDeputyName: site.teachingDeputyName || '',
-      teachingDeputyEmail: site.teachingDeputyEmail || '',
-      teachingDeputyPhone: site.teachingDeputyPhone || '',
+      teachingHeadName: site.teaching_head_name || '',
+      teachingHeadEmail: site.teaching_head_email || '',
+      teachingHeadPhone: site.teaching_head_phone || '',
+      teachingDeputyName: site.teaching_deputy_name || '',
+      teachingDeputyEmail: site.teaching_deputy_email || '',
+      teachingDeputyPhone: site.teaching_deputy_phone || '',
     });
   }
 }, [site]);
@@ -138,7 +136,7 @@ if (fetching) return <LoadingSpinner/>;
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razon social</dt>
+              <dt className="item-header">Razon social *</dt>
               <dd className="item-text">
                 <input
                   name="name"
@@ -146,7 +144,7 @@ if (fetching) return <LoadingSpinner/>;
                   value={formData.name}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="Razon social"
+                  maxLength={200}
                   disabled={saving}
                   required
                 />
@@ -154,7 +152,7 @@ if (fetching) return <LoadingSpinner/>;
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Institución</dt>
+              <dt className="item-header">Institución *</dt>
               <dd className="item-text">
                 <select
                   name="institutionId"
@@ -175,7 +173,7 @@ if (fetching) return <LoadingSpinner/>;
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Dirección</dt>
+              <dt className="item-header">Dirección *</dt>
               <dd className="item-text">
                 <input
                   name="address"
@@ -184,7 +182,7 @@ if (fetching) return <LoadingSpinner/>;
                   onChange={handleChange}
                   rows="4"
                   className="form-input--half"
-                  placeholder="Dirección"
+                  maxLength={255}
                   disabled={saving}
                   required
                 />
@@ -192,7 +190,7 @@ if (fetching) return <LoadingSpinner/>;
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Ciudad</dt>
+              <dt className="item-header">Ciudad *</dt>
               <dd className="item-text">
                 <select
                   name="city"
@@ -213,16 +211,15 @@ if (fetching) return <LoadingSpinner/>;
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza</dt>
+              <dt className="item-header">Jefe de enseñanza *</dt>
               <dd className="item-text">
                 <input
                   name="teachingHeadName"
                   type="text"
                   value={formData.teachingHeadName}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
-                  placeholder="Jefe de enseñanza"
+                  maxLength={100}
                   disabled={saving}
                   required
                 />
@@ -236,9 +233,8 @@ if (fetching) return <LoadingSpinner/>;
                   type="text"
                   value={formData.teachingHeadEmail}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
-                  placeholder="Correo electrónico del jefe de enseñanza"
+                  maxLength={50}
                   disabled={saving}
                 />
               </dd>
@@ -251,24 +247,22 @@ if (fetching) return <LoadingSpinner/>;
                   type="text"
                   value={formData.teachingHeadPhone}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
-                  placeholder="Teléfono del jefe de enseñanza"
+                  maxLength={15}
                   disabled={saving}
                 />
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza</dt>
+              <dt className="item-header">Subjefe de enseñanza *</dt>
               <dd className="item-text">
                 <input
                   name="teachingDeputyName"
                   type="text"
                   value={formData.teachingDeputyName}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
-                  placeholder="Subjefe de enseñanza"
+                  maxLength={100}
                   disabled={saving}
                   required
                 />
@@ -282,27 +276,23 @@ if (fetching) return <LoadingSpinner/>;
                   type="text"
                   value={formData.teachingDeputyEmail}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
-                  placeholder="Correo electrónico del subjefe de enseñanza"
+                  maxLength={50}
                   disabled={saving}
-                  required
                 />
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de ensañanza (telefono)</dt>
+              <dt className="item-header">Subjefe de ensañanza (telefono)</dt>
               <dd className="item-text">
                 <input
                   name="teachingDeputyPhone"
                   type="text"
                   value={formData.teachingDeputyPhone}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
-                  placeholder="Teléfono del subjefe de enseñanza"
+                  maxLength={15}
                   disabled={saving}
-                  required
                 />
               </dd>
             </div>

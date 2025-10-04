@@ -22,14 +22,6 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
 
 // ---------------------- FILTERS AND SEARCH ----------------------
 
-  const institutionNameById = useMemo(() => {
-    const map = new Map();
-    for (const it of institutions) map.set(Number(it.institution_id), it.name);
-    return map;
-  }, [institutions]);
-
-  const getInstitutionName = (id) => institutionNameById.get(Number(id)) ?? '—';
-
   const [search, setSearch] = useState('');
   const [institutionFilter, setInstitutionFilter] = useState('');
   const [cityFilter, setCityFilter] = useState('');
@@ -43,10 +35,10 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
       
       const name = String(site.name).toLowerCase();
       const teachingHeadName = String(site.teaching_head_name).toLowerCase();
-      const institutionName = String(getInstitutionName(site.institution_id)).toLowerCase();
+      const institutionName = String(site.institution.name).toLowerCase();
       return name.includes(searchQuery) || teachingHeadName.includes(searchQuery) || institutionName.includes(searchQuery);
     });
-  }, [sites, searchQuery, institutionFilter, cityFilter, institutionNameById]);
+  }, [sites, searchQuery, institutionFilter, cityFilter]);
 
 // ---------------------- HANDLERS ----------------------
 
@@ -187,7 +179,7 @@ const handleCloseError = () => {
               filtered.map((item) => (
               <tr key={item.site_id}>
                 <td className="text-left">{item.name}</td>
-                <td className="text-left">{getInstitutionName(item.institution_id)}</td>
+                <td className="text-left">{item.institution.name}</td>
                 <td>{item.city}</td>
                 <td className="text-left">{item.teaching_head_name}</td>
                 <td className="relative overflow-visible text-right">
