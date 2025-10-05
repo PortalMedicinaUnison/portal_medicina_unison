@@ -13,7 +13,7 @@ import ConfirmDialogContent from '../../../../../utils/ui/ConfirmDialogContent';
 function PsdList({ promotionId }) {
   const navigate = useNavigate();
   const { psds, loading: fetching, error: fetchError, refetch } = useGetPsdsByProm(promotionId);
-  const { deletePsd, loading: deleting, success: deleted,  error: deleteError, reset } = useDeletePsd();  
+  const { deletePsd, loading: deleting, success: deleted, error: deleteError, reset } = useDeletePsd();  
 
   const [item, setItem] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
