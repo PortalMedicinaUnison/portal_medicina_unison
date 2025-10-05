@@ -1,34 +1,34 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { deletePromotionRequest } from '../../../../services/promotionService';
+
 
 export default function useDeletePromotion() {
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess]   = useState(false);
-  const [error, setError]       = useState('');
+  const [error, setError]     = useState(null);
+  const [success, setSuccess] = useState(false);
 
-  const deletePromotion = async (id) => {
+  const deletePromotion = useCallback(async (id) => {
+    if (loading) return;
     setLoading(true);
     setSuccess(false);
-    setError('');
+    setError(null);
 
     try {
       await deletePromotionRequest(id);
       setSuccess(true);
-      return true;
     } catch (err) {
-      console.error('Delete failed', err);
-      setError(err.message);
-      return false;
+      setError(err.response?.data?.detail || 'Error deleting promotion');
+      setSuccess(false);
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading]);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setLoading(false);
     setSuccess(false);
-    setError('');
-  };
+    setError(null);
+  }, []);
 
   return { deletePromotion, loading, success, error, reset };
-}
+};

@@ -1,6 +1,6 @@
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
-import ReportInfo from '../components/ReportInfo';
+// import ReportInfo from '../components/ReportInfo';
 import { useParams } from 'react-router-dom';
 
 function ReportInfoPage() {
@@ -9,7 +9,7 @@ function ReportInfoPage() {
     return (
         <Layout>
             <PageLayout title={`Reporte #${reportId}`}>
-                <ReportInfo />
+                {/* <ReportInfo /> */}
             </PageLayout>
         </Layout>
     );

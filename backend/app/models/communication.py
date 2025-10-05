@@ -31,7 +31,7 @@ class Survey(BaseModel):
     
     survey_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
-    web_link: Mapped[str] = mapped_column(String(200), nullable=False)
+    url: Mapped[str] = mapped_column(String(200), nullable=False)
     description: Mapped[str] = mapped_column(Text)
     expiration_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     mandatory: Mapped[bool] = mapped_column(Boolean, nullable=False)

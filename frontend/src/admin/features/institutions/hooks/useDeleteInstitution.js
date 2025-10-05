@@ -1,34 +1,34 @@
-import { useState } from 'react';
-import { deleteInstitutionRequest } from '../../../../services/siteService'; 
+import { useState, useCallback } from 'react';
+import { deleteInstitutionRequest } from '../../../../services/siteService';
 
-export default function useDeleteInstitution() {
+
+export default function useDeleteApplication() {
   const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
 
-  const deleteInstitution = async (id) => {
+  const deleteInstitution = useCallback(async (id) => {
+    if (loading) return;
     setLoading(true);
     setSuccess(false);
-    setError('');
+    setError(null);
 
     try {
       await deleteInstitutionRequest(id);
       setSuccess(true);
-      return true;
     } catch (err) {
-      console.error('Delete institution failed', err);
-      setError(err?.message);
-      return false;
+      setError(err.response?.data?.detail || 'Error deleting institution');
+      setSuccess(false);
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading]);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setLoading(false);
     setSuccess(false);
-    setError('');
-  };
+    setError(null);
+  }, []);
 
   return { deleteInstitution, loading, success, error, reset };
-}
+};

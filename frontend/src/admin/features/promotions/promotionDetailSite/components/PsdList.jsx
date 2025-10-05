@@ -1,57 +1,107 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../../config';
-import useGetPsds from '../hooks/useGetPsds';
 import useDeletePsd from '../hooks/useDeletePsd';
+import useGetPsdsByProm from '../hooks/useGetPsdsByProm';
 import DropdownMenu from '../../../../../utils/ui/DropdownMenu';
 import LoadingSpinner from '../../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../../utils/ui/DataLoadError';
+import Modal from '../../../../../utils/ui/Modal';
+import ConfirmDialogContent from '../../../../../utils/ui/ConfirmDialogContent';
 
 
-function PsdList() {
+function PsdList({ promotionId }) {
   const navigate = useNavigate();
-  const { psds, loading: listLoading, error: listError, refetch } = useGetPsds();
-  const { deletePsd, loading: deleting, success: deleteSuccess, error: deleteError } = useDeletePsd();
-  
-  const [search, setSearch] = useState('');
+  const { psds, loading: fetching, error: fetchError, refetch } = useGetPsdsByProm(promotionId);
+  const { deletePsd, loading: deleting, success: deleted, error: deleteError, reset } = useDeletePsd();  
 
+  const [item, setItem] = useState(null);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+
+// ---------------------- FILTERS AND SEARCH ----------------------
+ 
+  const [search, setSearch] = useState('');
+  
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
-    return psds.filter((psd) => {
-    if (!searchQuery) return true;
-    return (
-      String(psd.site.name).toLowerCase().includes(searchQuery)
-    );
-  });
+    if (!psds) return [];
+
+    return psds.filter((item) => {
+      if (!searchQuery) return true;
+
+      const site = String(item.site.name).toLowerCase();
+      return site.includes(searchQuery);
+    });
   }, [psds, searchQuery]);
 
-  const handleViewButton = (id) => {
-    navigate(adminAbs(ROUTES.ADMIN.PSD_DETAIL(id)));
+// ---------------------- HANDLERS ----------------------
+
+  const handleDeleteButton = (id) => {
+    setItem(id)
+    setShowConfirmDelete(true);
   };
 
-  const handleEditButton = (id) => {
-    navigate(adminAbs(ROUTES.ADMIN.PSD_EDIT(id)));
+  const handleConfirmDelete = async () => {
+    if (item == null) return
+    await deletePsd(item);
   };
 
-  const handleDeleteButton = async (id) => {
-    const userConfirmation = window.confirm('Este registro se eliminará. ¿Deseas continuar?');
-    if (!userConfirmation) return;
-    await deletePsd(id);
-    await refetch();
+  const handleCloseConfirm = () => {
+    setShowConfirmDelete(false);
+    setItem(null);
+  }
+
+  const handleCloseError = () => {
+    setShowErrorDialog(false);
+    reset();
   };
 
-  if (listLoading) return <LoadingSpinner />;
-  if (listError) return <p>Error es: {String(listError)}</p>;
+// ---------------------- EFFECTS ----------------------
 
+  useEffect(() => {
+    if (deleted) {
+      setShowConfirmDelete(false);
+      setItem(null);
+      refetch();
+      reset();
+    }
+  }, [deleted, refetch, reset]);
+
+  useEffect(() => {
+    if (deleteError) {
+      setShowConfirmDelete(false);
+      setShowErrorDialog(true);
+    }
+  }, [deleteError]);
+
+// ---------------------- LOADING & ERROR STATES ----------------------
+
+  if (fetching) return <LoadingSpinner />;
+
+  if (fetchError) {
+    return (
+      <DataLoadError
+        title="No se pudo cargar la información"
+        message="Intenta recargar la página."
+        details={fetchError}
+        onRetry={refetch}
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
+    );
+  }
+
+// ---------------------- RENDER ----------------------
   return (
     <div className="table-container">
-      <div className="table-container-actions">
+      <div className="table-container-actions flex justify-end">
         <input
           type="text"
-          className="form-input--sm"
-          placeholder="Buscar sede"
+          className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          aria-label="Buscar"
+          placeholder="Buscar por sede"
         />
       </div>
 
@@ -59,48 +109,64 @@ function PsdList() {
         <table className="table">
           <thead>
             <tr>
-              <th>Sede</th>
-              <th>Capacidad</th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
+              <th className='w-8/12'>Sede</th>
+              <th className='w-3/12'>Capacidad</th>
+              <th className='w-1/12'></th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan="8">No se encontraron instituciones.</td>
+                <td colSpan={3} className="text-center py-6">
+                {search
+                  ? 'No se encontraron sedes que coincidan con los filtros.' 
+                  : 'No hay sedes disponibles.'
+                  }
+                </td>
               </tr>
             ) : (
               filtered.map((item) => (
-                <tr key={item.psd_id}>
-                  <td>{item.site.name}</td>
-                  <td>{item.capacity}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td className="td-actions text-right">
-                    <DropdownMenu actions={
-                      [
-                        { label: 'Ver', onClick: () => handleViewButton(item.promotion_id) },
-                        { label: 'Editar', onClick: () => handleEditButton(item.promotion_id) },
-                        { label: 'Eliminar', onClick: () => handleDeleteButton(item.promotion_id), className: 'text-red-600' },
-                      ]
-                    } />
-                  </td>
-                </tr>
+              <tr key={item.psd_id}>
+                <td className="text-left">{item.site.name}</td>
+                <td>{item.capacity}</td>
+                <td className="overflow-visible text-right">
+                  <DropdownMenu
+                    actions={[
+                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.psd_id), className: 'text-red-600' },
+                    ]}
+                    disabled={deleting}
+                  />
+                </td>
+              </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
+
+      <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>
+        <ConfirmDialogContent
+          title="Confirmar eliminación"
+          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar?"
+          onConfirm={handleConfirmDelete}
+          primaryLabel="Eliminar"
+          secondaryLabel="Cancelar"
+          onCancel={handleCloseConfirm}
+          danger
+        />
+      </Modal>
+
+      <Modal open={showErrorDialog} onClose={handleCloseError}>
+        <ConfirmDialogContent
+          title="Ops... Ha ocurrido un error"
+          message="Ocurrió un problema al eliminar la sede"
+          onConfirm={handleCloseError}
+          primaryLabel="Aceptar"
+        />
+      </Modal>
+      
     </div>
   );
 }
-
+    
 export default PsdList;

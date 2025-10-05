@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from 'react-router-dom';
-import { ROUTES } from '../../../config';
+import { DEFAULT_PROFILE_IMAGE, ROUTES } from '../../../config';
 import useSignUp from '../hooks/useSignUp';
 import { cleanFormData } from "../../../utils/utils";
 
@@ -42,26 +42,36 @@ function SignUpForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const data = cleanFormData(formData);
+    const cleanedData = cleanFormData(formData);
     
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    
-    if (!data.firstName) errors.push('El nombre es requerido.');
-    if (!data.lastName) errors.push('El apellido paterno es requerido.');
-    if (!data.academicId) errors.push('El número de expediente es requerido.');
-    if (!data.email) errors.push('El correo es requerido.');
-    if (data.email !== data.confirmEmail) errors.push('Los correos no coinciden.');
-    if (!data.password) errors.push('La contraseña es requerida.');
-    if (data.password !== data.confirmPassword) errors.push('Las contraseñas no coinciden.');
-    
+    if (!cleanedData.firstName) errors.push('El nombre es requerido.');
+    if (!cleanedData.lastName) errors.push('El apellido paterno es requerido.');
+    if (!cleanedData.academicId) errors.push('El número de expediente es requerido.');
+    if (!cleanedData.email) errors.push('El correo es requerido.');
+    if (cleanedData.email !== cleanedData.confirmEmail) errors.push('Los correos no coinciden.');
+    if (!cleanedData.password) errors.push('La contraseña es requerida.');
+    if (cleanedData.password !== cleanedData.confirmPassword) errors.push('Las contraseñas no coinciden.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
 
-    await signUpUser(data);
+    const payload = {
+      first_name: cleanedData.firstName,
+      last_name: cleanedData.lastName,
+      second_last_name: cleanedData.secondLastName || '',
+      academic_id: cleanedData.academicId,
+      email: cleanedData.email,
+      phone_number: '',
+      profile_photo: DEFAULT_PROFILE_IMAGE,
+      password: cleanedData.password,
+      is_admin: false,
+      is_super_admin: false,
+    };
+
+    await signUpUser(payload);
   };
 
 // ---------------------- EFFECTS ----------------------

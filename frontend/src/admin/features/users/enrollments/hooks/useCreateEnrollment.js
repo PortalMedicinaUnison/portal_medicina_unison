@@ -1,31 +1,35 @@
-import { useState } from 'react';
-import { cleanFormData } from '../../../../../utils/utils';
+import { useState, useCallback } from 'react';
 import { createUserEnrollmentRequest } from '../../../../../services/userService';
 
-export default function useCreateEnrollment() {
-  const [error, setError]     = useState('');
-  const [success, setSuccess] = useState(false);
 
-  const createEnrollment = async (formData) => {  
-    const cleanedData = cleanFormData(formData);
-    setError('');
+export default function useCreateEnrollment() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
+  const [success, setSuccess] = useState(false);    
+
+  const reset = useCallback(() => {
+    setLoading(false);
+    setError(null);
     setSuccess(false);
-    
-    const payload = {
-      academic_id: cleanedData.academic_id,
-      is_enrolled: cleanedData.is_enrolled,
-    };
+  }, []);
+
+  const createEnrollment = useCallback(async (formData) => {
+    if (loading) return false;
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
 
     try {
-      await createUserEnrollmentRequest(payload);
+      const response = await createUserEnrollmentRequest(formData);
       setSuccess(true);
-      return true;
+      return response;
     } catch (err) {
-      console.error("Register failed", err);
-      setError('Error al dar de alta al alumno. Por favor, intenta nuevamente.');
-      return false;
+      setError(err.response?.data?.detail || 'Error creating enrollment');
+      setSuccess(false);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [loading]);
 
-  return { createEnrollment, error, success };
+  return { createEnrollment, loading, error, success, reset };
 }

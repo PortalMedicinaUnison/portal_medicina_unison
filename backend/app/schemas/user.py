@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator
 from typing import Optional
+from datetime import datetime
 from utils.validation import is_valid_academic_id, is_valid_password, is_valid_email
 
 
@@ -7,7 +8,6 @@ from utils.validation import is_valid_academic_id, is_valid_password, is_valid_e
 
 class UserEnrollmentInput(BaseModel):
     academic_id: str
-    is_enrolled: bool = False
 
     @field_validator("academic_id")
     def validate_academic_id(cls, academic_id):
@@ -21,6 +21,7 @@ class UserEnrollmentOutput(BaseModel):
     enrollment_id: int
     academic_id: str
     is_enrolled: bool = False
+    updated_at: datetime
     
 # ---------------------- USERS ----------------------
 
@@ -32,7 +33,7 @@ class UserInput(BaseModel):
     email: str
     phone_number: Optional[str] = None
     password: str
-    profile_photo: str
+    profile_photo: Optional[str] = None
     is_admin: bool = False
     is_super_admin: bool = False
 

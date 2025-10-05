@@ -1,47 +1,42 @@
-import { useState, useEffect } from 'react';
-import { getSiteByIdRequest } from '../../../../services/siteService.js';
+import { useState, useEffect, useCallback } from 'react';
+import { getSiteByIdRequest } from '../../../../services/siteService';
 
-export const useSite = (siteId) => {
-    const [site, setSite] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
-    const getSiteById = async (id) => {
-        if (!id) return;
-        
-        setLoading(true);
-        setError(null);
-        
-        try {
-            const response = await getSiteByIdRequest(id);
-            setSite(response.data);
-            console.log('Site fetched:', response.data);
-        } catch (err) {
-            setError(err.response?.data?.detail || 'Error al cargar el sitio');
-            console.error('Error fetching site:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
+export default function useSite(id) {
+  const [site, setSite]       = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
 
-    useEffect(() => {
-        if (siteId) {
-            getSiteById(siteId);
-        }
-    }, [siteId]);
+  const getSite = useCallback(async (id) => {
+    if (!id) return Promise.resolve();
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await getSiteByIdRequest(id);
+      setSite(response.data);
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Error fetching site');
+      setSite(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    // Función para refrescar los datos
-    const refetch = () => {
-        if (siteId) {
-            getSiteById(siteId);
-        }
-    };
+  useEffect(() => {
+    if (!id) {
+      setSite(null);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+    getSite(id);
+  }, [id, getSite]);
 
-    return {
-        site,
-        loading,
-        error,
-        refetch,
-        getSiteById
-    };
+  const refetch = useCallback(() => {
+    if (!id) return Promise.resolve();
+    return getSite(id);
+  }, [id, getSite]);
+
+  return { site, loading, error, refetch, getSite };
 };

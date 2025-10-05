@@ -1,32 +1,35 @@
-import { useState } from 'react';
-import { cleanFormData } from '../../../../../utils/utils';
+import { useState, useCallback } from 'react';
 import { createPsdRequest } from '../../../../../services/promotionService';
 
-export default function useCreatePsd() {
-  const [error, setError]     = useState('');
-  const [success, setSuccess] = useState(false);
 
-  const createPsd = async (formData) => {  
-    const cleanedData = cleanFormData(formData);
-    setError('');
+export default function useCreatePsd() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
+  const [success, setSuccess] = useState(false);    
+
+  const reset = useCallback(() => {
+    setLoading(false);
+    setError(null);
     setSuccess(false);
-    
-    const psd = {
-      promotion_id: cleanedData.promotion_id,
-      site_id: cleanedData.site_id,
-      capacity: cleanedData.capacity,
-    };
+  }, []);
+
+  const createPsd = useCallback(async (formData) => {
+    if (loading) return false;
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
 
     try {
-      await createPsdRequest(psd);
+      const response = await createPsdRequest(formData);
       setSuccess(true);
-      return true;
+      return response;
     } catch (err) {
-      console.error("Register failed", err);
-      setError('Error al añadir la sede. Por favor, intenta nuevamente.');
-      return false;
+      setError(err.response?.data?.detail || 'Error creating promotion site detail');
+      setSuccess(false);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [loading]);
 
-  return { createPsd, error, success };
+  return { createPsd, loading, error, success, reset };
 }

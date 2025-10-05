@@ -1,31 +1,30 @@
-import { useState, useEffect } from 'react';
-import { getAllInstitutionsRequest } from '../../../../services/siteService'; 
+import { useState, useEffect, useCallback } from 'react';
+import { getAllInstitutionsRequest } from '../../../../services/siteService'
 
-const useGetInstitutions = () => {
+
+export default function useGetInstitutions () {
   const [institutions, setInstitutions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading]           = useState(false);
+  const [error, setError]               = useState(null);
 
-  const fetchInstitutions = async () => {
+  const getInstitutions = useCallback(async () => {
     setLoading(true);
     setError(null);
+    
     try {
       const response = await getAllInstitutionsRequest();
       setInstitutions(response.data);
     } catch (err) {
-      console.error('Error fetching institutions:', err);
-      setError(err?.message);
-      return false;
+      setError(err.response?.data?.detail || 'Error fetching institutions');
+      setInstitutions([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchInstitutions();
   }, []);
-
-  return { institutions, loading, error, refetch: fetchInstitutions };
+    
+  useEffect(() => {
+    getInstitutions();
+  }, [getInstitutions]);
+    
+  return { institutions, loading, error, refetch: getInstitutions };
 };
-
-export default useGetInstitutions;

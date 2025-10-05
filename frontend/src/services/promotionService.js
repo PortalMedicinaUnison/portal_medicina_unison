@@ -21,8 +21,14 @@ export const getAllPromotionsRequest = () =>
 export const createPsdRequest = (PsdData) =>
   api.post(API_ENDPOINTS.PSD.CREATE, PsdData);
 
+export const getAllPsdsRequest = () =>
+  api.get(API_ENDPOINTS.PSD.GET_ALL);
+
 export const getPsdByIdRequest = (id) =>
   api.get(API_ENDPOINTS.PSD.GET(id));
+
+export const getPsdsByPromotionIdRequest = (promotionId) =>
+  api.get(API_ENDPOINTS.PSD.GET_BY_PROMOTION(promotionId));
 
 export const updatePsdRequest = (id, data) =>
   api.patch(API_ENDPOINTS.PSD.UPDATE(id), data);
@@ -30,5 +36,3 @@ export const updatePsdRequest = (id, data) =>
 export const deletePsdRequest = (id) =>
   api.delete(API_ENDPOINTS.PSD.DELETE(id));
 
-export const getAllPsdsRequest = () =>
-  api.get(API_ENDPOINTS.PSD.GET_ALL);

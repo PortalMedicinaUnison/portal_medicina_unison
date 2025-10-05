@@ -43,11 +43,11 @@ def is_valid_period(period: int) -> None:
     if period not in [1, 2]:
         raise ValueError("El periodo debe ser 1 o 2.")
     
-def is_valid_future_date(date: date) -> None:
+def is_valid_future_date(input_date: date) -> None:
     """
     Valida que la fecha igual o futura a la actual.
     """
-    if date < date.today():
+    if input_date < date.today():
         raise ValueError("La fecha debe ser igual o futura a la actual.")
     
 def is_valid_past_date(date: date) -> None:

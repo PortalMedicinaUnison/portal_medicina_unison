@@ -5,6 +5,10 @@
 
 /* ------------------------------------------ */
 
+body {
+    @apply text-sm
+}
+
 @layer components {
     .show-on-sm { @apply 
         hidden 
@@ -426,7 +430,7 @@
 
     .table-container { @apply 
         w-full min-w-0 max-w-full
-        flex flex-col gap-4      
+        flex flex-col gap-4
     }
 
     .table-container-actions { @apply 
@@ -437,7 +441,7 @@
     }
 
     .table-container-body { @apply 
-        overflow-x-auto overflow-y-hidden
+        overflow-y-visible overflow-x-visible
         text-sm text-gray-900
     }
 
@@ -465,6 +469,11 @@
         truncate
         max-w-xs
     } 
+
+    .table th:last-child,
+    .table td:last-child { @apply 
+        overflow-visible
+    }
 
     /* ------------- MODAL ------------- */
 

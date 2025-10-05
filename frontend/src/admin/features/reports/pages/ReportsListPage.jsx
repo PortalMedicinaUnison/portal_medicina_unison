@@ -1,6 +1,6 @@
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
-import ReportsList from '../components/ReportsList';
+// import ReportsList from '../components/ReportsList';
 
 function ReportsListPage() {
     return (
@@ -8,7 +8,7 @@ function ReportsListPage() {
             <PageLayout 
                 title="Reportes de estudiantes"
             >
-                <ReportsList />
+                {/* <ReportsList /> */}
             </PageLayout>
         </Layout>
     );

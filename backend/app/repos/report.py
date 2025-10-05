@@ -26,7 +26,8 @@ class ReportRepo(BaseRepo):
     
     def get_by_student_id(self, student_id: int):
         return self.session.query(Report).filter(
-            Report.student_id == student_id
+            Report.student_id == student_id,
+            Report.is_active == True
         ).all()
     
     def get_by_internship_id(self, internship_id: int):

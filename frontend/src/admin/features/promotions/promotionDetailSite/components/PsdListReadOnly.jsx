@@ -1,59 +1,59 @@
-  import { useState } from 'react';
-  import useGetPsds from '../hooks/useGetPsds';
+import useGetPsdsByProm from '../hooks/useGetPsdsByProm';
+import LoadingSpinner from '../../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../../utils/ui/DataLoadError';
 
-  function PsdListReadOnly() {
-    const [search, setSearch] = useState('');
-    const { psds, loading: listLoading, error: listError, refetch } = useGetPsds();
 
-    const searchQuery = search.trim().toLowerCase();
-    const filtered = psds.filter((psd) => {
-      if (!searchQuery) return true;
-      return (
-        String(psd.site_id).includes(searchQuery)
-      );
-    });
+function PsdListReadOnly({ promotionId }) {
+  const { psds, loading: fetching, error: fetchError, refetch } = useGetPsdsByProm(promotionId);
 
-    if (listLoading) return <p>Cargando registros…</p>;
-    if (listError) return <p>Error es: {String(listError)}</p>;
+// ---------------------- LOADING & ERROR STATES ----------------------
 
+  if (fetching) return <LoadingSpinner />;
+
+  if (fetchError) {
     return (
-      <div className="table-container">
-        <div className="table-container-actions flex justify-end">
-          <input
-            className="form-input--sm"
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por sede"
-          />
-        </div>
-
-        <div className="table-container-body">
-          <table className="table">
-            <thead className="text-xs text-gray-700 bg-gray-50">
-              <tr>
-                <th>Sede</th>
-                <th>Capacidad</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 ? (
-                <tr>
-                  <td colSpan="8">No se encontraron instituciones.</td>
-                </tr>
-              ) : (
-                filtered.map((item) => (
-                  <tr key={item.psd_id}>
-                    <td>{item.site.name}</td>
-                    <td>{item.capacity}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <DataLoadError
+        title="No se pudo cargar la información"
+        message="Intenta recargar la página."
+        details={fetchError}
+        onRetry={refetch}
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
     );
   }
 
-  export default PsdListReadOnly;
+// ---------------------- RENDER ----------------------
+  return (
+    <div className="table-container">
+      <div className="table-container-body">
+        <table className="table">
+          <thead>
+            <tr>
+              <th className='w-8/12'>Sede</th>
+              <th className='w-4/12'>Capacidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            {!psds || psds.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="text-center py-6">
+                  No hay sedes disponibles.
+                </td>
+              </tr>
+            ) : (
+              psds.map((item) => (
+              <tr key={item.psd_id}>
+                <td className="text-left">{item.site.name}</td>
+                <td>{item.capacity}</td>
+              </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>      
+    </div>
+  );
+}
+    
+export default PsdListReadOnly;
