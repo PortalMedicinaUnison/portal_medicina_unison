@@ -1,200 +1,214 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllReportsRequest } from '../../../../services/reportService';
-import { ROUTES, userAbs } from '../../../../config.js';
+import { ROUTES } from '../../../../config';
+import useDeleteReport from '../hooks/useDeleteReport'
+import DropdownMenu from '../../../../utils/ui/DropdownMenu';
+import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../utils/ui/DataLoadError';
+import Modal from '../../../../utils/ui/Modal';
+import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 
-function ReportsList() {
-    const [search, setSearch] = useState('');
-    const [statusFilter, setStatusFilter] = useState('all');
-    const [typeFilter, setTypeFilter] = useState('all');
-    const [reports, setReports] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
-    
-    // TODO: Obtener studentId del contexto de autenticación
-    const studentId = 1; // Temporal - debe venir del contexto de usuario
 
-    const getReports = async () => {
-        if (!studentId) return;
-        
-        setLoading(true);
-        try {
-            const response = await getAllReportsRequest(studentId);
-            setReports(response.data || []);
-        } catch (error) {
-        } finally {
-            setLoading(false);
-        }
-    };
-    
-    useEffect(() => {
-        getReports();
-    }, [studentId]);
-    
-    const handleViewButton = (reportId) => {
-        navigate(userAbs(ROUTES.USER.REPORT_INFO(reportId)));
-    };
-    
-    const handleEditButton = (reportId) => {
-        navigate(userAbs(ROUTES.USER.REPORT_EDIT(reportId)));
-    };
+function ReportList({ reports, fetching, fetchError, refetch }) {
+  const navigate = useNavigate();
+  const { deleteReport, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteReport();
+  
+  const [item, setItem] = useState(null);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
 
-    const getReportTypeLabel = (type) => {
-        const types = {
-            1: 'Incidente',
-            2: 'Sugerencia', 
-            3: 'Queja',
-            4: 'Otro'
-        };
-        return types[type] || 'Desconocido';
-    };
+// ---------------------- FILTERS AND SEARCH ----------------------
+ 
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  
+  const REPORT_TYPES = {
+    1: 'Accidente',
+    2: 'Condiciones inseguras',
+    3: 'Acoso laboral',
+    4: 'Acoso sexual',
+    5: 'Discriminación',
+    6: 'Robo o hurto',
+    7: 'Otro',
+  };
 
-    const getStatusText = (isActive, isOpen) => {
-        if (!isActive) {
-            return "Inactivo";
-        }
-        if (isOpen) {
-            return "Abierto";
-        }
-        return "Cerrado";
-    };
+  const getReportTypeName = (type) => REPORT_TYPES[type] || 'Desconocido';
 
-    const filteredReports = reports.filter((report) => {
-        const matchesSearch = search.toLowerCase() === '' || 
-            report.description.toLowerCase().includes(search.toLowerCase()) ||
-            String(report.report_id).includes(search) ||
-            getReportTypeLabel(report.report_type).toLowerCase().includes(search.toLowerCase());
-        
-        const matchesStatus = statusFilter === 'all' || 
-            (statusFilter === 'active' && report.is_active) ||
-            (statusFilter === 'inactive' && !report.is_active);
-        
-        const matchesType = typeFilter === 'all' || 
-            String(report.report_type) === typeFilter;
-        
-        return matchesSearch && matchesStatus && matchesType;
+  const searchQuery = search.trim().toLowerCase();
+  const filtered = useMemo(() => {
+    if (!reports) return [];
+    return reports.filter((item) => {
+      if (typeFilter !== '' && String(item.type) !== typeFilter) return false;
+      if (statusFilter !== '' && String(item.is_open) !== statusFilter) return false;
+      if (!searchQuery) return true;
+
+      const title = String(item.title).toLowerCase();
+      const description = String(item.description).toLowerCase();
+      return title.includes(searchQuery) || description.includes(searchQuery);
     });
+  }, [reports, searchQuery, statusFilter, typeFilter]);
 
-    if (loading) {
-        return (
-            <div className="table-container">
-                <div className="text-center py-8">
-                    <span className="text-gray-500">Cargando reportes...</span>
-                </div>
-            </div>
-        );
+// ---------------------- HANDLERS ----------------------
+
+  const handleViewButton = (id) => navigate(ROUTES.USER.REPORT_DETAIL(id));
+  const handleEditButton = (id) => navigate(ROUTES.USER.REPORT_EDIT(id));
+  const handleDeleteButton = (id) => {
+    setItem(id)
+    setShowConfirmDelete(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (item == null) return
+    await deleteReport(item);
+  };
+
+  const handleCloseConfirm = () => {
+    setShowConfirmDelete(false);
+    setItem(null);
+  }
+
+  const handleCloseError = () => {
+    setShowErrorDialog(false);
+    reset();
+  };
+
+// ---------------------- EFFECTS ----------------------
+
+  useEffect(() => {
+    if (deleted) {
+      setShowConfirmDelete(false);
+      setItem(null);
+      refetch();
+      reset();
     }
+  }, [deleted, refetch, reset]);
 
+  useEffect(() => {
+    if (deleteError) {
+      setShowConfirmDelete(false);
+      setShowErrorDialog(true);
+    }
+  }, [deleteError]);
+
+// ---------------------- LOADING & ERROR STATES ----------------------
+
+  if (fetching) return <LoadingSpinner />;
+
+  if (fetchError) {
     return (
-        <div className="table-container">
-            <div className="table-container-actions">
-                <div className="flex gap-4 items-center">
-                    <input 
-                        className='form-input--sm'
-                        type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder='Buscar reporte'
-                    />
-                    
-                    <select 
-                        className='form-input--sm'
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                        <option value="all">Todos los estados</option>
-                        <option value="active">Activos</option>
-                        <option value="inactive">Inactivos</option>
-                    </select>
-                    
-                    <select 
-                        className='form-input--sm'
-                        value={typeFilter}
-                        onChange={(e) => setTypeFilter(e.target.value)}
-                    >
-                        <option value="all">Todos los tipos</option>
-                        <option value="1">Incidentes</option>
-                        <option value="2">Sugerencias</option>
-                        <option value="3">Quejas</option>
-                        <option value="4">Otros</option>
-                    </select>
-                </div>
-            </div>
-
-            <div className='table-container-body'>
-                <table className='table'>
-                    <thead className="text-xs text-gray-700 bg-gray-50">
-                        <tr>
-                            <th>ID</th>
-                            <th>Tipo</th>
-                            <th>Descripción</th>
-                            <th>Fecha</th>
-                            <th>Estado</th>
-                            <th>Anónimo</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    
-                    <tbody>
-                        {filteredReports.length === 0 ? (
-                            <tr>
-                                <td colSpan="8" className="text-center py-8 text-gray-500">
-                                    {reports.length === 0 ? 'No hay reportes disponibles' : 'No se encontraron reportes con los filtros aplicados'}
-                                </td>
-                            </tr>
-                        ) : (
-                            filteredReports.map((report) => (
-                                <tr key={report.report_id}>
-                                    <td>{report.report_id}</td>
-                                    <td>
-                                        <span className="font-medium">
-                                            {getReportTypeLabel(report.report_type)}
-                                        </span>
-                                        {report.other_type && (
-                                            <div className="text-xs text-gray-500">
-                                                {report.other_type}
-                                            </div>
-                                        )}
-                                    </td>
-                                    <td>
-                                        <div className="w-40 max-w-40 truncate" title={report.description}>
-                                            {report.description}
-                                        </div>
-                                    </td>
-                                    <td>{new Date(report.date_report).toLocaleDateString()}</td>
-                                    <td>{getStatusText(report.is_active, report.is_open)}</td>
-                                    <td>
-                                        {report.anonymity ? "Sí" : "No"}
-                                    </td>
-                                    <td>
-                                        <button 
-                                            className='item-link' 
-                                            onClick={() => handleViewButton(report.report_id)}
-                                        >
-                                            Ver
-                                        </button>
-                                    </td>
-                                    <td>
-                                        {report.is_open ? (
-                                            <button 
-                                                className='item-link' 
-                                                onClick={() => handleEditButton(report.report_id)}
-                                            >
-                                                Editar
-                                            </button>
-                                        ) : (
-                                            <span className="text-gray-400">Cerrado</span>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+      <DataLoadError
+        title="No se pudo cargar la información"
+        message="Intenta recargar la página."
+        details={fetchError}
+        onRetry={refetch}
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
     );
-}
+  }
 
-export default ReportsList;
+// ---------------------- RENDER ----------------------
+  return (
+    <div className="table-container">
+      <div className="table-container-actions">
+        <input
+          type="text"
+          className="form-input--sm mr-auto"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Buscar por título o descripción"
+        />
+         <select
+          className="btn-tertiary--light"
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+          aria-label="Filtrar por ambito"
+        >
+          <option value="">Ámbito</option>
+          <option value="1">General</option>
+          <option value="2">Internado</option>
+        </select>
+        <select
+          className="btn-tertiary--light"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          aria-label="Filtrar por estado"
+        >
+          <option value="">Estatus</option>
+          <option value="true">Activo</option>
+          <option value="false">Inactivo</option>
+        </select>
+      </div>
+
+      <div className="table-container-body">
+        <table className="table">
+          <thead>
+            <tr>
+              <th className='w-2/12'>Internado</th>
+              <th className='w-2/12'>Fecha</th>
+              <th className='w-4/12'>Descripción</th>
+              <th className='w-2/12'>Estatus</th>
+              <th className='w-1/12'></th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="text-center py-6">
+                {search || statusFilter || typeFilter 
+                  ? 'No se encontraron reportes que coincidan con los filtros.' 
+                  : 'No hay reportes disponibles.'
+                  }
+                </td>
+              </tr>
+            ) : (
+              filtered.map((item) => (
+              <tr key={item.report_id}>
+                <td>{item.internship_id}</td>
+                <td>{item.date}</td>
+                <td className="text-left">{item.description}</td>
+                <td>{item.is_open ? 'Abierto' : 'Cerrado'}</td>
+                <td className="overflow-visible text-right">
+                  <DropdownMenu
+                    actions={[
+                      { label: 'Ver', onClick: () => handleViewButton(item.report_id) },
+                      { label: 'Editar', onClick: () => handleEditButton(item.report_id) },
+                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.report_id), className: 'text-red-600' },
+                    ]}
+                    disabled={deleting}
+                  />
+                </td>
+              </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>
+        <ConfirmDialogContent
+          title="Confirmar eliminación"
+          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar?"
+          onConfirm={handleConfirmDelete}
+          primaryLabel="Eliminar"
+          secondaryLabel="Cancelar"
+          onCancel={handleCloseConfirm}
+          danger
+        />
+      </Modal>
+
+      <Modal open={showErrorDialog} onClose={handleCloseError}>
+        <ConfirmDialogContent
+          title="Ops... Ha ocurrido un error"
+          message="Ocurrió un problema al eliminar el registro"
+          onConfirm={handleCloseError}
+          primaryLabel="Aceptar"
+        />
+      </Modal>
+      
+    </div>
+  );
+}
+    
+export default ReportList;

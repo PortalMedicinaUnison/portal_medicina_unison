@@ -11,7 +11,7 @@ from controllers.internship import (
     create_internship,
     get_all_internships,
     get_internship,
-    get_internships_by_student,
+    get_internships_by_academic,
     get_internships_by_site,
     update_internship,
     delete_internship,
@@ -19,7 +19,7 @@ from controllers.internship import (
     create_internship_application,
     get_all_internship_applications,
     get_internship_application,
-    get_internship_applications_by_student,
+    get_internship_applications_by_academic,
     update_internship_application, 
     delete_internship_application, 
 
@@ -57,9 +57,9 @@ async def get_internship_route(internship_id: int, db: Session = Depends(get_db)
             detail="Internado no encontrado")
     return internship
 
-@internship_router.get('/studentId={student_id}', response_model=List[InternshipOutput])
-async def get_internships_by_student_route(student_id: int, db: Session = Depends(get_db)):
-    internships = get_internships_by_student(student_id, db)
+@internship_router.get('/academicId={academic_id}', response_model=List[InternshipOutput])
+async def get_internships_by_academic_route(academic_id: int, db: Session = Depends(get_db)):
+    internships = get_internships_by_academic(academic_id, db)
     return internships
 
 @internship_router.get('/siteId={site_id}', response_model=List[InternshipOutput])
@@ -112,9 +112,9 @@ async def get_internship_application_route(application_id: int, db: Session = De
             detail="Aplicación no encontrada")
     return application
 
-@internship_application_router.get('/studentId={student_id}', response_model=List[InternshipApplicationOutput])
-async def get_internship_applications_by_student_route(student_id: int, db: Session = Depends(get_db)):
-    applications = get_internship_applications_by_student(student_id, db)
+@internship_application_router.get('/academicId={academic_id}', response_model=List[InternshipApplicationOutput])
+async def get_internship_applications_by_academic_route(academic_id: int, db: Session = Depends(get_db)):
+    applications = get_internship_applications_by_academic(academic_id, db)
     return applications
 
 @internship_application_router.patch('/{application_id}', response_model=InternshipApplicationOutput)

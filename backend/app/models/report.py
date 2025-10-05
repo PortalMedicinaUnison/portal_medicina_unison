@@ -8,8 +8,9 @@ from .types import IntEnumType
 
 class ReportTypeEnum(IntEnum):
     ACCIDENT = 1
-    WORK_HARASSMENT = 2
-    SEXUAL_HARASSMENT = 3
+    INSECURE_CONDITION = 2
+    WORK_HARASSMENT = 3
+    SEXUAL_HARASSMENT = 4
 
 class Report(BaseModel):
     __tablename__ = 'reports'
@@ -19,10 +20,10 @@ class Report(BaseModel):
     internship_id: Mapped[int] = mapped_column(Integer, ForeignKey("internships.internship_id", ondelete="CASCADE"), nullable=False)
     site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id", ondelete="RESTRICT"), nullable=False)
     date_report: Mapped[date] = mapped_column(Date, nullable=False)
-    report_type: Mapped[ReportTypeEnum] = mapped_column(IntEnumType(ReportTypeEnum), nullable=False)
+    type: Mapped[ReportTypeEnum] = mapped_column(IntEnumType(ReportTypeEnum), nullable=False)
     other_type: Mapped[str] = mapped_column(String(25))
     description: Mapped[str] = mapped_column(Text, nullable=False)
-    evidence: Mapped[str] = mapped_column(String(255))
+    evidence_url: Mapped[str] = mapped_column(String(255))
     anonymity: Mapped[bool] = mapped_column(Boolean, nullable=False)
     is_open: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     admin_comment: Mapped[str] = mapped_column(Text)

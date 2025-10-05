@@ -1,34 +1,41 @@
-import ReportsList from '../components/ReportsList.jsx';
-import Layout from '../../../../Layout.jsx';
-import PageLayout from '../../../../components/PageLayout.jsx';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES, userAbs } from '../../../../config.js';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ROUTES } from '../../../../config';
+import Layout from '../../../../Layout';
+import PageLayout from '../../../../components/PageLayout';
+import useGetPsdsByProm from '../hooks/useGetReportsByStudent';
+import ReportsList from '../components/ReportsList';
 
-function ReportsListPage() {
+
+function ReportListPage() {
   const navigate = useNavigate();
-
-  const reportActions = (
-    <span className="show-on-sm">
-      <button
-        type="button"
-        className="btn-primary"
-        onClick={() => navigate(userAbs(ROUTES.USER.REPORT_CREATE))}
-      >
-        Crear Reporte
-      </button>
-    </span>
+  const { studentId } = useParams();
+  const { reports, loading: fetching, error: fetchError, refetch } = useGetPsdsByProm(studentId);
+    
+  const actions = (
+    <button
+      type="button"
+      className="btn-primary"
+      onClick={() => navigate(ROUTES.USER.REPORT_CREATE)}
+    >
+      Crear
+    </button>
   );
-
+    
   return (
-      <Layout>
-        <PageLayout 
-          title="Mis Reportes"
-          actions={reportActions}
-          >
-          <ReportsList />
-        </PageLayout>
-      </Layout>
+    <Layout>
+      <PageLayout 
+        title="Mis reportes"
+        actions={actions}
+      >
+        <ReportsList
+          reports={reports}
+          fetching={fetching}
+          fetchError={fetchError}
+          refetch={refetch}
+        />
+      </PageLayout>
+    </Layout>
   );
 }
 
-export default ReportsListPage;
+export default ReportListPage;

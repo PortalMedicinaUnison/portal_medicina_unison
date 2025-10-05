@@ -21,7 +21,7 @@ export const ROUTES = {
         
         REPORTS_LIST: '/reports',
         REPORT_CREATE: '/reports/create',
-        REPORT_INFO: (reportId) => `/reports/${reportId}`,
+        REPORT_DETAIL: (reportId) => `/reports/${reportId}`,
         REPORT_EDIT: (reportId) => `/reports/${reportId}/edit`,
     },
 

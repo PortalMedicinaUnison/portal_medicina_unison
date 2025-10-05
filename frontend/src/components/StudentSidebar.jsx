@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../config';
+import { ROUTES } from '../config';
 import SidebarCollapse from '../utils/ui/CollapseMenu';
 
 
@@ -67,7 +67,7 @@ function StudentSidebar({ toggleSidebar, openToggleButton }) {
                             </p>
                         </div>
                         <div>
-                            <Link to={adminAbs(ROUTES.ADMIN.REPORT_LIST)} className="sidebar-item-group group">
+                            <Link to={ROUTES.ADMIN.REPORT_LIST} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
@@ -83,7 +83,7 @@ function StudentSidebar({ toggleSidebar, openToggleButton }) {
                             </Link>
                         </div>
                         <div>
-                            <Link to={adminAbs(ROUTES.ADMIN.REPORT_LIST)} className="sidebar-item-group group">
+                            <Link to={ROUTES.ADMIN.REPORT_LIST} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"

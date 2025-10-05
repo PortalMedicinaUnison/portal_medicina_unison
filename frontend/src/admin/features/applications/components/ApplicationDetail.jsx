@@ -96,7 +96,7 @@ function ApplicationDetail({ application, fetching, fetchError, refetch, applica
         <dl className="item-list">
           <div className="item-row">
             <dt className="item-header">Expediente del alumno</dt>
-            <dd className="item-text">{application.student_id}</dd>
+            <dd className="item-text">{application.academic_id}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Promoción</dt>

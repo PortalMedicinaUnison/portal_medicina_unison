@@ -39,7 +39,8 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
       if (statusFilter !== '' && item.status !== Number(statusFilter)) return false;
       if (!searchQuery) return true;
 
-      const student = String(item.student_id).toLowerCase();
+      const student = String(item.academic_id).toLowerCase();
+      return student.includes(searchQuery);
     });
   }, [applications, searchQuery, statusFilter]);
 
@@ -149,7 +150,7 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
             ) : (
               filtered.map((item) => (
               <tr key={item.application_id}>
-                <td>{item.student_id}</td>
+                <td>{item.academic_id}</td>
                 <td>{item.promotion_id}</td>
                 <td>{getStatusName(item.status)}</td>
                 <td className="overflow-visible text-right">

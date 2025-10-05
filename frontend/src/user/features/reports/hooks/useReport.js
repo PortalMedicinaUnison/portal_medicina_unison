@@ -1,50 +1,42 @@
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { getReportByIdRequest } from '../../../../services/reportService.js';
+import { useState, useEffect, useCallback } from 'react';
+import { getReportByIdRequest } from '../../../../services/reportService';
 
-export const useReport = (reportId, studentId) => {
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const [report, setReport] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
-    const getReportById = async (id, studentId) => {
-        if (!id || !studentId) return;
-        
-        setLoading(true);
-        setError(null);
-        
-        try {
-            const response = await getReportByIdRequest(id, studentId);
-            setReport(response.data);
-            console.log('Report fetched:', response.data);
-        } catch (err) {
-            setError(err.response?.data?.detail || 'Error al cargar el reporte');
-            console.error('Error fetching report:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
+export default function useReport(id) {
+  const [report, setReport]   = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
 
-    useEffect(() => {
-        if (reportId && studentId) {
-            getReportById(reportId, studentId);
-        }
-    }, [reportId, studentId, location.search]);
+  const getReport = useCallback(async (id) => {
+    if (!id) return Promise.resolve();
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await getReportByIdRequest(id);
+      setReport(response.data);
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Error fetching report');
+      setReport(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    // Función para refrescar los datos
-    const refetch = () => {
-        if (reportId && studentId) {
-            getReportById(reportId, studentId);
-        }
-    };
+  useEffect(() => {
+    if (!id) {
+      setReport(null);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+    getReport(id);
+  }, [id, getReport]);
 
-    return {
-        report,
-        loading,
-        error,
-        refetch,
-        getReportById
-    };
+  const refetch = useCallback(() => {
+    if (!id) return Promise.resolve();
+    return getReport(id);
+  }, [id, getReport]);
+
+  return { report, loading, error, refetch, getReport };
 };

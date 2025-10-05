@@ -14,7 +14,7 @@ function ApplicationPage() {
   const pageTitle = fetching
   ? 'Cargando...'
   : application
-    ? `${application.student_id}`
+    ? `${application.academic_id}`
     : ' ';
 
   const actions = (

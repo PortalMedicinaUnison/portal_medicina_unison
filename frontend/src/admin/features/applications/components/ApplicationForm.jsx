@@ -9,8 +9,7 @@ import { cleanFormData } from "../../../../utils/utils";
 
 const INITIAL_FORM = {
   promotionId: '',
-  studentId: '',
-  status: 1
+  academicId: '',
 };
 
 function ApplicationForm() {
@@ -39,26 +38,25 @@ function ApplicationForm() {
 
   // Lookup del usuario cuando hay 9 dígitos
   const matchedUser = useMemo(() => {
-    const student_id = formData.studentId?.trim();
-    if (!student_id || !/^\d{9}$/.test(student_id)) return null;
-    if (!Array.isArray(users)) return null;
-    return users.find(user => String(user.academic_id) === student_id) || null;
-  }, [formData.studentId, users]);
+    const academic_id = formData.academicId?.trim();
+    if (!academic_id || !/^\d{9}$/.test(academic_id)) return null;
+    if (fetchingUsers || usersError || !Array.isArray(users)) return null;
+    return users.find(user => String(user.academic_id) === academic_id) || null;
+  }, [formData.academicId, users, fetchingUsers, usersError]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const cleanedData = cleanFormData({
       promotionId: Number(formData.promotionId),
-      studentId: formData.studentId,
-      status: Number(formData.status)
+      academicId: formData.academicId,
     });
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
     if (!cleanedData.promotionId) errors.push('La promoción es obligatoria.');
-    if (!cleanedData.studentId) errors.push('El expediente del alumno es obligatorio.');
-    if (cleanedData.studentId && !/^\d{9}$/.test(cleanedData.studentId)) {
+    if (!cleanedData.academicId) errors.push('El expediente del alumno es obligatorio.');
+    if (cleanedData.academicId && !/^\d{9}$/.test(cleanedData.academicId)) {
       errors.push('El expediente del alumno debe tener 9 dígitos numéricos.');
     }
     if (errors.length > 0) {
@@ -68,8 +66,7 @@ function ApplicationForm() {
 
     const payload = {
       promotion_id: cleanedData.promotionId,
-      student_id: cleanedData.studentId,
-      status: cleanedData.status
+      academic_id: cleanedData.academicId,
     };
     
     const response = await createApplication(payload);
@@ -129,7 +126,7 @@ function ApplicationForm() {
               <dd className="item-text">
                 <select
                   name="promotionId"
-                  checked={formData.promotionId}
+                  value={formData.promotionId}
                   onChange={handleChange}
                   className="form-input--half"
                   disabled={saving || fetchingPromotions || promotionsError}
@@ -148,9 +145,9 @@ function ApplicationForm() {
               <dt className="item-header">Expediente del alumno *</dt>
               <dd className="item-text">
                 <input
-                  name="studentId"
+                  name="academicId"
                   type="text"
-                  value={formData.studentId}
+                  value={formData.academicId}
                   onChange={handleChange}
                   className="form-input--half"
                   placeholder="222222222"

@@ -23,9 +23,9 @@ class InternshipRepo(BaseRepo):
             Internship.is_active == True
         ).first()
 
-    def get_by_student_id(self, student_id: int) -> List[Internship]:
+    def get_by_academic_id(self, academic_id: str) -> List[Internship]:
         return self.session.query(Internship).filter(
-            Internship.student_id == student_id,
+            Internship.academic_id == academic_id,
             Internship.is_active == True
         ).all()
 
@@ -35,7 +35,7 @@ class InternshipRepo(BaseRepo):
             Internship.is_active == True
         ).all()
     
-    def get_by_promotio_id(self, promotion_id: int) -> List[Internship]:
+    def get_by_promotion_id(self, promotion_id: int) -> List[Internship]:
         return self.session.query(Internship).filter(
             Internship.promotion_id == promotion_id,
             Internship.is_active == True
@@ -79,9 +79,9 @@ class InternshipApplicationRepo(BaseRepo):
             InternshipApplication.is_active == True
         ).first())
     
-    def get_by_student_id(self, student_id: int) -> List[InternshipApplication]:
+    def get_by_academic_id(self, academic_id: str) -> List[InternshipApplication]:
         return (self.session.query(InternshipApplication).filter(
-            InternshipApplication.student_id == student_id,
+            InternshipApplication.academic_id == academic_id,
             InternshipApplication.is_active == True
         ).all())
     
@@ -112,7 +112,7 @@ class InternshipDocumentRepo(BaseRepo):
         self.session.refresh(data)
         return data
     
-    def get_all(self, internship_id: int) -> List[InternshipDocument]:
+    def get_all_by_internship(self, internship_id: int) -> List[InternshipDocument]:
         return self.session.query(InternshipDocument).filter(
             InternshipDocument.internship_id == internship_id,
             InternshipDocument.is_active == True
@@ -135,8 +135,8 @@ class InternshipDocumentRepo(BaseRepo):
             self.session.refresh(doc)
         return doc
 
-    def delete(self, document_id: int) -> bool:
-        doc = self.get_by_id(document_id)
+    def delete(self, internship_id: int, document_id: int) -> bool:
+        doc = self.get_by_id(internship_id, document_id)
         if doc:
             doc.is_active = False
             self.session.commit()

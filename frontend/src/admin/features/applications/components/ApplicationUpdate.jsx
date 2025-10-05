@@ -8,7 +8,7 @@ import DataLoadError from '../../../../utils/ui/DataLoadError';
 
 
 const INITIAL_FORM = {
-  student_id: '',
+  academicId: '',
   isAccepted: false,
 };
 
@@ -61,7 +61,7 @@ function ApplicationUpdate({ announcement, fetching, fetchError, refetch, applic
   useEffect(() => {
     if (announcement) {
       setFormData({
-        student_id: announcement.student_id || '',
+        academicId: announcement.academicId || '',
         isAccepted: announcement.isAccepted || false,
       });
     }

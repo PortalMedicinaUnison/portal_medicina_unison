@@ -1,18 +1,16 @@
 import { useParams } from "react-router-dom";
 import Layout from "../../../../Layout.jsx";
 import PageLayout from '../../../../components/PageLayout.jsx';
-import AnnouncementUpdate from '../components/AnnouncementUpdate.jsx'
-import useAnnouncement from '../hooks/useAnnouncement';
+import ApplicationUpdate from '../components/ApplicationUpdate.jsx'
 
 
-function AnnouncementUpdatePage() {
-  const { announcementId } = useParams();
-  const { announcement, loading: fetching, error: fetchError, refetch } = useAnnouncement(announcementId);
+function ApplicationUpdatePage() {
+  const { applicationId } = useParams();
   
   const pageTitle = fetching
-  ? 'Cargando anuncio...'
+  ? 'Cargando...'
   : announcement
-    ? '📢 Actualizar anuncio'
+    ? 'Actualizar'
     : ' ';
   
   return ( 
@@ -20,16 +18,16 @@ function AnnouncementUpdatePage() {
       <PageLayout 
         title={pageTitle}
       >
-        <AnnouncementUpdate
+        <ApplicationUpdate
           announcement={announcement}
           fetching={fetching}
           fetchError={fetchError}
           refetch={refetch}
-          announcementId={announcementId}
+          applicationId={applicationId}
         />
       </PageLayout>
     </Layout>
   );
 }
 
-export default AnnouncementUpdatePage;
+export default ApplicationUpdatePage;

@@ -12,10 +12,9 @@ class ReportInput(BaseModel):
     type: ReportTypeEnum
     other_type: Optional[str] = None
     description: str
-    evidence: Optional[str] = None
+    evidence_url: Optional[str] = None
     anonymity: bool = False
     is_open: bool = True
-    admin_comment: Optional[str] = None
 
     @field_validator("other_type")
     def validate_other_type(cls, other_type):
@@ -23,7 +22,7 @@ class ReportInput(BaseModel):
         return other_type
 
 class ReportInputUpdate(BaseModel):
-    evidence: Optional[str] = None
+    evidence_url: Optional[str] = None
     anonymity: Optional[bool] = None
 
 class ReportInputUpdateByAdmin(BaseModel):
@@ -39,7 +38,7 @@ class ReportOutput(BaseModel):
     type: ReportTypeEnum
     other_type: Optional[str] = None
     description: str
-    evidence: Optional[str] = None
+    evidence_url: Optional[str] = None
     anonymity: bool
     is_open: bool
     admin_comment: Optional[str] = None

@@ -14,8 +14,9 @@ import ProfilePage from '../features/profile/pages/ProfilePage';
 // Reports pages
 import ReportsListPage from './features/reports/pages/ReportsListPage';
 import ReportFormPage from './features/reports/pages/ReportFormPage';
-import ReportInfoPage from './features/reports/pages/ReportInfoPage';
-import ReportEditPage from './features/reports/pages/ReportEditPage';
+
+// Internships pages
+import ApplicationUpdatePage from '../user/features/internships/pages/ApplicationUpdatePage';
 
 function UserRoutes() {
   return (
@@ -32,8 +33,9 @@ function UserRoutes() {
         {/* Reports routes */}
         <Route path="reports" element={<ReportsListPage />} />
         <Route path="reports/create" element={<ReportFormPage />} />
-        <Route path="reports/:reportId" element={<ReportInfoPage />} />
-        <Route path="reports/:reportId/edit" element={<ReportEditPage />} />
+
+        {/* Internships routes */}
+        <Route path="applications/:applicationId/edit" element={<ApplicationUpdatePage />} />
       </Route>
     </Routes>
   );

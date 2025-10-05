@@ -34,9 +34,9 @@ def get_internship(internship_id: int, db: Session):
     internship_response = orm_to_dict(internship)
     return internship_response
 
-def get_internships_by_student(student_id: int, db: Session):
+def get_internships_by_academic(academic_id: int, db: Session):
     internship_repo = InternshipRepo(db)
-    internships = internship_repo.get_by_student_id(student_id)
+    internships = internship_repo.get_by_academic_id(academic_id)
     if not internships:
         return []
     internships_response = [orm_to_dict(internship) for internship in internships]
@@ -88,13 +88,13 @@ def get_internship_application(application_id: int, db: Session):
     # internship_application_response = orm_to_dict(internship_application)
     return internship_application
 
-def get_internship_applications_by_student(student_id: int, db: Session):
+def get_internship_applications_by_academic(academic_id: int, db: Session):
     internship_application_repo = InternshipApplicationRepo(db)
-    internship_applications = internship_application_repo.get_by_student_id(student_id)
+    internship_applications = internship_application_repo.get_by_academic_id(academic_id)
     if not internship_applications:
         return []
-    internship_applications_response = [orm_to_dict(internship_application) for internship_application in internship_applications]
-    return internship_applications_response
+    # internship_applications_response = [orm_to_dict(internship_application) for internship_application in internship_applications]
+    return internship_applications
 
 def update_internship_application(application_id: int, internship_application_input: InternshipApplicationUpdate, db: Session):
     update_data = internship_application_input.dict(exclude_unset=True)

@@ -35,13 +35,13 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
     if (!announcements) return [];
-    return announcements.filter((announcement) => {
-      if (typeFilter !== '' && announcement.announcement_type !== Number(typeFilter)) return false;
-      if (statusFilter !== '' && announcement.is_visible !== (statusFilter === 'true')) return false;
+    return announcements.filter((item) => {
+      if (typeFilter !== '' && item.announcement_type !== Number(typeFilter)) return false;
+      if (statusFilter !== '' && item.is_visible !== (statusFilter === 'true')) return false;
       if (!searchQuery) return true;
 
-      const title = String(announcement.title).toLowerCase();
-      const description = String(announcement.description).toLowerCase();
+      const title = String(item.title).toLowerCase();
+      const description = String(item.description).toLowerCase();
       return title.includes(searchQuery) || description.includes(searchQuery);
     });
   }, [announcements, searchQuery, statusFilter, typeFilter]);

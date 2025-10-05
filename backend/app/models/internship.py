@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Integer, String, Index, ForeignKey
+from sqlalchemy import Boolean, Integer, String, Index, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from enum import IntEnum
 from .base import BaseModel
@@ -32,32 +32,33 @@ class InternshipApplication(BaseModel):
     
     application_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     promotion_id: Mapped[int] = mapped_column(ForeignKey("promotions.promotion_id"), nullable=False)
-    student_id: Mapped[str] = mapped_column(String(9), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    academic_id: Mapped[str] = mapped_column(String(9), ForeignKey("users.academic_id", ondelete="CASCADE"), nullable=False)
     status: Mapped[ApplicationStatusEnum] = mapped_column(IntEnumType(ApplicationStatusEnum), nullable=False, default=ApplicationStatusEnum.PENDING)
 
     promotion: Mapped["Promotion"] = relationship("Promotion", lazy="joined")
 
     def __repr__(self):
-        return f"<InternshipApplication(student_id={self.student_id}, promotion_id={self.promotion_id}, status={self.status.name})>"
+        return f"<InternshipApplication(academic_id={self.academic_id}, promotion_id={self.promotion_id}, status={self.status.name})>"
 
 # ----------------------  INTERNSHIP  ----------------------
 
 class Internship(BaseModel):
     __tablename__ = 'internships'
     __table_args__ = (
-        Index('idx_internship_user', 'student_id'),
+        Index('idx_internship_user', 'academic_id'),
         Index('idx_internship_site', 'site_id'),
+        UniqueConstraint('promotion_id', 'academic_id', name='uq_app_promotion_student'),
     )
 
     internship_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     promotion_id: Mapped[int] = mapped_column(ForeignKey("promotions.promotion_id"), nullable=False)
     application_id: Mapped[int] = mapped_column(Integer, ForeignKey("internship_applications.application_id", ondelete="RESTRICT"), unique=True, nullable=False)
-    student_id: Mapped[str] = mapped_column(String(9), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    academic_id: Mapped[str] = mapped_column(String(9), ForeignKey("users.academic_id", ondelete="CASCADE"), nullable=False)
     site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id", ondelete="RESTRICT"), nullable=False)
     status: Mapped[InternshipStatusEnum] = mapped_column(IntEnumType(InternshipStatusEnum), nullable=False)
 
     def __repr__(self):
-        return (f"<Internship(student_id={self.student_id}, site_id={self.site_id}, promotion_id={self.promotion_id}, status={self.status.name})>")
+        return (f"<Internship(academic_id={self.academic_id}, site_id={self.site_id}, promotion_id={self.promotion_id}, status={self.status.name})>")
 
 # ----------------------  INTERNSHIP DOCUMENT  ----------------------
 
