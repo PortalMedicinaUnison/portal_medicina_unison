@@ -1,23 +1,23 @@
 import { useState, useCallback } from 'react';
-import { updateUserRequest } from '../../../services/userService';
+import { deleteUserRequest } from '../../../services/userService';
 
 
-export default function useUpdateUser() {
+export default function useDeleteUser() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updateUser = useCallback(async (id, formData) => {  
+  const deleteUser = useCallback(async (id) => {
     if (loading) return;
     setLoading(true);
-    setError(null);
     setSuccess(false);
+    setError(null);
 
     try {
-      await updateUserRequest(id, formData);
+      await deleteUserRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating user');
+      setError(err.response?.data?.detail || 'Error deleting user');
       setSuccess(false);
     } finally {
       setLoading(false);
@@ -26,9 +26,9 @@ export default function useUpdateUser() {
 
   const reset = useCallback(() => {
     setLoading(false);
-    setError(null);
     setSuccess(false);
+    setError(null);
   }, []);
 
-  return { updateUser, loading, error, success, reset };
-}
+  return { deleteUser, loading, success, error, reset };
+};

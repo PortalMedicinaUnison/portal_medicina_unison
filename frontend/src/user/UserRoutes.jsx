@@ -7,7 +7,7 @@ import LoginPage from '../features/auth/pages/LoginPage';
 import SignUpPage from '../features/auth/pages/SignUpPage';
 import HomePage from '../pages/HomePage';
 import UserFormPage from '../features/profile/pages/UserFormPage';
-import UserInfoPage from '../features/profile/pages/UserInfoPage';
+import ProfilePage from '../features/profile/pages/ProfilePage';
 
 // Reports pages
 import ReportsListPage from './features/reports/pages/ReportsListPage';
@@ -24,7 +24,7 @@ function UserRoutes() {
       
       <Route element={<ProtectedRoute />}>
         <Route path={ROUTES.HOME} element={<HomePage />} />
-        <Route path={ROUTES.USER.PROFILE} element={<UserInfoPage />} />
+        <Route path={ROUTES.USER.PROFILE} element={<ProfilePage />} />
         <Route path={ROUTES.USER.EDIT_PROFILE} element={<UserFormPage />} />
         
         {/* Reports routes */}

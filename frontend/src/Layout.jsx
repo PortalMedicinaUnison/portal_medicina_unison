@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useUser } from './contexts/UserContext';
 import LoadingSpinner from './utils/ui/LoadingSpinner';
 
-import StudentSidebar from './user/components/StudentSidebar';
+import StudentSidebar from './components/StudentSidebar';
 import AdminSidebar from './admin/components/AdminSidebar';
 import Navbar from './components/Navbar';
 
