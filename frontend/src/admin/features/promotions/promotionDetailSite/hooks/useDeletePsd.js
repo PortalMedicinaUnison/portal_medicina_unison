@@ -1,34 +1,34 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { deletePsdRequest } from '../../../../../services/promotionService';
+
 
 export default function useDeletePsd() {
   const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
-  const [error, setError]     = useState('');
 
-  const deletePsd = async (id) => {
+  const deletePsd = useCallback(async (id) => {
+    if (loading) return;
     setLoading(true);
     setSuccess(false);
-    setError('');
+    setError(null);
 
     try {
       await deletePsdRequest(id);
       setSuccess(true);
-      return true;
     } catch (err) {
-      console.error('Delete failed', err);
-      setError(err.message);
-      return false;
+      setError(err.response?.data?.detail || 'Error deleting promotion site detail');
+      setSuccess(false);
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading]);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setLoading(false);
     setSuccess(false);
-    setError('');
-  };
+    setError(null);
+  }, []);
 
   return { deletePsd, loading, success, error, reset };
-}
+};

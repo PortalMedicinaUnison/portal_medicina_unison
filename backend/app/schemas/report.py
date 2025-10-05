@@ -8,8 +8,8 @@ from utils.validation import is_valid_other_type_report
 class ReportInput(BaseModel):
     internship_id: int
     site_id: int
-    date_report: date
-    report_type: ReportTypeEnum
+    date: date
+    type: ReportTypeEnum
     other_type: Optional[str] = None
     description: str
     evidence: Optional[str] = None
@@ -35,8 +35,8 @@ class ReportOutput(BaseModel):
     student_id: int
     internship_id: int
     site_id: int
-    date_report: date
-    report_type: ReportTypeEnum
+    date: date
+    type: ReportTypeEnum
     other_type: Optional[str] = None
     description: str
     evidence: Optional[str] = None

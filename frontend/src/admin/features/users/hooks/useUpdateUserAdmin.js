@@ -1,26 +1,34 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { updateUserRequest } from '../../../../services/userService';
 
-export default function useUserUpdateAdmin() {
-  const [error, setError] = useState('');
+
+export default function useUpdateUser() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updateUserAdmin = async (userId, formData) => {      
-    setError('');
-
-    console.log('Updating user with data:', formData);
+  const updateUser = useCallback(async (id, formData) => {  
+    if (loading) return;
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
 
     try {
-      await updateUserRequest(userId, formData);
-      console.log('User updated successfully');
+      await updateUserRequest(id, formData);
       setSuccess(true);
-      return true;
     } catch (err) {
-      console.error("Update failed", err);
-      setError('Error al cambiar el rol del usuario. Por favor, intenta nuevamente.');
-      return false;
+      setError(err.response?.data?.detail || 'Error updating user');
+      setSuccess(false);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [loading]);
 
-  return { updateUserAdmin, error, success };
+  const reset = useCallback(() => {
+    setLoading(false);
+    setError(null);
+    setSuccess(false);
+  }, []);
+
+  return { updateUser, loading, error, success, reset };
 }

@@ -1,15 +1,15 @@
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
-import AnnouncementsForm from '../components/AnnouncementsForm';
+import AnnouncementForm from '../components/AnnouncementForm';
 
 
 function AnnouncementFormPage() {
   return (
     <Layout>
       <PageLayout 
-        title="📣 Registrar nuevo anuncio" 
+        title="Registrar nuevo anuncio" 
       >
-        <AnnouncementsForm/>
+        <AnnouncementForm/>
       </PageLayout>
     </Layout>
   );

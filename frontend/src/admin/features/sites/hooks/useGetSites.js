@@ -1,31 +1,30 @@
-import { useState, useEffect } from 'react';
-import { getAllSitesRequest } from '../../../../services/siteService'; 
+import { useState, useEffect, useCallback } from 'react';
+import { getAllSitesRequest } from '../../../../services/siteService'
 
-const useGetSites = () => {
-  const [sites, setSites] = useState([]);
+
+export default function useGetSites () {
+  const [sites, setSites]     = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError]     = useState(null);
 
-  const fetchSites = async () => {
+  const getSites = useCallback(async () => {
     setLoading(true);
     setError(null);
+    
     try {
       const response = await getAllSitesRequest();
       setSites(response.data);
     } catch (err) {
-      console.error('Error fetching sites:', err);
-      setError(err?.message);
-      return false;
+      setError(err.response?.data?.detail || 'Error fetching sites');
+      setSites([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchSites();
   }, []);
-
-  return { sites, loading, error, refetch: fetchSites };
+    
+  useEffect(() => {
+    getSites();
+  }, [getSites]);
+    
+  return { sites, loading, error, refetch: getSites };
 };
-
-export default useGetSites;

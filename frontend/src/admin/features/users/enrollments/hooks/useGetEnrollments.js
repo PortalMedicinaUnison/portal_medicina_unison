@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
-import { getAllUserEnrollmentsRequest } from '../../../../../services/userService';
+import { useState, useEffect, useCallback } from 'react';
+import { getAllUserEnrollmentsRequest } from '../../../../../services/userService'
 
-const useGetUserEnrollments = () => {
+
+export default function useGetEnrollments () {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading]         = useState(false);
   const [error, setError]             = useState(null);
 
-  const fetchEnrollments = async () => {
+  const getEnrollments = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -14,19 +15,16 @@ const useGetUserEnrollments = () => {
       const response = await getAllUserEnrollmentsRequest();
       setEnrollments(response.data);
     } catch (err) {
-      console.error('Error fetching user enrollments:', err);
-      setError(err.message);
-      return false;
+      setError(err.response?.data?.detail || 'Error fetching enrollments');
+      setEnrollments([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchEnrollments();
   }, []);
-
-  return { enrollments, loading, error, refetch: fetchEnrollments };
+    
+  useEffect(() => {
+    getEnrollments();
+  }, [getEnrollments]);
+    
+  return { enrollments, loading, error, refetch: getEnrollments };
 };
-
-export default useGetUserEnrollments;

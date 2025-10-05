@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useUserAdmin } from "../hooks/useUserAdmin";
-import useUserUpdateAdmin from "../hooks/useUpdateUserAdmin";
+import useUserAdmin from "../hooks/useUserAdmin";
+import useUpdateUser from "../hooks/useUpdateUserAdmin";
 import LoadingSpinner from "../../../../utils/ui/LoadingSpinner";
 
 function UpdateUserAdmin({ academicId, onClose, onSuccess }) {
-    const { userAdmin, loading, error, refetch } = useUserAdmin(academicId);
-    const { updateUserAdmin, error: updateError } = useUserUpdateAdmin();
+    const { user, loading, error, refetch } = useUserAdmin(academicId);
+    const { updateUser, error: updateError } = useUpdateUser();
     const [submitting, setSubmitting] = useState(false);
 
     if (loading) return <LoadingSpinner />;

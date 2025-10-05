@@ -1,7 +1,8 @@
-from sqlalchemy import Boolean, Integer, String,Index, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Boolean, Integer, String, Index, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from enum import IntEnum
 from .base import BaseModel
+from .promotion import Promotion
 from .types import IntEnumType
 
 
@@ -21,16 +22,23 @@ class InternshipStatusEnum(IntEnum):
     SUSPENDED = 4
     FINISHED = 5
 
+class ApplicationStatusEnum(IntEnum):
+    PENDING = 1
+    ACCEPTED = 2
+    DECLINED = 3
+
 class InternshipApplication(BaseModel):
     __tablename__ = 'internship_applications'
     
     application_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    student_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
     promotion_id: Mapped[int] = mapped_column(ForeignKey("promotions.promotion_id"), nullable=False)
-    is_accepted: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    student_id: Mapped[str] = mapped_column(String(9), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    status: Mapped[ApplicationStatusEnum] = mapped_column(IntEnumType(ApplicationStatusEnum), nullable=False, default=ApplicationStatusEnum.PENDING)
+
+    promotion: Mapped["Promotion"] = relationship("Promotion", lazy="joined")
 
     def __repr__(self):
-        return f"<InternshipApplication(student_id={self.student_id}, is_accepted={self.is_accepted})>"
+        return f"<InternshipApplication(student_id={self.student_id}, promotion_id={self.promotion_id}, status={self.status.name})>"
 
 # ----------------------  INTERNSHIP  ----------------------
 
@@ -44,7 +52,7 @@ class Internship(BaseModel):
     internship_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     promotion_id: Mapped[int] = mapped_column(ForeignKey("promotions.promotion_id"), nullable=False)
     application_id: Mapped[int] = mapped_column(Integer, ForeignKey("internship_applications.application_id", ondelete="RESTRICT"), unique=True, nullable=False)
-    student_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    student_id: Mapped[str] = mapped_column(String(9), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
     site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id", ondelete="RESTRICT"), nullable=False)
     status: Mapped[InternshipStatusEnum] = mapped_column(IntEnumType(InternshipStatusEnum), nullable=False)
 

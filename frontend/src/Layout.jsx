@@ -72,7 +72,7 @@ function Layout({ children }) {
           className="relative flex-1 overflow-x-hidden overflow-y-auto min-h-0"
         >
           <div id="thread" className="h-full w-full max-w-full min-w-0">
-            <div className="h-full w-full min-w-0">
+            <div className="h-full w-full min-w-0 text-sm/6">
               {children}
             </div>
           </div>

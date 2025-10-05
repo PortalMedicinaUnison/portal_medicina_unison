@@ -22,16 +22,16 @@ def get_all_sites(db: Session):
     sites = site_repo.get_all()
     if not sites:
         return []
-    sites_response = [orm_to_dict(site) for site in sites]
-    return sites_response
+    # sites_response = [orm_to_dict(site) for site in sites]
+    return sites
 
 def get_site(site_id: int, db: Session):
     site_repo = SiteRepo(db)
     read_site = site_repo.get_by_id(site_id)
     if not read_site:
         return None
-    site_response = orm_to_dict(read_site)
-    return site_response
+    # site_response = orm_to_dict(read_site)
+    return read_site
 
 def update_site(site_id: int, site_input: SiteInputUpdate, db: Session):
     update_data = site_input.dict(exclude_unset=True)

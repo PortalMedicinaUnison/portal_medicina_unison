@@ -61,7 +61,7 @@ async def update_promotion_route(promotion_id: int, promotion: PromotionInputUpd
     return updated_promotion
 
 @promotion_router.delete("/{promotion_id}")
-async def delete_promotion_route(promotion_id: int, db: Session = Depends(get_db)) -> Dict[str, Any]:
+async def delete_promotion_route(promotion_id: int, db: Session = Depends(get_db)):
     deleted = delete_promotion(promotion_id, db)
     if not deleted:
         raise HTTPException(
@@ -99,7 +99,7 @@ async def get_psd_route(psd_id: int, db: Session = Depends(get_db)):
         )
     return psd
 
-@psd_router.get("/promotionId={promotion_id}", response_model=List[PromotionSiteDetailOutput])
+@psd_router.get("/promotionId/{promotion_id}", response_model=List[PromotionSiteDetailOutput])
 async def get_psd_by_promotion_route(promotion_id: int, db: Session = Depends(get_db)):
     psds = get_promotion_site_details_by_promotion(promotion_id, db)
     return psds
@@ -114,8 +114,8 @@ async def update_psd_route(psd_id: int, psd: PromotionSiteDetailInputUpdate, db:
         )
     return updated_psd
 
-@psd_router.delete("/id/{psd_id}")
-async def delete_psd_route(psd_id: int, db: Session = Depends(get_db)) -> Dict[str, Any]:
+@psd_router.delete("/{psd_id}")
+async def delete_psd_route(psd_id: int, db: Session = Depends(get_db)):
     deleted = delete_promotion_site_detail(psd_id, db)
     if not deleted:
         raise HTTPException(

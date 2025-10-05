@@ -1,21 +1,27 @@
 from pydantic import BaseModel
-from models.internship import DocumentTypeEnum, InternshipStatusEnum
+from models.internship import DocumentTypeEnum, InternshipStatusEnum, ApplicationStatusEnum
+from schemas.promotion import PromotionOutput
 from typing import Optional
+from datetime import datetime
 
 
 # ---------------------- INTERNSHIP APPLICATION ----------------------
 
 class InternshipApplicationInput(BaseModel):
+    promotion_id: int
     student_id: int
-    is_accepted: bool
+    status: ApplicationStatusEnum
 
 class InternshipApplicationUpdate(BaseModel):
-    is_accepted: Optional[bool] = None
+    status: Optional[ApplicationStatusEnum] = None
 
 class InternshipApplicationOutput(BaseModel):
     application_id: int
+    promotion_id: int
     student_id: int
-    is_accepted: bool
+    status: ApplicationStatusEnum
+    created_at: datetime
+    promotion: PromotionOutput
 
 # ---------------------- INTERNSHIP ----------------------
 

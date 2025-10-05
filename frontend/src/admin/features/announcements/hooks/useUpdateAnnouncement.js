@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
-import { cleanFormData } from '../../../../utils/utils';
-import { updateAnnouncementRequest } from '../../../../services/announcementService';
+import { updateAnnouncementRequest } from '../../../../services/communicationService';
 
 
 export default function useUpdateAnnouncement() {
@@ -8,15 +7,14 @@ export default function useUpdateAnnouncement() {
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updateAnnouncement = useCallback(async (announcementID, formData) => {  
+  const updateAnnouncement = useCallback(async (announcementID, payload) => {  
     if (loading) return;
     setLoading(true);
     setError(null);
     setSuccess(false);
 
     try {
-      const cleanedFormData = cleanFormData(formData);
-      await updateAnnouncementRequest(announcementID, cleanedFormData);
+      await updateAnnouncementRequest(announcementID, payload);
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error updating announcement');

@@ -1,46 +1,42 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getUserByAcademicIdRequest } from '../../../../services/userService';
 
-export const useUserAdmin = (academicId) => {
-    const [userAdmin, setUserAdmin] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
-    const getUserAcademicById = async (id) => {
-        if (!id) return;
-        
-        setLoading(true);
-        setError(null);
-        
-        try {
-            const response = await getUserByAcademicIdRequest(id);
-            setUserAdmin(response.data);
-            console.log('User fetched:', response.data);
-        } catch (err) {
-            setError(err.response?.data?.detail || 'Error al cargar la promoción');
-            console.error('Error fetching user:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
+export default function useUserAdmin(academicId) {
+  const [user, setUserAdmin]  = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
 
-    useEffect(() => {
-        if (academicId) {
-            getUserAcademicById(academicId);
-        }
-    }, [academicId]);
+  const getUserAdmin = useCallback(async (academicId) => {
+    if (!academicId) return Promise.resolve();
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await getUserByAcademicIdRequest(academicId);
+      setUserAdmin(response.data);
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Error fetching user');
+      setUserAdmin(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    const refetch = () => {
-        if (academicId) {
-            getUserAcademicById(academicId);
-        }
-    };
+  useEffect(() => {
+    if (!academicId) {
+      setUserAdmin(null);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+    getUserAdmin(academicId);
+  }, [academicId, getUserAdmin]);
 
-    return {
-        userAdmin,
-        loading,
-        error,
-        refetch,
-        getUserAcademicById
-    };
+  const refetch = useCallback(() => {
+    if (!academicId) return Promise.resolve();
+    return getUserAdmin(academicId);
+  }, [academicId, getUserAdmin]);
+
+  return { user, loading, error, refetch, getUserAdmin };
 };

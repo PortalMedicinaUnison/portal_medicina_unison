@@ -1,117 +1,160 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate, Link } from 'react-router-dom';
+import { ROUTES, adminAbs } from '../../../../config';
 import useCreateSite from "../hooks/useCreateSite";
-import useGetInstitutions from "../hooks/useGetInstitutions";
-import { ROUTES, adminAbs } from "../../../../config";
+import useGetInstitutions from "../../institutions/hooks/useGetInstitutions.js";
+import { cleanFormData } from "../../../../utils/utils";
 import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
-import { isValidCity } from "../../../../utils/validations.js";
+
+
+const INITIAL_FORM = {
+  name: '',
+  institutionId: '',
+  address: '',
+  city: '',
+  teachingHeadName: '',
+  teachingHeadEmail: '',
+  teachingHeadPhone: '',
+  teachingDeputyName: '',
+  teachingDeputyEmail: '',
+  teachingDeputyPhone: '',
+};
 
 function SiteForm() {
   const navigate = useNavigate();
+  const { createSite, loading: saving, success: saved, error: saveError, reset } = useCreateSite();
+  const { institutions, loading: fetchingInstitutions, error: institutionsError } = useGetInstitutions();
 
-  const [formData, setFormData] = useState({
-    name: '',
-    institutionId: '',
-    address: '',
-    city: '',
-    teachingHeadName: '',
-    teachingHeadEmail: '',
-    teachingHeadPhone: '',
-    teachingDeputyName: '',
-    teachingDeputyEmail: '',
-    teachingDeputyPhone: '',
-  });
+  const [formData, setFormData] = useState(INITIAL_FORM);
+  const [createdId, setCreatedId] = useState(null);
+  const [validationError, setValidationError] = useState('');
 
-  const { createSite, error, success } = useCreateSite();
-  const { institutions, loading: institutionsLoading, error: institutionsError } = useGetInstitutions();
+// ---------------------- HANDLERS ----------------------
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = useCallback((e) => {
+    const { name, value, type, checked } = e.target;
     setFormData(prevData => ({
       ...prevData,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value,
     }));
-  };
+
+    if (validationError) setValidationError('');
+    if (saveError) return reset();
+            
+  }, [validationError, saveError, reset]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isValidCity(formData.city)) {
-      alert('El municipio seleccionado no es válido');
+
+    const cleanedData = cleanFormData({
+      ...formData,
+      institutionId: Number(formData.institutionId),
+    });
+
+    // ---------------------- VALIDATIONS ----------------------
+    const errors = [];
+    if (!cleanedData.name) errors.push('La razon social es requerida');
+    if (!cleanedData.institutionId) errors.push('La institución es requerida');
+    if (!cleanedData.address) errors.push('La dirección es requerida');
+    if (!cleanedData.city) errors.push('La ciudad es requerida');
+    if (!cleanedData.teachingHeadName) errors.push('El nombre del jefe de enseñanza es requerido');
+    if (!cleanedData.teachingDeputyName) errors.push('El nombre del subjefe de enseñanza es requerido');
+    if (errors.length > 0) {
+      setValidationError(errors.join(' | '));
       return;
     }
 
-    if (!formData.institutionId) {
-      alert('Por favor selecciona una institución');
-      return;
-    }
-
-    const isCreated = await createSite(formData);
-    if (isCreated) {
-      console.log('Sede registrada exitosamente');
-      
-      setFormData({
-        name: '',
-        institutionId: '',
-        address: '',
-        city: '',
-        teachingHeadName: '',
-        teachingHeadEmail: '',
-        teachingHeadPhone: '',
-        teachingDeputyName: '',
-        teachingDeputyEmail: '',
-        teachingDeputyPhone: '',
-      });
+    const payload = {
+      name: cleanedData.name,
+      institution_id: cleanedData.institutionId,
+      address: cleanedData.address,
+      city: cleanedData.city,
+      teaching_head_name: cleanedData.teachingHeadName,
+      teaching_head_email: cleanedData.teachingHeadEmail,
+      teaching_head_phone: cleanedData.teachingHeadPhone,
+      teaching_deputy_name: cleanedData.teachingDeputyName,
+      teaching_deputy_email: cleanedData.teachingDeputyEmail,
+      teaching_deputy_phone: cleanedData.teachingDeputyPhone,
+    };
+    
+    const response = await createSite(payload);
+    if (response && response.data.site_id) {
+      setCreatedId(response.data.site_id);
     }
   };
 
+// ---------------------- EFFECTS ----------------------
+
+  useEffect(() => {
+    if (saved) {
+      setFormData(INITIAL_FORM);
+
+      const alertTimeout = setTimeout(() => {
+        reset();
+      }, 10000);
+      return () => clearTimeout(alertTimeout);
+    }
+  }, [saved, reset]);
+
+// ---------------------- RENDER ----------------------
+
   return (
     <form className="component-container" onSubmit={handleSubmit}>
-
-      {success && (
-        <div className="alert-success-text">
-          Sede registrada exitosamente.
+      {saved && (
+        <div className="alert-success">
+          Sede registrada exitosamente.{' '}
+          {createdId && (
+            <Link
+              to={adminAbs(ROUTES.ADMIN.SITE_DETAIL(createdId))}
+              className="font-bold underline"
+            >
+              Ver
+            </Link>
+          )}
         </div>
       )}
 
-      {error && (
-        <div className="alert-footer-text">
+      {(validationError || saveError) && (
+        <div className="alert-error">
           <strong className="font-bold">Error: </strong>
-          <span className="block sm:inline">{error}</span>
+            <span className="block sm:inline">
+              {validationError || saveError}
+            </span>
         </div>
       )}
 
       <div className="info-container">
-        
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razon social</dt>
+              <dt className="item-header">Razon social *</dt>
               <dd className="item-text">
                 <input
-                  className="form-input--half"
                   name="name"
                   type="text"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Razon social"
+                  className="form-input--half"
+                  placeholder="Hospital General Zona 2"
+                  maxLength={200}
+                  disabled={saving}
+                  required
                 />
               </dd>
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Institución</dt>
+              <dt className="item-header">Institución *</dt>
               <dd className="item-text">
                 <select
-                  className="form-input--half"
                   name="institutionId"
                   value={formData.institutionId}
                   onChange={handleChange}
+                  className="form-input--half"
+                  disabled={fetchingInstitutions || saving || institutionsError}
                   required
-                  disabled={institutionsLoading}
                 >
-                  <option value="">
-                    {institutionsLoading ? 'Cargando instituciones...' : 'Seleccionar institución'}
-                  </option>
+                  <option value="">Seleccionar institución</option>
                   {institutions.map(institution => (
                     <option key={institution.institution_id} value={institution.institution_id}>
                       {institution.name}
@@ -122,29 +165,33 @@ function SiteForm() {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Dirección</dt>
+              <dt className="item-header">Dirección *</dt>
               <dd className="item-text">
                 <input
-                  className="form-input--half"
                   name="address"
                   type="text"
                   value={formData.address}
                   onChange={handleChange}
-                  placeholder="Direccion"
+                  className="form-input--half"
+                  placeholder="C. Benito Juárez 206, Modelo, 83190"
+                  maxLength={255}
+                  disabled={saving}
+                  required
                 />
               </dd>
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Ciudad</dt>
+              <dt className="item-header">Ciudad *</dt>
               <dd className="item-text">
                 <select
-                  className="form-input--half"
                   name="city"
                   type="text"
                   value={formData.city}
                   onChange={handleChange}
-                  placeholder="Ciudad"
+                  className="form-input--half"
+                  disabled={saving}
+                  required
                 >
                   <option value="">Seleccionar municipio</option>
                   {SONORA_MUNICIPALITIES.map(city => (
@@ -155,88 +202,95 @@ function SiteForm() {
                 </select>
               </dd>
             </div>
-
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza</dt>
+              <dt className="item-header">Jefe de enseñanza *</dt>
               <dd className="item-text">
                 <input
-                  className="form-input--half"
                   name="teachingHeadName"
                   type="text"
                   value={formData.teachingHeadName}
                   onChange={handleChange}
-                  placeholder="Nombre"
+                  className="form-input--half"
+                  placeholder="Dr. Juan Pérez"
+                  maxLength={100}
+                  disabled={saving}
                   required
                 />
               </dd>
             </div>
-
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza (email)</dt>
+              <dt className="item-header">Jefe de ensañanza (email)</dt>
               <dd className="item-text">
                 <input
-                  className="form-input--half"
                   name="teachingHeadEmail"
-                  type="email"
+                  type="text"
                   value={formData.teachingHeadEmail}
                   onChange={handleChange}
-                  placeholder="email@dominio.com"
+                  className="form-input--half"
+                  placeholder="juan.perez@imss.mx"
+                  maxLength={50}
+                  disabled={saving}
                 />
               </dd>
             </div>
-
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza (teléfono)</dt>
+              <dt className="item-header">Jefe de ensañanza (telefono)</dt>
               <dd className="item-text">
                 <input
-                  className="form-input--half"
                   name="teachingHeadPhone"
-                  type="tel"
+                  type="text"
                   value={formData.teachingHeadPhone}
                   onChange={handleChange}
-                  placeholder="Teléfono"
+                  className="form-input--half"
+                  placeholder="6621234567"
+                  maxLength={15}
+                  disabled={saving}
                 />
               </dd>
             </div>
-
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza</dt>
+              <dt className="item-header">Subjefe de enseñanza *</dt>
               <dd className="item-text">
                 <input
-                  className="form-input--half"
                   name="teachingDeputyName"
                   type="text"
                   value={formData.teachingDeputyName}
                   onChange={handleChange}
-                  placeholder="Nombre"
+                  className="form-input--half"
+                  placeholder="Dra. María López"
+                  maxLength={100}
+                  disabled={saving}
+                  required
                 />
               </dd>
             </div>
-
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza (email)</dt>
+              <dt className="item-header">Subjefe de ensañanza (email)</dt>
               <dd className="item-text">
                 <input
-                  className="form-input--half"
                   name="teachingDeputyEmail"
-                  type="email"
+                  type="text"
                   value={formData.teachingDeputyEmail}
                   onChange={handleChange}
-                  placeholder="email@dominio.com"
+                  className="form-input--half"
+                  placeholder="maria.lopez@unison.mx"
+                  maxLength={50}
+                  disabled={saving}
                 />
               </dd>
             </div>
-
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza (teléfono)</dt>
+              <dt className="item-header">Jefe de ensañanza (telefono)</dt>
               <dd className="item-text">
                 <input
-                  className="form-input--half"
                   name="teachingDeputyPhone"
-                  type="tel"
+                  type="text"
                   value={formData.teachingDeputyPhone}
                   onChange={handleChange}
-                  placeholder="Teléfono"
+                  className="form-input--half"
+                  placeholder="+526621234567"
+                  maxLength={15}
+                  disabled={saving}
                 />
               </dd>
             </div>
@@ -248,14 +302,16 @@ function SiteForm() {
             type="button" 
             className="btn-secondary" 
             onClick={() => navigate(adminAbs(ROUTES.ADMIN.SITE_LIST))}
+            disabled={saving}
           >
             Cancelar
           </button>
           <button 
             type="submit" 
             className="btn-primary"
+            disabled={saving}
           >
-            Guardar
+            {saving ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
       </div>

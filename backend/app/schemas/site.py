@@ -1,3 +1,4 @@
+from __future__ import annotations
 from pydantic import BaseModel, field_validator
 from typing import List, Optional
 from utils.validation import is_valid_email
@@ -7,14 +8,14 @@ from utils.constants import MUNICIPALITY_SET
 # ---------------------- SITE ----------------------
 
 class SiteInput(BaseModel):
-    institution_id: int
     name: str
+    institution_id: int
     address: str
     city: str
     teaching_head_name: str
     teaching_head_email: Optional[str] = None
     teaching_head_phone: Optional[str] = None
-    teaching_deputy_name: Optional[str] = None
+    teaching_deputy_name: str = None
     teaching_deputy_email: Optional[str] = None
     teaching_deputy_phone: Optional[str] = None
 
@@ -76,9 +77,10 @@ class SiteOutput(BaseModel):
     teaching_head_name: str
     teaching_head_email: Optional[str] = None
     teaching_head_phone: Optional[str] = None
-    teaching_deputy_name: Optional[str] = None
+    teaching_deputy_name: str
     teaching_deputy_email: Optional[str] = None
     teaching_deputy_phone: Optional[str] = None
+    institution: Optional[InstitutionBasic] = None
 
 class SiteBasicOutput(BaseModel):
     site_id: int
@@ -97,3 +99,11 @@ class InstitutionOutput(BaseModel):
     institution_id: int
     name: str
     sites: List[SiteOutput] = []
+
+class InstitutionBasic(BaseModel):
+    institution_id: int
+    name: str
+
+# --- resolver referencias cruzadas (Pydantic v2) ---
+SiteOutput.model_rebuild()
+InstitutionOutput.model_rebuild()

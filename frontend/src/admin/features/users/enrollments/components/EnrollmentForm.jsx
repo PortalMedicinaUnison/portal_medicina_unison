@@ -1,69 +1,117 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ROUTES, adminAbs } from "../../../../../config";
-import useCreateEnrollment from "../hooks/useCreateEnrollment";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate, Link } from 'react-router-dom';
+import { ROUTES, adminAbs } from '../../../../../config';
+import useCreateEnrollment from '../hooks/useCreateEnrollment';
+import { cleanFormData } from "../../../../../utils/utils";
+
+
+const INITIAL_FORM = {
+  academicId: '',
+};
 
 function EnrollmentForm() {
   const navigate = useNavigate();
-  const { createEnrollment, error, success } = useCreateEnrollment();
+  const { createEnrollment, loading: saving, success: saved, error: saveError, reset } = useCreateEnrollment();
 
-  const [formData, setFormData] = useState({
-    academic_id: '',
-    is_enrolled: false,
-  });
+  const [formData, setFormData] = useState(INITIAL_FORM);
+  const [createdId, setCreatedId] = useState(null);
+  const [validationError, setValidationError] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+// ---------------------- HANDLERS ----------------------
+
+  const handleChange = useCallback((e) => {
+    const { name, value, type, checked } = e.target;
     setFormData(prevData => ({
       ...prevData,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value,
     }));
-  };
+
+    if (validationError) return setValidationError('');
+    if (saveError) return reset();
+            
+  }, [validationError, saveError, reset]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const isCreated = await createEnrollment(formData);
-    if (isCreated) {
-      console.log('Alumno pre-registrado exitosamente');
-      
-      setFormData({
-        academic_id: '',
-        is_enrolled: false,
-      });
+    const cleanedData = cleanFormData(formData);
+
+    // ---------------------- VALIDATIONS ----------------------
+    const errors = [];
+    if (!cleanedData.academicId) errors.push('El expediente académico es obligatorio');
+    if (errors.length > 0) {
+      setValidationError(errors.join(' | '));
+      return;
+    }
+
+    const payload = {
+      academic_id: cleanedData.academicId,
+    };
+    
+    const response = await createEnrollment(payload);
+    if (response && response.data.enrollment_id) {
+      setCreatedId(response.data.enrollment_id);
     }
   };
 
+// ---------------------- EFFECTS ----------------------
+
+  useEffect(() => {
+    if (saved) {
+      setFormData(INITIAL_FORM);
+
+      const alertTimeout = setTimeout(() => {
+        reset();
+      }, 10000);
+      return () => clearTimeout(alertTimeout);
+    }
+  }, [saved, reset]);
+
+// ---------------------- LOADING & ERROR STATES ----------------------
+
+    
+// ---------------------- RENDER ----------------------
+
   return (
     <form className="component-container" onSubmit={handleSubmit}>
-
-      {success && (
-        <div className="alert-success-text">
-          Alumno dado de alta exitosamente.
+      {saved && (
+        <div className="alert-success">
+          Anuncio registrado exitosamente.{' '}
+          {createdId && (
+            <Link
+              to={adminAbs(ROUTES.ADMIN.USER_ENROLLMENT_DETAIL(createdId))}
+              className="font-bold underline"
+            >
+              Ver
+            </Link>
+          )}
         </div>
       )}
 
-      {error && (
-        <div className="alert-footer-text">
+      {(validationError || saveError) && (
+        <div className="alert-error">
           <strong className="font-bold">Error: </strong>
-          <span className="block sm:inline">{error}</span>
+            <span className="block sm:inline">
+              {validationError || saveError}
+            </span>
         </div>
       )}
 
       <div className="info-container">
-        
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
               <dt className="item-header">Expediente del alumno</dt>
               <dd className="item-text">
                 <input
-                  className="form-input--half"
-                  name="academic_id"
+                  name="academicId"
                   type="text"
-                  value={formData.academic_id}
+                  value={formData.academicId}
                   onChange={handleChange}
+                  className="form-input--half"
                   placeholder="Expediente del alumno"
+                  disabled={saving}
+                  required
                 />
               </dd>
             </div>
@@ -84,14 +132,16 @@ function EnrollmentForm() {
             type="button" 
             className="btn-secondary" 
             onClick={() => navigate(adminAbs(ROUTES.ADMIN.USER_ENROLLMENT_LIST))}
+            disabled={saving}
           >
             Cancelar
           </button>
           <button 
             type="submit" 
             className="btn-primary"
+            disabled={saving}
           >
-            Guardar
+            {saving ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
       </div>

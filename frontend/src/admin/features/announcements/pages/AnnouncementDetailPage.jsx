@@ -12,12 +12,12 @@ function AnnouncementPage() {
   const { announcement, loading: fetching, error: fetchError, refetch } = useAnnouncement(announcementId);
 
   const pageTitle = fetching
-  ? 'Cargando anuncio...'
+  ? 'Cargando...'
   : announcement
-    ? `📢 ${announcement.title}`
+    ? `${announcement.title}`
     : ' ';
 
-  const announcementActions = (
+  const actions = (
     <span className="show-on-sm">
       <button
         type="button"
@@ -34,7 +34,7 @@ function AnnouncementPage() {
     <Layout>
       <PageLayout 
         title={pageTitle}
-        actions={announcementActions}
+        actions={actions}
       >
         <AnnouncementDetail
           announcement={announcement}

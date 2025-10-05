@@ -10,8 +10,8 @@ import DataLoadError from '../../../../utils/ui/DataLoadError';
 const INITIAL_FORM = {
   title: '',
   description: '',
-  announcement_type: 0,
-  is_visible: true,
+  announcementType: 0,
+  isVisible: true,
 };
 
 function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, announcementId }) {
@@ -43,24 +43,29 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
         return;
     }
 
-    const data = cleanFormData({
+    const cleanedData = cleanFormData({
       ...formData,
-      announcement_type: Number(formData.announcement_type),
+      announcementType: Number(formData.announcementType),
     });
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-
-    if (!data.title) errors.push('El título es requerido.');
-    if (!data.description) errors.push('La descripción es requerida.');
-    if (data.announcement_type === 0) errors.push('Seleccione un tipo de anuncio válido.');
-    
+    if (!cleanedData.title) errors.push('El título es requerido.');
+    if (!cleanedData.description) errors.push('La descripción es requerida.');
+    if (cleanedData.announcementType === 0) errors.push('Seleccione un tipo de anuncio válido.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
+
+    const payload = {
+      title: cleanedData.title,
+      description: cleanedData.description,
+      announcement_type: cleanedData.announcementType,
+      is_visible: cleanedData.isVisible,
+    };
     
-    await updateAnnouncement(announcementId, data);
+    await updateAnnouncement(announcementId, payload);
   };
 
 // ---------------------- EFFECTS ----------------------
@@ -70,8 +75,8 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
       setFormData({
         title: announcement.title || '',
         description: announcement.description || '',
-        announcement_type: announcement.announcement_type ?? 0,
-        is_visible: announcement.is_visible ?? true,
+        announcementType: announcement.announcementType ?? 0,
+        isVisible: announcement.isVisible ?? true,
       });
     }
   }, [announcement]);
@@ -102,7 +107,7 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
   if (!announcement) {
     return (
       <DataLoadError
-        title="Anuncio no disponible"
+        title="404"
         message="No encontramos información para este anuncio."
         onRetry={refetch}
         retryLabel='Recargar'
@@ -162,8 +167,8 @@ return (
                 <dt className="item-header">Ambito</dt>
                 <dd className="item-text">
                   <select
-                    name="announcement_type"
-                    value={formData.announcement_type}
+                    name="announcementType"
+                    value={formData.announcementType}
                     onChange={handleChange}
                     className="form-input--half"
                     disabled={saving}
@@ -179,9 +184,9 @@ return (
               <dt className="item-header">Visible</dt>
               <dd className="item-text">
                 <input
-                  name="is_visible"
+                  name="isVisible"
                   type="checkbox"
-                  checked={formData.is_visible}
+                  checked={formData.isVisible}
                   onChange={handleChange}
                   className="form-checkbox"
                   disabled={saving}
