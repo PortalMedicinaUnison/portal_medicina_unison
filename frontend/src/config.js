@@ -17,8 +17,7 @@ export const ROUTES = {
     USER: {
         PROFILE: '/profile',
         EDIT_PROFILE: '/profile/edit',
-        REMOVE_USER: '/delete-account',
-        CHANGE_PASSWORD: '/reset-password',
+        USER_DELETE: (userId) => `/users/${userId}/delete`,
         
         REPORTS_LIST: '/reports',
         REPORT_CREATE: '/reports/create',

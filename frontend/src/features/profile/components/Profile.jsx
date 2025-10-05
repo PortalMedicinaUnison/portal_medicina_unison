@@ -7,7 +7,7 @@ import Modal from '../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../utils/ui/ConfirmDialogContent';
 
 
-function UserDetail({ user, fetching, fetchError, refetch, userId }) {    
+function Profile({ user, fetching, fetchError, refetch, userId }) {    
   const navigate = useNavigate();
   const { deleteUser, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteUser();
   
@@ -119,7 +119,7 @@ function UserDetail({ user, fetching, fetchError, refetch, userId }) {
           </div>
           <div className="item-row">
             <dt className="item-header">Internado</dt>
-            <dd className="item-text">{user.internship_id}</dd>
+            <dd className="item-text">{user.internship_id ? 'Activo' : 'No activo'}</dd>
           </div>
         </dl>
       </div>
@@ -165,4 +165,4 @@ function UserDetail({ user, fetching, fetchError, refetch, userId }) {
   );
 }
 
-export default UserDetail;
+export default Profile;

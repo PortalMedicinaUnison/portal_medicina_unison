@@ -6,7 +6,9 @@ import ProtectedRoute from '../features/auth/ProtectedRoute';
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignUpPage from '../features/auth/pages/SignUpPage';
 import HomePage from '../pages/HomePage';
-import UserFormPage from '../features/profile/pages/UserFormPage';
+
+// Profile pages
+import ProfileUpdatePage from '../features/profile/pages/ProfileUpdatePage';
 import ProfilePage from '../features/profile/pages/ProfilePage';
 
 // Reports pages
@@ -19,19 +21,19 @@ function UserRoutes() {
   return (
 
     <Routes>
-      <Route path={ROUTES.AUTH.LOGIN} element={<LoginPage />} />
-      <Route path={ROUTES.AUTH.SIGNUP} element={<SignUpPage />} />
+      <Route path="login" element={<LoginPage />} />
+      <Route path="signup" element={<SignUpPage />} />
       
       <Route element={<ProtectedRoute />}>
-        <Route path={ROUTES.HOME} element={<HomePage />} />
-        <Route path={ROUTES.USER.PROFILE} element={<ProfilePage />} />
-        <Route path={ROUTES.USER.EDIT_PROFILE} element={<UserFormPage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="profile" element={<ProfilePage />} />
+        <Route path="profile/edit" element={<ProfileUpdatePage />} />
         
         {/* Reports routes */}
-        <Route path={ROUTES.USER.REPORTS_LIST} element={<ReportsListPage />} />
-        <Route path={ROUTES.USER.REPORT_CREATE} element={<ReportFormPage />} />
-        <Route path={ROUTES.USER.REPORT_INFO(':reportId')} element={<ReportInfoPage />} />
-        <Route path={ROUTES.USER.REPORT_EDIT(':reportId')} element={<ReportEditPage />} />
+        <Route path="reports" element={<ReportsListPage />} />
+        <Route path="reports/create" element={<ReportFormPage />} />
+        <Route path="reports/:reportId" element={<ReportInfoPage />} />
+        <Route path="reports/:reportId/edit" element={<ReportEditPage />} />
       </Route>
     </Routes>
   );

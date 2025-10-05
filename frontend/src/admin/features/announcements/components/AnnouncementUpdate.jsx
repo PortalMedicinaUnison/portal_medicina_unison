@@ -94,7 +94,7 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
   if (fetchError) {
     return (
       <DataLoadError
-        title="No se pudo cargar el anuncio"
+        title="No se pudo cargar la información"
         message="Intenta recargar o vuelve a la lista."
         details={fetchError}
         onRetry={refetch}

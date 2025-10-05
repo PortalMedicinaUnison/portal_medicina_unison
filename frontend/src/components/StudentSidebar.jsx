@@ -98,41 +98,6 @@ function StudentSidebar({ toggleSidebar, openToggleButton }) {
                                 </span>
                             </Link>
                         </div>
-
-                        <div>
-                            <Link to={adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST)} className="sidebar-item-group group">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="sidebar-item-icon"
-                                    width="32" 
-                                    height="32" 
-                                    viewBox="0 0 26 26"
-                                    fill="none"
-                                    stroke="currentColor"
-                                >
-                                    <path d="M18.008 2.987C19.34 2.225 21 3.187 21 4.723v12.554c0 1.535-1.659 2.498-2.992 1.736L14 16.723V5.277zM12 6H7a5 5 0 0 0-1 9.9v3.6a2.5 2.5 0 0 0 5 0V16h1z" clipRule="evenodd"/>
-                                </svg>                        
-                                <span className="sidebar-item-text">
-                                    Avisos
-                                </span>
-                            </Link>
-                        </div>
-                        <div>
-                            <Link to={adminAbs(ROUTES.ADMIN.SURVEY_LIST)} className="sidebar-item-group group">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="sidebar-item-icon"
-                                    width="32" 
-                                    height="32" 
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path fill="currentColor" d="M16.116 10q.213 0 .356-.143q.144-.143.144-.357t-.144-.357T16.115 9H12.5q-.213 0-.357.143T12 9.5t.143.357t.357.143zm0 5q.213 0 .356-.143q.144-.143.144-.357t-.144-.357t-.357-.143H12.5q-.213 0-.357.143T12 14.5t.143.357t.357.143zM9 10.73q.517 0 .874-.356t.357-.874t-.357-.874T9 8.269t-.874.357t-.357.874t.357.874t.874.357m0 5q.517 0 .874-.357t.357-.874t-.357-.874T9 13.269t-.874.357t-.357.874t.357.874t.874.357M5.616 20q-.691 0-1.153-.462T4 18.384V5.616q0-.691.463-1.153T5.616 4h12.769q.69 0 1.153.463T20 5.616v12.769q0 .69-.462 1.153T18.384 20zm0-1h12.769q.23 0 .423-.192t.192-.424V5.616q0-.231-.192-.424T18.384 5H5.616q-.231 0-.424.192T5 5.616v12.769q0 .23.192.423t.423.192M5 5v14z"/>
-                                </svg>                        
-                                <span className="sidebar-item-text">
-                                    Encuestas
-                                </span>
-                            </Link>
-                        </div>
                     </div>
                 </div>     
             </aside>

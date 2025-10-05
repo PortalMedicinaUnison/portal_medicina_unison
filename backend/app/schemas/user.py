@@ -89,6 +89,7 @@ class UserInputUpdateByAdmin(BaseModel):
 class UserOutput(BaseModel):
     user_id: int
     academic_id: str
+    internship_id: Optional[int] = None
     first_name: str
     last_name: str
     second_last_name: Optional[str] = None

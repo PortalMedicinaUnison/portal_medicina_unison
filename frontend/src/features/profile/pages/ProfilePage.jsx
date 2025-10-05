@@ -1,14 +1,16 @@
 import { useNavigate } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../../../config';
+import { ROUTES } from '../../../config';
 import { useUser } from '../../../contexts/UserContext';
 import Layout from '../../../Layout';
 import PageLayout from '../../../components/PageLayout';
-import UserDetail from '../components/UserDetail';
+import Profile from '../components/Profile';
 
 
 function ProfilePage() {
   const navigate = useNavigate();
   const { user, loading: fetching, error: fetchError, reload } = useUser();
+
+  const userId = user?.user_id;
 
   const pageTitle = fetching
   ? 'Cargando...'
@@ -22,7 +24,7 @@ function ProfilePage() {
       <button
         type="button"
         className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.USER.EDIT_PROFILE))}
+        onClick={() => navigate(ROUTES.USER.EDIT_PROFILE)}
         disabled={fetching || fetchError}
       >
         Editar
@@ -36,12 +38,12 @@ function ProfilePage() {
         title={pageTitle}
         actions={actions}
       >
-        <UserDetail
+        <Profile
           user={user}
           fetching={fetching}
           fetchError={fetchError}
           reload={reload}
-          userId={user.user_id}
+          userId={userId}
         />
       </PageLayout>
     </Layout>
