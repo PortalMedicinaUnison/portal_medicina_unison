@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useCreateInternship from '../hooks/useCreateInternship';
+import userGetPromotions from '../../promotions/hooks/useGetPromotions';
+import useGetPsdsByProm from '../../promotions/promotionDetailSite/hooks/useGetPsdsByProm';
 import { cleanFormData } from "../../../../utils/utils";
 
 
@@ -19,6 +21,11 @@ function InternshipForm() {
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [createdId, setCreatedId] = useState(null);
   const [validationError, setValidationError] = useState('');
+
+  const { promotions, loading: loadingPromotions, error: promotionsError } = userGetPromotions();
+  const selectedPromotionId = formData.promotionId ? Number(formData.promotionId) : null;
+
+  const { psds, loading: loadingPsds, error: psdsError } = useGetPsdsByProm(selectedPromotionId);
 
 // ---------------------- HANDLERS ----------------------
 
@@ -119,13 +126,15 @@ function InternshipForm() {
                   onChange={handleChange}
                   className="form-input--half"
                   placeholder="Promoción del internado"
-                  disabled={saving}
+                  disabled={saving || loadingPromotions || promotionsError}
                   required
                 >
-                  <option value={0}>Seleccionar promoción</option>
-                  <option value={1}>2023-I</option>
-                  <option value={2}>2023-II</option>
-                  <option value={3}>2024-I</option>
+                  <option value="">Seleccionar promoción</option>
+                  {promotions.map(promotion => (
+                    <option key={promotion.promotion_id} value={promotion.promotion_id}>
+                      {promotion.year} - {promotion.period}
+                    </option>
+                  ))}
                 </select>
               </dd>
             </div>
@@ -136,16 +145,17 @@ function InternshipForm() {
                   name="siteId"
                   value={formData.siteId}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
                   placeholder="Sede del internado"
-                  disabled={saving}
+                  disabled={saving || !formData.promotionId || loadingPsds || !!psdsError}
                   required
                 >
-                  <option value={0}>Seleccionar sede</option>
-                  <option value={1}>Lima</option>
-                  <option value={2}>Arequipa</option>
-                  <option value={3}>Trujillo</option>
+                  <option value="">Seleccionar sede</option>
+                  {(psds || []).map(psd => (
+                    <option key={psd.psd_id} value={psd.site_id}>
+                      {psd.site?.name} ({psd.capacity})
+                      </option>
+                  ))}
                 </select>
               </dd>
             </div>

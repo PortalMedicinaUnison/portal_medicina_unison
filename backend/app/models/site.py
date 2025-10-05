@@ -1,10 +1,10 @@
 from sqlalchemy import Integer, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import BaseModel
-import typing
+from typing import TYPE_CHECKING
 from typing import List
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from .promotion import PromotionSiteDetail
 
 # ----------------------  INSTITUTION  ----------------------
@@ -15,7 +15,7 @@ class Institution(BaseModel):
     institution_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
 
-    sites: Mapped[list["Site"]] = relationship(back_populates="institution")
+    sites: Mapped[List["Site"]] = relationship(back_populates="institution")
 
     def __repr__(self):
         return f"<Institution(name={self.name}, is_active={self.is_active})>"

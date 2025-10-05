@@ -106,20 +106,24 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </Link>
                         </div>
                         <div>
-                            <Link to={adminAbs(ROUTES.ADMIN.PROMOTION_LIST)} className="sidebar-item-group group">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="sidebar-item-icon"
-                                    width="32" 
-                                    height="32" 
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path fill="currentColor" d="M11.25 12.75v3q0 .317.216.534q.217.216.534.216t.534-.216q.216-.217.216-.534v-3h3q.317 0 .534-.216q.216-.217.216-.534t-.216-.534q-.217-.216-.534-.216h-3v-3q0-.317-.216-.534Q12.317 7.5 12 7.5t-.534.216q-.216.217-.216.534v3h-3q-.317 0-.534.216q-.216.217-.216.534t.216.534q.217.216.534.216zM5.616 20q-.691 0-1.153-.462T4 18.384V5.616q0-.691.463-1.153T5.616 4h12.769q.69 0 1.153.463T20 5.616v12.769q0 .69-.462 1.153T18.384 20zm0-1h12.769q.23 0 .423-.192t.192-.424V5.616q0-.231-.192-.424T18.384 5H5.616q-.231 0-.424.192T5 5.616v12.769q0 .23.192.423t.423.192M5 5v14z"/>
-                                </svg>                        
-                                <span className="sidebar-item-text">
-                                    Internados
-                                </span>
-                            </Link>
+                            <SidebarCollapse
+                                title="Internados"
+                                links={[
+                                    { label: 'Internados', to: adminAbs(ROUTES.ADMIN.INTERNSHIP_LIST), className: 'sidebar-item-link' },
+                                    { label: 'Aplicaciones', to: adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_LIST), className: 'sidebar-item-link' },
+                                ]}
+                                icon={
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="sidebar-item-icon"
+                                        width="32" 
+                                        height="32" 
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path fill="currentColor" d="M11.25 12.75v3q0 .317.216.534q.217.216.534.216t.534-.216q.216-.217.216-.534v-3h3q.317 0 .534-.216q.216-.217.216-.534t-.216-.534q-.217-.216-.534-.216h-3v-3q0-.317-.216-.534Q12.317 7.5 12 7.5t-.534.216q-.216.217-.216.534v3h-3q-.317 0-.534.216q-.216.217-.216.534t.216.534q.217.216.534.216zM5.616 20q-.691 0-1.153-.462T4 18.384V5.616q0-.691.463-1.153T5.616 4h12.769q.69 0 1.153.463T20 5.616v12.769q0 .69-.462 1.153T18.384 20zm0-1h12.769q.23 0 .423-.192t.192-.424V5.616q0-.231-.192-.424T18.384 5H5.616q-.231 0-.424.192T5 5.616v12.769q0 .23.192.423t.423.192M5 5v14z"/>
+                                    </svg>             
+                                }
+                            />
                         </div>
                         <div>
                             <SidebarCollapse

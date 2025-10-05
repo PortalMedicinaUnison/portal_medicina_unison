@@ -17,6 +17,16 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
 
+  const STATUS_OPTIONS = {
+    1: 'Pendiente',
+    2: 'Aceptado',
+    3: 'Declinado'
+  };
+
+  const getStatusName = (statusEnum) => {
+    return STATUS_OPTIONS[statusEnum] || 'Desconocido';
+  };
+
 // ---------------------- FILTERS AND SEARCH ----------------------
  
   const [search, setSearch] = useState('');
@@ -26,12 +36,12 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
   const filtered = useMemo(() => {
     if (!applications) return [];
     return applications.filter((item) => {
-      if (statusFilter !== '' && String(item.isOpen).toLowerCase() !== statusFilter.toLowerCase()) return false;
+      if (statusFilter !== '' && item.status !== Number(statusFilter)) return false;
       if (!searchQuery) return true;
 
       const student = String(item.student_id).toLowerCase();
     });
-  }, [applications, searchQuery, statusFilter, typeFilter]);
+  }, [applications, searchQuery, statusFilter]);
 
 // ---------------------- HANDLERS ----------------------
 
@@ -110,6 +120,7 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
           aria-label="Filtrar por estado"
         >
           <option value="">Estatus</option>
+          <option value="true">Pendiente</option>
           <option value="true">Aceptado</option>
           <option value="false">Declinado</option>
         </select>
@@ -120,15 +131,16 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
           <thead>
             <tr>
               <th className='w-4/12'>Expediente</th>
-              <th className='w-7/12'>Estatus</th>
+              <th className='w-3/12'>Promoción</th>
+              <th className='w-4/12'>Estatus</th>
               <th className='w-1/12'></th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={5} className="text-center py-6">
-                {search || statusFilter || typeFilter 
+                <td colSpan={4} className="text-center py-6">
+                {search || statusFilter
                   ? 'No se encontraron aplicaciones que coincidan con los filtros.' 
                   : 'No hay aplicaciones disponibles.'
                   }
@@ -137,8 +149,9 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
             ) : (
               filtered.map((item) => (
               <tr key={item.application_id}>
-                <td className="text-left">{item.student_id}</td>
-                <td>{item.is_accepted ? 'Aceptado' : 'Declinado'}</td>
+                <td>{item.student_id}</td>
+                <td>{item.promotion_id}</td>
+                <td>{getStatusName(item.status)}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[

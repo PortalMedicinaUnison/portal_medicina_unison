@@ -5,6 +5,7 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import { formatDateTime } from '../../../../utils/utils';
 
 
 function ApplicationDetail({ application, fetching, fetchError, refetch, applicationId }) {    
@@ -13,6 +14,16 @@ function ApplicationDetail({ application, fetching, fetchError, refetch, applica
   
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
+
+  const STATUS_OPTIONS = {
+    1: 'Pendiente',
+    2: 'Aceptado',
+    3: 'Declinado'
+  };
+
+  const getStatusName = (statusEnum) => {
+    return STATUS_OPTIONS[statusEnum] || 'Desconocido';
+  };
 
 // ---------------------- HANDLERS ----------------------
 
@@ -88,12 +99,16 @@ function ApplicationDetail({ application, fetching, fetchError, refetch, applica
             <dd className="item-text">{application.student_id}</dd>
           </div>
           <div className="item-row">
+            <dt className="item-header">Promoción</dt>
+            <dd className="item-text">{application.promotion.year} - {application.promotion.period}</dd>
+          </div>
+          <div className="item-row">
             <dt className="item-header">Estatus</dt>
-            <dd className="item-text">{application.is_accepted}</dd>
+            <dd className="item-text">{getStatusName(application.status)}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Fecha de aceptación/desistimiento</dt>
-            <dd className="item-text">{application.created_at}</dd>
+            <dd className="item-text">{formatDateTime(application.created_at)}</dd>
           </div>
         </dl>
       </div>

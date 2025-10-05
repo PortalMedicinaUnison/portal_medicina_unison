@@ -12,9 +12,9 @@ function ApplicationPage() {
   const { application, loading: fetching, error: fetchError, refetch } = useApplication(applicationId);
 
   const pageTitle = fetching
-  ? 'Cargando anuncio...'
+  ? 'Cargando...'
   : application
-    ? `📢 ${application.title}`
+    ? `${application.student_id}`
     : ' ';
 
   const actions = (

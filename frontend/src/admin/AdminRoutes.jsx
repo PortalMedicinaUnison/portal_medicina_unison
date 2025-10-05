@@ -2,8 +2,9 @@ import { Routes, Route } from 'react-router-dom';
 import { ROUTES } from '../config.js';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 
-import ApplicationDetailPage from '../admin/features/applications/pages/ApplicationDetailPage.jsx';
 import ApplicationListPage from '../admin/features/applications/pages/ApplicationListPage.jsx';
+import ApplicationFormPage from '../admin/features/applications/pages/ApplicationFormPage.jsx';
+import ApplicationDetailPage from '../admin/features/applications/pages/ApplicationDetailPage.jsx';
 
 import UserListPage from '../admin/features/users/pages/UserListPage.jsx';
 import UserDetailAdmin from './features/users/pages/UserDetailAdmin.jsx';
@@ -40,6 +41,9 @@ import EnrollmentDetailPage from '../admin/features/users/enrollments/pages/Enro
 import ReportsListPage from '../admin/features/reports/pages/ReportsListPage.jsx';
 import ReportInfoPage from '../admin/features/reports/pages/ReportInfoPage.jsx';
 
+import InternshipFormPage from '../admin/features/internships/pages/InternshipFormPage.jsx';
+import InternshipListPage from '../admin/features/internships/pages/InternshipListPage.jsx';
+
 const toRel = (absPath) => absPath.replace(/^\//, '');
 
 function AdminRoutes() {
@@ -47,8 +51,9 @@ function AdminRoutes() {
     <Routes>
       <Route element={<ProtectedRoute />}>
         {/* Applications */}
-        <Route path="applications" element={<ApplicationListPage />} />
-        <Route path="applications/:applicationId" element={<ApplicationDetailPage />} />
+        <Route path="internship-applications" element={<ApplicationListPage />} />
+        <Route path="internship-applications/create" element={<ApplicationFormPage />} />
+        <Route path="internship-applications/:applicationId" element={<ApplicationDetailPage />} />
 
         {/* Users */}
         <Route path="users" element={<UserListPage />} />
@@ -92,6 +97,10 @@ function AdminRoutes() {
         {/* Reports */}
         <Route path="reports" element={<ReportsListPage />} />
         <Route path="reports/:reportId" element={<ReportInfoPage />} />
+
+        {/* Internships */}
+        <Route path="internships" element={<InternshipListPage />} />
+        <Route path="internships/create" element={<InternshipFormPage />} />
       </Route>
     </Routes>
   );

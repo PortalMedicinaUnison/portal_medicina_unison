@@ -77,16 +77,16 @@ def get_all_internship_applications(db: Session):
     internship_applications = internship_application_repo.get_all()
     if not internship_applications:
         return []
-    internship_applications_response = [orm_to_dict(internship_application) for internship_application in internship_applications]
-    return internship_applications_response
+    # internship_applications_response = [orm_to_dict(internship_application) for internship_application in internship_applications]
+    return internship_applications
 
 def get_internship_application(application_id: int, db: Session):
     internship_application_repo = InternshipApplicationRepo(db)
     internship_application = internship_application_repo.get_by_id(application_id)
     if not internship_application:
         return None
-    internship_application_response = orm_to_dict(internship_application)
-    return internship_application_response
+    # internship_application_response = orm_to_dict(internship_application)
+    return internship_application
 
 def get_internship_applications_by_student(student_id: int, db: Session):
     internship_application_repo = InternshipApplicationRepo(db)

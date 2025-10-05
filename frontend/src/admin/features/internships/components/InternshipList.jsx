@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
-import useDeleteAnnouncement from '../hooks/useDeleteAnnouncement';
+import useDeleteInternship from '../hooks/useDeleteInternship';
 import DropdownMenu from '../../../../utils/ui/DropdownMenu';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
@@ -9,9 +9,9 @@ import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 
 
-function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
+function InternshipList({ internships, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
-  const { deleteAnnouncement, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteAnnouncement();
+  const { deleteInternship, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteInternship();
   
   const [item, setItem] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -23,33 +23,33 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   
-  const ANNOUNCEMENT_TYPES = {
-    1: 'General',
-    2: 'Internado'
+  const INTERNSHIP_STATUS = {
+    1: 'Pendiente',
+    2: 'Aceptado',
+    3: 'Rechazado',
+    4: 'Suspendido',
+    5: 'Finalizado'
   };
 
-  const getAnnouncementTypeName = (typeEnum) => {
-    return ANNOUNCEMENT_TYPES[typeEnum] || 'Desconocido';
+  const getStatusName = (statusEnum) => {
+    return INTERNSHIP_STATUS[statusEnum] || 'Desconocido';
   };
 
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
-    if (!announcements) return [];
-    return announcements.filter((announcement) => {
-      if (typeFilter !== '' && announcement.announcement_type !== Number(typeFilter)) return false;
-      if (statusFilter !== '' && announcement.is_visible !== (statusFilter === 'true')) return false;
+    if (!internships) return [];
+    return internships.filter((item) => {
       if (!searchQuery) return true;
 
-      const title = String(announcement.title).toLowerCase();
-      const description = String(announcement.description).toLowerCase();
-      return title.includes(searchQuery) || description.includes(searchQuery);
+      const studentId = String(item.student_id).toLowerCase();
+      return studentId.includes(searchQuery);
     });
-  }, [announcements, searchQuery, statusFilter, typeFilter]);
+  }, [internships, searchQuery, statusFilter, typeFilter]);
 
 // ---------------------- HANDLERS ----------------------
 
-  const handleViewButton = (id) => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DETAIL(id)));
-  const handleEditButton = (id) => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_EDIT(id)));
+  const handleViewButton = (id) => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_DETAIL(id)));
+  const handleEditButton = (id) => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_EDIT(id)));
   const handleDeleteButton = (id) => {
     setItem(id)
     setShowConfirmDelete(true);
@@ -57,7 +57,7 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
 
   const handleConfirmDelete = async () => {
     if (item == null) return
-    await deleteAnnouncement(item);
+    await deleteInternship(item);
   };
 
   const handleCloseConfirm = () => {
@@ -114,37 +114,17 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
           className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por título o descripción"
+          placeholder="Buscar por expediente"
         />
-         <select
-          className="btn-tertiary--light"
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-          aria-label="Filtrar por ambito"
-        >
-          <option value="">Ámbito</option>
-          <option value="1">General</option>
-          <option value="2">Internado</option>
-        </select>
-        <select
-          className="btn-tertiary--light"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          aria-label="Filtrar por estado"
-        >
-          <option value="">Estatus</option>
-          <option value="true">Activo</option>
-          <option value="false">Inactivo</option>
-        </select>
       </div>
 
       <div className="table-container-body">
         <table className="table">
           <thead>
             <tr>
-              <th className='w-3/12'>Título</th>
-              <th className='w-4/12'>Descripción</th>
-              <th className='w-2/12'>Ámbito</th>
+              <th className='w-3/12'>Expediente</th>
+              <th className='w-4/12'>Sede</th>
+              <th className='w-2/12'>Promoción</th>
               <th className='w-2/12'>Estatus</th>
               <th className='w-1/12'></th>
             </tr>
@@ -153,7 +133,7 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={5} className="text-center py-6">
-                {search || statusFilter || typeFilter 
+                {search
                   ? 'No se encontraron avisos que coincidan con los filtros.' 
                   : 'No hay avisos disponibles.'
                   }
@@ -161,17 +141,17 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
               </tr>
             ) : (
               filtered.map((item) => (
-              <tr key={item.announcement_id}>
-                <td className="text-left">{item.title}</td>
-                <td className="text-left">{item.description}</td>
-                <td>{getAnnouncementTypeName(item.announcement_type)}</td>
-                <td>{item.is_visible ? 'Activo' : 'Inactivo'}</td>
+              <tr key={item.internship_id}>
+                <td>{item.student_id}</td>
+                <td>{item.site_id}</td>
+                <td>{item.promotion_id}</td>
+                <td>{getStatusName(item.status)}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[
-                      { label: 'Ver', onClick: () => handleViewButton(item.announcement_id) },
-                      { label: 'Editar', onClick: () => handleEditButton(item.announcement_id) },
-                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.announcement_id), className: 'text-red-600' },
+                      { label: 'Ver', onClick: () => handleViewButton(item.internship_id) },
+                      { label: 'Editar', onClick: () => handleEditButton(item.internship_id) },
+                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.internship_id), className: 'text-red-600' },
                     ]}
                     disabled={deleting}
                   />
@@ -208,4 +188,4 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
   );
 }
     
-export default AnnouncementList;
+export default InternshipList;
