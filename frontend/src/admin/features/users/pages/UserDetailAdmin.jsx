@@ -9,7 +9,7 @@ function UserPage() {
   const { user, loading: fetching, error: fetchError, refetch } = useUserAdmin(userId);
 
   const pageTitle = fetching
-  ? 'Cargando anuncio...'
+  ? 'Cargando...'
   : user
     ? `${user.firs_name} ${user.last_name} ${user.second_last_name}`
     : ' ';

@@ -5,6 +5,7 @@ import LoadingSpinner from '../../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../../utils/ui/DataLoadError';
 import Modal from '../../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../../utils/ui/ConfirmDialogContent';
+import { formatDateTime } from '../../../../../utils/utils';
 
 
 function EnrollmentDetail({ enrollment, fetching, fetchError, refetch, enrollmentId }) {    
@@ -93,7 +94,8 @@ function EnrollmentDetail({ enrollment, fetching, fetchError, refetch, enrollmen
           </div>
           <div className="item-row">
             <dt className="item-header">Ultima fecha de actualización</dt>
-            <dd className="item-text">{enrollment.updated_at}</dd>
+            <dd className="item-text">{formatDateTime(enrollment.updated_at)}
+            </dd>
           </div>
         </dl>
       </div>

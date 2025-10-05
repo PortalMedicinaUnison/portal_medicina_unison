@@ -12,9 +12,9 @@ function AnnouncementPage() {
   const { announcement, loading: fetching, error: fetchError, refetch } = useAnnouncement(announcementId);
 
   const pageTitle = fetching
-  ? 'Cargando anuncio...'
+  ? 'Cargando...'
   : announcement
-    ? `📢 ${announcement.title}`
+    ? `${announcement.title}`
     : ' ';
 
   const actions = (

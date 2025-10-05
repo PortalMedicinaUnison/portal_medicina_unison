@@ -10,9 +10,9 @@ function EnrollmentPage() {
   const { enrollment, loading: fetching, error: fetchError, refetch } = useEnrollment(enrollmentId);
 
   const pageTitle = fetching
-  ? 'Cargando usuario...'
+  ? 'Cargando...'
   : enrollment
-    ? 'Usuario pre-registrado'
+    ? `${enrollment.academic_id}`
     : ' ';
 
   return (

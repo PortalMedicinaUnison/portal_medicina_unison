@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator
 from typing import Optional
+from datetime import datetime
 from utils.validation import is_valid_academic_id, is_valid_password, is_valid_email
 
 
@@ -20,6 +21,7 @@ class UserEnrollmentOutput(BaseModel):
     enrollment_id: int
     academic_id: str
     is_enrolled: bool = False
+    updated_at: datetime
     
 # ---------------------- USERS ----------------------
 

@@ -37,8 +37,6 @@ function PsdList({ promotionId }) {
 
 // ---------------------- HANDLERS ----------------------
 
-  const handleViewButton = (id) => navigate(adminAbs(ROUTES.ADMIN.PSD_DETAIL(id)));
-  const handleEditButton = (id) => navigate(adminAbs(ROUTES.ADMIN.PSD_EDIT(id)));
   const handleDeleteButton = (id) => {
     setItem(id)
     setShowConfirmDelete(true);
@@ -134,8 +132,6 @@ function PsdList({ promotionId }) {
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[
-                      { label: 'Ver', onClick: () => handleViewButton(item.psd_id) },
-                      { label: 'Editar', onClick: () => handleEditButton(item.psd_id) },
                       { label: 'Eliminar', onClick: () => handleDeleteButton(item.psd_id), className: 'text-red-600' },
                     ]}
                     disabled={deleting}

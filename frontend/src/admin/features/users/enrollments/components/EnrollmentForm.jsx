@@ -34,9 +34,7 @@ function EnrollmentForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const cleanedData = cleanFormData({
-      academicId: Number(formData.academicId),
-    });
+    const cleanedData = cleanFormData(formData);
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];

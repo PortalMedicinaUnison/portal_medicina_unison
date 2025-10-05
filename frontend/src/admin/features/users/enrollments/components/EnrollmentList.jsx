@@ -127,7 +127,7 @@ function EnrollmentList({ enrollments, fetching, fetchError, refetch }) {
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={5} className="text-center py-6">
+                <td colSpan={3} className="text-center py-6">
                 {search || statusFilter
                   ? 'No se encontraron usuarios pre-registrados que coincidan con los filtros.' 
                   : 'No hay usuarios pre-registrados disponibles.'
@@ -137,7 +137,7 @@ function EnrollmentList({ enrollments, fetching, fetchError, refetch }) {
             ) : (
               filtered.map((item) => (
               <tr key={item.enrollment_id}>
-                <td className="text-left">{item.academic_id}</td>
+                <td>{item.academic_id}</td>
                 <td>{item.is_enrolled ? 'Registrado' : 'Sin registrarse'}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
