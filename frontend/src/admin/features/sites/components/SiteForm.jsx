@@ -172,7 +172,6 @@ function SiteForm() {
                   type="text"
                   value={formData.address}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
                   placeholder="C. Benito Juárez 206, Modelo, 83190"
                   maxLength={255}

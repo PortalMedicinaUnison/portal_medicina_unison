@@ -19,15 +19,25 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
 
 // ---------------------- FILTERS AND SEARCH ----------------------
  
-  const [yearFilter, setTypeFilter] = useState('');
+  const [yearFilter, setYearFilter] = useState('');
   const [periodFilter, setPeriodFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
+  const years = useMemo(
+    () => [...new Set((promotions || []).map(p => p.year))].sort((a,b) => b - a),
+    [promotions]
+  );
+
   const filtered = useMemo(() => {
+    if (!promotions) return [];
+
     return promotions.filter((item) => {
       if (statusFilter !== '' && item.is_finished !== (statusFilter === 'true')) return false;
+      if (yearFilter !== '' && item.year.toString() !== yearFilter) return false;
+      if (periodFilter !== '' && item.period.toString() !== periodFilter) return false;
+      return true;
     });
-  }, [promotions, statusFilter, yearFilter, periodFilter]);
+  }, [promotions, yearFilter, periodFilter, statusFilter]);
 
 // ---------------------- HANDLERS ----------------------
 
@@ -87,20 +97,6 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
       />
     );
   }
-  
-  if (!promotions) {
-    return (
-      <DataLoadError
-        title="404"
-        titleClassName="text-5xl"
-        message="No se encontraron promociones."
-        onRetry={refetch}
-        retryLabel='Recargar'
-        onSecondary={() => navigate(-1)}
-        secondaryLabel="Volver"
-      />
-    );
-  }
 
 // ---------------------- RENDER ----------------------
   return (
@@ -113,8 +109,9 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
           aria-label="Filtrar por año"
         >
           <option value="">Año</option>
-          <option value="1">General</option>
-          <option value="2">Internado</option>
+            {years.map(y => (
+              <option key={y} value={String(y)}>{y}</option>
+            ))}
         </select>
         <select
           className="btn-tertiary--light"
@@ -123,8 +120,8 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
           aria-label="Filtrar por periodo"
         >
           <option value="">Periodo</option>
-          <option value="1">General</option>
-          <option value="2">Internado</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
         </select>
         <select
           className="btn-tertiary--light"
@@ -133,8 +130,8 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
           aria-label="Filtrar por estado"
         >
           <option value="">Estatus</option>
-          <option value="true">Activa</option>
-          <option value="false">Inactiva</option>
+          <option value="true">Finalizado</option>
+          <option value="false">No finalizado</option>
         </select>
       </div>
 
@@ -161,9 +158,9 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
             ) : (
               filtered.map((item) => (
               <tr key={item.promotion_id}>
-                <td className="text-left">{item.year}</td>
-                <td className="text-left">{item.period}</td>
-                <td>{item.is_finished ? 'Activa' : 'Inactiva'}</td>
+                <td>{item.year}</td>
+                <td>{item.period}</td>
+                <td>{item.is_finished ? 'Finalizado' : 'No finalizado'}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[

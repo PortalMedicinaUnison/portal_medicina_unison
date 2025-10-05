@@ -24,6 +24,7 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
 
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
+    if (!applications) return [];
     return applications.filter((item) => {
       if (statusFilter !== '' && String(item.isOpen).toLowerCase() !== statusFilter.toLowerCase()) return false;
       if (!searchQuery) return true;
@@ -85,20 +86,6 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
         message="Intenta recargar la página."
         details={fetchError}
         onRetry={refetch}
-        onSecondary={() => navigate(-1)}
-        secondaryLabel="Volver"
-      />
-    );
-  }
-  
-  if (!applications) {
-    return (
-      <DataLoadError
-        title="404"
-        titleClassName="text-5xl"
-        message="No se encontraron aplicaciones."
-        onRetry={refetch}
-        retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
       />

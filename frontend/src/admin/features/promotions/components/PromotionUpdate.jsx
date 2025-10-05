@@ -1,15 +1,18 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
-import useUpdatePromotion from '../hooks/useUpdatePromotion'
+import useUpdatePromotion from '../hooks/useUpdatePromotion';
+import PsdList from '../promotionDetailSite/components/PsdList';
+import PsdForm from '../promotionDetailSite/components/PsdForm';
 import { cleanFormData } from "../../../../utils/utils";
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
+import Modal from '../../../../utils/ui/Modal';
 
 
 const INITIAL_FORM = {
   year: '',
-  period: '',
+  period: 0,
   isFinished: false,
 };
 
@@ -19,6 +22,7 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
 
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [validationError, setValidationError] = useState('');
+  const [openModal, setOpenModal] = useState(false);
 
 // ---------------------- HANDLERS ----------------------
 
@@ -63,7 +67,7 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
       year: cleanedData.year,
       period: cleanedData.period,
       is_finished: cleanedData.isFinished,
-    };
+    };    
     
     await updatePromotion(promotionId, payload);
   };
@@ -93,7 +97,7 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
   if (fetchError) {
     return (
       <DataLoadError
-        title="No se pudo cargar el anuncio"
+        title="No se pudo cargar la información"
         message="Intenta recargar o vuelve a la lista."
         details={fetchError}
         onRetry={refetch}
@@ -107,7 +111,7 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
     return (
       <DataLoadError
         title="404"
-        message="No encontramos información para este anuncio."
+        message="No encontramos información para esta promoción."
         onRetry={refetch}
         retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
@@ -118,7 +122,7 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
     
 // ---------------------- RENDER ----------------------
 
-return (
+  return (
     <form className="component-container" onSubmit={handleSubmit}>
       {(validationError || saveError) && (
         <div className="alert-error">
@@ -141,7 +145,6 @@ return (
                   value={formData.year}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="Año de la promoción"
                   min={2025}
                   disabled={saving}
                   required
@@ -156,7 +159,6 @@ return (
                   value={formData.period}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="Periodo de la promoción"
                   disabled={saving}
                   required
                 >
@@ -166,10 +168,47 @@ return (
                 </select>
               </dd>
             </div>
+            <div className="item-row">
+              <dt className="item-header">¿Promoción finalizada?</dt>
+              <dd className="item-text">
+                <input
+                  className="form-checkbox"
+                  name="isFinished"
+                  type="checkbox"
+                  checked={formData.isFinished}
+                  onChange={handleChange}
+                  disabled={saving}
+                />
+              </dd>
+            </div>
           </dl>
         </div>
 
+        <div className="mt-16"> 
+          <PsdList promotionId={Number(promotionId)}/>
+        </div>
+
+        <Modal
+          open={openModal}
+          title="Añadir cupos a una sede"
+          onClose={() => setOpenModal(false)}
+        >
+          <PsdForm 
+            promotionId={promotionId}
+            onClose={() => setOpenModal(false)}
+            onSuccess={() => setOpenModal(false)} 
+          />
+        </Modal>
+
         <div className="button-group">
+          <button 
+            type="button" 
+            className="btn-tertiary"
+            onClick={() => setOpenModal(true)}
+
+          >
+            Añadir sede
+          </button>
           <button 
             type="button" 
             className="btn-secondary" 

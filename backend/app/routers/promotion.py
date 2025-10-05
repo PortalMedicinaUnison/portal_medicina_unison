@@ -99,7 +99,7 @@ async def get_psd_route(psd_id: int, db: Session = Depends(get_db)):
         )
     return psd
 
-@psd_router.get("/promotionId={promotion_id}", response_model=List[PromotionSiteDetailOutput])
+@psd_router.get("/promotionId/{promotion_id}", response_model=List[PromotionSiteDetailOutput])
 async def get_psd_by_promotion_route(promotion_id: int, db: Session = Depends(get_db)):
     psds = get_promotion_site_details_by_promotion(promotion_id, db)
     return psds

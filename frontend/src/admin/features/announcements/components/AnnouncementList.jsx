@@ -34,6 +34,7 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
 
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
+    if (!announcements) return [];
     return announcements.filter((announcement) => {
       if (typeFilter !== '' && announcement.announcement_type !== Number(typeFilter)) return false;
       if (statusFilter !== '' && announcement.is_visible !== (statusFilter === 'true')) return false;
@@ -98,20 +99,6 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
         message="Intenta recargar la página."
         details={fetchError}
         onRetry={refetch}
-        onSecondary={() => navigate(-1)}
-        secondaryLabel="Volver"
-      />
-    );
-  }
-  
-  if (!announcements) {
-    return (
-      <DataLoadError
-        title="404"
-        titleClassName="text-5xl"
-        message="No se encontraron avisos."
-        onRetry={refetch}
-        retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
       />

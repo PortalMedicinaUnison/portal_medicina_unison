@@ -24,6 +24,7 @@ function EnrollmentList({ enrollments, fetching, fetchError, refetch }) {
 
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
+    if (!enrollments) return [];
     return enrollments.filter((item) => {
       if (statusFilter !== '' && item.is_enrolled !== (statusFilter === 'true')) return false;
       if (!searchQuery) return true;
@@ -85,20 +86,6 @@ function EnrollmentList({ enrollments, fetching, fetchError, refetch }) {
         message="Intenta recargar la página."
         details={fetchError}
         onRetry={refetch}
-        onSecondary={() => navigate(-1)}
-        secondaryLabel="Volver"
-      />
-    );
-  }
-  
-  if (!enrollments) {
-    return (
-      <DataLoadError
-        title="404"
-        titleClassName="text-5xl"
-        message="No se encontraron usuarios pre-registrados."
-        onRetry={refetch}
-        retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
       />

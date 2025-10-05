@@ -77,8 +77,8 @@ def get_promotion_site_details_by_promotion(promotion_id: int, db: Session):
     psds = psd_repo.get_by_promotion_id(promotion_id)
     if not psds:
         return []
-    psds_response = [orm_to_dict(psd) for psd in psds]
-    return psds_response
+    # psds_response = [orm_to_dict(psd) for psd in psds]
+    return psds
 
 def update_promotion_site_detail(psd_id: int, psd_input: PromotionSiteDetailInputUpdate, db: Session):
     update_data = psd_input.dict(exclude_unset=True)

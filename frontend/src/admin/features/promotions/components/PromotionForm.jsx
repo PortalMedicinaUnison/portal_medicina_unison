@@ -117,7 +117,7 @@ function PromotionForm() {
                   value={formData.year}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="Año de la promoción"
+                  placeholder="2025"
                   min={2025}
                   disabled={saving}
                   required
@@ -132,7 +132,6 @@ function PromotionForm() {
                   value={formData.period}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="Periodo de la promoción"
                   disabled={saving}
                   required
                 >

@@ -23,6 +23,7 @@ function InstitutionList({ institutions, fetching, fetchError, refetch }) {
 
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
+    if (!institutions) return [];
     return institutions.filter((item) => {
       if (!searchQuery) return true;
 
@@ -84,20 +85,6 @@ function InstitutionList({ institutions, fetching, fetchError, refetch }) {
         message="Intenta recargar la página."
         details={fetchError}
         onRetry={refetch}
-        onSecondary={() => navigate(-1)}
-        secondaryLabel="Volver"
-      />
-    );
-  }
-  
-  if (!institutions) {
-    return (
-      <DataLoadError
-        title="404"
-        titleClassName="text-5xl"
-        message="No se encontraron instituciones."
-        onRetry={refetch}
-        retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
       />

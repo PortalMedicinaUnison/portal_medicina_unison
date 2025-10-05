@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useDeletePromotion from '../hooks/useDeletePromotion';
+import PsdListReadOnly from '../promotionDetailSite/components/PsdListReadOnly';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
@@ -96,6 +97,10 @@ function PromotionDetail({ promotion, fetching, fetchError, refetch, promotionId
             <dd className="item-text">  {promotion?.is_finished ? 'Finalizado' : 'No finalizado'}</dd>
           </div>
         </dl>
+      </div>
+
+      <div className='mt-16'>
+          <PsdListReadOnly promotionId={Number(promotionId)}/>
       </div>
 
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>

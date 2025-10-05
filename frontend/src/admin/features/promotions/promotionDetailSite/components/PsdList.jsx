@@ -1,18 +1,20 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../../../../config';
+import { ROUTES, adminAbs } from '../../../../../config';
 import useDeletePsd from '../hooks/useDeletePsd';
-import DropdownMenu from '../../../../utils/ui/DropdownMenu';
-import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
-import DataLoadError from '../../../../utils/ui/DataLoadError';
-import Modal from '../../../../utils/ui/Modal';
-import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import useGetPsdsByProm from '../hooks/useGetPsdsByProm';
+import DropdownMenu from '../../../../../utils/ui/DropdownMenu';
+import LoadingSpinner from '../../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../../utils/ui/DataLoadError';
+import Modal from '../../../../../utils/ui/Modal';
+import ConfirmDialogContent from '../../../../../utils/ui/ConfirmDialogContent';
 
 
-function AnnouncementList({ psds, fetching, fetchError, refetch }) {
+function PsdList({ promotionId }) {
   const navigate = useNavigate();
-  const { deletePsd, loading: deleting, success: deleted,  error: deleteError, reset } = useDeletePsd();
-  
+  const { psds, loading: fetching, error: fetchError, refetch } = useGetPsdsByProm(promotionId);
+  const { deletePsd, loading: deleting, success: deleted,  error: deleteError, reset } = useDeletePsd();  
+
   const [item, setItem] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
@@ -23,10 +25,13 @@ function AnnouncementList({ psds, fetching, fetchError, refetch }) {
   
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
+    if (!psds) return [];
+
     return psds.filter((item) => {
       if (!searchQuery) return true;
 
-      site = String(item.site.name).toLowerCase().includes(searchQuery)
+      const site = String(item.site.name).toLowerCase();
+      return site.includes(searchQuery);
     });
   }, [psds, searchQuery]);
 
@@ -88,25 +93,11 @@ function AnnouncementList({ psds, fetching, fetchError, refetch }) {
       />
     );
   }
-  
-  if (!psds) {
-    return (
-      <DataLoadError
-        title="404"
-        titleClassName="text-5xl"
-        message="No se encontraron sedes en esta institución."
-        onRetry={refetch}
-        retryLabel='Recargar'
-        onSecondary={() => navigate(-1)}
-        secondaryLabel="Volver"
-      />
-    );
-  }
 
 // ---------------------- RENDER ----------------------
   return (
     <div className="table-container">
-      <div className="table-container-actions">
+      <div className="table-container-actions flex justify-end">
         <input
           type="text"
           className="form-input--sm mr-auto"
@@ -120,15 +111,15 @@ function AnnouncementList({ psds, fetching, fetchError, refetch }) {
         <table className="table">
           <thead>
             <tr>
-              <th className='w-9/12'>Sede</th>
-              <th className='w-2/12'>Capacidad</th>
+              <th className='w-8/12'>Sede</th>
+              <th className='w-3/12'>Capacidad</th>
               <th className='w-1/12'></th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={5} className="text-center py-6">
+                <td colSpan={3} className="text-center py-6">
                 {search
                   ? 'No se encontraron sedes que coincidan con los filtros.' 
                   : 'No hay sedes disponibles.'
@@ -139,7 +130,7 @@ function AnnouncementList({ psds, fetching, fetchError, refetch }) {
               filtered.map((item) => (
               <tr key={item.psd_id}>
                 <td className="text-left">{item.site.name}</td>
-                <td className="text-left">{item.capacity}</td>
+                <td>{item.capacity}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[
@@ -172,7 +163,7 @@ function AnnouncementList({ psds, fetching, fetchError, refetch }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el anuncio"
+          message="Ocurrió un problema al eliminar la sede"
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />
@@ -182,4 +173,4 @@ function AnnouncementList({ psds, fetching, fetchError, refetch }) {
   );
 }
     
-export default AnnouncementList;
+export default PsdList;

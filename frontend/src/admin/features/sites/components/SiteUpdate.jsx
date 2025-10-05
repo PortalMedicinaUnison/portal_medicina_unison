@@ -46,22 +46,35 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = cleanFormData(formData);
+    const cleanedData = cleanFormData(formData);
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!data.name) errors.push('La razon social es requerida');
-    if (!data.institutionId) errors.push('La institución es requerida');
-    if (!data.address) errors.push('La dirección es requerida');
-    if (!data.city) errors.push('La ciudad es requerida');
-    if (!data.teachingHeadName) errors.push('El nombre del jefe de enseñanza es requerido');
-    if (!data.teachingDeputyName) errors.push('El nombre del subjefe de enseñanza es requerido');
+    if (!cleanedData.name) errors.push('La razon social es requerida');
+    if (!cleanedData.institutionId) errors.push('La institución es requerida');
+    if (!cleanedData.address) errors.push('La dirección es requerida');
+    if (!cleanedData.city) errors.push('La ciudad es requerida');
+    if (!cleanedData.teachingHeadName) errors.push('El nombre del jefe de enseñanza es requerido');
+    if (!cleanedData.teachingDeputyName) errors.push('El nombre del subjefe de enseñanza es requerido');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
+
+    const payload = {
+      name: cleanedData.name,
+      institution_id: cleanedData.institutionId,
+      address: cleanedData.address,
+      city: cleanedData.city,
+      teaching_head_name: cleanedData.teachingHeadName,
+      teaching_head_email: cleanedData.teachingHeadEmail,
+      teaching_head_phone: cleanedData.teachingHeadPhone,
+      teaching_deputy_name: cleanedData.teachingDeputyName,
+      teaching_deputy_email: cleanedData.teachingDeputyEmail,
+      teaching_deputy_phone: cleanedData.teachingDeputyPhone,
+    };
     
-    await updateSite(siteId, data);
+    await updateSite(siteId, payload);
   };
 
 // ---------------------- EFFECTS ----------------------

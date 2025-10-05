@@ -12,9 +12,9 @@ function PromotionPage() {
   const { promotion, loading: fetching, error: fetchError, refetch } = usePromotion(promotionId);
 
   const pageTitle = fetching
-  ? 'Cargando promoción...'
+  ? 'Cargando...'
   : promotion
-    ? `📢 ${promotion.year} - ${promotion.period}`
+    ? `${promotion.year} - ${promotion.period}`
     : ' ';
 
   const actions = (

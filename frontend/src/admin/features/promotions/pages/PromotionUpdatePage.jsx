@@ -10,9 +10,9 @@ function PromotionUpdatePage() {
   const { promotion, loading: fetching, error: fetchError, refetch } = usePromotion(promotionId);
   
   const pageTitle = fetching
-  ? 'Cargando anuncio...'
+  ? 'Cargando...'
   : promotion
-    ? '📢 Actualizar promoción'
+    ? 'Actualizar promoción'
     : ' ';
   
   return ( 

@@ -23,6 +23,7 @@ function UserList({ users, fetching, fetchError, refetch }) {
   
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
+    if (!users) return [];
     return users.filter((item) => {
       if (!searchQuery) return true;
 
@@ -91,20 +92,6 @@ function UserList({ users, fetching, fetchError, refetch }) {
         message="Intenta recargar la página."
         details={fetchError}
         onRetry={refetch}
-        onSecondary={() => navigate(-1)}
-        secondaryLabel="Volver"
-      />
-    );
-  }
-  
-  if (!users) {
-    return (
-      <DataLoadError
-        title="404"
-        titleClassName="text-5xl"
-        message="No se encontraron usuarios."
-        onRetry={refetch}
-        retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
       />
