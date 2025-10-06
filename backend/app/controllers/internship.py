@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models.internship import Internship, InternshipApplication, InternshipDocument
+from models.internship import Internship, InternshipApplication, InternshipDocument, ApplicationStatusEnum, InternshipStatusEnum
 from repos.internship import InternshipRepo, InternshipApplicationRepo, InternshipDocumentRepo
 from schemas.internship import (
     InternshipInput, InternshipUpdate,
@@ -118,6 +118,37 @@ def update_internship_application(application_id: int, internship_application_in
     updated_internship_application = internship_application_repo.update(application_id, update_data)
     if not updated_internship_application:
         return None
+    updated_internship_application_response = orm_to_dict(updated_internship_application)
+    return updated_internship_application_response
+
+def accept_internship_application_and_create_internship(application_id: int, internship_application_input: InternshipApplicationUpdate, db: Session):
+    update_data = internship_application_input.dict(exclude_unset=True)
+    internship_application_repo = InternshipApplicationRepo(db)
+    internship_repo = InternshipRepo(db)
+
+    application = internship_application_repo.get_by_id(application_id)
+    if not application:
+        return None
+    
+    updated_internship_application = internship_application_repo.update(application_id, update_data)
+    if not updated_internship_application:
+        return None
+    
+    # Si el status cambió a ACCEPTED (2), crear automáticamente el internship
+    if update_data.get('status') == ApplicationStatusEnum.ACCEPTED:
+        existing_internship = db.query(Internship).filter(
+            Internship.application_id == application_id,
+            Internship.is_active == True
+        ).first()
+        
+        if not existing_internship:
+            new_internship = Internship(
+                application_id=application_id,
+                site_id=None,  # Se asignará después
+                status=InternshipStatusEnum.PENDING
+            )
+            internship_repo.create(new_internship)
+    
     updated_internship_application_response = orm_to_dict(updated_internship_application)
     return updated_internship_application_response
 
