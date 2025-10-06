@@ -10,16 +10,15 @@ if TYPE_CHECKING:
 
 class Promotion(BaseModel):
     __tablename__ = 'promotions'
-    
-    promotion_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    year: Mapped[int] = mapped_column(Integer, nullable=False)
-    period: Mapped[int] = mapped_column(Integer, nullable=False)
-    is_finished: Mapped[bool] = mapped_column(Boolean, nullable=False)
-
     __table_args__ = (
         UniqueConstraint('year', 'period', name='uq_promotion_year_period'),
         Index('ix_promotion_year_period', 'year', 'period'),
     )    
+
+    promotion_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    year: Mapped[int] = mapped_column(Integer, nullable=False)
+    period: Mapped[int] = mapped_column(Integer, nullable=False)
+    is_finished: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     def __repr__(self):
         return f"<Promotion(promotion_id={self.promotion_id}, year={self.year}, period={self.period}, is_finished={self.is_finished})>"

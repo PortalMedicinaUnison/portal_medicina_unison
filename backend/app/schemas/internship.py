@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from models.internship import DocumentTypeEnum, InternshipStatusEnum, ApplicationStatusEnum
 from schemas.promotion import PromotionOutput
+from schemas.site import SiteBasicOutput
 from typing import Optional
 from datetime import datetime
 
@@ -26,26 +27,21 @@ class InternshipApplicationOutput(BaseModel):
 # ---------------------- INTERNSHIP ----------------------
 
 class InternshipInput(BaseModel):
-    promotion_id: int
     application_id: int
-    academic_id: str
-    site_id: int
+    site_id: Optional[int] = None
     status: InternshipStatusEnum
 
 class InternshipUpdate(BaseModel):
-    promotion_id: Optional[int] = None
-    application_id: Optional[int] = None
-    academic_id: Optional[str] = None
     site_id: Optional[int] = None
     status: Optional[InternshipStatusEnum]
 
 class InternshipOutput(BaseModel):
     internship_id: int
-    promotion_id: int
     application_id: int
-    academic_id: str
     site_id: int
     status: InternshipStatusEnum
+    application: Optional[InternshipApplicationOutput] = None
+    site: Optional[SiteBasicOutput] = None
 
 # ---------------------- INTERNSHIP DOCUMENT ----------------------
 

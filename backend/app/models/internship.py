@@ -1,7 +1,8 @@
 from sqlalchemy import Boolean, Integer, String, Index, ForeignKey, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
 from enum import IntEnum
 from .base import BaseModel
+from .site import Site
 from .promotion import Promotion
 from .types import IntEnumType
 
@@ -51,29 +52,36 @@ class Internship(BaseModel):
     __table_args__ = (
         Index('idx_internship_user', 'academic_id'),
         Index('idx_internship_site', 'site_id'),
-        UniqueConstraint('promotion_id', 'academic_id', name='uq_app_promotion_student'),
     )
 
     internship_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    promotion_id: Mapped[int] = mapped_column(ForeignKey("promotions.promotion_id"), nullable=False)
     application_id: Mapped[int] = mapped_column(Integer, ForeignKey("internship_applications.application_id", ondelete="RESTRICT"), unique=True, nullable=False)
-    academic_id: Mapped[str] = mapped_column(String(9), ForeignKey("users.academic_id", ondelete="CASCADE"), nullable=False)
-    site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id", ondelete="RESTRICT"), nullable=False)
+    site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id", ondelete="RESTRICT"), nullable=True)
     status: Mapped[InternshipStatusEnum] = mapped_column(IntEnumType(InternshipStatusEnum), nullable=False)
 
+    application: Mapped["InternshipApplication"] = relationship("InternshipApplication", lazy="joined", backref=backref("internship", uselist=False))
+    site: Mapped["Site"] = relationship("Site", lazy="joined")
+    documents: Mapped[list["InternshipDocument"]] = relationship("InternshipDocument", back_populates="internship", cascade="all, delete-orphan",lazy="selectin")
+
     def __repr__(self):
-        return (f"<Internship(academic_id={self.academic_id}, site_id={self.site_id}, promotion_id={self.promotion_id}, status={self.status.name})>")
+        return f"<Internship(internship_id={self.internship_id}, academic_id={self.application.academic_id}, site_id={self.site_id}, status={self.status.name})>"
 
 # ----------------------  INTERNSHIP DOCUMENT  ----------------------
 
 class InternshipDocument(BaseModel):
     __tablename__ = 'internship_documents'
+    __table_args__ = (
+        UniqueConstraint('internship_id', 'document_type', name='uq_doc_internship_type'),
+        Index('idx_docs_internship_type', 'internship_id', 'document_type'),
+    )
     
     document_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     internship_id: Mapped[int] = mapped_column(Integer, ForeignKey("internships.internship_id", ondelete="CASCADE"), nullable=False)
     document_type: Mapped[DocumentTypeEnum] = mapped_column(IntEnumType(DocumentTypeEnum), nullable=False)
     path: Mapped[str] = mapped_column(String(255), nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+
+    internship: Mapped["Internship"] = relationship("Internship", back_populates="documents", lazy="joined",)
     
     def __repr__(self):
         return f"<InternshipDocument(internship_id={self.internship_id}, document_type={self.document_type.name}, is_verified={self.is_verified})>"

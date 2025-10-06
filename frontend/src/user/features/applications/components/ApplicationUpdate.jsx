@@ -7,6 +7,7 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import useCreateInternship from '../../internships/hooks/useCreateInternship';
 
 
 const INITIAL_FORM = {

@@ -24,20 +24,39 @@ class InternshipRepo(BaseRepo):
         ).first()
 
     def get_by_academic_id(self, academic_id: str) -> List[Internship]:
-        return self.session.query(Internship).filter(
-            Internship.academic_id == academic_id,
-            Internship.is_active == True
-        ).all()
+        return (
+            self.session.query(Internship)
+            .join(Internship.application)
+            .filter(
+                InternshipApplication.academic_id == academic_id,
+                Internship.is_active == True
+            ).all()
+        )
+    
+    def get_latest_by_academic_id(self, academic_id: str) -> Optional[Internship]:
+        return (
+            self.session.query(Internship)
+            .join(Internship.application)
+            .filter(
+                InternshipApplication.academic_id == academic_id,
+                Internship.is_active == True
+            )
+            .order_by(Internship.created_at.desc())
+        ).first()
+
+    def get_by_promotion_id(self, promotion_id: int) -> List[Internship]:
+        return (
+            self.session.query(Internship)
+            .join(Internship.application)
+            .filter(
+                InternshipApplication.promotion_id == promotion_id,
+                Internship.is_active == True
+            ).all()
+        )
 
     def get_by_site_id(self, site_id: int) -> List[Internship]:
         return self.session.query(Internship).filter(
             Internship.site_id == site_id,
-            Internship.is_active == True
-        ).all()
-    
-    def get_by_promotion_id(self, promotion_id: int) -> List[Internship]:
-        return self.session.query(Internship).filter(
-            Internship.promotion_id == promotion_id,
             Internship.is_active == True
         ).all()
 
@@ -142,8 +161,8 @@ class InternshipDocumentRepo(BaseRepo):
             InternshipDocument.is_active == True
         ).first())
 
-    def update(self, document_id: int, data: dict) -> Optional[InternshipDocument]:
-        doc = self.get_by_id(document_id)
+    def update(self, internship_id: int, document_id: int, data: dict) -> Optional[InternshipDocument]:
+        doc = self.get_by_id(internship_id, document_id)
         if doc:
             for key, value in data.items():
                 if hasattr(doc, key):
