@@ -85,13 +85,11 @@ class InternshipApplicationRepo(BaseRepo):
             InternshipApplication.is_active == True
         ).all())
     
-    def get_pending_by_academic_id(self, academic_id: str) -> Optional[InternshipApplication]:
-        print("Fetching pending application for academic_id:", academic_id)
+    def get_latest_by_academic_id(self, academic_id: str) -> Optional[InternshipApplication]:
         q = (self.session.query(InternshipApplication)
             .filter(
                 InternshipApplication.academic_id == academic_id,
                 InternshipApplication.is_active == True,
-                InternshipApplication.status == ApplicationStatusEnum.PENDING
             )
             .order_by(InternshipApplication.created_at.desc()))
         return q.first()

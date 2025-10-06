@@ -38,8 +38,8 @@ export const getInternshipApplicationByIdRequest = (id) =>
 export const getInternshipApplicationsByAcademicRequest = (academicId) =>
   api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.GET_BY_ACADEMIC(academicId));
 
-export const getInternshipApplicationsPendingByAcademicRequest = (academicId) =>
-  api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.GET_PENDING_BY_ACADEMIC(academicId));
+export const getInternshipApplicationsLatestByAcademicRequest = (academicId) =>
+  api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.GET_LATEST_BY_ACADEMIC(academicId));
 
 export const getInternshipApplicationForUpdateByIdRequest = (id) =>
   api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.GET_FOR_UPDATE(id));

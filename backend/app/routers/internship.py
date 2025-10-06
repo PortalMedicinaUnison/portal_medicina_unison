@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from core.dependencies import get_db
-from typing import List
+from typing import List, Optional
 from schemas.internship import (
     InternshipInput, InternshipUpdate, InternshipOutput,
     InternshipApplicationInput, InternshipApplicationUpdate, InternshipApplicationOutput,
@@ -20,7 +20,7 @@ from controllers.internship import (
     get_all_internship_applications,
     get_internship_application,
     get_internship_applications_by_academic,
-    get_internship_applications_pending_by_academic,
+    get_internship_applications_latest_by_academic,
     get_internship_application_for_update,
     update_internship_application, 
     delete_internship_application, 
@@ -60,7 +60,7 @@ async def get_internship_route(internship_id: int, db: Session = Depends(get_db)
     return internship
 
 @internship_router.get('/academicId/{academic_id}', response_model=List[InternshipOutput])
-async def get_internships_by_academic_route(academic_id: int, db: Session = Depends(get_db)):
+async def get_internships_by_academic_route(academic_id: str, db: Session = Depends(get_db)):
     internships = get_internships_by_academic(academic_id, db)
     return internships
 
@@ -115,13 +115,13 @@ async def get_internship_application_route(application_id: int, db: Session = De
     return application
 
 @internship_application_router.get('/academicId/{academic_id}', response_model=List[InternshipApplicationOutput])
-async def get_internship_applications_by_academic_route(academic_id: int, db: Session = Depends(get_db)):
+async def get_internship_applications_by_academic_route(academic_id: str, db: Session = Depends(get_db)):
     applications = get_internship_applications_by_academic(academic_id, db)
     return applications
 
-@internship_application_router.get('/academicId/{academic_id}/pending', response_model=InternshipApplicationOutput)
-async def get_internship_applications_pending_by_academic_route(academic_id: int, db: Session = Depends(get_db)):
-    applications = get_internship_applications_pending_by_academic(academic_id, db)
+@internship_application_router.get('/academicId/{academic_id}/pending', response_model=Optional[InternshipApplicationOutput])
+async def get_internship_applications_latest_by_academic_route(academic_id: str, db: Session = Depends(get_db)):
+    applications = get_internship_applications_latest_by_academic(academic_id, db)
     return applications
 
 @internship_application_router.get('/{application_id}/for-update', response_model=InternshipApplicationOutput)

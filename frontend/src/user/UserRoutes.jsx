@@ -17,6 +17,8 @@ import ReportFormPage from './features/reports/pages/ReportFormPage';
 
 // Internships pages
 import ApplicationUpdatePage from '../user/features/internships/pages/ApplicationUpdatePage';
+import ApplicationDeclinedPage from '../user/features/internships/pages/ApplicationDeclinedPage';
+import InternshipDetailPage from '../user/features/internships/pages/InternshipDetailPage';
 
 function UserRoutes() {
   return (
@@ -35,7 +37,9 @@ function UserRoutes() {
         <Route path="reports/create" element={<ReportFormPage />} />
 
         {/* Internships routes */}
-        <Route path="my-internship" element={<ApplicationUpdatePage />} />
+        <Route path="application" element={<ApplicationUpdatePage />} />
+        <Route path="my-internship/declined" element={<ApplicationDeclinedPage />} />
+        <Route path="my-internship" element={<InternshipDetailPage />} />
       </Route>
     </Routes>
   );

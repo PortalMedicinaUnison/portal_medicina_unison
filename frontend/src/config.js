@@ -24,8 +24,9 @@ export const ROUTES = {
         REPORT_DETAIL: (reportId) => `/reports/${reportId}`,
         REPORT_EDIT: (reportId) => `/reports/${reportId}/edit`,
 
-        // INTERNSHIP_APPLICATION_EDIT: (applicationId) => `/applications/${applicationId}/edit`,
-        INTERNSHIP_APPLICATION_EDIT: '/my-internship',
+        INTERNSHIP_APPLICATION_STATUS: '/application',
+        INTERNSHIP_APPLICATION_DECLINED: '/my-internship/declined',
+        INTERNSHIP: '/my-internship',
     },
 
     ADMIN: {

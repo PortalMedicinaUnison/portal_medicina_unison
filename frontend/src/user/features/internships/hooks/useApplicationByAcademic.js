@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getInternshipApplicationsPendingByAcademicRequest } from '../../../../services/internshipService';
+import { getInternshipApplicationsLatestByAcademicRequest } from '../../../../services/internshipService';
 
 
 export default function useApplicationByAcademic(id) {
@@ -13,7 +13,7 @@ export default function useApplicationByAcademic(id) {
     setError(null);
     
     try {
-      const response = await getInternshipApplicationsPendingByAcademicRequest(id);
+      const response = await getInternshipApplicationsLatestByAcademicRequest(id);
       setApplication(response.data);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error fetching application');

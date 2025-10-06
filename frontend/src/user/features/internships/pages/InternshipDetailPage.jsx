@@ -2,12 +2,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
-import ApplicationUpdate from '../components/ApplicationUpdate';
+import InternshipDetail from '../components/InternshipDetail';
 import { useUser } from '../../../../contexts/UserContext';
 import useApplicationByAcademic from '../hooks/useApplicationByAcademic'
+import { useEffect } from 'react';
 
 
-function ApplicationUpdatePage() {
+function InternshipDetailPage() {
   const navigate = useNavigate();
   const { user } = useUser();
   const academicId = user?.academic_id;
@@ -16,35 +17,22 @@ function ApplicationUpdatePage() {
   const applicationId = application?.application_id ?? null;
   const status = application?.status != null ? Number(application.status) : null;
 
-  if (status === 2) {
-    navigate(ROUTES.USER.INTERNSHIP);
+  if (status === 1) {
+    navigate(ROUTES.USER.INTERNSHIP_APPLICATION_STATUS);
   }
   if (status === 3) {
     navigate(ROUTES.USER.INTERNSHIP_APPLICATION_DECLINED);
   }
 
-  const pageTitle = fetching
-  ? 'Cargando...'
-  : application
-    ? 'Información importante'
-    : ' ';
-  
   return ( 
     <Layout>
       <PageLayout 
-        title={pageTitle}
+        title="Detalle de pasantía" 
       >
-        <ApplicationUpdate
-          application={application}
-          fetching={fetching}
-          fetchError={fetchError}
-          refetch={refetch}
-          applicationId={applicationId}
-          user={user}
-        />
+        <InternshipDetail/>
       </PageLayout>
     </Layout>
   );
 }
 
-export default ApplicationUpdatePage;
+export default InternshipDetailPage;

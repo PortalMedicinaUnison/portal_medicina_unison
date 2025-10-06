@@ -71,7 +71,7 @@ export const API_ENDPOINTS = {
     GET_ALL: '/internship-applications',
     GET: (id) => `/internship-applications/${id}`,
     GET_BY_ACADEMIC: (academicId) => `/internship-applications/academicId/${academicId}`,
-    GET_PENDING_BY_ACADEMIC: (academicId) => `/internship-applications/academicId/${academicId}/pending`,
+    GET_LATEST_BY_ACADEMIC: (academicId) => `/internship-applications/academicId/${academicId}/pending`,
     GET_FOR_UPDATE: (id) => `/internship-applications/${id}/for-update`,
     UPDATE: (id) => `/internship-applications/${id}`,
     DELETE: (id) => `/internship-applications/${id}`,
