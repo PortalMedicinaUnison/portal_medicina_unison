@@ -71,6 +71,8 @@ export const API_ENDPOINTS = {
     GET_ALL: '/internship-applications',
     GET: (id) => `/internship-applications/${id}`,
     GET_BY_ACADEMIC: (academicId) => `/internship-applications/academicId/${academicId}`,
+    GET_PENDING_BY_ACADEMIC: (academicId) => `/internship-applications/academicId/${academicId}/pending`,
+    GET_FOR_UPDATE: (id) => `/internship-applications/${id}/for-update`,
     UPDATE: (id) => `/internship-applications/${id}`,
     DELETE: (id) => `/internship-applications/${id}`,
   },
@@ -79,8 +81,8 @@ export const API_ENDPOINTS = {
     CREATE: (internshipId) => `/internships/${internshipId}/documents`,
     GET_ALL: (internshipId) => `/internships/${internshipId}/documents`,
     GET: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}`,
-    UPDATE: (internshipId, docId) => `/internship/${internshipId}/documents/${docId}`,
-    DELETE: (internshipId, docId) => `/internship/${internshipId}/documents/${docId}`,
+    UPDATE: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}`,
+    DELETE: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}`,
   },
 
   ANNOUNCEMENTS: {

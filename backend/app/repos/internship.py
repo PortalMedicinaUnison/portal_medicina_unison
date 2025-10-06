@@ -1,5 +1,5 @@
 from .base import BaseRepo
-from models.internship import  InternshipApplication, Internship, InternshipDocument
+from models.internship import  InternshipApplication, Internship, InternshipDocument, ApplicationStatusEnum
 from typing import List, Optional
 
 
@@ -84,6 +84,25 @@ class InternshipApplicationRepo(BaseRepo):
             InternshipApplication.academic_id == academic_id,
             InternshipApplication.is_active == True
         ).all())
+    
+    def get_pending_by_academic_id(self, academic_id: str) -> Optional[InternshipApplication]:
+        print("Fetching pending application for academic_id:", academic_id)
+        q = (self.session.query(InternshipApplication)
+            .filter(
+                InternshipApplication.academic_id == academic_id,
+                InternshipApplication.is_active == True,
+                InternshipApplication.status == ApplicationStatusEnum.PENDING
+            )
+            .order_by(InternshipApplication.created_at.desc()))
+        return q.first()
+
+    def get_by_id_for_update(self, application_id: int) -> Optional[InternshipApplication]:
+        # Para flujo (aceptar/declinar + crear internship)
+        return (self.session.query(InternshipApplication).filter(
+            InternshipApplication.application_id == application_id,
+            InternshipApplication.is_active == True)
+        .with_for_update()
+        .first())
     
     def update(self, application_id: int, data: dict) -> Optional[InternshipApplication]:
         application = self.get_by_id(application_id)

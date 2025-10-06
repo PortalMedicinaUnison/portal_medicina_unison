@@ -1,5 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { ROUTES } from '../config';
+import { useUser } from '../contexts/UserContext';
 import SidebarCollapse from '../utils/ui/CollapseMenu';
 
 
@@ -67,7 +68,7 @@ function StudentSidebar({ toggleSidebar, openToggleButton }) {
                             </p>
                         </div>
                         <div>
-                            <Link to={ROUTES.ADMIN.REPORT_LIST} className="sidebar-item-group group">
+                            <Link to={ROUTES.USER.INTERNSHIP_APPLICATION_EDIT} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"

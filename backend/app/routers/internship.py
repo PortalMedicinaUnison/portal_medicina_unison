@@ -20,6 +20,8 @@ from controllers.internship import (
     get_all_internship_applications,
     get_internship_application,
     get_internship_applications_by_academic,
+    get_internship_applications_pending_by_academic,
+    get_internship_application_for_update,
     update_internship_application, 
     delete_internship_application, 
 
@@ -57,12 +59,12 @@ async def get_internship_route(internship_id: int, db: Session = Depends(get_db)
             detail="Internado no encontrado")
     return internship
 
-@internship_router.get('/academicId={academic_id}', response_model=List[InternshipOutput])
+@internship_router.get('/academicId/{academic_id}', response_model=List[InternshipOutput])
 async def get_internships_by_academic_route(academic_id: int, db: Session = Depends(get_db)):
     internships = get_internships_by_academic(academic_id, db)
     return internships
 
-@internship_router.get('/siteId={site_id}', response_model=List[InternshipOutput])
+@internship_router.get('/siteId/{site_id}', response_model=List[InternshipOutput])
 async def get_internships_by_site_route(site_id: int, db: Session = Depends(get_db)):
     internships = get_internships_by_site(site_id, db)
     return internships
@@ -112,10 +114,24 @@ async def get_internship_application_route(application_id: int, db: Session = De
             detail="Aplicación no encontrada")
     return application
 
-@internship_application_router.get('/academicId={academic_id}', response_model=List[InternshipApplicationOutput])
+@internship_application_router.get('/academicId/{academic_id}', response_model=List[InternshipApplicationOutput])
 async def get_internship_applications_by_academic_route(academic_id: int, db: Session = Depends(get_db)):
     applications = get_internship_applications_by_academic(academic_id, db)
     return applications
+
+@internship_application_router.get('/academicId/{academic_id}/pending', response_model=InternshipApplicationOutput)
+async def get_internship_applications_pending_by_academic_route(academic_id: int, db: Session = Depends(get_db)):
+    applications = get_internship_applications_pending_by_academic(academic_id, db)
+    return applications
+
+@internship_application_router.get('/{application_id}/for-update', response_model=InternshipApplicationOutput)
+async def get_internship_application_for_update_route(application_id: int, db: Session = Depends(get_db)):
+    application = get_internship_application_for_update(application_id, db)
+    if not application:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Aplicación no encontrada")
+    return application
 
 @internship_application_router.patch('/{application_id}', response_model=InternshipApplicationOutput)
 async def update_internship_application_route(application_id: int, application: InternshipApplicationUpdate, db: Session = Depends(get_db)):
@@ -140,8 +156,8 @@ async def delete_internship_application_route(application_id: int, db: Session =
 internship_document_router = APIRouter(prefix="/internships", tags=["Documentos"])
 
 @internship_document_router.post('/{internship_id}/documents', response_model=InternshipDocumentOutput)
-async def create_internship_document_route(internship_document: InternshipDocumentInput, db: Session = Depends(get_db)):
-    created_internship_document = create_internship_document(internship_document, db)
+async def create_internship_document_route(internship_id: int, internship_document: InternshipDocumentInput, db: Session = Depends(get_db)):
+    created_internship_document = create_internship_document(internship_id, internship_document, db)
     if not created_internship_document:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, 

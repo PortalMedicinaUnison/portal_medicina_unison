@@ -35,7 +35,7 @@ function UserRoutes() {
         <Route path="reports/create" element={<ReportFormPage />} />
 
         {/* Internships routes */}
-        <Route path="applications/:applicationId/edit" element={<ApplicationUpdatePage />} />
+        <Route path="my-internship" element={<ApplicationUpdatePage />} />
       </Route>
     </Routes>
   );

@@ -1,16 +1,21 @@
-import { useParams } from "react-router-dom";
 import Layout from "../../../../Layout.jsx";
 import PageLayout from '../../../../components/PageLayout.jsx';
-import ApplicationUpdate from '../components/ApplicationUpdate.jsx'
+import ApplicationUpdate from '../components/ApplicationUpdate.jsx';
+import { useUser } from '../../../../contexts/UserContext.jsx';
+import useApplicationByAcademic from '../hooks/useApplicationByAcademic.js'
 
 
 function ApplicationUpdatePage() {
-  const { applicationId } = useParams();
+  const { user } = useUser();
+  const academicId = user?.academic_id;
+
+  const { application, loading: fetching, error: fetchError, refetch } = useApplicationByAcademic(academicId);
+  const applicationId = application?.application_id;
   
   const pageTitle = fetching
   ? 'Cargando...'
-  : announcement
-    ? 'Actualizar'
+  : application
+    ? 'Información importante'
     : ' ';
   
   return ( 
@@ -19,11 +24,12 @@ function ApplicationUpdatePage() {
         title={pageTitle}
       >
         <ApplicationUpdate
-          announcement={announcement}
+          application={application}
           fetching={fetching}
           fetchError={fetchError}
           refetch={refetch}
           applicationId={applicationId}
+          user={user}
         />
       </PageLayout>
     </Layout>

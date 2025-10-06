@@ -29,6 +29,10 @@ class ApplicationStatusEnum(IntEnum):
 
 class InternshipApplication(BaseModel):
     __tablename__ = 'internship_applications'
+    __table_args__ = (
+        UniqueConstraint('promotion_id', 'academic_id', name='uq_app_promotion_student'),
+        Index('idx_app_academic_status', 'academic_id', 'status'),
+    )
     
     application_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     promotion_id: Mapped[int] = mapped_column(ForeignKey("promotions.promotion_id"), nullable=False)

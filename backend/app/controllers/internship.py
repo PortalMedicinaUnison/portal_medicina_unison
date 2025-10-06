@@ -96,6 +96,22 @@ def get_internship_applications_by_academic(academic_id: int, db: Session):
     # internship_applications_response = [orm_to_dict(internship_application) for internship_application in internship_applications]
     return internship_applications
 
+def get_internship_applications_pending_by_academic(academic_id: int, db: Session):
+    internship_application_repo = InternshipApplicationRepo(db)
+    internship_applications = internship_application_repo.get_pending_by_academic_id(academic_id)
+    if not internship_applications:
+        return []
+    # internship_applications_response = [orm_to_dict(internship_application) for internship_application in internship_applications]
+    return internship_applications
+
+def get_internship_application_for_update(application_id: int, db: Session):
+    internship_application_repo = InternshipApplicationRepo(db)
+    internship_application = internship_application_repo.get_by_id_for_update(application_id)
+    if not internship_application:
+        return None
+    # internship_application_response = orm_to_dict(internship_application)
+    return internship_application
+
 def update_internship_application(application_id: int, internship_application_input: InternshipApplicationUpdate, db: Session):
     update_data = internship_application_input.dict(exclude_unset=True)
     internship_application_repo = InternshipApplicationRepo(db)
@@ -111,7 +127,7 @@ def delete_internship_application(application_id: int, db: Session):
 
 # ---------------------- INTERNSHIP DOCUMENT ----------------------
 
-def create_internship_document(internship_document: InternshipDocumentInput, db: Session):
+def create_internship_document(internship_id: int, internship_document: InternshipDocumentInput, db: Session):
     new_internship_document = map_to_model(internship_document, InternshipDocument)
     internship_document_repo = InternshipDocumentRepo(db)
     created_internship_document = internship_document_repo.create(new_internship_document)
