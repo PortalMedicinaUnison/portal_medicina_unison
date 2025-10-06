@@ -15,9 +15,11 @@ import ProfilePage from '../features/profile/pages/ProfilePage';
 import ReportsListPage from './features/reports/pages/ReportsListPage';
 import ReportFormPage from './features/reports/pages/ReportFormPage';
 
+// Applications pages
+import ApplicationUpdatePage from '../user/features/applications/pages/ApplicationUpdatePage';
+import ApplicationDeclinedPage from '../user/features/applications/pages/ApplicationDeclinedPage';
+
 // Internships pages
-import ApplicationUpdatePage from '../user/features/internships/pages/ApplicationUpdatePage';
-import ApplicationDeclinedPage from '../user/features/internships/pages/ApplicationDeclinedPage';
 import InternshipDetailPage from '../user/features/internships/pages/InternshipDetailPage';
 
 function UserRoutes() {

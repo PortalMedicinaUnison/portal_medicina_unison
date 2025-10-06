@@ -1,35 +1,38 @@
-import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
 import InternshipDetail from '../components/InternshipDetail';
 import { useUser } from '../../../../contexts/UserContext';
-import useApplicationByAcademic from '../hooks/useApplicationByAcademic'
+import useInternshipByAcademic from '../hooks/useInternshipByAcademic'
 import { useEffect } from 'react';
 
 
 function InternshipDetailPage() {
-  const navigate = useNavigate();
   const { user } = useUser();
   const academicId = user?.academic_id;
 
-  const { application, loading: fetching, error: fetchError, refetch } = useApplicationByAcademic(academicId);
-  const applicationId = application?.application_id ?? null;
-  const status = application?.status != null ? Number(application.status) : null;
+  const { internship, loading: fetching, error: fetchError, refetch } = useInternshipByAcademic(academicId);
+  const internshipId = internship?.internship_id ?? null;
 
-  if (status === 1) {
-    navigate(ROUTES.USER.INTERNSHIP_APPLICATION_STATUS);
-  }
-  if (status === 3) {
-    navigate(ROUTES.USER.INTERNSHIP_APPLICATION_DECLINED);
-  }
+  const pageTitle = fetching
+  ? 'Cargando...'
+  : internship
+    ? 'Mi internado'
+    : ' ';
 
   return ( 
     <Layout>
       <PageLayout 
-        title="Detalle de pasantía" 
+        title={pageTitle}
       >
-        <InternshipDetail/>
+        <InternshipDetail
+          internship={internship}
+          fetching={fetching}
+          fetchError={fetchError}
+          refetch={refetch}
+          internshipId={internshipId}
+          user={user}
+        />
       </PageLayout>
     </Layout>
   );
