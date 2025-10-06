@@ -1,4 +1,4 @@
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';

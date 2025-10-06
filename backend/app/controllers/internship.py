@@ -121,36 +121,31 @@ def update_internship_application(application_id: int, internship_application_in
     updated_internship_application_response = orm_to_dict(updated_internship_application)
     return updated_internship_application_response
 
-def accept_internship_application_and_create_internship(application_id: int, internship_application_input: InternshipApplicationUpdate, db: Session):
-    update_data = internship_application_input.dict(exclude_unset=True)
+def update_accept_internship_application(application_id: int, internship_application_input: InternshipApplicationUpdate, db: Session):
     internship_application_repo = InternshipApplicationRepo(db)
     internship_repo = InternshipRepo(db)
 
-    application = internship_application_repo.get_by_id(application_id)
+    application = internship_application_repo.get_by_id_for_update(application_id)
     if not application:
         return None
-    
-    updated_internship_application = internship_application_repo.update(application_id, update_data)
-    if not updated_internship_application:
-        return None
-    
-    # Si el status cambió a ACCEPTED (2), crear automáticamente el internship
-    if update_data.get('status') == ApplicationStatusEnum.ACCEPTED:
-        existing_internship = db.query(Internship).filter(
-            Internship.application_id == application_id,
-            Internship.is_active == True
-        ).first()
-        
-        if not existing_internship:
-            new_internship = Internship(
-                application_id=application_id,
-                site_id=None,  # Se asignará después
-                status=InternshipStatusEnum.PENDING
-            )
-            internship_repo.create(new_internship)
-    
-    updated_internship_application_response = orm_to_dict(updated_internship_application)
-    return updated_internship_application_response
+
+    try:
+        application.status = internship_application_input.status
+        if application.status == ApplicationStatusEnum.ACCEPTED:
+            existing_internship = internship_repo.get_by_application_id(application.application_id)
+            if not existing_internship:
+                new_internship = Internship(
+                    application_id=application.application_id,
+                    site_id=None,
+                    status=InternshipStatusEnum.PENDING
+                )
+                db.add(new_internship)
+        db.commit()
+        db.refresh(application)
+
+    except Exception as e:
+        db.rollback()
+    return orm_to_dict(application)
 
 def delete_internship_application(application_id: int, db: Session):
     internship_application_repo = InternshipApplicationRepo(db)

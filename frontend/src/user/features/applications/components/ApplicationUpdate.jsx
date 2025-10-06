@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../../../../config';
+import { ROUTES } from '../../../../config';
 import useUpdateApplication from '../../applications/hooks/useUpdateApplication'
 import { cleanFormData } from "../../../../utils/utils";
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
-import useCreateInternship from '../../internships/hooks/useCreateInternship';
 
 
 const INITIAL_FORM = {
@@ -104,10 +103,9 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
 
   useEffect(() => {
     if (saved) {
-      refetch?.();
-      reset();
+      navigate(ROUTES.USER.INTERNSHIP_REDIRECT)
     }
-  }, [saved, refetch, reset]);
+  }, [saved, navigate]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 

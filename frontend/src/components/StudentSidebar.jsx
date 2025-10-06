@@ -68,7 +68,7 @@ function StudentSidebar({ toggleSidebar, openToggleButton }) {
                             </p>
                         </div>
                         <div>
-                            <Link to={ROUTES.USER.INTERNSHIP} className="sidebar-item-group group">
+                            <Link to={ROUTES.USER.INTERNSHIP_REDIRECT} className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"

@@ -74,6 +74,7 @@ export const API_ENDPOINTS = {
     GET_LATEST_BY_ACADEMIC: (academicId) => `/internship-applications/academicId/${academicId}/pending`,
     GET_FOR_UPDATE: (id) => `/internship-applications/${id}/for-update`,
     UPDATE: (id) => `/internship-applications/${id}`,
+    UPDATE_ACCEPT: (id) => `/internship-applications/${id}/accept`,
     DELETE: (id) => `/internship-applications/${id}`,
   },
 

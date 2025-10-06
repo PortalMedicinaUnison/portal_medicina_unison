@@ -47,6 +47,9 @@ export const getInternshipApplicationForUpdateByIdRequest = (id) =>
 export const updateInternshipApplicationRequest = (id, data) =>
   api.patch(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.UPDATE(id), data);
 
+export const updateAcceptInternshipApplicationRequest = (id) =>
+  api.post(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.UPDATE_ACCEPT(id));
+
 export const deleteInternshipApplicationRequest = (id) =>
   api.delete(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.DELETE(id));
 

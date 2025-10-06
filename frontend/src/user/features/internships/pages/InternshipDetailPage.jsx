@@ -1,10 +1,8 @@
-import { ROUTES } from '../../../../config';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
 import InternshipDetail from '../components/InternshipDetail';
 import { useUser } from '../../../../contexts/UserContext';
 import useInternshipByAcademic from '../hooks/useInternshipByAcademic'
-import { useEffect } from 'react';
 
 
 function InternshipDetailPage() {

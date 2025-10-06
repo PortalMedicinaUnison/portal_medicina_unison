@@ -22,7 +22,8 @@ from controllers.internship import (
     get_internship_applications_by_academic,
     get_internship_applications_latest_by_academic,
     get_internship_application_for_update,
-    update_internship_application, 
+    update_internship_application,
+    update_accept_internship_application,
     delete_internship_application, 
 
     create_internship_document,
@@ -141,6 +142,15 @@ async def update_internship_application_route(application_id: int, application: 
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Aplicación no encontrada")
     return updated_application
+
+@internship_application_router.post('/{application_id}/accept', response_model=InternshipOutput)
+async def update_accept_internship_application_route(application_id: int, application: InternshipApplicationUpdate, db: Session = Depends(get_db)):
+    internship = update_accept_internship_application(application_id, application, db)
+    if not internship:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Aplicación no encontrada o no se pudo crear el internado")
+    return internship
 
 @internship_application_router.delete('/{application_id}')
 async def delete_internship_application_route(application_id: int, db: Session = Depends(get_db)):

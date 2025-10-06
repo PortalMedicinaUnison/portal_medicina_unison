@@ -50,7 +50,7 @@ class InternshipApplication(BaseModel):
 class Internship(BaseModel):
     __tablename__ = 'internships'
     __table_args__ = (
-        Index('idx_internship_user', 'academic_id'),
+        Index('idx_internship_application', 'application_id'),
         Index('idx_internship_site', 'site_id'),
     )
 

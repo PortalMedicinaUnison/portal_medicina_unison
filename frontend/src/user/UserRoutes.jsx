@@ -15,12 +15,13 @@ import ProfilePage from '../features/profile/pages/ProfilePage';
 import ReportsListPage from './features/reports/pages/ReportsListPage';
 import ReportFormPage from './features/reports/pages/ReportFormPage';
 
-// Applications pages
+// Internship pages
+import ApplicationRedirectPage from '../user/features/applications/pages/ApplicationRedirectPage';
 import ApplicationUpdatePage from '../user/features/applications/pages/ApplicationUpdatePage';
 import ApplicationDeclinedPage from '../user/features/applications/pages/ApplicationDeclinedPage';
 
-// Internships pages
 import InternshipDetailPage from '../user/features/internships/pages/InternshipDetailPage';
+
 
 function UserRoutes() {
   return (
@@ -38,10 +39,13 @@ function UserRoutes() {
         <Route path="reports" element={<ReportsListPage />} />
         <Route path="reports/create" element={<ReportFormPage />} />
 
-        {/* Internships routes */}
-        <Route path="application" element={<ApplicationUpdatePage />} />
+        {/* Applications routes */}
+        <Route path="my-internship/application" element={<ApplicationUpdatePage />} />
         <Route path="my-internship/declined" element={<ApplicationDeclinedPage />} />
+
+        {/* Internships routes */}
         <Route path="my-internship" element={<InternshipDetailPage />} />
+        <Route path="my-internship/redirect" element={<ApplicationRedirectPage />} />
       </Route>
     </Routes>
   );
