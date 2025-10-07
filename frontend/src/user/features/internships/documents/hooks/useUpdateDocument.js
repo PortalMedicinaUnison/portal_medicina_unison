@@ -1,23 +1,23 @@
 import { useState, useCallback } from 'react';
-import { updateAnnouncementRequest } from '../../../../services/communicationService';
+import { updateInternshipDocumentRequest } from '../../../../../services/internshipService';
 
 
-export default function useUpdateAnnouncement() {
+export default function useUpdateDocument() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updateAnnouncement = useCallback(async (id, payload) => {  
+  const updateDocument = useCallback(async (id, payload) => {  
     if (loading) return;
     setLoading(true);
     setError(null);
     setSuccess(false);
 
     try {
-      await updateAnnouncementRequest(id, payload);
+      await updateInternshipDocumentRequest(id, payload);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating announcement');
+      setError(err.response?.data?.detail || 'Error updating document');
       setSuccess(false);
     } finally {
       setLoading(false);
@@ -30,5 +30,5 @@ export default function useUpdateAnnouncement() {
     setSuccess(false);
   }, []);
 
-  return { updateAnnouncement, loading, error, success, reset };
+  return { updateDocument, loading, error, success, reset };
 }

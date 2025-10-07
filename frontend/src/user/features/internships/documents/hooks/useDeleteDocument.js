@@ -1,23 +1,23 @@
 import { useState, useCallback } from 'react';
-import { updateAnnouncementRequest } from '../../../../services/communicationService';
+import { deleteInternshipDocumentRequest } from '../../../../../services/internshipService';
 
 
-export default function useUpdateAnnouncement() {
+export default function useDeleteDocument() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updateAnnouncement = useCallback(async (id, payload) => {  
+  const deleteDocument = useCallback(async (id) => {
     if (loading) return;
     setLoading(true);
-    setError(null);
     setSuccess(false);
+    setError(null);
 
     try {
-      await updateAnnouncementRequest(id, payload);
+      await deleteInternshipDocumentRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating announcement');
+      setError(err.response?.data?.detail || 'Error deleting document');
       setSuccess(false);
     } finally {
       setLoading(false);
@@ -26,9 +26,9 @@ export default function useUpdateAnnouncement() {
 
   const reset = useCallback(() => {
     setLoading(false);
-    setError(null);
     setSuccess(false);
+    setError(null);
   }, []);
 
-  return { updateAnnouncement, loading, error, success, reset };
-}
+  return { deleteDocument, loading, success, error, reset };
+};

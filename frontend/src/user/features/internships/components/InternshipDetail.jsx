@@ -4,24 +4,24 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import DocumentList from '../documents/components/DocumentList'
 
 
 function InternshipDetail({ internship, fetching, fetchError, refetch, internshipId }) {    
   const navigate = useNavigate();
   
+  const INTERNSHIP_STATUS = {
+    1: 'Activo',
+    2: 'Suspendido',
+    3: 'Finalizado',
+  };
+
+  const getInternshipStatusName = (typeEnum) => {
+    return INTERNSHIP_STATUS[typeEnum] || 'Desconocido';
+  };
+
 // ---------------------- HANDLERS ----------------------
 
-  const handleDeleteButton = () => setShowConfirmDelete(true);
-
-  const handleConfirmDelete = async () => {
-    if (!internshipId) return;
-  };
-  const handleCloseConfirm = () => setShowConfirmDelete(false);
-
-  const handleCloseError = () => {
-    setShowErrorDialog(false);
-    reset();
-  };
 
 // ---------------------- EFFECTS ----------------------
     
@@ -74,20 +74,15 @@ function InternshipDetail({ internship, fetching, fetchError, refetch, internshi
           </div>
           <div className="item-row">
             <dt className="item-header">Estatus</dt>
-            <dd className="item-text">  {internship?.is_finished ? 'Finalizado' : 'No finalizado'}</dd>
+            <dd className="item-text">{getInternshipStatusName(internship?.status)}</dd>
           </div>
         </dl>
       </div>
 
-      <div className="info-actions mt-16">
-        <button 
-          type="button" 
-          className='btn-tertiary'
-          onClick={handleDeleteButton}
-        >
-          {'Eliminar'}
-        </button>
+      <div className='mt-16'>
+          <DocumentList/>
       </div>
+
     </div>        
   );
 }

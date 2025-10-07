@@ -14,14 +14,11 @@ class DocumentTypeEnum(IntEnum):
     COMPLETION_LETTER = 2
     KARDEX = 3
     CERTIFICATE = 4
-    OTHER = 5
 
 class InternshipStatusEnum(IntEnum):
-    PENDING = 1
-    ACCEPTED = 2
-    REJECTED = 3
-    SUSPENDED = 4
-    FINISHED = 5
+    ACTIVE = 1
+    SUSPENDED = 2
+    FINISHED = 3
 
 class ApplicationStatusEnum(IntEnum):
     PENDING = 1
