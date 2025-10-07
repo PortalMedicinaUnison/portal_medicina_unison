@@ -14,8 +14,7 @@ function ApplicationRedirectPage() {
   const navigate = useNavigate();
   const academicId = user?.academic_id;
 
-  const { application, loading: fetching, error: fetchError, refetch } =
-    useApplicationByAcademic(academicId);
+  const { application, loading: fetching, error: fetchError, refetch } = useApplicationByAcademic(academicId);
 
   if (fetching) return <LoadingSpinner />;
 

@@ -1,5 +1,3 @@
-import { Navigate } from 'react-router-dom';
-import { ROUTES } from '../../../../config';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
 import ApplicationDeclined from '../components/ApplicationDeclined';
@@ -7,12 +5,22 @@ import { useUser } from '../../../../contexts/UserContext';
 import useApplicationByAcademic from '../hooks/useApplicationByAcademic'
 
 function ApplicationDeclinedPage() {
+  const { user } = useUser();
+  const academicId = user?.academic_id;  
+  const { application, loading: fetching, error: fetchError, refetch } = useApplicationByAcademic(academicId);
+  
   return ( 
     <Layout>
       <PageLayout 
-        title="Solicitud rechazada" 
+        title="Participación declinada" 
       >
-        <ApplicationDeclined/>
+        <ApplicationDeclined
+          application={application}
+          fetching={fetching}
+          fetchError={fetchError}
+          refetch={refetch}
+          user={user}
+        />
       </PageLayout>
     </Layout>
   );
