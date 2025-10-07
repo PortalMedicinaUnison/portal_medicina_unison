@@ -9,7 +9,7 @@ from schemas.internship import (
     InternshipApplicationInput, InternshipApplicationUpdate, 
     InternshipDocumentInput, InternshipDocumentUpdate,
 )
-from utils.utils import orm_to_dict, map_to_model
+from utils.utils import orm_to_dict, map_to_model, save_uploaded_file
 
 
 # ---------------------- INTERNSHIP ----------------------
@@ -172,20 +172,12 @@ async def create_internship_document(
 ):  
 
     upload_dir = Path("uploads") / "internship-documents" / str(internship_id)
-    upload_dir.mkdir(parents=True, exist_ok=True)
-
     filename = f"{uuid4().hex}.pdf"
-    file_path = upload_dir / filename
-
-    contents = await file.read()
 
     try:
-        with open(file_path, "wb") as f:
-            f.write(contents)
+        file_path = await save_uploaded_file(file, upload_dir, filename)
     except Exception as e:
-        raise Exception("Error saving file") from e
-    finally:
-        await file.close()
+        raise Exception("Error saving internship document") from e
 
     # --- Persistencia (delegada al repo) ---
     try:

@@ -39,4 +39,45 @@ def map_to_model(input_data: BaseModel | dict, model_cls: Type[Any]) -> Any:
     except Exception as e: 
         raise ValueError(f"Error mapping to model: {e}")
     
+
+from pathlib import Path
+from uuid import uuid4
+from fastapi import UploadFile
+
+
+async def save_uploaded_file(file: UploadFile, upload_dir: Path, filename: str = None) -> Path:
+    """
+    Guarda un archivo subido en el directorio especificado usando chunks.
     
+    Args:
+        file: Archivo subido desde FastAPI
+        upload_dir: Directorio donde se guardará el archivo
+        filename: Nombre del archivo (opcional, genera uno aleatorio si no se provee)
+        chunk_size: Tamaño del chunk en bytes (default: 1MB)
+    
+    Returns:
+        Path: Ruta completa del archivo guardado
+    
+    Raises:
+        Exception: Si hay un error al guardar el archivo
+    """
+    chunk_size: int = 1024 * 1024
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    if filename is None:
+        extension = Path(file.filename).suffix if file.filename else ""
+        filename = f"{uuid4().hex}{extension}"
+    
+    file_path = upload_dir / filename
+    
+    try:
+        with open(file_path, "wb") as f:
+            while chunk := await file.read(chunk_size):
+                f.write(chunk)
+    except Exception as e:
+        file_path.unlink(missing_ok=True)
+        raise Exception(f"Error saving file: {str(e)}") from e
+    finally:
+        await file.close()
+    
+    return file_path
