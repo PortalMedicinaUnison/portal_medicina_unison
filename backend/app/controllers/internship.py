@@ -1,5 +1,8 @@
+from pathlib import Path
+from uuid import uuid4
+from fastapi import UploadFile
 from sqlalchemy.orm import Session
-from models.internship import Internship, InternshipApplication, InternshipDocument, ApplicationStatusEnum, InternshipStatusEnum
+from models.internship import Internship, InternshipApplication, InternshipDocument, ApplicationStatusEnum, InternshipStatusEnum, DocumentTypeEnum
 from repos.internship import InternshipRepo, InternshipApplicationRepo, InternshipDocumentRepo
 from schemas.internship import (
     InternshipInput, InternshipUpdate,
@@ -96,7 +99,7 @@ def get_internship_application(application_id: int, db: Session):
     # internship_application_response = orm_to_dict(internship_application)
     return internship_application
 
-def get_internship_applications_by_academic(academic_id: str, db: Session):
+def get_all_internship_applications_by_academic(academic_id: str, db: Session):
     internship_application_repo = InternshipApplicationRepo(db)
     internship_applications = internship_application_repo.get_by_academic_id(academic_id)
     if not internship_applications:
@@ -161,44 +164,67 @@ def delete_internship_application(application_id: int, db: Session):
 
 # ---------------------- INTERNSHIP DOCUMENT ----------------------
 
-def create_internship_document(internship_id: int, internship_document: InternshipDocumentInput, db: Session):
-    new_internship_document = map_to_model(internship_document, InternshipDocument)
-    internship_document_repo = InternshipDocumentRepo(db)
-    created_internship_document = internship_document_repo.create(new_internship_document)
-    internship_document_response = orm_to_dict(created_internship_document)
-    return internship_document_response
+async def create_internship_document(
+    internship_id: int,
+    document_type: DocumentTypeEnum,
+    file: UploadFile,
+    db: Session,
+):  
+
+    upload_dir = Path("uploads") / "internship-documents" / str(internship_id)
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    filename = f"{uuid4().hex}.pdf"
+    file_path = upload_dir / filename
+
+    contents = await file.read()
+
+    try:
+        with open(file_path, "wb") as f:
+            f.write(contents)
+    except Exception as e:
+        raise Exception("Error saving file") from e
+    finally:
+        await file.close()
+
+    # --- Persistencia (delegada al repo) ---
+    try:
+        internship_document_repo = InternshipDocumentRepo(db)
+        new_doc = InternshipDocument(
+            internship_id=internship_id,
+            document_type=document_type,
+            path=str(file_path.as_posix()),
+        )
+        created = internship_document_repo.create(new_doc)
+        return orm_to_dict(created)
+    except Exception:
+        file_path.unlink(missing_ok=True)
 
 def get_all_internship_documents(internship_id: int, db: Session):
     internship_document_repo = InternshipDocumentRepo(db)
-    internship_documents = internship_document_repo.get_all(internship_id)
+    internship_documents = internship_document_repo.get_all_by_internship(internship_id)
     if not internship_documents:
         return []
     internship_documents_response = [orm_to_dict(internship_document) for internship_document in internship_documents]
     return internship_documents_response
 
-def get_internship_documents_by_id(internship_id: int, document_id: int, db: Session):
+def get_internship_documents_by_id(document_id: int, db: Session):
     internship_document_repo = InternshipDocumentRepo(db)
-    internship_document = internship_document_repo.get_by_id(internship_id, document_id)
+    internship_document = internship_document_repo.get_by_id(document_id)
     if not internship_document:
         return None
     internship_document_response = orm_to_dict(internship_document)
     return internship_document_response
 
-def update_internship_document(internship_id: int, document_id: int, internship_document_input: InternshipDocumentUpdate, db: Session):
+def update_internship_document(document_id: int, internship_document_input: InternshipDocumentUpdate, db: Session):
     update_data = internship_document_input.dict(exclude_unset=True)
     internship_document_repo = InternshipDocumentRepo(db)
-    document = internship_document_repo.get_by_id(internship_id, document_id)
-    if not document:
-        return None
     updated_internship_document = internship_document_repo.update(document_id, update_data)
     if not updated_internship_document:
         return None
     updated_internship_document_response = orm_to_dict(updated_internship_document)
     return updated_internship_document_response
 
-def delete_internship_document(internship_id: int, document_id: int, db: Session):
+def delete_internship_document(document_id: int, db: Session):
     internship_document_repo = InternshipDocumentRepo(db)
-    document = internship_document_repo.get_by_id(internship_id, document_id)
-    if not document:
-        return False
     return internship_document_repo.delete(document_id)

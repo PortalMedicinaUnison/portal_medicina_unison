@@ -49,18 +49,13 @@ class InternshipDocumentInput(BaseModel):
     internship_id: int
     document_type: DocumentTypeEnum
     path: str
-    is_verified: bool = False
 
 class InternshipDocumentUpdate(BaseModel):
     document_type: Optional[DocumentTypeEnum] = None
     path: Optional[str] = None
-
-class InternshipDocumentUpdateByAdmin(BaseModel):
-    is_verified: Optional[bool]
 
 class InternshipDocumentOutput(BaseModel):
     document_id: int
     internship_id: int
     document_type: DocumentTypeEnum
     path: str
-    is_verified: bool

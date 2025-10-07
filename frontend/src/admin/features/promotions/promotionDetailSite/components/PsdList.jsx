@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../../../../../config';
 import useDeletePsd from '../hooks/useDeletePsd';
 import useGetPsdsByProm from '../hooks/useGetPsdsByProm';
 import DropdownMenu from '../../../../../utils/ui/DropdownMenu';

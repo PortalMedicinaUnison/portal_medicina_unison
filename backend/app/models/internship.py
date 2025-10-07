@@ -58,7 +58,7 @@ class Internship(BaseModel):
 
     application: Mapped["InternshipApplication"] = relationship("InternshipApplication", lazy="joined", backref=backref("internship", uselist=False))
     site: Mapped["Site"] = relationship("Site", lazy="joined")
-    documents: Mapped[list["InternshipDocument"]] = relationship("InternshipDocument", back_populates="internship", cascade="all, delete-orphan",lazy="selectin")
+    documents: Mapped[list["InternshipDocument"]] = relationship("InternshipDocument", back_populates="internship", cascade="all, delete-orphan", passive_deletes=True)
 
     def __repr__(self):
         return f"<Internship(internship_id={self.internship_id}, academic_id={self.application.academic_id}, site_id={self.site_id}, status={self.status.name})>"
@@ -75,10 +75,9 @@ class InternshipDocument(BaseModel):
     document_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     internship_id: Mapped[int] = mapped_column(Integer, ForeignKey("internships.internship_id", ondelete="CASCADE"), nullable=False)
     document_type: Mapped[DocumentTypeEnum] = mapped_column(IntEnumType(DocumentTypeEnum), nullable=False)
-    path: Mapped[str] = mapped_column(String(255), nullable=False)
-    is_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    path: Mapped[str] = mapped_column(String(1024), nullable=False)
 
-    internship: Mapped["Internship"] = relationship("Internship", back_populates="documents", lazy="joined",)
+    internship: Mapped["Internship"] = relationship("Internship", back_populates="documents", lazy="selectin",)
     
     def __repr__(self):
         return f"<InternshipDocument(internship_id={self.internship_id}, document_type={self.document_type.name}, is_verified={self.is_verified})>"

@@ -2,17 +2,17 @@ import { useState, useEffect, useCallback } from 'react';
 import { getDocumentsByInternshipRequest } from '../../../../../services/internshipService'
 
 
-export default function useGetDocuments () {
+export default function useGetDocumentsByInternship (id) {
   const [documents, setDocuments] = useState([]);
-  const [loading, setLoading]             = useState(false);
-  const [error, setError]                 = useState(null);
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState(null);
 
-  const getDocuments = useCallback(async () => {
+  const getDocuments = useCallback(async (internshipId) => {
     setLoading(true);
     setError(null);
     
     try {
-      const response = await getDocumentsByInternshipRequest();
+      const response = await getDocumentsByInternshipRequest(internshipId);
       setDocuments(response.data);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error fetching documents');
@@ -23,8 +23,8 @@ export default function useGetDocuments () {
   }, []);
     
   useEffect(() => {
-    getDocuments();
-  }, [getDocuments]);
+    getDocuments(id);
+  }, [id, getDocuments]);
     
   return { documents, loading, error, refetch: getDocuments };
 };

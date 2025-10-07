@@ -5,11 +5,15 @@ import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 import DocumentList from '../documents/components/DocumentList'
+import DocumentForm from '../documents/components/DocumentForm';
 
 
 function InternshipDetail({ internship, fetching, fetchError, refetch, internshipId }) {    
   const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState(false);
   
+  internshipId = Number(internshipId);
+
   const INTERNSHIP_STATUS = {
     1: 'Activo',
     2: 'Suspendido',
@@ -79,9 +83,31 @@ function InternshipDetail({ internship, fetching, fetchError, refetch, internshi
         </dl>
       </div>
 
-      <div className='mt-16'>
-          <DocumentList/>
+      <div className="info-actions mt-16">
+        <button 
+          type="button" 
+          className='btn-tertiary'
+          onClick={() => setOpenModal(true)}
+        >
+          Subir documento
+        </button>
       </div>
+
+      <div className='mt-8'>
+          <DocumentList internshipId={internshipId}/>
+      </div>
+
+      <Modal
+        open={openModal}
+        title="Subir documento"
+        onClose={() => setOpenModal(false)}
+      >
+        <DocumentForm 
+          internshipId={internshipId}
+          onClose={() => setOpenModal(false)}
+          onSuccess={() => setOpenModal(false)} 
+        />
+      </Modal>
 
     </div>        
   );

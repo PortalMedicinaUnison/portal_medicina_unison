@@ -13,14 +13,14 @@ export default function useCreateDocument() {
     setSuccess(false);
   }, []);
 
-  const createDocument = useCallback(async (payload) => {
+  const createDocument = useCallback(async (internshipId, payload) => {
     if (loading) return false;
     setLoading(true);
     setError(null);
     setSuccess(false);
 
     try {
-      const response = await createInternshipDocumentRequest(payload);
+      const response = await createInternshipDocumentRequest(internshipId, payload);
       setSuccess(true);
       return response;
     } catch (err) {
