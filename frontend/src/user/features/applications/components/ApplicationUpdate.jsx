@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
 import useUpdateApplication from '../../applications/hooks/useUpdateApplication'
+import useCreateInternship from '../../internships/hooks/useCreateInternship';
 import { cleanFormData } from "../../../../utils/utils";
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
@@ -17,6 +18,7 @@ const INITIAL_FORM = {
 function ApplicationUpdate({ application, fetching, fetchError, refetch, applicationId, user }) {
   const navigate = useNavigate();
   const { updateApplication, loading: saving, error: saveError, success: saved, reset } = useUpdateApplication();
+  const { createInternship, loading: creatingInternship, error: internshipError, success: internshipCreated, reset: resetCreate } = useCreateInternship();
 
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [validationError, setValidationError] = useState('');
@@ -54,8 +56,21 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
     const payload = {
       status: 2,
     };
+    
+    const response = await updateApplication(applicationId, payload);
+    console.log("Update response:", response);
 
-    await updateApplication(applicationId, payload);
+    if (response && response.data) {
+      const internshipPayload = {
+        application_id: applicationId,
+        site_id: null,
+        status: 1,
+      };
+
+      console.log("Creating internship with payload:", internshipPayload);
+
+      await createInternship(internshipPayload);
+    }
   };
 
   const handleConfirmDecline = async () => {
@@ -95,17 +110,21 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
 
       if (validationError) setValidationError("");
       if (saveError) reset();
+      if (internshipError) resetCreate();
+
     },
-    [validationError, saveError, reset]
+    [validationError, saveError, internshipError, reset, resetCreate]
   );
 
 // ---------------------- EFFECTS ----------------------
 
   useEffect(() => {
-    if (saved) {
-      navigate(ROUTES.USER.INTERNSHIP_REDIRECT)
+    if (saved && internshipCreated) {
+      navigate(ROUTES.USER.INTERNSHIP_REDIRECT);
+    } else if (saved && !creatingInternship && internshipError) {
+      setValidationError("La aplicación se guardó pero hubo un error al crear el internship. Contacta al administrador.");
     }
-  }, [saved, navigate]);
+  }, [saved, internshipCreated, creatingInternship, internshipError, navigate]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -145,7 +164,7 @@ return (
         <div className="alert-error">
           <strong className="font-bold">Error: </strong>
             <span className="block sm:inline">
-              {validationError || saveError}
+              {validationError || saveError || internshipError}
             </span>
         </div>
       )}

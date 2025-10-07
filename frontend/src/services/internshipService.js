@@ -15,6 +15,9 @@ export const getInternshipByIdRequest = (id) =>
 export const getInternshipsByAcademicRequest = (academicId) =>
   api.get(API_ENDPOINTS.INTERNSHIPS.GET_BY_ACADEMIC(academicId));
 
+export const getLastestInternshipByAcademicRequest = (academicId) =>
+  api.get(API_ENDPOINTS.INTERNSHIPS.GET_LATEST_BY_ACADEMIC(academicId));
+
 export const getInternshipsBySiteRequest = (siteId) =>
   api.get(API_ENDPOINTS.INTERNSHIPS.GET_BY_SITE(siteId));
 

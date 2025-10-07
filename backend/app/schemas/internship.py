@@ -38,7 +38,7 @@ class InternshipUpdate(BaseModel):
 class InternshipOutput(BaseModel):
     internship_id: int
     application_id: int
-    site_id: int
+    site_id: Optional[int] = None
     status: InternshipStatusEnum
     application: Optional[InternshipApplicationOutput] = None
     site: Optional[SiteBasicOutput] = None

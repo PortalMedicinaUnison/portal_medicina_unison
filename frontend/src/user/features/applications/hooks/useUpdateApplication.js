@@ -14,8 +14,9 @@ export default function useUpdateApplication() {
     setSuccess(false);
 
     try {
-      await updateInternshipApplicationRequest(id, formData);
+      const response = await updateInternshipApplicationRequest(id, formData);
       setSuccess(true);
+      return response;
     } catch (err) {
       setError(err.response?.data?.detail || 'Error updating application');
       setSuccess(false);

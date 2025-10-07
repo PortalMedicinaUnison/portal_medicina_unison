@@ -23,32 +23,40 @@ def get_all_internships(db: Session):
     internships = internship_repo.get_all()
     if not internships:
         return []
-    internships_response = [orm_to_dict(internship) for internship in internships]
-    return internships_response
+    # internships_response = [orm_to_dict(internship) for internship in internships]
+    return internships
 
 def get_internship(internship_id: int, db: Session):
     internship_repo = InternshipRepo(db)
     internship = internship_repo.get_by_id(internship_id)
     if not internship:
         return None
-    internship_response = orm_to_dict(internship)
-    return internship_response
+    # internship_response = orm_to_dict(internship)
+    return internship
 
-def get_internships_by_academic(academic_id: str, db: Session):
+def get_all_internships_by_academic(academic_id: str, db: Session):
     internship_repo = InternshipRepo(db)
     internships = internship_repo.get_by_academic_id(academic_id)
     if not internships:
         return []
-    internships_response = [orm_to_dict(internship) for internship in internships]
-    return internships_response
+    # internships_response = [orm_to_dict(internship) for internship in internships]
+    return internships
+
+def get_latest_internship_by_academic(academic_id: str, db: Session):
+    internship_repo = InternshipRepo(db)
+    internship = internship_repo.get_latest_by_academic_id(academic_id)
+    if not internship:
+        return None
+    # internship_response = orm_to_dict(internship)
+    return internship
 
 def get_internships_by_site(site_id: int, db: Session):
     internship_repo = InternshipRepo(db)
     internships = internship_repo.get_by_site_id(site_id)
     if not internships:
         return []
-    internships_response = [orm_to_dict(internship) for internship in internships]
-    return internships_response
+    # internships_response = [orm_to_dict(internship) for internship in internships]
+    return internships
 
 def update_internship(internship_id: int, internship_input: InternshipUpdate, db: Session):
     update_data = internship_input.dict(exclude_unset=True)

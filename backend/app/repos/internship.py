@@ -12,6 +12,10 @@ class InternshipRepo(BaseRepo):
         self.session.refresh(data)
         return data
     
+    def create_without_commit(self, data: Internship) -> Internship:
+        self.session.add(data)
+        return data
+    
     def get_all(self) -> List[Internship]:
         return self.session.query(Internship).filter(
             Internship.is_active == True
@@ -53,13 +57,12 @@ class InternshipRepo(BaseRepo):
                 Internship.is_active == True
             ).all()
         )
-    
 
     def get_by_application_id(self, application_id: int) -> Optional[Internship]:
         return self.session.query(Internship).filter(
             Internship.application_id == application_id,
             Internship.is_active == True
-        ).first()
+    ).first()
 
     def get_by_site_id(self, site_id: int) -> List[Internship]:
         return self.session.query(Internship).filter(
@@ -84,18 +87,6 @@ class InternshipRepo(BaseRepo):
             self.session.commit()
             return True
         return False
-
-    def update_without_commit(self, application_id: int, data: dict) -> Optional[InternshipApplication]:
-        application = self.get_by_id(application_id)
-        if application:
-            for key, value in data.items():
-                if hasattr(application, key):
-                    setattr(application, key, value)
-        return application
-
-    def create_without_commit(self, data: Internship) -> Internship:
-        self.session.add(data)
-        return data
 
 # ---------------  INTERNSHIP APPLICATION  ----------------------
 
@@ -148,6 +139,14 @@ class InternshipApplicationRepo(BaseRepo):
                     setattr(application, key, value)
             self.session.commit()
             self.session.refresh(application)
+        return application
+
+    def update_without_commit(self, application_id: int, data: dict) -> Optional[InternshipApplication]:
+        application = self.get_by_id(application_id)
+        if application:
+            for key, value in data.items():
+                if hasattr(application, key):
+                    setattr(application, key, value)
         return application
 
     def delete(self, application_id: int) -> bool:

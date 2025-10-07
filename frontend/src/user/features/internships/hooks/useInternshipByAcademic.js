@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getInternshipsByAcademicRequest } from '../../../../services/internshipService';
+import { getLastestInternshipByAcademicRequest } from '../../../../services/internshipService';
 
 
 export default function useInternshipByAcademic(id) {
@@ -13,7 +13,7 @@ export default function useInternshipByAcademic(id) {
     setError(null);
     
     try {
-      const response = await getInternshipsByAcademicRequest(id);
+      const response = await getLastestInternshipByAcademicRequest(id);
       setInternship(response.data);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error fetching internship');

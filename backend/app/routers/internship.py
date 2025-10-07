@@ -11,7 +11,8 @@ from controllers.internship import (
     create_internship,
     get_all_internships,
     get_internship,
-    get_internships_by_academic,
+    get_all_internships_by_academic,
+    get_latest_internship_by_academic,
     get_internships_by_site,
     update_internship,
     delete_internship,
@@ -60,10 +61,20 @@ async def get_internship_route(internship_id: int, db: Session = Depends(get_db)
             detail="Internado no encontrado")
     return internship
 
-@internship_router.get('/academicId/{academic_id}', response_model=List[InternshipOutput])
-async def get_internships_by_academic_route(academic_id: str, db: Session = Depends(get_db)):
-    internships = get_internships_by_academic(academic_id, db)
+@internship_router.get('/academicId/{academic_id}/all', response_model=List[InternshipOutput])
+async def get_all_internships_by_academic_route(academic_id: str, db: Session = Depends(get_db)):
+    internships = get_all_internships_by_academic(academic_id, db)
     return internships
+
+@internship_router.get('/academicId/{academic_id}', response_model=InternshipOutput)
+async def get_latest_internship_by_academic_route(academic_id: str, db: Session = Depends(get_db)):
+    internship = get_latest_internship_by_academic(academic_id, db)
+    if not internship:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Internado no encontrado")
+    return internship
+    
 
 @internship_router.get('/siteId/{site_id}', response_model=List[InternshipOutput])
 async def get_internships_by_site_route(site_id: int, db: Session = Depends(get_db)):

@@ -63,12 +63,14 @@ function InternshipDetail({ internship, fetching, fetchError, refetch, internshi
       <div className="item-container">
         <dl className="item-list">
           <div className="item-row">
-            <dt className="item-header">Año</dt>
-            <dd className="item-text">{internship.year}</dd>
+            <dt className="item-header">Promoción</dt>
+            <dd className="item-text">
+              {internship.application.promotion.year} - {internship.application.promotion.period}
+            </dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Periodo</dt>
-            <dd className="item-text">{internship.period}</dd>
+            <dt className="item-header">Sede</dt>
+            <dd className="item-text">{internship?.site?.name ?? 'Sin asignar'}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Estatus</dt>
