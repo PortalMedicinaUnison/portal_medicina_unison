@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status
+from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from core.dependencies import get_db
 from typing import List, Optional
@@ -32,7 +32,9 @@ from controllers.internship import (
     get_all_internship_documents,
     get_internship_documents_by_id,
     update_internship_document,
-    delete_internship_document
+    delete_internship_document,
+    view_internship_document,
+    download_internship_document,
 )
 
 # ----------------------  INTERNSHIP  ----------------------
@@ -183,12 +185,14 @@ async def create_internship_document_route(
     document_type: DocumentTypeEnum = Form(...),
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
+    request: Request = None
 ):
     uploaded_document = await create_internship_document(
         db=db,
         internship_id=internship_id,
         document_type=document_type,
         file=file,
+        request=request
     )
     if not uploaded_document:
         raise HTTPException(
@@ -196,15 +200,14 @@ async def create_internship_document_route(
             detail="No se pudo crear el documento del internado.")
     return uploaded_document
 
-
 @internship_document_router.get('/{internship_id}/documents', response_model=List[InternshipDocumentOutput])
 async def get_internship_documents_route(internship_id: int, db: Session = Depends(get_db)):
     internship_documents = get_all_internship_documents(internship_id, db)
     return internship_documents
 
 @internship_document_router.get('/{internship_id}/documents/{document_id}', response_model=InternshipDocumentOutput)
-async def get_internship_documents_by_id_route(document_id: int, db: Session = Depends(get_db)):
-    internship_document = get_internship_documents_by_id(document_id, db)
+async def get_internship_documents_by_id_route(internship_id: int, document_id: int, db: Session = Depends(get_db)):
+    internship_document = get_internship_documents_by_id(internship_id, document_id, db)
     if not internship_document:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -212,8 +215,8 @@ async def get_internship_documents_by_id_route(document_id: int, db: Session = D
     return internship_document
 
 @internship_document_router.patch('/{internship_id}/documents/{document_id}', response_model=InternshipDocumentOutput)
-async def update_internship_document_route(document_id: int, document: InternshipDocumentUpdate, db: Session = Depends(get_db)):
-    updated_document = update_internship_document(document_id, document, db)
+async def update_internship_document_route(internship_id: int, document_id: int, document: InternshipDocumentUpdate, db: Session = Depends(get_db)):
+    updated_document = update_internship_document(internship_id, document_id, document, db)
     if not updated_document:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -221,10 +224,20 @@ async def update_internship_document_route(document_id: int, document: Internshi
     return updated_document
 
 @internship_document_router.delete('/{internship_id}/documents/{document_id}')
-async def delete_internship_document_route(document_id: int, db: Session = Depends(get_db)):
-    deleted = delete_internship_document(document_id, db)
+async def delete_internship_document_route(internship_id: int, document_id: int, db: Session = Depends(get_db)):
+    deleted = delete_internship_document(internship_id, document_id, db)
     if not deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Documento de internado no encontrado")
     return deleted
+
+@internship_document_router.get('/{internship_id}/documents/{document_id}/view', name='view_internship_document')
+async def view_internship_document_route(internship_id: int, document_id: int, db: Session = Depends(get_db)):
+    return view_internship_document(internship_id, document_id, db)
+
+
+@internship_document_router.get('/{internship_id}/documents/{document_id}/download', name='download_internship_document')
+async def download_internship_document_route(internship_id: int, document_id: int, db: Session = Depends(get_db)):
+    return download_internship_document(internship_id, document_id, db)
+

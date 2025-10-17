@@ -1,6 +1,6 @@
 from pathlib import Path
 from uuid import uuid4
-from fastapi import UploadFile
+from fastapi import UploadFile, Request
 from sqlalchemy.orm import Session
 from models.internship import Internship, InternshipApplication, InternshipDocument, ApplicationStatusEnum, InternshipStatusEnum, DocumentTypeEnum
 from repos.internship import InternshipRepo, InternshipApplicationRepo, InternshipDocumentRepo
@@ -9,7 +9,8 @@ from schemas.internship import (
     InternshipApplicationInput, InternshipApplicationUpdate, 
     InternshipDocumentInput, InternshipDocumentUpdate,
 )
-from utils.utils import orm_to_dict, map_to_model, save_uploaded_file
+from utils.utils import orm_to_dict, map_to_model
+from utils.file_handlers import save_uploaded_file, get_file_response
 
 
 # ---------------------- INTERNSHIP ----------------------
@@ -169,6 +170,7 @@ async def create_internship_document(
     document_type: DocumentTypeEnum,
     file: UploadFile,
     db: Session,
+    request: Request,
 ):  
 
     upload_dir = Path("uploads") / "internship-documents" / str(internship_id)
@@ -179,16 +181,33 @@ async def create_internship_document(
     except Exception as e:
         raise Exception("Error saving internship document") from e
 
-    # --- Persistencia (delegada al repo) ---
     try:
         internship_document_repo = InternshipDocumentRepo(db)
         new_doc = InternshipDocument(
             internship_id=internship_id,
             document_type=document_type,
             path=str(file_path.as_posix()),
+            media_type=file.content_type,
         )
         created = internship_document_repo.create(new_doc)
-        return orm_to_dict(created)
+
+        view_url = str(request.url_for(
+            "view_internship_document",
+            internship_id=created.internship_id,
+            document_id=created.document_id
+        ))
+        
+        download_url = str(request.url_for(
+            "download_internship_document",
+            internship_id=created.internship_id,
+            document_id=created.document_id
+        ))
+       
+        updated = internship_document_repo.update(created.internship_id, created.document_id, {
+            "view_url": view_url,
+            "download_url": download_url
+        })
+        return orm_to_dict(updated)
     except Exception:
         file_path.unlink(missing_ok=True)
 
@@ -200,23 +219,43 @@ def get_all_internship_documents(internship_id: int, db: Session):
     internship_documents_response = [orm_to_dict(internship_document) for internship_document in internship_documents]
     return internship_documents_response
 
-def get_internship_documents_by_id(document_id: int, db: Session):
+def get_internship_documents_by_id(internship_id: int, document_id: int, db: Session):
     internship_document_repo = InternshipDocumentRepo(db)
-    internship_document = internship_document_repo.get_by_id(document_id)
+    internship_document = internship_document_repo.get_by_id(internship_id, document_id)
     if not internship_document:
         return None
     internship_document_response = orm_to_dict(internship_document)
     return internship_document_response
 
-def update_internship_document(document_id: int, internship_document_input: InternshipDocumentUpdate, db: Session):
+def update_internship_document(internship_id: int, document_id: int, internship_document_input: InternshipDocumentUpdate, db: Session):
     update_data = internship_document_input.dict(exclude_unset=True)
     internship_document_repo = InternshipDocumentRepo(db)
-    updated_internship_document = internship_document_repo.update(document_id, update_data)
+    updated_internship_document = internship_document_repo.update(internship_id, document_id, update_data)
     if not updated_internship_document:
         return None
     updated_internship_document_response = orm_to_dict(updated_internship_document)
     return updated_internship_document_response
 
-def delete_internship_document(document_id: int, db: Session):
+def delete_internship_document(internship_id: int, document_id: int, db: Session):
     internship_document_repo = InternshipDocumentRepo(db)
-    return internship_document_repo.delete(document_id)
+    return internship_document_repo.delete(internship_id, document_id)
+
+def view_internship_document(internship_id: int, document_id: int, db: Session):
+    internship_document_repo = InternshipDocumentRepo(db)
+    internship_document = internship_document_repo.get_by_id(internship_id, document_id)
+    if not internship_document:
+        return None
+    return get_file_response(
+        doc=internship_document,
+        inline=True
+    )
+
+def download_internship_document(internship_id: int, document_id: int, db: Session):
+    internship_document_repo = InternshipDocumentRepo(db)
+    internship_document = internship_document_repo.get_by_id(internship_id, document_id)
+    if not internship_document:
+        return None
+    return get_file_response(
+        doc=internship_document,
+        inline=False
+    )

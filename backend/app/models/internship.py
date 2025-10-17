@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Integer, String, Index, ForeignKey, UniqueConstraint
+from sqlalchemy import Boolean, Integer, String, Index, ForeignKey, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
 from enum import IntEnum
 from .base import BaseModel
@@ -68,16 +68,23 @@ class Internship(BaseModel):
 class InternshipDocument(BaseModel):
     __tablename__ = 'internship_documents'
     __table_args__ = (
-        UniqueConstraint('internship_id', 'document_type', name='uq_doc_internship_type'),
-        Index('idx_docs_internship_type', 'internship_id', 'document_type'),
+        Index(
+            "uq_active_doc_per_type",
+            "internship_id", "document_type",
+            unique=True,
+            sqlite_where=text("is_active = 1"),
+        ),
     )
     
     document_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     internship_id: Mapped[int] = mapped_column(Integer, ForeignKey("internships.internship_id", ondelete="CASCADE"), nullable=False)
     document_type: Mapped[DocumentTypeEnum] = mapped_column(IntEnumType(DocumentTypeEnum), nullable=False)
     path: Mapped[str] = mapped_column(String(1024), nullable=False)
+    media_type: Mapped[str] = mapped_column(String(255), nullable=True)
+    view_url: Mapped[str] = mapped_column(String(1024), nullable=True)
+    download_url: Mapped[str] = mapped_column(String(1024), nullable=True)
 
     internship: Mapped["Internship"] = relationship("Internship", back_populates="documents", lazy="selectin",)
     
     def __repr__(self):
-        return f"<InternshipDocument(internship_id={self.internship_id}, document_type={self.document_type.name}, is_verified={self.is_verified})>"
+        return f"<InternshipDocument(internship_id={self.internship_id}, document_type={self.document_type.name})>"

@@ -72,3 +72,13 @@ export const updateInternshipDocumentRequest = (internshipId, docId, data) =>
 
 export const deleteInternshipDocumentRequest = (internshipId, docId) =>
   api.delete(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.DELETE(internshipId, docId));
+
+export const viewInternshipDocumentRequest = (internshipId, docId) =>
+  api.get(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.VIEW(internshipId, docId), {
+    responseType: 'blob',
+  });
+
+export const downloadInternshipDocumentRequest = (internshipId, docId) =>
+  api.get(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.DOWNLOAD(internshipId, docId), {
+    responseType: 'blob',
+  });

@@ -7,14 +7,14 @@ export default function useUpdateDocument() {
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updateDocument = useCallback(async (id, payload) => {  
+  const updateDocument = useCallback(async (internshipId, docId, payload) => {  
     if (loading) return;
     setLoading(true);
     setError(null);
     setSuccess(false);
 
     try {
-      await updateInternshipDocumentRequest(id, payload);
+      await updateInternshipDocumentRequest(internshipId, docId, payload);
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error updating document');

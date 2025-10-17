@@ -59,3 +59,6 @@ class InternshipDocumentOutput(BaseModel):
     internship_id: int
     document_type: DocumentTypeEnum
     path: str
+    media_type: str
+    view_url: Optional[str] = None
+    download_url: Optional[str] = None

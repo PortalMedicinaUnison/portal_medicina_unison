@@ -27,8 +27,7 @@ export const ROUTES = {
         INTERNSHIP: '/my-internship',
         INTERNSHIP_APPLICATION_STATUS: '/my-internship/application',
         INTERNSHIP_APPLICATION_DECLINED: '/my-internship/declined',
-        INTERNSHIP_REDIRECT: '/my-internship/redirect',
-        
+        INTERNSHIP_REDIRECT: '/my-internship/redirect',        
     },
 
     ADMIN: {

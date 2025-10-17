@@ -85,6 +85,8 @@ export const API_ENDPOINTS = {
     GET: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}`,
     UPDATE: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}`,
     DELETE: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}`,
+    VIEW: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}/view`,
+    DOWNLOAD: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}/download`,
   },
 
   ANNOUNCEMENTS: {

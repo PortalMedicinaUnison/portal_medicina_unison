@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
-import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 import DocumentList from '../documents/components/DocumentList'
 import DocumentForm from '../documents/components/DocumentForm';
 
@@ -11,6 +10,7 @@ import DocumentForm from '../documents/components/DocumentForm';
 function InternshipDetail({ internship, fetching, fetchError, refetch, internshipId }) {    
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
+  const [docsVersion, setDocsVersion] = useState(0);
   
   internshipId = Number(internshipId);
 
@@ -94,7 +94,7 @@ function InternshipDetail({ internship, fetching, fetchError, refetch, internshi
       </div>
 
       <div className='mt-8'>
-          <DocumentList internshipId={internshipId}/>
+        <DocumentList internshipId={internshipId} version={docsVersion} />
       </div>
 
       <Modal
@@ -105,7 +105,10 @@ function InternshipDetail({ internship, fetching, fetchError, refetch, internshi
         <DocumentForm 
           internshipId={internshipId}
           onClose={() => setOpenModal(false)}
-          onSuccess={() => setOpenModal(false)} 
+          onSuccess={() => {
+            setOpenModal(false);
+            setDocsVersion(v => v + 1);
+          }}
         />
       </Modal>
 

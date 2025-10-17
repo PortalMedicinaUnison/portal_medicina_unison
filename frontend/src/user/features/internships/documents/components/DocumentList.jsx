@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../../../../../config';
 import useDeleteDocument from '../hooks/useDeleteDocument';
 import useGetDocumentsByInternship from '../hooks/useGetDocumentsByInternship'
+import useDocumentLinks from '../hooks/useDocumentsLinks';
 import DropdownMenu from '../../../../../utils/ui/DropdownMenu';
 import LoadingSpinner from '../../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../../utils/ui/DataLoadError';
@@ -10,10 +10,12 @@ import Modal from '../../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../../utils/ui/ConfirmDialogContent';
 
 
-function DocumentList({ internshipId }) {
+function DocumentList({ internshipId, version = 0 }) {
   const navigate = useNavigate();
   const { documents, loading: fetching, error: fetchError, refetch } = useGetDocumentsByInternship(internshipId);
   const { deleteDocument, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteDocument();
+  const { openView, openDownload } = useDocumentLinks(internshipId);
+
   
   const [item, setItem] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -40,7 +42,7 @@ function DocumentList({ internshipId }) {
 
   const handleConfirmDelete = async () => {
     if (item == null) return
-    await deleteDocument(item);
+    await deleteDocument(internshipId, item);
   };
 
   const handleCloseConfirm = () => {
@@ -56,10 +58,14 @@ function DocumentList({ internshipId }) {
 // ---------------------- EFFECTS ----------------------
 
   useEffect(() => {
+    if (internshipId) refetch(internshipId);
+  }, [version, internshipId, refetch]);
+
+  useEffect(() => {
     if (deleted) {
       setShowConfirmDelete(false);
       setItem(null);
-      refetch();
+      refetch(internshipId);
       reset();
     }
   }, [deleted, refetch, reset]);
@@ -81,7 +87,7 @@ function DocumentList({ internshipId }) {
         title="No se pudo cargar la información"
         message="Intenta recargar la página."
         details={fetchError}
-        onRetry={refetch}
+        onRetry={() => refetch(internshipId)}
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
       />
@@ -111,10 +117,17 @@ function DocumentList({ internshipId }) {
               documents.map((item) => (
               <tr key={item.document_id}>
                 <td className="text-left">{getDocumentTypeName(item.document_type)}</td>
-                <td>{item.is_verified ? '📄' : '📄'}</td>
+                <td>
+                  <button
+                    onClick={() => openView(item.document_id)}
+                  >
+                    📄
+                  </button>
+                </td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[
+                      { label: 'Descargar', onClick: () => openDownload(item.document_id) },
                       { label: 'Eliminar', onClick: () => handleDeleteButton(item.document_id), className: 'text-red-600' },
                     ]}
                     disabled={deleting}

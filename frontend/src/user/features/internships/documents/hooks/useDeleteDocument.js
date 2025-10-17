@@ -7,14 +7,14 @@ export default function useDeleteDocument() {
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const deleteDocument = useCallback(async (id) => {
+  const deleteDocument = useCallback(async (internshipId, docId) => {
     if (loading) return;
     setLoading(true);
     setSuccess(false);
     setError(null);
 
     try {
-      await deleteInternshipDocumentRequest(id);
+      await deleteInternshipDocumentRequest(internshipId, docId);
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error deleting document');

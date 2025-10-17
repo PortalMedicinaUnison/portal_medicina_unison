@@ -172,14 +172,16 @@ class InternshipDocumentRepo(BaseRepo):
             InternshipDocument.is_active == True
         ).all()
 
-    def get_by_id(self, document_id: int) -> Optional[InternshipDocument]:
+    
+    def get_by_id(self, internship_id: int, document_id: int) -> Optional[InternshipDocument]:
         return (self.session.query(InternshipDocument).filter(
             InternshipDocument.document_id == document_id,
+            InternshipDocument.internship_id == internship_id,
             InternshipDocument.is_active == True
         ).first())
 
-    def update(self, document_id: int, data: dict) -> Optional[InternshipDocument]:
-        doc = self.get_by_id(document_id)
+    def update(self, internship_id: int, document_id: int, data: dict) -> Optional[InternshipDocument]:
+        doc = self.get_by_id(internship_id, document_id)
         if doc:
             for key, value in data.items():
                 if hasattr(doc, key):
@@ -188,8 +190,8 @@ class InternshipDocumentRepo(BaseRepo):
             self.session.refresh(doc)
         return doc
 
-    def delete(self, document_id: int) -> bool:
-        doc = self.get_by_id(document_id)
+    def delete(self, internship_id: int, document_id: int) -> bool:
+        doc = self.get_by_id(internship_id, document_id)
         if doc:
             doc.is_active = False
             self.session.commit()
