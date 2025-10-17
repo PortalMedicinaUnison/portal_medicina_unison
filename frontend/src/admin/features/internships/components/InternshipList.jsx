@@ -142,9 +142,9 @@ function InternshipList({ internships, fetching, fetchError, refetch }) {
             ) : (
               filtered.map((item) => (
               <tr key={item.internship_id}>
-                <td>{item.student_id}</td>
-                <td>{item.site_id}</td>
-                <td>{item.promotion_id}</td>
+                <td>{item.application.academic_id}</td>
+                <td>{item.site ? item.site.name : 'No asignada'}</td>
+                <td>{item.application.promotion.year} - {item.application.promotion.period}</td>
                 <td>{getStatusName(item.status)}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
