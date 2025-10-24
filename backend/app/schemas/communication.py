@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator, HttpUrl
 from typing import Optional
-from datetime import date
+from datetime import date, datetime
 from models.communication import AnnouncementTypeEnum
 from utils.validation import is_valid_future_date
 
@@ -25,6 +25,7 @@ class AnnouncementOutput(BaseModel):
     announcement_type: AnnouncementTypeEnum
     description: Optional[str] = None
     is_visible: bool = True
+    created_at: datetime
 
 # ---------------------- SURVEY ----------------------
 

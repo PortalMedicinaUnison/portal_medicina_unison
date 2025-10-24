@@ -24,6 +24,8 @@ export const ROUTES = {
         REPORT_DETAIL: (reportId) => `/reports/${reportId}`,
         REPORT_EDIT: (reportId) => `/reports/${reportId}/edit`,
 
+        SURVEYS_LIST: '/surveys',
+
         INTERNSHIP: '/my-internship',
         INTERNSHIP_APPLICATION_STATUS: '/my-internship/application',
         INTERNSHIP_APPLICATION_DECLINED: '/my-internship/declined',

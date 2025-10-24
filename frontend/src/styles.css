@@ -547,7 +547,7 @@ body {
   }
 
   .card-badge {
-    @apply inline-block px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-800 mb-2;
+    @apply inline-block px-2 py-0.5 text-xs rounded-full mb-2;
   }
 
   .card-title {

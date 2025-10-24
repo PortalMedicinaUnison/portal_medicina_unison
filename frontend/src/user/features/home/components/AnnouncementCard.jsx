@@ -19,7 +19,7 @@ function AnnouncementCard({ announcements, fetching, fetchError, refetch }) {
 
   const getTypeBadgeColor = (typeEnum) => {
     const colors = {
-      1: 'bg-blue-100 text-blue-800',
+      1: 'bg-green-100 text-green-800',
       2: 'bg-purple-100 text-purple-800'
     };
     return colors[typeEnum] || 'bg-gray-100 text-gray-800';
@@ -61,10 +61,10 @@ function AnnouncementCard({ announcements, fetching, fetchError, refetch }) {
           <div className="text-left mb-4">
             <span
               className={`card-badge ${getTypeBadgeColor(
-                announcement.type
+                announcement.announcement_type
               )}`}
             >
-              {getAnnouncementTypeName(announcement.type)}
+              {getAnnouncementTypeName(announcement.announcement_type)}
             </span>
           </div>
 
@@ -88,11 +88,10 @@ function AnnouncementCard({ announcements, fetching, fetchError, refetch }) {
           {/* Footer Info */}
           <div className="card-footer">
             <span>
-              {announcement.createdAt
-                ? new Date(announcement.createdAt).toLocaleDateString('es-MX')
+              {announcement.created_at
+                ? new Date(announcement.created_at).toLocaleDateString('es-MX')
                 : 'Fecha desconocida'}
             </span>
-            {announcement.author && <span>{announcement.author}</span>}
           </div>          
         </div>
       ))}
