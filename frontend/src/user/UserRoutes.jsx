@@ -5,7 +5,7 @@ import ProtectedRoute from '../features/auth/ProtectedRoute';
 
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignUpPage from '../features/auth/pages/SignUpPage';
-import HomePage from '../user/features/home/pages/HomePage';
+import HomePage from '../user/features/announcements/pages/AnnouncementCardPage';
 
 // Profile pages
 import ProfileUpdatePage from '../features/profile/pages/ProfileUpdatePage';
