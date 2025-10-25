@@ -20,6 +20,7 @@ function SurveyList({ surveys, fetching, fetchError, refetch }) {
 // ---------------------- FILTERS AND SEARCH ----------------------
  
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const [mandatoryStatus, setMandatoryStatus] = useState('');
   
   const searchQuery = search.trim().toLowerCase();
@@ -27,6 +28,7 @@ function SurveyList({ surveys, fetching, fetchError, refetch }) {
     if (!surveys) return [];
     return surveys.filter((item) => {
       if (mandatoryStatus !== '' && item.mandatory !== (mandatoryStatus === 'true')) return false;
+      if (statusFilter !== '' && item.is_visible !== (statusFilter === 'true')) return false;
       if (!searchQuery) return true;
 
       const title = String(item.title).toLowerCase();
@@ -148,6 +150,7 @@ function SurveyList({ surveys, fetching, fetchError, refetch }) {
                 <td className="text-left">{item.description}</td>
                 <td>{item.expiration_date}</td>
                 <td>{item.mandatory ? 'Obligatoria' : 'Opcional'}</td>
+                <td>{item.is_visible ? 'Activo' : 'Inactivo'}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[

@@ -89,7 +89,11 @@ function SurveyDetail({ survey, fetching, fetchError, refetch, surveyId }) {
           </div>
           <div className="item-row">
             <dt className="item-header">Enlace</dt>
-            <dd className="item-text">{survey.url}</dd>
+            <dd className="item-text">
+              <a href={survey.url} target="_blank" rel="noopener noreferrer">
+                {survey.url}
+              </a>
+            </dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Descripción</dt>
@@ -102,6 +106,10 @@ function SurveyDetail({ survey, fetching, fetchError, refetch, surveyId }) {
           <div className="item-row">
             <dt className="item-header">Obligatoriedad</dt>
             <dd className="item-text">{survey.mandatory}</dd>
+          </div>
+          <div className="item-row">
+            <dt className="item-header">Estatus</dt>
+            <dd className="item-text">{survey.is_visible ? 'Activo' : 'Inactivo'}</dd>
           </div>
         </dl>
       </div>

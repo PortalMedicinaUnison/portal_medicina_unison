@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Boolean, Integer, String, ForeignKey, Text, DateTime
+from sqlalchemy import Boolean, Integer, String, ForeignKey, Text, Date
 from sqlalchemy.orm import Mapped, mapped_column
 from enum import IntEnum
 from .base import BaseModel
@@ -33,8 +33,9 @@ class Survey(BaseModel):
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     url: Mapped[str] = mapped_column(String(200), nullable=False)
     description: Mapped[str] = mapped_column(Text)
-    expiration_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    expiration_date: Mapped[Date] = mapped_column(Date, nullable=False)
     mandatory: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    is_visible: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     def __repr__(self):
         return f"<Survey(created_by={self.created_by}, title={self.title}, mandatory={self.mandatory})>"

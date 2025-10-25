@@ -22,6 +22,9 @@ import ApplicationDeclinedPage from '../user/features/applications/pages/Applica
 
 import InternshipDetailPage from '../user/features/internships/pages/InternshipDetailPage';
 
+// Survey pages
+import SurveyPage from '../user/features/surveys/pages/SurveyCardPage';
+
 
 function UserRoutes() {
   return (
@@ -46,6 +49,9 @@ function UserRoutes() {
         {/* Internships routes */}
         <Route path="my-internship" element={<InternshipDetailPage />} />
         <Route path="my-internship/redirect" element={<ApplicationRedirectPage />} />
+
+        {/* Surveys routes */}
+        <Route path="surveys" element={<SurveyPage />} />
       </Route>
     </Routes>
   );

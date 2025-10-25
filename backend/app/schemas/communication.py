@@ -35,6 +35,7 @@ class SurveyInput(BaseModel):
     description: Optional[str] = None
     expiration_date: date
     mandatory: bool
+    is_visible: bool = True
 
     @field_validator("expiration_date")
     def validate_expiration_date(cls, input_date: date) -> date:
@@ -47,6 +48,7 @@ class SurveyInputUpdate(BaseModel):
     description: Optional[str] = None
     expiration_date: Optional[date] = None
     mandatory: Optional[bool] = None
+    is_visible: bool = True
 
     @field_validator("expiration_date")
     def validate_expiration_date(cls, input_date: Optional[date]) -> Optional[date]:
@@ -61,3 +63,4 @@ class SurveyOutput(BaseModel):
     description: Optional[str] = None
     expiration_date: date
     mandatory: bool
+    is_visible: bool = True

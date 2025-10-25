@@ -371,6 +371,11 @@ body {
         sm:mt-0
     }
 
+    .item-text a {
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
     .info-actions { @apply 
         flex
         flex-col

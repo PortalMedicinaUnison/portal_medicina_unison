@@ -11,6 +11,7 @@ const INITIAL_FORM = {
   description: '',
   expirationDate: '',
   mandatory: false,
+  isVisible: true,
 };
 
 function SurveyForm() {
@@ -60,7 +61,8 @@ function SurveyForm() {
       url: cleanedData.url,
       description: cleanedData.description,
       expiration_date: cleanedData.expirationDate,
-      mandatory: cleanedData.mandatory,  
+      mandatory: cleanedData.mandatory,
+      is_visible: cleanedData.isVisible,
     };
     
     const response = await createSurvey(payload);
@@ -181,6 +183,19 @@ function SurveyForm() {
                   name="mandatory"
                   type="checkbox"
                   checked={formData.mandatory}
+                  onChange={handleChange}
+                  className="form-checkbox"
+                  disabled={saving}
+                />
+              </dd>
+            </div>
+            <div className="item-row">
+              <dt className="item-header">Visible</dt>
+              <dd className="item-text">
+                <input
+                  name="isVisible"
+                  type="checkbox"
+                  checked={formData.isVisible}
                   onChange={handleChange}
                   className="form-checkbox"
                   disabled={saving}

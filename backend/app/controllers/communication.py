@@ -49,6 +49,8 @@ def delete_announcement(announcement_id: int, db: Session):
 
 def create_survey(survey: SurveyInput, db: Session):
     new_survey = map_to_model(survey, Survey)
+    # Convertir url HttpUrl a string
+    new_survey.url = str(new_survey.url)
     survey_repo = SurveyRepo(db)
     created_survey = survey_repo.create(new_survey)
     survey_response = orm_to_dict(created_survey)

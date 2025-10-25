@@ -11,6 +11,7 @@ const INITIAL_FORM = {
   description: '',
   expirationDate: '',
   mandatory: false,
+  isVisible: true,
 };
 
 function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
@@ -64,7 +65,8 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
       url: cleanedData.url,
       description: cleanedData.description,
       expiration_date: cleanedData.expirationDate,
-      mandatory: cleanedData.mandatory,  
+      mandatory: cleanedData.mandatory,
+      is_visible: cleanedData.isVisible,
     };
     
     await updateSurvey(surveyId, payload);
@@ -202,6 +204,19 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
                   name="mandatory"
                   type="checkbox"
                   checked={formData.mandatory}
+                  onChange={handleChange}
+                  className="form-checkbox"
+                  disabled={saving}
+                />
+              </dd>
+            </div>
+            <div className="item-row">
+              <dt className="item-header">Visible</dt>
+              <dd className="item-text">
+                <input
+                  name="isVisible"
+                  type="checkbox"
+                  checked={formData.isVisible}
                   onChange={handleChange}
                   className="form-checkbox"
                   disabled={saving}

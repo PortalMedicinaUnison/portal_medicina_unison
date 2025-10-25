@@ -104,6 +104,10 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
             <dt className="item-header">Tipo de Anuncio</dt>
             <dd className="item-text">{getAnnouncementTypeName(announcement.announcement_type)}</dd>
           </div>
+          <div className="item-row">
+            <dt className="item-header">Estatus</dt>
+            <dd className="item-text">{announcement.is_visible ? 'Activo' : 'Inactivo'}</dd>
+          </div>
         </dl>
       </div>
 
