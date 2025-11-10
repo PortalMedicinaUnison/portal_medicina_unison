@@ -3,6 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import BaseModel
 from typing import TYPE_CHECKING
 from typing import List
+from .report import Report
 
 if TYPE_CHECKING:
     from .promotion import PromotionSiteDetail
@@ -42,6 +43,7 @@ class Site(BaseModel):
 
     promotion_details: Mapped[List["PromotionSiteDetail"]] = relationship(back_populates="site")
     institution: Mapped["Institution"] = relationship(back_populates="sites", lazy="joined")
+    report: Mapped["Report"] = relationship(back_populates="site", lazy="joined")
 
     def __repr__(self):
         return f"<Site(name={self.name}, institution_id={self.institution_id}, is_active={self.is_active})>"
