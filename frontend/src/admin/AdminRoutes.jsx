@@ -1,5 +1,4 @@
 import { Routes, Route } from 'react-router-dom';
-import { ROUTES } from '../config.js';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 
 import ApplicationListPage from '../admin/features/applications/pages/ApplicationListPage.jsx';
@@ -38,8 +37,8 @@ import EnrollmentFormPage from '../admin/features/users/enrollments/pages/Enroll
 import EnrollmentListPage from '../admin/features/users/enrollments/pages/EnrollmentListPage.jsx';
 import EnrollmentDetailPage from '../admin/features/users/enrollments/pages/EnrollmentDetailPage.jsx';
 
-import ReportsListPage from '../admin/features/reports/pages/ReportsListPage.jsx';
-import ReportInfoPage from '../admin/features/reports/pages/ReportInfoPage.jsx';
+import ReportListPage from '../admin/features/reports/pages/ReportListPage.jsx';
+import ReportDetailPage from '../admin/features/reports/pages/ReportDetailPage.jsx';
 
 import InternshipFormPage from '../admin/features/internships/pages/InternshipFormPage.jsx';
 import InternshipListPage from '../admin/features/internships/pages/InternshipListPage.jsx';
@@ -95,8 +94,8 @@ function AdminRoutes() {
         <Route path="enrollments/:enrollmentId" element={<EnrollmentDetailPage />} />
 
         {/* Reports */}
-        <Route path="reports" element={<ReportsListPage />} />
-        <Route path="reports/:reportId" element={<ReportInfoPage />} />
+        <Route path="reports" element={<ReportListPage />} />
+        <Route path="reports/:reportId" element={<ReportDetailPage />} />
 
         {/* Internships */}
         <Route path="internships" element={<InternshipListPage />} />
