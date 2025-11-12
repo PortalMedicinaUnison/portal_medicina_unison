@@ -39,13 +39,13 @@ function ReportList({ reports, fetching, fetchError, refetch }) {
   const filtered = useMemo(() => {
     if (!reports) return [];
     return reports.filter((item) => {
-      if (typeFilter !== '' && String(item.type) !== typeFilter) return false;
+      if (typeFilter !== '' && String(item.report_type) !== typeFilter) return false;
       if (statusFilter !== '' && String(item.is_open) !== statusFilter) return false;
       if (!searchQuery) return true;
 
-      const title = String(item.title).toLowerCase();
+      const id = String(item.academic_id).toLowerCase();
       const description = String(item.description).toLowerCase();
-      return title.includes(searchQuery) || description.includes(searchQuery);
+      return id.includes(searchQuery) || description.includes(searchQuery);
     });
   }, [reports, searchQuery, statusFilter, typeFilter]);
 
@@ -117,17 +117,22 @@ function ReportList({ reports, fetching, fetchError, refetch }) {
           className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por título o descripción"
+          placeholder="Buscar"
         />
          <select
           className="btn-tertiary--light"
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          aria-label="Filtrar por ambito"
+          aria-label="Filtrar por tipo"
         >
-          <option value="">Ámbito</option>
-          <option value="1">General</option>
-          <option value="2">Internado</option>
+          <option value="">Tipo</option>
+          <option value={1}>Accidente</option>
+          <option value={2}>Condiciones inseguras</option>
+          <option value={3}>Acoso laboral</option>
+          <option value={4}>Acoso sexual</option>
+          <option value={5}>Discriminación</option>
+          <option value={6}>Robo</option>
+          <option value={7}>Otro</option>
         </select>
         <select
           className="btn-tertiary--light"
@@ -166,7 +171,7 @@ function ReportList({ reports, fetching, fetchError, refetch }) {
               filtered.map((item) => (
               <tr key={item.report_id}>
                 <td>{item.internship_id}</td>
-                <td>{item.date}</td>
+                <td>{item.date_report}</td>
                 <td className="text-left">{item.description}</td>
                 <td>{item.is_open ? 'Abierto' : 'Cerrado'}</td>
                 <td className="overflow-visible text-right">

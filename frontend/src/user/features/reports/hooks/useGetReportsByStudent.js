@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { getReportsByStudentRequest } from '../../../../services/reportService';
 
 
-export default function useGetPsdsByProm(id) {
+export default function useGetReportsByStudent(id) {
   const [reports, setReports]       = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);

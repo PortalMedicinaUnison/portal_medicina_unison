@@ -24,11 +24,18 @@ class ReportRepo(BaseRepo):
             Report.is_active == True,
         ).first()
     
-    def get_by_student_id(self, student_id: int):
+    def get_all_by_academic_id(self, academic_id: str):
         return self.session.query(Report).filter(
-            Report.student_id == student_id,
+            Report.academic_id == academic_id,
             Report.is_active == True
         ).all()
+    
+    def get_by_academic_id(self, report_id: int, academic_id: str):
+        return self.session.query(Report).filter(
+            Report.report_id == report_id,
+            Report.academic_id == academic_id,
+            Report.is_active == True
+        ).first()
     
     def get_by_internship_id(self, internship_id: int):
         return self.session.query(Report).filter(

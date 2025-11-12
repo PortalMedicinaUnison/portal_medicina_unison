@@ -9,6 +9,8 @@ from utils.utils import orm_to_dict, map_to_model
 
 def create_report(report: ReportInput, db: Session):
     new_report = map_to_model(report, Report)
+    if new_report.evidence_url is not None:
+        new_report.evidence_url = str(new_report.evidence_url)
     report_repo = ReportRepo(db)    
     created_report = report_repo.create(new_report)
     report_response = orm_to_dict(created_report)
@@ -30,13 +32,21 @@ def get_report(report_id: int, db: Session):
     report_response = orm_to_dict(report)
     return report_response
 
-def get_reports_by_student(student_id: int, db: Session):
+def get_reports_by_student(academic_id: str, db: Session):
     report_repo = ReportRepo(db)
-    reports = report_repo.get_by_student_id(student_id)
+    reports = report_repo.get_all_by_academic_id(academic_id)
     if not reports:
         return []
     reports_response = [orm_to_dict(report) for report in reports]
     return reports_response
+
+def get_report_by_student(report_id: int, academic_id: str, db: Session):
+    report_repo = ReportRepo(db)
+    report = report_repo.get_by_academic_id(report_id, academic_id)
+    if not report:
+        return None
+    report_response = orm_to_dict(report)
+    return report_response
 
 def get_reports_by_internship(internship_id: int, db: Session):
     report_repo = ReportRepo(db)
@@ -67,13 +77,13 @@ def delete_report(report_id: int, db: Session):
     report_repo = ReportRepo(db)
     return report_repo.delete(report_id)
 
-def upload_evidence_file(report_id: int, student_id: int, file: UploadFile, db: Session):
+def upload_evidence_file(report_id: int, academic_id: int, file: UploadFile, db: Session):
     """Subir un archivo de evidencia para un reporte"""
     report_repo = ReportRepo(db)
     existing_report = report_repo.get_by_id(report_id)
     if not existing_report:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reporte no encontrado")
-    if existing_report.student_id != student_id:
+    if existing_report.academic_id != academic_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No tienes permisos para modificar este reporte")
     
     # Validar tamaño del archivo (máximo 50MB)

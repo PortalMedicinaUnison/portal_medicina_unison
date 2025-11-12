@@ -8,6 +8,7 @@ from utils.validation import is_valid_other_type_report
 class ReportInput(BaseModel):
     academic_id: str
     site_id: int
+    internship_id: Optional[int] = None
     date_report: date
     report_type: ReportTypeEnum
     other_type: Optional[str] = None
@@ -15,11 +16,6 @@ class ReportInput(BaseModel):
     evidence_url: Optional[HttpUrl] = None
     anonymity: bool = False
     is_open: bool = True
-
-    @field_validator("other_type")
-    def validate_other_type(cls, other_type):
-        is_valid_other_type_report(other_type)
-        return other_type
 
 class ReportInputUpdate(BaseModel):
     site_id: Optional[int] = None
@@ -42,6 +38,7 @@ class ReportOutput(BaseModel):
     report_id: int
     academic_id: str
     site_id: int
+    internship_id: Optional[int] = None
     date_report: date
     report_type: ReportTypeEnum
     other_type: Optional[str] = None

@@ -2,24 +2,28 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useCreateReport from '../hooks/useCreateReport';
+import useGetSites from '../../../../admin/features/sites/hooks/useGetSites';
 import { cleanFormData } from "../../../../utils/utils";
+import { useUser } from '../../../../contexts/UserContext';
 
 
 const INITIAL_FORM = {
-  internshipId: '',
   siteId: '',
-  date: '',
-  type: '',
+  internshipId: '',
+  dateReport: '',
+  reportType: '',
   otherType: '',
   description: '',
   evidenceUrl: '',
-  anonimity: false,
+  anonymity: false,
   isOpen: true,
 };
 
 function ReportForm() {
   const navigate = useNavigate();
+  const { user } = useUser();
   const { createReport, loading: saving, success: saved, error: saveError, reset } = useCreateReport();
+  const { sites, loading: fetchingSites, error: sitesError } = useGetSites();
 
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [createdId, setCreatedId] = useState(null);
@@ -29,10 +33,13 @@ function ReportForm() {
 
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    setFormData(prev => {
+      const next = { ...prev, [name]: type === 'checkbox' ? checked : value };
+      
+      // Limpiar otherType cuando se cambia de "Otro" a otra opción
+      if (name === 'reportType' && String(value) !== '7') next.otherType = '';
+      return next;
+    });
 
     if (validationError) return setValidationError('');
     if (saveError) return reset();
@@ -44,31 +51,33 @@ function ReportForm() {
 
     const cleanedData = cleanFormData({
       ...formData,
-      internshipId: Number(formData.internshipId),
+      academicId: user.academic_id,
+      internshipId: Number(user.internship_id),
       siteId: Number(formData.siteId),
-      type: Number(formData.type),
+      reportType: Number(formData.reportType),
     });
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.date) errors.push('La fecha es obligatoria');
-    if (!cleanedData.type) errors.push('El tipo de reporte es obligatorio');
+    if (!cleanedData.dateReport) errors.push('La fecha es obligatoria');
+    if (!cleanedData.siteId) errors.push('La sede es obligatoria');
+    if (!cleanedData.reportType) errors.push('El tipo de reporte es obligatorio');
     if (!cleanedData.description) errors.push('La descripción es obligatoria');
-    if (!cleanedData.anonimity) errors.push('Debe declarar si desea o no ser anónimo');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
 
     const payload = {
+      academic_id: cleanedData.academicId,
       internship_id: cleanedData.internshipId,
       site_id: cleanedData.siteId,
-      date: cleanedData.date,
-      type: cleanedData.type,
-      other_type: cleanedData.otherType,
+      date_report: cleanedData.dateReport,
+      report_type: cleanedData.reportType,
+      other_type: Number(cleanedData.reportType) === 7 ? cleanedData.otherType : null,
       description: cleanedData.description,
       evidence_url: cleanedData.evidenceUrl,
-      anonimity: cleanedData.anonimity,
+      anonymity: cleanedData.anonymity,
       is_open: cleanedData.isOpen,
     };
     
@@ -128,9 +137,9 @@ function ReportForm() {
               <dt className="item-header">Fecha</dt>
               <dd className="item-text">
                 <input
-                  name="date"
+                  name="dateReport"
                   type="date"
-                  value={formData.date}
+                  value={formData.dateReport}
                   onChange={handleChange}
                   className="form-input--half"
                   placeholder="dd/mm/aaaa"
@@ -143,8 +152,8 @@ function ReportForm() {
                 <dt className="item-header">Motivo</dt>
                 <dd className="item-text">
                   <select
-                    name="type"
-                    value={formData.type}
+                    name="reportType"
+                    value={formData.reportType}
                     onChange={handleChange}
                     className="form-input--half"
                     disabled={saving}
@@ -156,10 +165,47 @@ function ReportForm() {
                     <option value={3}>Acoso laboral</option>
                     <option value={4}>Acoso sexual</option>
                     <option value={5}>Discriminación</option>
-                    <option value={6}>Robo o hurto</option>
+                    <option value={6}>Robo</option>
                     <option value={7}>Otro</option>
                   </select>
                 </dd>
+            </div>
+            {Number(formData.reportType) === 7 && (
+              <div className="item-row">
+                <dt className="item-header">Especificar motivo</dt>
+                <dd className="item-text">
+                  <input
+                    name="otherType"
+                    type="text"
+                    value={formData.otherType}
+                    onChange={handleChange}
+                    className="form-input--half"
+                    placeholder="Describe el motivo del reporte"
+                    disabled={saving}
+                    required
+                  />
+                </dd>
+              </div>
+            )}
+            <div className="item-row">
+              <dt className="item-header">Sede *</dt>
+              <dd className="item-text">
+                <select
+                  name="siteId"
+                  value={formData.siteId}
+                  onChange={handleChange}
+                  className="form-input--half"
+                  disabled={fetchingSites || saving || sitesError}
+                  required
+                >
+                  <option value="">Selecciona una sede</option>
+                  {sites.map(site => (
+                    <option key={site.site_id} value={site.site_id}>
+                      {site.name}
+                    </option>
+                  ))}
+                </select>
+              </dd>
             </div>
             <div className="item-row">
               <dt className="item-header">Descripción</dt>
@@ -177,12 +223,27 @@ function ReportForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">¿Reporte anonimo?</dt>
+              <dt className="item-header">Evidencia</dt>
               <dd className="item-text">
                 <input
-                  name="anonimity"
+                  name="evidenceUrl"
+                  value={formData.evidenceUrl}
+                  onChange={handleChange}
+                  rows="4"
+                  className="form-input--half"
+                  placeholder="Adjunta un enlace a fotos, videos u otros documentos que sirvan de evidencia."
+                  disabled={saving}
+                  required
+                />
+              </dd>
+            </div>
+            <div className="item-row">
+              <dt className="item-header">¿Deseas que el reporte sea anonimo?</dt>
+              <dd className="item-text">
+                <input
+                  name="anonymity"
                   type="checkbox"
-                  checked={formData.anonimity}
+                  checked={formData.anonymity}
                   onChange={handleChange}
                   className="form-checkbox"
                   disabled={saving}
@@ -196,7 +257,7 @@ function ReportForm() {
           <button 
             type="button" 
             className="btn-secondary" 
-            onClick={() => navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENTS_LIST))}
+            onClick={() => navigate(adminAbs(ROUTES.HOME))}
             disabled={saving}
           >
             Cancelar

@@ -3,7 +3,7 @@ import { API_ENDPOINTS } from '../config/apiEndpoints';
 
 // ------------ Reports ------------
 
-export const createReportRequest = (reportData, ) =>
+export const createReportRequest = (reportData) =>
   api.post(API_ENDPOINTS.REPORTS.CREATE, reportData);
 
 export const getAllReportsRequest = () =>
@@ -15,8 +15,8 @@ export const getReportByIdRequest = (id) =>
 export const updateReportRequest = (id, data) =>
   api.patch(API_ENDPOINTS.REPORTS.UPDATE(id), data);
 
-export const getReportsByStudentRequest = (studentId) =>
-  api.get(API_ENDPOINTS.REPORTS.GET_BY_STUDENT(studentId));
+export const getReportsByStudentRequest = (academicId) =>
+  api.get(API_ENDPOINTS.REPORTS.GET_BY_ACADEMIC(academicId));
 
 export const getReportsByInternshipRequest = (internshipId) =>
   api.get(API_ENDPOINTS.REPORTS.GET_BY_INTERNSHIP(internshipId));

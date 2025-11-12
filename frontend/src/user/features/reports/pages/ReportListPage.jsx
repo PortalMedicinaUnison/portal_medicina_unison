@@ -2,14 +2,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
-import useGetPsdsByProm from '../hooks/useGetReportsByStudent';
-import ReportsList from '../components/ReportsList';
+import useGetReportsByStudent from '../hooks/useGetReportsByStudent';
+import ReportList from '../components/ReportList';
+import { useUser } from '../../../../contexts/UserContext';
 
 
 function ReportListPage() {
   const navigate = useNavigate();
-  const { studentId } = useParams();
-  const { reports, loading: fetching, error: fetchError, refetch } = useGetPsdsByProm(studentId);
+  const { user } = useUser();
+  const academicId = user?.academic_id;
+
+  const { reports, loading: fetching, error: fetchError, refetch } = useGetReportsByStudent(academicId);
     
   const actions = (
     <button
@@ -27,7 +30,7 @@ function ReportListPage() {
         title="Mis reportes"
         actions={actions}
       >
-        <ReportsList
+        <ReportList
           reports={reports}
           fetching={fetching}
           fetchError={fetchError}

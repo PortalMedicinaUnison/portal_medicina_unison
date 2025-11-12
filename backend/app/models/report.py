@@ -12,14 +12,17 @@ class ReportTypeEnum(IntEnum):
     INSECURE_CONDITION = 2
     WORK_HARASSMENT = 3
     SEXUAL_HARASSMENT = 4
-    OTHER = 5
+    DISCRIMINATION = 5
+    ROBBERY = 6
+    OTHER = 7
 
 class Report(BaseModel):
     __tablename__ = 'reports'
     
     report_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     academic_id: Mapped[str] = mapped_column(String(9), ForeignKey("users.academic_id", ondelete="CASCADE"), nullable=False)
-    site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id", ondelete="RESTRICT"), nullable=False
+    site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id", ondelete="RESTRICT"), nullable=False)
+    internship_id: Mapped[int] = mapped_column(Integer, ForeignKey("internships.internship_id", ondelete="CASCADE"), nullable=True)
     date_report: Mapped[date] = mapped_column(Date, nullable=False)
     report_type: Mapped[ReportTypeEnum] = mapped_column(IntEnumType(ReportTypeEnum), nullable=False)
     other_type: Mapped[str] = mapped_column(String(25), nullable=True)
