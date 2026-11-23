@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { deleteInstitutionRequest } from '../../../../services/siteService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useDeleteApplication() {
@@ -17,7 +18,7 @@ export default function useDeleteApplication() {
       await deleteInstitutionRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error deleting institution');
+      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

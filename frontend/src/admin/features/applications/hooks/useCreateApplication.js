@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { createInternshipApplicationRequest } from '../../../../services/internshipService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useCreateApplication() {
@@ -24,7 +25,7 @@ export default function useCreateApplication() {
       setSuccess(true);
       return response;
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error creating application');
+      setError(getErrorMessage(err, 'No se pudo guardar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

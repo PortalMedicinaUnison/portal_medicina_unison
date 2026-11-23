@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getReportByIdRequest } from '../../../../services/reportService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useReport(id) {
@@ -16,7 +17,7 @@ export default function useReport(id) {
       const response = await getReportByIdRequest(id);
       setReport(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching report');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setReport(null);
     } finally {
       setLoading(false);

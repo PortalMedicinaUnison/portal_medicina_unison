@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { deleteUserEnrollmentRequest } from '../../../../../services/userService';
+import { getErrorMessage } from '../../../../../utils/errors';
 
 
 export default function useDeleteEnrollment() {
@@ -17,7 +18,7 @@ export default function useDeleteEnrollment() {
       await deleteUserEnrollmentRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error deleting user enrollment');
+      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

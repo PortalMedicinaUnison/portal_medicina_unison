@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllUsersRequest } from '../../../../services/userService'
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useGetUsers () {
@@ -15,7 +16,7 @@ export default function useGetUsers () {
       const response = await getAllUsersRequest();
       setUsers(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching users');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setUsers([]);
     } finally {
       setLoading(false);

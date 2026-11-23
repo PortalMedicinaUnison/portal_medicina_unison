@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getDocumentsByInternshipRequest } from '../../../../../services/internshipService'
+import { getErrorMessage } from '../../../../../utils/errors';
 
 
 export default function useGetDocumentsByInternship (id) {
@@ -15,7 +16,7 @@ export default function useGetDocumentsByInternship (id) {
       const response = await getDocumentsByInternshipRequest(internshipId);
       setDocuments(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching documents');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setDocuments([]);
     } finally {
       setLoading(false);

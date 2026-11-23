@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { createReportRequest } from '../../../../services/reportService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useCreateReport() {
@@ -24,7 +25,7 @@ export default function useCreateReport() {
       setSuccess(true);
       return response;
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error creating report');
+      setError(getErrorMessage(err, 'No se pudo guardar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

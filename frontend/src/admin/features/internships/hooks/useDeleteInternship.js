@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { deleteInternshipRequest } from '../../../../services/internshipService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useDeleteInternship() {
@@ -17,7 +18,7 @@ export default function useDeleteInternship() {
       await deleteInternshipRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error deleting internship');
+      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

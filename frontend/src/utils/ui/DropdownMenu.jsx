@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 
-function DropdownMenu({ icon, actions, hover = true }) {
+function DropdownMenu({ icon, actions, hover = true, disabled = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -43,10 +43,11 @@ function DropdownMenu({ icon, actions, hover = true }) {
       <button
         type="button"
         onClick={() => setIsOpen(prev => !prev)}
+        disabled={disabled}
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        className={`p-2 rounded ${hover ? 'hover:bg-gray-100' : ''}`}
-        title="Drop menu"
+        className={`p-2 rounded disabled:opacity-50 disabled:cursor-not-allowed ${hover ? 'hover:bg-gray-100' : ''}`}
+        title="Acciones"
       >
         {triggerIcon || <DefaultIcon />}
       </button>
@@ -59,9 +60,11 @@ function DropdownMenu({ icon, actions, hover = true }) {
           {actions.map((action, index) => (
             <button
               key={index}
+              type="button"
               role="menuitem"
-              className={`block w-full px-3 py-2 text-left text-xs hover:bg-gray-50 ${action.className}`}
-              onClick={() => handleActionClick(action.onClick)}
+              disabled={action.disabled}
+              className={`block w-full px-3 py-2 text-left text-xs hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed ${action.className ?? ''}`}
+              onClick={() => !action.disabled && handleActionClick(action.onClick)}
             >
               {action.label}
             </button>

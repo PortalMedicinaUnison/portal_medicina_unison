@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { deleteAnnouncementRequest } from '../../../../services/communicationService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useDeleteAnnouncement() {
@@ -17,7 +18,7 @@ export default function useDeleteAnnouncement() {
       await deleteAnnouncementRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error deleting announcement');
+      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

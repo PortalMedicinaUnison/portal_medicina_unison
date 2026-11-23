@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { createInternshipDocumentRequest } from '../../../../../services/internshipService';
+import { getErrorMessage } from '../../../../../utils/errors';
 
 
 export default function useCreateDocument() {
@@ -24,7 +25,7 @@ export default function useCreateDocument() {
       setSuccess(true);
       return response;
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error creating document');
+      setError(getErrorMessage(err, 'No se pudo guardar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

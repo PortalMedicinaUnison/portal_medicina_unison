@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { createSurveyRequest } from '../../../../services/communicationService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useCreateSurvey() {
@@ -24,7 +25,7 @@ export default function useCreateSurvey() {
       setSuccess(true);
       return response;
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error creating survey');
+      setError(getErrorMessage(err, 'No se pudo guardar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

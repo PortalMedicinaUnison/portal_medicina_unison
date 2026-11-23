@@ -9,7 +9,10 @@ import Navbar from './components/Navbar';
 
 function Layout({ children }) {
   const { isAdmin, loading } = useUser();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  // Abierta en escritorio; cerrada en móvil (cada página monta su Layout, así no se reabre al navegar).
+  const [isSidebarOpen, setIsSidebarOpen] = useState(
+    () => typeof window === 'undefined' || window.matchMedia('(min-width: 768px)').matches
+  );
 
   if (loading) return <LoadingSpinner />;
 

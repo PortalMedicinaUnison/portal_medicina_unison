@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { updateUserEnrollmentRequest } from '../../../../../services/userService';
+import { getErrorMessage } from '../../../../../utils/errors';
 
 
 export default function useUpdateEnrollment() {
@@ -17,7 +18,7 @@ export default function useUpdateEnrollment() {
       await updateUserEnrollmentRequest(id, formData);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating enrollment');
+      setError(getErrorMessage(err, 'No se pudieron guardar los cambios.'));
       setSuccess(false);
     } finally {
       setLoading(false);

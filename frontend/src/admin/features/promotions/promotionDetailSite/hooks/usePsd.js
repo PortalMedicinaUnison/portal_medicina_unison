@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getPsdByIdRequest } from '../../../../../services/promotionService';
+import { getErrorMessage } from '../../../../../utils/errors';
 
 
 export default function usePsd(id) {
@@ -16,7 +17,7 @@ export default function usePsd(id) {
       const response = await getPsdByIdRequest(id);
       setPsd(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching promotion site detail');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setPsd(null);
     } finally {
       setLoading(false);

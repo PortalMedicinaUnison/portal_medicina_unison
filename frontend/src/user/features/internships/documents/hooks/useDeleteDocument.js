@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { deleteInternshipDocumentRequest } from '../../../../../services/internshipService';
+import { getErrorMessage } from '../../../../../utils/errors';
 
 
 export default function useDeleteDocument() {
@@ -17,7 +18,7 @@ export default function useDeleteDocument() {
       await deleteInternshipDocumentRequest(internshipId, docId);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error deleting document');
+      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

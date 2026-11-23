@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { updateSurveyRequest } from '../../../../services/communicationService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useUpdateSurvey() {
@@ -17,7 +18,7 @@ export default function useUpdateSurvey() {
       await updateSurveyRequest(id, formData);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating survey');
+      setError(getErrorMessage(err, 'No se pudieron guardar los cambios.'));
       setSuccess(false);
     } finally {
       setLoading(false);

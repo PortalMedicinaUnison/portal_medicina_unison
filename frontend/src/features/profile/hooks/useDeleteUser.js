@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { deactivateMeRequest } from '../../../services/userService';
+import { getErrorMessage } from '../../../utils/errors';
 
 
 export default function useDeleteUser() {
@@ -18,7 +19,7 @@ export default function useDeleteUser() {
       await deactivateMeRequest();
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error deleting user');
+      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getInternshipByIdRequest } from '../../../../services/internshipService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useInternship(id) {
@@ -16,7 +17,7 @@ export default function useInternship(id) {
       const response = await getInternshipByIdRequest(id);
       setInternship(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching internship');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setInternship(null);
     } finally {
       setLoading(false);

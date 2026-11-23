@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { createSiteRequest } from '../../../../services/siteService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useCreateSite() {
@@ -24,7 +25,7 @@ export default function useCreateSite() {
       setSuccess(true);
       return response;
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error creating site');
+      setError(getErrorMessage(err, 'No se pudo guardar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

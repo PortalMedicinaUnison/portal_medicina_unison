@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { updateInternshipRequest } from '../../../../services/internshipService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useUpdateInternship() {
@@ -17,7 +18,7 @@ export default function useUpdateInternship() {
       await updateInternshipRequest(id, formData);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating internship');
+      setError(getErrorMessage(err, 'No se pudieron guardar los cambios.'));
       setSuccess(false);
     } finally {
       setLoading(false);

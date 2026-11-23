@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllInternshipApplicationsRequest } from '../../../../services/internshipService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useApplicationByAcademic(id) {
@@ -17,7 +18,7 @@ export default function useApplicationByAcademic(id) {
       const response = await getAllInternshipApplicationsRequest();
       setApplication(response.data[0] ?? null);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching application');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setApplication(null);
     } finally {
       setLoading(false);

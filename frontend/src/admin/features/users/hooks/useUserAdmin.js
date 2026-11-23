@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getUserByIdRequest } from '../../../../services/userService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useUserAdmin(userId) {
@@ -16,7 +17,7 @@ export default function useUserAdmin(userId) {
       const response = await getUserByIdRequest(userId);
       setUserAdmin(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching user');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setUserAdmin(null);
     } finally {
       setLoading(false);

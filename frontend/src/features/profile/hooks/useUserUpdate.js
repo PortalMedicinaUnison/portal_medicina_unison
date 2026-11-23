@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { updateMeRequest } from '../../../services/userService';
+import { getErrorMessage } from '../../../utils/errors';
 
 
 export default function useUpdateUser() {
@@ -18,7 +19,7 @@ export default function useUpdateUser() {
       await updateMeRequest(formData);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating user');
+      setError(getErrorMessage(err, 'No se pudieron guardar los cambios.'));
       setSuccess(false);
     } finally {
       setLoading(false);

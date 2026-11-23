@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { createPromotionRequest } from '../../../../services/promotionService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useCreatePromotion() {
@@ -24,7 +25,7 @@ export default function useCreatePromotion() {
       setSuccess(true);
       return response;
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error creating promotion');
+      setError(getErrorMessage(err, 'No se pudo guardar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

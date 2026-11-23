@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { updateReportRequest } from '../../../../services/reportService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useUpdateReport() {
@@ -17,7 +18,7 @@ export default function useUpdateReport() {
       await updateReportRequest(id, formData);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating report');
+      setError(getErrorMessage(err, 'No se pudieron guardar los cambios.'));
       setSuccess(false);
     } finally {
       setLoading(false);

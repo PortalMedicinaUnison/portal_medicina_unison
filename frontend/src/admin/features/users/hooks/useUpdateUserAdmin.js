@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { setUserRoleRequest, updateUserRequest } from '../../../../services/userService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useUpdateUser() {
@@ -20,7 +21,7 @@ export default function useUpdateUser() {
       if (Object.keys(profile).length) await updateUserRequest(id, profile);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating user');
+      setError(getErrorMessage(err, 'No se pudieron guardar los cambios.'));
       setSuccess(false);
     } finally {
       setLoading(false);

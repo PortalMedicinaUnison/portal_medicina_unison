@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllAnnouncementsRequest } from '../../../../services/communicationService'
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useGetAnnouncements () {
@@ -15,7 +16,7 @@ export default function useGetAnnouncements () {
       const response = await getAllAnnouncementsRequest();
       setAnnouncements(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching announcements');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setAnnouncements([]);
     } finally {
       setLoading(false);

@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { createAnnouncementRequest } from '../../../../services/communicationService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useCreateAnnouncement() {
@@ -24,7 +25,7 @@ export default function useCreateAnnouncement() {
       setSuccess(true);
       return response;
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error creating announcement');
+      setError(getErrorMessage(err, 'No se pudo guardar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

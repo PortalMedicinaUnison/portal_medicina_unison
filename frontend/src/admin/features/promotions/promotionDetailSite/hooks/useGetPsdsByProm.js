@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getPsdsByPromotionIdRequest } from '../../../../../services/promotionService';
+import { getErrorMessage } from '../../../../../utils/errors';
 
 
 export default function useGetPsdsByProm(id) {
@@ -16,7 +17,7 @@ export default function useGetPsdsByProm(id) {
       const response = await getPsdsByPromotionIdRequest(id);
       setPsds(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching sites for this promotion');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setPsds(null);
     } finally {
       setLoading(false);

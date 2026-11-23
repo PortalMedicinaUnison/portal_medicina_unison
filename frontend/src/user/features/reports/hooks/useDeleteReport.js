@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { deleteReportRequest } from '../../../../services/reportService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useDeleteReport() {
@@ -17,7 +18,7 @@ export default function useDeleteReport() {
       await deleteReportRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error deleting report');
+      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);
