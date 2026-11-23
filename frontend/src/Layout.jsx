@@ -8,13 +8,12 @@ import Navbar from './components/Navbar';
 
 
 function Layout({ children }) {
-  const { userRole, loading, error } = useUser();
+  const { isAdmin, loading } = useUser();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <div>Error: {error.message}</div>;
 
-  const Sidebar = userRole === 'admin' ? AdminSidebar : StudentSidebar;
+  const Sidebar = isAdmin ? AdminSidebar : StudentSidebar;
   
   const toggleSidebar = () => setIsSidebarOpen((v) => !v);
   const closeMobileSidebar = () => setIsSidebarOpen(false);

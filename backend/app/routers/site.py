@@ -1,113 +1,66 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from core.dependencies import get_db
-from typing import List
-from schemas.site import (
-    SiteInput, SiteInputUpdate, SiteOutput, 
-    InstitutionInput, InstitutionInputUpdate, InstitutionOutput
-)
-from controllers.site import (
-    create_site,
-    update_site,
-    get_site,
-    get_all_sites,
-    delete_site
-)
-from controllers.site import (
-    create_institution,
-    update_institution,
-    get_institution,
-    get_all_institutions,
-    delete_institution
-)
+from typing import List, Optional
+
+from fastapi import APIRouter, status
+
+from controllers import site as controller
+from core.dependencies import AdminUser, CurrentUser, DbSession
+from schemas.site import InstitutionInput, InstitutionOutput, InstitutionUpdate, SiteInput, SiteOutput, SiteUpdate
 
 # ----------------------  SITE  ----------------------
 
-site_router = APIRouter(prefix="/sites", tags=["Sites"])
+site_router = APIRouter(prefix="/sites", tags=["Sedes"])
 
-@site_router.post('/', response_model=SiteOutput)
-async def create_site_route(site: SiteInput, db: Session = Depends(get_db)):
-    site = create_site(site, db)
-    if not site:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="No se pudo crear el sitio")
-    return site
 
-@site_router.get('/', response_model=List[SiteOutput])
-async def get_sites_route(db: Session = Depends(get_db)):
-    sites =  get_all_sites(db)
-    return sites
+@site_router.get("", response_model=List[SiteOutput])
+def list_sites(_user: CurrentUser, db: DbSession, institution_id: Optional[int] = None, city: Optional[str] = None):
+    return controller.list_sites(db, institution_id=institution_id, city=city)
 
-@site_router.get('/{site_id}', response_model=SiteOutput)
-async def get_site_route(site_id: int, db: Session = Depends(get_db)):
-    site =  get_site(site_id, db)
-    if not site:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Sitio no encontrado")
-    return site
 
-@site_router.patch('/{site_id}', response_model=SiteOutput)
-async def update_site_route(site_id: int, site: SiteInputUpdate, db: Session = Depends(get_db)):
-    site =  update_site(site_id, site, db)
-    if not site:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Sitio no encontrado")
-    return site
+@site_router.post("", response_model=SiteOutput, status_code=status.HTTP_201_CREATED)
+def create_site(data: SiteInput, _admin: AdminUser, db: DbSession):
+    return controller.create_site(db, data)
 
-@site_router.delete('/{site_id}')
-async def delete_site_route(site_id: int, db: Session = Depends(get_db)):
-    site = delete_site(site_id, db)
-    if not site:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Sitio no encontrado")
-    return site
+
+@site_router.get("/{site_id}", response_model=SiteOutput)
+def get_site(site_id: int, _user: CurrentUser, db: DbSession):
+    return controller.get_site(db, site_id)
+
+
+@site_router.patch("/{site_id}", response_model=SiteOutput)
+def update_site(site_id: int, data: SiteUpdate, _admin: AdminUser, db: DbSession):
+    return controller.update_site(db, site_id, data)
+
+
+@site_router.delete("/{site_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_site(site_id: int, _admin: AdminUser, db: DbSession):
+    controller.delete_site(db, site_id)
 
 
 # ----------------------  INSTITUTION  ----------------------
 
 institution_router = APIRouter(prefix="/institutions", tags=["Instituciones"])
 
-@institution_router.post('/', response_model=InstitutionOutput)
-async def create_institution_route(institution: InstitutionInput, db: Session = Depends(get_db)):
-    institution = create_institution(institution, db)
-    if not institution:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="No se pudo crear la institución")
-    return institution
 
-@institution_router.get('/', response_model=List[InstitutionOutput])
-async def get_institutions_route(db: Session = Depends(get_db)):
-    institutions =  get_all_institutions(db)
-    return institutions
+@institution_router.get("", response_model=List[InstitutionOutput])
+def list_institutions(_user: CurrentUser, db: DbSession):
+    return controller.list_institutions(db)
 
-@institution_router.get('/{institution_id}', response_model=InstitutionOutput)
-async def get_institution_route(institution_id: int, db: Session = Depends(get_db)):
-    institution =  get_institution(institution_id, db)
-    if not institution:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Institución no encontrada")
-    return institution
 
-@institution_router.patch('/{institution_id}', response_model=InstitutionOutput)
-async def update_institution_route(institution_id: int, institution: InstitutionInputUpdate, db: Session = Depends(get_db)):
-    institution =  update_institution(institution_id, institution, db)
-    if not institution:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Institución no encontrada")
-    return institution
+@institution_router.post("", response_model=InstitutionOutput, status_code=status.HTTP_201_CREATED)
+def create_institution(data: InstitutionInput, _admin: AdminUser, db: DbSession):
+    return controller.create_institution(db, data)
 
-@institution_router.delete('/{institution_id}')
-async def delete_institution_route(institution_id: int, db: Session = Depends(get_db)):
-    institution = delete_institution(institution_id, db)
-    if not institution:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Institución no encontrada")
-    return institution
+
+@institution_router.get("/{institution_id}", response_model=InstitutionOutput)
+def get_institution(institution_id: int, _user: CurrentUser, db: DbSession):
+    return controller.get_institution(db, institution_id)
+
+
+@institution_router.patch("/{institution_id}", response_model=InstitutionOutput)
+def update_institution(institution_id: int, data: InstitutionUpdate, _admin: AdminUser, db: DbSession):
+    return controller.update_institution(db, institution_id, data)
+
+
+@institution_router.delete("/{institution_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_institution(institution_id: int, _admin: AdminUser, db: DbSession):
+    controller.delete_institution(db, institution_id)

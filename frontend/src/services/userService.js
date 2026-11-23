@@ -1,38 +1,55 @@
 import api from '../api';
 import { API_ENDPOINTS } from '../config/apiEndpoints';
 
+// ----------------- Usuario en sesión ----------------
 
-export const createUserRequest = (userData) =>
-  api.post(API_ENDPOINTS.USERS.CREATE, userData);
+export const getMeRequest = () =>
+  api.get(API_ENDPOINTS.USERS.ME);
 
-export const getAllUsersRequest = () =>
-  api.get(API_ENDPOINTS.USERS.GET_ALL);
+export const updateMeRequest = (data) =>
+  api.patch(API_ENDPOINTS.USERS.ME, data);
 
-export const getUserByAcademicIdRequest = (academicId) =>
-  api.get(API_ENDPOINTS.USERS.GET_BY_ACADEMIC_ID(academicId));
+export const changeMyPasswordRequest = (data) =>
+  api.put(API_ENDPOINTS.USERS.ME_PASSWORD, data);
+
+export const deactivateMeRequest = () =>
+  api.delete(API_ENDPOINTS.USERS.ME);
+
+// ----------------- Administración de usuarios ----------------
+
+// params: { is_admin, academic_id, q }
+export const getAllUsersRequest = (params = {}) =>
+  api.get(API_ENDPOINTS.USERS.LIST, { params });
 
 export const getUserByIdRequest = (id) =>
-  api.get(API_ENDPOINTS.USERS.GET(id));
+  api.get(API_ENDPOINTS.USERS.DETAIL(id));
 
 export const updateUserRequest = (id, data) =>
-  api.patch(API_ENDPOINTS.USERS.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.USERS.DETAIL(id), data);
+
+export const setUserRoleRequest = (id, isAdmin) =>
+  api.patch(API_ENDPOINTS.USERS.ROLE(id), { is_admin: isAdmin });
 
 export const deleteUserRequest = (id) =>
-  api.delete(API_ENDPOINTS.USERS.DELETE(id));
+  api.delete(API_ENDPOINTS.USERS.DETAIL(id));
 
-// ----------------- User Enrollment ----------------
+// ----------------- Pre-registro (enrollments) ----------------
 
 export const createUserEnrollmentRequest = (enrollmentData) =>
-  api.post(API_ENDPOINTS.USER_ENROLLMENTS.CREATE, enrollmentData);
+  api.post(API_ENDPOINTS.USER_ENROLLMENTS.LIST, enrollmentData);
 
-export const getAllUserEnrollmentsRequest = () =>
-  api.get(API_ENDPOINTS.USER_ENROLLMENTS.GET_ALL);
+export const bulkCreateUserEnrollmentsRequest = (academicIds) =>
+  api.post(API_ENDPOINTS.USER_ENROLLMENTS.BULK, { academic_ids: academicIds });
+
+// params: { academic_id, is_enrolled }
+export const getAllUserEnrollmentsRequest = (params = {}) =>
+  api.get(API_ENDPOINTS.USER_ENROLLMENTS.LIST, { params });
 
 export const getUserEnrollmentByIdRequest = (id) =>
-  api.get(API_ENDPOINTS.USER_ENROLLMENTS.GET(id));
+  api.get(API_ENDPOINTS.USER_ENROLLMENTS.DETAIL(id));
 
 export const updateUserEnrollmentRequest = (id, data) =>
-  api.patch(API_ENDPOINTS.USER_ENROLLMENTS.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.USER_ENROLLMENTS.DETAIL(id), data);
 
 export const deleteUserEnrollmentRequest = (id) =>
-  api.delete(API_ENDPOINTS.USER_ENROLLMENTS.DELETE(id));
+  api.delete(API_ENDPOINTS.USER_ENROLLMENTS.DETAIL(id));

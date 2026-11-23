@@ -1,19 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getUserByAcademicIdRequest } from '../../../../services/userService';
+import { getUserByIdRequest } from '../../../../services/userService';
 
 
-export default function useUserAdmin(academicId) {
+export default function useUserAdmin(userId) {
   const [user, setUserAdmin]  = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
 
-  const getUserAdmin = useCallback(async (academicId) => {
-    if (!academicId) return Promise.resolve();
+  const getUserAdmin = useCallback(async (userId) => {
+    if (!userId) return Promise.resolve();
     setLoading(true);
     setError(null);
     
     try {
-      const response = await getUserByAcademicIdRequest(academicId);
+      const response = await getUserByIdRequest(userId);
       setUserAdmin(response.data);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error fetching user');
@@ -24,19 +24,19 @@ export default function useUserAdmin(academicId) {
   }, []);
 
   useEffect(() => {
-    if (!academicId) {
+    if (!userId) {
       setUserAdmin(null);
       setError(null);
       setLoading(false);
       return;
     }
-    getUserAdmin(academicId);
-  }, [academicId, getUserAdmin]);
+    getUserAdmin(userId);
+  }, [userId, getUserAdmin]);
 
   const refetch = useCallback(() => {
-    if (!academicId) return Promise.resolve();
-    return getUserAdmin(academicId);
-  }, [academicId, getUserAdmin]);
+    if (!userId) return Promise.resolve();
+    return getUserAdmin(userId);
+  }, [userId, getUserAdmin]);
 
   return { user, loading, error, refetch, getUserAdmin };
 };

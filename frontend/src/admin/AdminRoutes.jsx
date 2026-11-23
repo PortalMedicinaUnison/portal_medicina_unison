@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 
 import ApplicationListPage from '../admin/features/applications/pages/ApplicationListPage.jsx';
@@ -40,15 +40,16 @@ import EnrollmentDetailPage from '../admin/features/users/enrollments/pages/Enro
 import ReportListPage from '../admin/features/reports/pages/ReportListPage.jsx';
 import ReportDetailPage from '../admin/features/reports/pages/ReportDetailPage.jsx';
 
-import InternshipFormPage from '../admin/features/internships/pages/InternshipFormPage.jsx';
 import InternshipListPage from '../admin/features/internships/pages/InternshipListPage.jsx';
+import NotFoundPage from '../pages/NotFoundPage.jsx';
 
-const toRel = (absPath) => absPath.replace(/^\//, '');
 
 function AdminRoutes() {
   return (
     <Routes>
-      <Route element={<ProtectedRoute />}>
+      <Route element={<ProtectedRoute allow="admin" />}>
+        <Route index element={<Navigate to="internship-applications" replace />} />
+
         {/* Applications */}
         <Route path="internship-applications" element={<ApplicationListPage />} />
         <Route path="internship-applications/create" element={<ApplicationFormPage />} />
@@ -56,7 +57,7 @@ function AdminRoutes() {
 
         {/* Users */}
         <Route path="users" element={<UserListPage />} />
-        <Route path="users/academicId/:academicId" element={<UserDetailAdmin />} />
+        <Route path="users/:userId" element={<UserDetailAdmin />} />
 
         {/* Promotions */}
         <Route path="promotions" element={<PromotionListPage />} />
@@ -99,8 +100,8 @@ function AdminRoutes() {
 
         {/* Internships */}
         <Route path="internships" element={<InternshipListPage />} />
-        <Route path="internships/create" element={<InternshipFormPage />} />
       </Route>
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

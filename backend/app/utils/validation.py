@@ -1,79 +1,86 @@
+"""
+Validaciones reutilizables. Todas lanzan ValueError con un mensaje en español
+(Pydantic lo convierte en un error 422) y devuelven el valor normalizado.
+"""
+import re
 from datetime import date
+from typing import Optional
 
-def is_valid_email(email: str) -> bool:
-    import re
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return re.match(email_regex, email) is not None
+from pydantic import HttpUrl, TypeAdapter
 
-def is_valid_password(password: str) -> bool:
-    # Por ejemplo: al menos 8 caracteres, una mayúscula, un número y un carácter especial
-    return len(password) >= 8 and any(c.isupper() for c in password) and any(c.isdigit() for c in password)
+EMAIL_REGEX = re.compile(r"^[A-Za-z0-9_.+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+$")
+_http_url_adapter = TypeAdapter(HttpUrl)
 
-def is_valid_academic_id(id: str) -> None:
-    """    
-    Valida que un ID de estudiante sea una cadena donde:
-    - Todos los caracteres son números enteros.
-    - La longitud de la cadena es exactamente 9.
-    - El primer carácter es '2'.
-    """
-    if not id.isdigit():
-        raise ValueError("El expediente debe contener solo números")
 
-    if len(id) != 9:
-        raise ValueError("El expediente debe tener una longitud de 9 caracteres.")
-    
-    if id[0] != '2':
-        raise ValueError("El expediente esta fuera de rango.")
+def validate_email(email: str) -> str:
+    email = email.strip().lower()
+    if not EMAIL_REGEX.match(email):
+        raise ValueError("El correo electrónico no es válido.")
+    return email
 
-def is_valid_phone(phone: str) -> None:
-    """
-    Valida que un número de teléfono tenga el formato correcto.
-    """
-    if not phone.isdigit():
-        raise ValueError("El número de teléfono debe contener solo números")
-    if len(phone) != 10:
-        raise ValueError("El número de teléfono debe tener una longitud de 10 caracteres.")
 
-    
-def is_valid_period(period: int) -> None:
-    """
-    Valida que el periodo sea un número 1 o 2, correspondiente 
-    a la primera o segunda promoción del año.
-    """
-    if period not in [1, 2]:
+def validate_password(password: str) -> str:
+    """Al menos 8 caracteres, una mayúscula y un número (máximo 72 bytes, límite de bcrypt)."""
+    if len(password) < 8:
+        raise ValueError("La contraseña debe tener al menos 8 caracteres.")
+    if len(password.encode("utf-8")) > 72:
+        raise ValueError("La contraseña es demasiado larga (máximo 72 caracteres).")
+    if not any(c.isupper() for c in password):
+        raise ValueError("La contraseña debe incluir al menos una letra mayúscula.")
+    if not any(c.isdigit() for c in password):
+        raise ValueError("La contraseña debe incluir al menos un número.")
+    return password
+
+
+def validate_academic_id(academic_id: str) -> str:
+    """Expediente: 9 dígitos que empiezan con 2."""
+    academic_id = academic_id.strip()
+    if not academic_id.isdigit():
+        raise ValueError("El expediente debe contener solo números.")
+    if len(academic_id) != 9:
+        raise ValueError("El expediente debe tener 9 dígitos.")
+    if academic_id[0] != "2":
+        raise ValueError("El expediente debe empezar con 2.")
+    return academic_id
+
+
+def validate_phone(phone: Optional[str]) -> Optional[str]:
+    """Teléfono opcional de 10 dígitos."""
+    if phone is None or not phone.strip():
+        return None
+    phone = phone.strip()
+    if not phone.isdigit() or len(phone) != 10:
+        raise ValueError("El teléfono debe tener 10 dígitos.")
+    return phone
+
+
+def validate_period(period: int) -> int:
+    """1 o 2: primera o segunda promoción del año."""
+    if period not in (1, 2):
         raise ValueError("El periodo debe ser 1 o 2.")
-    
-def is_valid_future_date(input_date: date) -> None:
-    """
-    Valida que la fecha igual o futura a la actual.
-    """
-    if input_date < date.today():
-        raise ValueError("La fecha debe ser igual o futura a la actual.")
-    
-def is_valid_past_date(date: date) -> None:
-    """
-    Valida que la fecha sea igual o anterior a la actual.
-    """
-    if date > date.today():
-        raise ValueError("La fecha debe ser igual o anterior a la actual.")
-    
-def is_valid_year(year: int) -> None:
-    """
-    Valida que el año de la pasantía no pueda ser menor al actual.
-    """
-    if year < date.today().year:
-        raise ValueError("El año de la pasantía no puede ser menor al actual.")
-    
-def is_valid_capacity(capacity: int) -> None:
-    """
-    Valida que la capacidad sea un número entero positivo.
-    """
-    if capacity < 0:
-        raise ValueError("La capacidad debe ser un número entero positivo.")
-    
-def is_valid_other_type_report(other_type: str) -> None:
-    """
-    Valida que el campo de tipo personalizado no exceda los 25 caracteres
-    """
-    if len(other_type) > 25:
-        raise ValueError("El tipo personalizado no puede exceder 25 caracteres")
+    return period
+
+
+def validate_year(year: int) -> int:
+    if year < 2000 or year > date.today().year + 5:
+        raise ValueError("El año no es válido.")
+    return year
+
+
+def validate_not_past(value: date) -> date:
+    if value < date.today():
+        raise ValueError("La fecha no puede ser anterior a hoy.")
+    return value
+
+
+def validate_not_future(value: date) -> date:
+    if value > date.today():
+        raise ValueError("La fecha no puede ser posterior a hoy.")
+    return value
+
+
+def validate_http_url(value: str) -> str:
+    try:
+        return str(_http_url_adapter.validate_python(value.strip()))
+    except Exception:
+        raise ValueError("La URL no es válida (debe empezar con http:// o https://).")

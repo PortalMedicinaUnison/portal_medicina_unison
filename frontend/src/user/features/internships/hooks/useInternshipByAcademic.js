@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getLastestInternshipByAcademicRequest } from '../../../../services/internshipService';
+import { getAllInternshipsRequest } from '../../../../services/internshipService';
 
 
 export default function useInternshipByAcademic(id) {
@@ -13,8 +13,9 @@ export default function useInternshipByAcademic(id) {
     setError(null);
     
     try {
-      const response = await getLastestInternshipByAcademicRequest(id);
-      setInternship(response.data);
+      // El backend devuelve solo los internados del estudiante, del más reciente al más antiguo.
+      const response = await getAllInternshipsRequest();
+      setInternship(response.data[0] ?? null);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error fetching internship');
       setInternship(null);

@@ -4,8 +4,9 @@ import { API_ENDPOINTS } from '../config/apiEndpoints';
 export const loginRequest = (credentials) =>
   api.post(API_ENDPOINTS.AUTH.LOGIN, credentials);
 
-export const verifyTokenRequest = (token) =>
-  api.post(API_ENDPOINTS.AUTH.VERIFY_TOKEN, { token });
+// Registro de estudiantes pre-registrados (no permite crear administradores).
+export const registerRequest = (data) =>
+  api.post(API_ENDPOINTS.AUTH.REGISTER, data);
 
-export const refreshTokenRequest = (token) =>
-  api.post(API_ENDPOINTS.AUTH.REFRESH_TOKEN, { token });
+export const refreshTokenRequest = () =>
+  api.post(API_ENDPOINTS.AUTH.REFRESH);

@@ -7,6 +7,7 @@ class IntEnumType(TypeDecorator):
     Convierte un enumerado (basado en IntEnum) a un entero en la base de datos y viceversa.
     """
     impl = Integer
+    cache_ok = True  # el estado (la clase del enum) es inmutable: se puede usar en la caché de SQL
 
     def __init__(self, enum_class, *args, **kwargs):
         if not issubclass(enum_class, IntEnum):

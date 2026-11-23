@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { createUserRequest } from '../../../services/userService';
+import { registerRequest } from '../../../services/authService';
+import { getErrorMessage } from '../../../utils/errors';
 
 
 export default function useSignUp() {
@@ -17,14 +18,14 @@ export default function useSignUp() {
     if (loading) return false;
     setLoading(true);
     setError(null);
-    setSuccess(false);    
+    setSuccess(false);
 
     try {
-      const response = await createUserRequest(payload);
+      const response = await registerRequest(payload);
       setSuccess(true);
       return response;
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error registering user');
+      setError(getErrorMessage(err, 'No se pudo completar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

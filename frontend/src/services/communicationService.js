@@ -1,36 +1,40 @@
 import api from '../api';
 import { API_ENDPOINTS } from '../config/apiEndpoints';
 
-// ---------------------- ANNOUNCEMENT ----------------------
+// Los estudiantes solo reciben avisos visibles y encuestas visibles y vigentes.
+
+// ----------------- Avisos ----------------
 
 export const createAnnouncementRequest = (announcementData) =>
-    api.post(API_ENDPOINTS.ANNOUNCEMENTS.CREATE, announcementData);
+  api.post(API_ENDPOINTS.ANNOUNCEMENTS.LIST, announcementData);
 
-export const getAllAnnouncementsRequest = () =>
-    api.get(API_ENDPOINTS.ANNOUNCEMENTS.GET_ALL);
+// params: { is_visible, announcement_type }
+export const getAllAnnouncementsRequest = (params = {}) =>
+  api.get(API_ENDPOINTS.ANNOUNCEMENTS.LIST, { params });
 
 export const getAnnouncementByIdRequest = (id) =>
-    api.get(API_ENDPOINTS.ANNOUNCEMENTS.GET(id));
+  api.get(API_ENDPOINTS.ANNOUNCEMENTS.DETAIL(id));
 
 export const updateAnnouncementRequest = (id, data) =>
-    api.patch(API_ENDPOINTS.ANNOUNCEMENTS.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.ANNOUNCEMENTS.DETAIL(id), data);
 
 export const deleteAnnouncementRequest = (id) =>
-    api.delete(API_ENDPOINTS.ANNOUNCEMENTS.DELETE(id));
+  api.delete(API_ENDPOINTS.ANNOUNCEMENTS.DETAIL(id));
 
-// ---------------------- SURVEY ----------------------
+// ----------------- Encuestas ----------------
 
 export const createSurveyRequest = (surveyData) =>
-    api.post(API_ENDPOINTS.SURVEYS.CREATE, surveyData);
+  api.post(API_ENDPOINTS.SURVEYS.LIST, surveyData);
+
+// params: { is_visible, mandatory }
+export const getAllSurveysRequest = (params = {}) =>
+  api.get(API_ENDPOINTS.SURVEYS.LIST, { params });
 
 export const getSurveyByIdRequest = (id) =>
-    api.get(API_ENDPOINTS.SURVEYS.GET(id));
+  api.get(API_ENDPOINTS.SURVEYS.DETAIL(id));
 
 export const updateSurveyRequest = (id, data) =>
-    api.patch(API_ENDPOINTS.SURVEYS.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.SURVEYS.DETAIL(id), data);
 
 export const deleteSurveyRequest = (id) =>
-    api.delete(API_ENDPOINTS.SURVEYS.DELETE(id));
-
-export const getAllSurveysRequest = () =>
-    api.get(API_ENDPOINTS.SURVEYS.GET_ALL);
+  api.delete(API_ENDPOINTS.SURVEYS.DETAIL(id));

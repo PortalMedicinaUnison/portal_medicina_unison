@@ -1,5 +1,5 @@
 # Herramientas de desarrollo y pruebas.
 -r requirements.txt
 pytest==9.2.0
-httpx==0.28.1
+httpx2==2.16.2
 pip-audit==2.10.1

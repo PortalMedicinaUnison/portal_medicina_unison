@@ -1,24 +1,32 @@
-import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { ROUTES } from '../../config';
+import { ADMIN_HOME, ROUTES } from '../../config';
 import { useUser } from '../../contexts/UserContext';
 import LoadingSpinner from '../../utils/ui/LoadingSpinner';
 
-const ProtectedRoute = () => {
-  const { isAuthenticated, loading: fetching } = useUser();
+/**
+ * Protege rutas por sesión y rol.
+ *  allow="any"     → cualquier usuario con sesión
+ *  allow="student" → solo estudiantes (un administrador se manda a /admin)
+ *  allow="admin"   → administradores y super administradores (un estudiante se manda al inicio)
+ */
+const ProtectedRoute = ({ allow = 'any' }) => {
+  const { isAuthenticated, isAdmin, loading } = useUser();
   const location = useLocation();
 
-  if (fetching) {
+  if (loading) {
     return (
       <div className="min-h-screen w-full grid place-items-center">
-        <LoadingSpinner />;
+        <LoadingSpinner />
       </div>
     );
   }
 
   if (!isAuthenticated) {
-    return <Navigate to={ROUTES.AUTH.LOGIN} replace state={{ from: location }} />;
+    return <Navigate to={ROUTES.AUTH.LOGIN} replace state={{ from: location.pathname + location.search }} />;
   }
+
+  if (allow === 'admin' && !isAdmin) return <Navigate to={ROUTES.HOME} replace />;
+  if (allow === 'student' && isAdmin) return <Navigate to={ADMIN_HOME} replace />;
 
   return <Outlet />;
 };

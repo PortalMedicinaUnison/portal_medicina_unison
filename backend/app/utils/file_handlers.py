@@ -1,77 +1,57 @@
-from pathlib import Path
+"""Guardado y lectura de archivos subidos (documentos PDF del internado)."""
+from pathlib import Path, PurePosixPath
+from typing import Optional, Tuple
 from uuid import uuid4
-from fastapi import UploadFile, HTTPException
-from fastapi.responses import FileResponse
-from typing import Any
 
-async def save_uploaded_file(file: UploadFile, upload_dir: Path, filename: str = None) -> Path:
+from fastapi import UploadFile
+
+from core.errors import bad_request, not_found, payload_too_large
+from core.settings import settings
+
+PDF_SIGNATURE = b"%PDF-"
+CHUNK_SIZE = 1024 * 1024
+
+
+def _clean_filename(filename: Optional[str]) -> Optional[str]:
+    if not filename:
+        return None
+    name = PurePosixPath(filename.replace("\\", "/")).name.strip()
+    return name[:255] or None
+
+
+def save_pdf_upload(file: UploadFile, subdir: str) -> Tuple[str, Optional[str]]:
     """
-    Guarda un archivo subido en el directorio especificado usando chunks.
-    
-    Args:
-        file: Archivo subido desde FastAPI
-        upload_dir: Directorio donde se guardará el archivo
-        filename: Nombre del archivo (opcional, genera uno aleatorio si no se provee)
-        chunk_size: Tamaño del chunk en bytes (default: 1MB)
-    
-    Returns:
-        Path: Ruta completa del archivo guardado
-    
-    Raises:
-        Exception: Si hay un error al guardar el archivo
+    Valida que el archivo sea un PDF dentro del tamaño máximo y lo guarda en
+    UPLOAD_DIR/<subdir>/<uuid>.pdf. Devuelve (ruta relativa a UPLOAD_DIR, nombre original).
+    El tipo se comprueba por el contenido, no por lo que declara el cliente.
     """
-    chunk_size: int = 1024 * 1024
-    upload_dir.mkdir(parents=True, exist_ok=True)
-    
-    if filename is None:
-        extension = Path(file.filename).suffix if file.filename else ""
-        filename = f"{uuid4().hex}{extension}"
-    
-    file_path = upload_dir / filename
-    
+    header = file.file.read(len(PDF_SIGNATURE))
+    if header != PDF_SIGNATURE:
+        raise bad_request("El archivo debe ser un PDF.")
+
+    relative = PurePosixPath(subdir) / f"{uuid4().hex}.pdf"
+    target = settings.UPLOAD_DIR / relative
+    target.parent.mkdir(parents=True, exist_ok=True)
+
+    size = len(header)
     try:
-        with open(file_path, "wb") as f:
-            while chunk := await file.read(chunk_size):
-                f.write(chunk)
-    except Exception as e:
-        file_path.unlink(missing_ok=True)
-        raise Exception(f"Error saving file: {str(e)}") from e
-    finally:
-        await file.close()
-    
-    return file_path
+        with open(target, "wb") as out:
+            out.write(header)
+            while chunk := file.file.read(CHUNK_SIZE):
+                size += len(chunk)
+                if size > settings.max_upload_bytes:
+                    raise payload_too_large(f"El archivo supera el tamaño máximo de {settings.MAX_UPLOAD_MB} MB.")
+                out.write(chunk)
+    except BaseException:
+        target.unlink(missing_ok=True)
+        raise
+    return relative.as_posix(), _clean_filename(file.filename)
 
 
-def get_file_response(
-    doc: Any,
-    inline: bool = True,
-) -> FileResponse:
-    """
-    
-    Args:
-        document_id: ID del documento
-        parent_id: ID del padre (internship_id, student_id, etc.)
-        parent_id_field: Nombre del campo del padre en el modelo
-        repo_class: Clase del repositorio
-        db: Sesión de base de datos
-        inline: True para visualizar, False para descargar
-    
-    Returns:
-        FileResponse con el archivo
-    
-    Raises:
-        HTTPException: Si el documento no existe o no pertenece al padre
-    """
-
-    file_path = Path(doc.path)
-    if not file_path.exists() or not file_path.is_file():
-        raise HTTPException(status_code=404, detail="Archivo no disponible")
-    
-    disposition = "inline" if inline else "attachment"
-    
-    return FileResponse(
-        path=str(file_path),
-        media_type=doc.media_type,
-        filename=file_path.name,
-        headers={"Content-Disposition": f'{disposition}; filename="{file_path.name}"'}
-    )
+def resolve_upload(relative_path: str) -> Path:
+    """Ruta absoluta de un archivo guardado; impide salir de UPLOAD_DIR."""
+    base = settings.UPLOAD_DIR.resolve()
+    path = (base / relative_path).resolve()
+    if not path.is_relative_to(base) or not path.is_file():
+        raise not_found("El archivo no está disponible.")
+    return path

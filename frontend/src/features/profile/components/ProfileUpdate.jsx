@@ -67,10 +67,6 @@ function ProfileUpdate({ user, fetching, fetchError, relead, userId }) {
       second_last_name: cleanedData.secondLastName,
       email: cleanedData.email,
       phone_number: cleanedData.phoneNumber,
-      password: cleanedData.password,
-      profile_photo: cleanedData.profile_photo,
-      is_admin: cleanedData.is_admin,
-      is_super_admin: cleanedData.is_super_admin,
     };
     
     await updateUser(userId, payload);

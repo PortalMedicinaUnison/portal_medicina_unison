@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { deleteUserRequest } from '../../../services/userService';
+import { deactivateMeRequest } from '../../../services/userService';
 
 
 export default function useDeleteUser() {
@@ -7,14 +7,15 @@ export default function useDeleteUser() {
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const deleteUser = useCallback(async (id) => {
+  // Desactiva la cuenta en sesión.
+  const deleteUser = useCallback(async () => {
     if (loading) return;
     setLoading(true);
     setSuccess(false);
     setError(null);
 
     try {
-      await deleteUserRequest(id);
+      await deactivateMeRequest();
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error deleting user');

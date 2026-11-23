@@ -1,104 +1,97 @@
-import os
+from typing import List, Optional
+
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status, UploadFile
+
+from core.errors import bad_request, conflict, not_found
+from models.internship import InternshipStatusEnum
+from models.report import Report, ReportTypeEnum
+from models.user import User
+from repos.internship import InternshipRepo
 from repos.report import ReportRepo
-from models.report import Report
-from schemas.report import ReportInput, ReportInputUpdate
-from utils.utils import orm_to_dict, map_to_model
+from repos.site import SiteRepo
+from schemas.report import OTHER_TYPE_REQUIRED, ReportInput, ReportOutput, ReportStatusUpdate, ReportUpdate
 
 
-def create_report(report: ReportInput, db: Session):
-    new_report = map_to_model(report, Report)
-    if new_report.evidence_url is not None:
-        new_report.evidence_url = str(new_report.evidence_url)
-    report_repo = ReportRepo(db)    
-    created_report = report_repo.create(new_report)
-    report_response = orm_to_dict(created_report)
-    return report_response
+def to_output(report: Report, viewer: User) -> ReportOutput:
+    """Si el reporte es anónimo, el personal administrativo no ve quién lo hizo."""
+    output = ReportOutput.model_validate(report)
+    if viewer.is_staff and report.anonymity:
+        output.academic_id = None
+        output.student = None
+    return output
 
-def get_all_reports(db: Session):
-    report_repo = ReportRepo(db)
-    reports = report_repo.get_all()
-    if not reports:
-        return []
-    reports_response = [orm_to_dict(report) for report in reports]
-    return reports_response
 
-def get_report(report_id: int, db: Session):
-    report_repo = ReportRepo(db)
-    report = report_repo.get_by_id(report_id)
-    if not report:
-        return None
-    report_response = orm_to_dict(report)
-    return report_response
+def _is_owner(report: Report, user: User) -> bool:
+    return not user.is_staff and report.academic_id == user.academic_id
 
-def get_reports_by_student(academic_id: str, db: Session):
-    report_repo = ReportRepo(db)
-    reports = report_repo.get_all_by_academic_id(academic_id)
-    if not reports:
-        return []
-    reports_response = [orm_to_dict(report) for report in reports]
-    return reports_response
 
-def get_report_by_student(report_id: int, academic_id: str, db: Session):
-    report_repo = ReportRepo(db)
-    report = report_repo.get_by_academic_id(report_id, academic_id)
-    if not report:
-        return None
-    report_response = orm_to_dict(report)
-    return report_response
+def _check_site(db: Session, site_id: int) -> None:
+    if SiteRepo(db).get(site_id) is None:
+        raise bad_request("La sede seleccionada no existe.")
 
-def get_reports_by_internship(internship_id: int, db: Session):
-    report_repo = ReportRepo(db)
-    reports = report_repo.get_by_internship_id(internship_id)
-    if not reports:
-        return []
-    reports_response = [orm_to_dict(report) for report in reports]
-    return reports_response
 
-def get_reports_by_site(site_id: int, db: Session):
-    report_repo = ReportRepo(db)
-    reports = report_repo.get_by_site_id(site_id)
-    if not reports:
-        return []
-    reports_response = [orm_to_dict(report) for report in reports]
-    return reports_response
+def list_reports(
+    db: Session, user: User,
+    academic_id: Optional[str], site_id: Optional[int], internship_id: Optional[int],
+    is_open: Optional[bool], report_type: Optional[ReportTypeEnum],
+) -> List[ReportOutput]:
+    scoped_academic_id = academic_id if user.is_staff else user.academic_id
+    reports = ReportRepo(db).list(
+        academic_id=scoped_academic_id, site_id=site_id, internship_id=internship_id,
+        is_open=is_open, report_type=report_type,
+    )
+    if user.is_staff and academic_id:
+        # Filtrar por estudiante no debe revelar a quién pertenecen los reportes anónimos.
+        reports = [report for report in reports if not report.anonymity]
+    return [to_output(report, user) for report in reports]
 
-def update_report(report_id: int, report_input: ReportInputUpdate, db: Session):
-    update_data = report_input.dict(exclude_unset=True)
-    report_repo = ReportRepo(db)
-    updated_report = report_repo.update(report_id, update_data)
-    if not updated_report:
-        return None
-    report_response = orm_to_dict(updated_report)
-    return report_response
 
-def delete_report(report_id: int, db: Session):
-    report_repo = ReportRepo(db)
-    return report_repo.delete(report_id)
+def get_report(db: Session, user: User, report_id: int) -> Report:
+    report = ReportRepo(db).get(report_id)
+    if report is None or not (user.is_staff or _is_owner(report, user)):
+        raise not_found("Reporte no encontrado.")
+    return report
 
-def upload_evidence_file(report_id: int, academic_id: int, file: UploadFile, db: Session):
-    """Subir un archivo de evidencia para un reporte"""
-    report_repo = ReportRepo(db)
-    existing_report = report_repo.get_by_id(report_id)
-    if not existing_report:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reporte no encontrado")
-    if existing_report.academic_id != academic_id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No tienes permisos para modificar este reporte")
-    
-    # Validar tamaño del archivo (máximo 50MB)
-    file.file.seek(0, os.SEEK_END)
-    file_size = file.file.tell()
-    file.file.seek(0)
-    
-    max_size = 50 * 1024 * 1024  # 50MB en bytes
-    if file_size > max_size:
-        raise HTTPException(status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail="El archivo es demasiado grande. El tamaño máximo permitido es de 50MB.")
-    
-    file_path = report_repo.upload_evidence(report_id, file)
-    if not file_path:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al subir el archivo de evidencia")
-    
-    updated_report = report_repo.get_by_id(report_id)
-    report_response = orm_to_dict(updated_report)
-    return report_response
+
+def create_report(db: Session, student: User, data: ReportInput) -> Report:
+    _check_site(db, data.site_id)
+    current = [
+        internship for internship in InternshipRepo(db).list(academic_id=student.academic_id)
+        if internship.status != InternshipStatusEnum.FINISHED
+    ]
+    report = Report(
+        **data.model_dump(),
+        academic_id=student.academic_id,
+        internship_id=current[0].internship_id if current else None,
+    )
+    return ReportRepo(db).add(report)
+
+
+def update_report(db: Session, user: User, report_id: int, data: ReportUpdate) -> Report:
+    report = get_report(db, user, report_id)
+    if not _is_owner(report, user):
+        raise not_found("Reporte no encontrado.")
+    if not report.is_open:
+        raise conflict("El reporte está cerrado y ya no se puede editar.")
+    payload = data.model_dump(exclude_unset=True)
+    if "site_id" in payload:
+        _check_site(db, payload["site_id"])
+    report_type = payload.get("report_type", report.report_type)
+    other_type = payload.get("other_type", report.other_type)
+    if report_type == ReportTypeEnum.OTHER and not other_type:
+        raise bad_request(OTHER_TYPE_REQUIRED)
+    if report_type != ReportTypeEnum.OTHER:
+        payload["other_type"] = None
+    return ReportRepo(db).update(report, payload)
+
+
+def set_report_status(db: Session, user: User, report_id: int, data: ReportStatusUpdate) -> Report:
+    report = get_report(db, user, report_id)
+    return ReportRepo(db).update(report, {"is_open": data.is_open})
+
+
+def delete_report(db: Session, user: User, report_id: int) -> None:
+    report = get_report(db, user, report_id)
+    if _is_owner(report, user) and not report.is_open:
+        raise conflict("El reporte está cerrado y ya no se puede eliminar.")
+    ReportRepo(db).soft_delete(report)

@@ -1,38 +1,41 @@
 import api from '../api';
 import { API_ENDPOINTS } from '../config/apiEndpoints';
 
-export const createPromotionRequest = (PromotionData) =>
-  api.post(API_ENDPOINTS.PROMOTIONS.CREATE, PromotionData);
+// ----------------- Promociones ----------------
+
+export const createPromotionRequest = (promotionData) =>
+  api.post(API_ENDPOINTS.PROMOTIONS.LIST, promotionData);
+
+// params: { year, period, is_finished }
+export const getAllPromotionsRequest = (params = {}) =>
+  api.get(API_ENDPOINTS.PROMOTIONS.LIST, { params });
 
 export const getPromotionByIdRequest = (id) =>
-  api.get(API_ENDPOINTS.PROMOTIONS.GET(id));
+  api.get(API_ENDPOINTS.PROMOTIONS.DETAIL(id));
 
 export const updatePromotionRequest = (id, data) =>
-  api.patch(API_ENDPOINTS.PROMOTIONS.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.PROMOTIONS.DETAIL(id), data);
 
 export const deletePromotionRequest = (id) =>
-  api.delete(API_ENDPOINTS.PROMOTIONS.DELETE(id));
+  api.delete(API_ENDPOINTS.PROMOTIONS.DETAIL(id));
 
-export const getAllPromotionsRequest = () =>
-  api.get(API_ENDPOINTS.PROMOTIONS.GET_ALL);
+// ----------------- Cupos por sede (promotion site details) ----------------
 
-// ------------ PSD ------------
+export const createPsdRequest = (psdData) =>
+  api.post(API_ENDPOINTS.PSD.LIST, psdData);
 
-export const createPsdRequest = (PsdData) =>
-  api.post(API_ENDPOINTS.PSD.CREATE, PsdData);
-
-export const getAllPsdsRequest = () =>
-  api.get(API_ENDPOINTS.PSD.GET_ALL);
-
-export const getPsdByIdRequest = (id) =>
-  api.get(API_ENDPOINTS.PSD.GET(id));
+// params: { promotion_id, site_id }. Cada cupo incluye `occupied` (internos ya asignados).
+export const getAllPsdsRequest = (params = {}) =>
+  api.get(API_ENDPOINTS.PSD.LIST, { params });
 
 export const getPsdsByPromotionIdRequest = (promotionId) =>
-  api.get(API_ENDPOINTS.PSD.GET_BY_PROMOTION(promotionId));
+  getAllPsdsRequest({ promotion_id: promotionId });
+
+export const getPsdByIdRequest = (id) =>
+  api.get(API_ENDPOINTS.PSD.DETAIL(id));
 
 export const updatePsdRequest = (id, data) =>
-  api.patch(API_ENDPOINTS.PSD.UPDATE(id), data);
+  api.patch(API_ENDPOINTS.PSD.DETAIL(id), data);
 
 export const deletePsdRequest = (id) =>
-  api.delete(API_ENDPOINTS.PSD.DELETE(id));
-
+  api.delete(API_ENDPOINTS.PSD.DETAIL(id));

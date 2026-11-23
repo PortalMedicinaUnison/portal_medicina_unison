@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { updateUserRequest } from '../../../services/userService';
+import { updateMeRequest } from '../../../services/userService';
 
 
 export default function useUpdateUser() {
@@ -7,14 +7,15 @@ export default function useUpdateUser() {
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updateUser = useCallback(async (id, formData) => {  
+  // `_id` se conserva por compatibilidad: siempre se actualiza la cuenta en sesión.
+  const updateUser = useCallback(async (_id, formData) => {  
     if (loading) return;
     setLoading(true);
     setError(null);
     setSuccess(false);
 
     try {
-      await updateUserRequest(id, formData);
+      await updateMeRequest(formData);
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error updating user');

@@ -1,33 +1,26 @@
-from fastapi import APIRouter, Depends, Request
-from sqlalchemy.orm import Session
-from core.dependencies import get_db
-from schemas.auth import LoginForm, TokenRequest, TokenResponse, CheckAuthResponse, UserInfo
-from controllers.auth import authenticate_user, get_current_user, refresh_token
+from fastapi import APIRouter, status
+
+from controllers import auth as controller
+from core.dependencies import CurrentUser, DbSession
+from schemas.auth import LoginInput, RegisterInput, TokenResponse
+from schemas.user import UserOutput
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
-@auth_router.post("/login/", response_model=TokenResponse)
-async def login_router(form_data: LoginForm, db: Session = Depends(get_db)):
-    """
-    Endpoint para iniciar sesión y obtener el token JWT.
-    """
-    return authenticate_user(form_data, db)
 
-@auth_router.post("/verify-token/", response_model=CheckAuthResponse)
-async def verify_token_router(token_request: TokenRequest, db: Session = Depends(get_db)):
-    """
-    Endpoint para verificar la autenticación del usuario utilizando el token proporcionado.
-    Retorna información básica del usuario autenticado.
-    """
-    user = get_current_user(token_request.token, db)
-    user_info = {
-        "user_id": user.user_id,
-    }
-    return {"user_info": user_info}
+@auth_router.post("/login", response_model=TokenResponse)
+def login(data: LoginInput, db: DbSession):
+    """Inicia sesión y devuelve el token JWT (enviarlo como `Authorization: Bearer <token>`)."""
+    return controller.login(db, data)
 
-@auth_router.post("/refresh/", response_model=TokenResponse)
-async def refresh_token_endpoint(token_request: TokenRequest, db: Session = Depends(get_db)):
-    """
-    Endpoint para renovar el token JWT basado en el token actual.
-    """
-    return refresh_token(token_request, db)
+
+@auth_router.post("/register", response_model=UserOutput, status_code=status.HTTP_201_CREATED)
+def register(data: RegisterInput, db: DbSession):
+    """Registro de estudiantes pre-registrados por la coordinación."""
+    return controller.register(db, data)
+
+
+@auth_router.post("/refresh", response_model=TokenResponse)
+def refresh(user: CurrentUser):
+    """Renueva el token de la sesión actual."""
+    return controller.refresh_token(user)

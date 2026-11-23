@@ -1,10 +1,10 @@
-import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignUpPage from '../features/auth/pages/SignUpPage';
 import HomePage from '../user/features/announcements/pages/AnnouncementCardPage';
+import NotFoundPage from '../pages/NotFoundPage';
 
 // Profile pages
 import ProfileUpdatePage from '../features/profile/pages/ProfileUpdatePage';
@@ -27,16 +27,20 @@ import SurveyPage from '../user/features/surveys/pages/SurveyCardPage';
 
 function UserRoutes() {
   return (
-
     <Routes>
       <Route path="login" element={<LoginPage />} />
       <Route path="signup" element={<SignUpPage />} />
-      
-      <Route element={<ProtectedRoute />}>
-        <Route index element={<HomePage />} />
+
+      {/* Perfil: cualquier usuario con sesión (también administradores) */}
+      <Route element={<ProtectedRoute allow="any" />}>
         <Route path="profile" element={<ProfilePage />} />
         <Route path="profile/edit" element={<ProfileUpdatePage />} />
-        
+      </Route>
+
+      {/* Área del estudiante */}
+      <Route element={<ProtectedRoute allow="student" />}>
+        <Route index element={<HomePage />} />
+
         {/* Reports routes */}
         <Route path="reports" element={<ReportListPage />} />
         <Route path="reports/create" element={<ReportFormPage />} />
@@ -52,6 +56,8 @@ function UserRoutes() {
         {/* Surveys routes */}
         <Route path="surveys" element={<SurveyPage />} />
       </Route>
+
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getInternshipApplicationsLatestByAcademicRequest } from '../../../../services/internshipService';
+import { getAllInternshipApplicationsRequest } from '../../../../services/internshipService';
 
 
 export default function useApplicationByAcademic(id) {
@@ -13,8 +13,9 @@ export default function useApplicationByAcademic(id) {
     setError(null);
     
     try {
-      const response = await getInternshipApplicationsLatestByAcademicRequest(id);
-      setApplication(response.data);
+      // El backend devuelve solo las asignaciones del estudiante, de la más reciente a la más antigua.
+      const response = await getAllInternshipApplicationsRequest();
+      setApplication(response.data[0] ?? null);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error fetching application');
       setApplication(null);

@@ -1,243 +1,127 @@
-from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status, Request
-from sqlalchemy.orm import Session
-from core.dependencies import get_db
 from typing import List, Optional
-from models.internship import DocumentTypeEnum
+
+from fastapi import APIRouter, File, Form, UploadFile, status
+from fastapi.responses import FileResponse
+
+from controllers import internship as controller
+from core.dependencies import AdminUser, CurrentUser, DbSession
+from models.internship import ApplicationStatusEnum, DocumentTypeEnum, InternshipStatusEnum
 from schemas.internship import (
-    InternshipInput, InternshipUpdate, InternshipOutput,
-    InternshipApplicationInput, InternshipApplicationUpdate, InternshipApplicationOutput,
-    InternshipDocumentInput, InternshipDocumentUpdate, InternshipDocumentOutput
+    InternshipApplicationInput, InternshipApplicationOutput, InternshipDocumentOutput,
+    InternshipOutput, InternshipUpdate,
 )
-from controllers.internship import (
-    create_internship,
-    get_all_internships,
-    get_internship,
-    get_all_internships_by_academic,
-    get_latest_internship_by_academic,
-    get_internships_by_site,
-    update_internship,
-    delete_internship,
 
-    create_internship_application,
-    get_all_internship_applications,
-    get_internship_application,
-    get_all_internship_applications_by_academic,
-    get_internship_applications_latest_by_academic,
-    get_internship_application_for_update,
-    update_internship_application,
-    update_accept_internship_application,
-    delete_internship_application, 
+# ----------------------  INTERNSHIP APPLICATION  ----------------------
 
-    create_internship_document,
-    get_all_internship_documents,
-    get_internship_documents_by_id,
-    update_internship_document,
-    delete_internship_document,
-    view_internship_document,
-    download_internship_document,
-)
+internship_application_router = APIRouter(prefix="/internship-applications", tags=["Asignaciones de internado"])
+
+
+@internship_application_router.get("", response_model=List[InternshipApplicationOutput])
+def list_applications(
+    user: CurrentUser, db: DbSession,
+    promotion_id: Optional[int] = None, academic_id: Optional[str] = None,
+    status: Optional[ApplicationStatusEnum] = None,
+):
+    """Administradores: todas (con filtros). Estudiantes: solo las suyas, de la más reciente a la más antigua."""
+    return controller.list_applications(db, user, promotion_id=promotion_id, academic_id=academic_id, status=status)
+
+
+@internship_application_router.post("", response_model=InternshipApplicationOutput, status_code=status.HTTP_201_CREATED)
+def create_application(data: InternshipApplicationInput, _admin: AdminUser, db: DbSession):
+    return controller.create_application(db, data)
+
+
+@internship_application_router.get("/{application_id}", response_model=InternshipApplicationOutput)
+def get_application(application_id: int, user: CurrentUser, db: DbSession):
+    return controller.get_application(db, user, application_id)
+
+
+@internship_application_router.post("/{application_id}/accept", response_model=InternshipOutput)
+def accept_application(application_id: int, user: CurrentUser, db: DbSession):
+    """El estudiante acepta su asignación: se crea su internado (sin sede, la asigna la coordinación)."""
+    return controller.accept_application(db, user, application_id)
+
+
+@internship_application_router.post("/{application_id}/decline", response_model=InternshipApplicationOutput)
+def decline_application(application_id: int, user: CurrentUser, db: DbSession):
+    return controller.decline_application(db, user, application_id)
+
+
+@internship_application_router.delete("/{application_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_application(application_id: int, _admin: AdminUser, db: DbSession):
+    controller.delete_application(db, application_id)
+
 
 # ----------------------  INTERNSHIP  ----------------------
 
 internship_router = APIRouter(prefix="/internships", tags=["Internados"])
 
-@internship_router.post('/', response_model=InternshipOutput)
-async def create_internship_route(internship: InternshipInput, db: Session = Depends(get_db)):
-    created_internship = create_internship(internship, db)
-    if not created_internship:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="No se pudo crear el internado")
-    return created_internship
 
-@internship_router.get('/', response_model=List[InternshipOutput])
-async def get_internships_route(db: Session = Depends(get_db)):
-    internships = get_all_internships(db)
-    return internships
-
-@internship_router.get('/{internship_id}', response_model=InternshipOutput)
-async def get_internship_route(internship_id: int, db: Session = Depends(get_db)):
-    internship = get_internship(internship_id, db)
-    if not internship:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Internado no encontrado")
-    return internship
-
-@internship_router.get('/academicId/{academic_id}/all', response_model=List[InternshipOutput])
-async def get_all_internships_by_academic_route(academic_id: str, db: Session = Depends(get_db)):
-    internships = get_all_internships_by_academic(academic_id, db)
-    return internships
-
-@internship_router.get('/academicId/{academic_id}', response_model=InternshipOutput)
-async def get_latest_internship_by_academic_route(academic_id: str, db: Session = Depends(get_db)):
-    internship = get_latest_internship_by_academic(academic_id, db)
-    if not internship:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Internado no encontrado")
-    return internship
-    
-
-@internship_router.get('/siteId/{site_id}', response_model=List[InternshipOutput])
-async def get_internships_by_site_route(site_id: int, db: Session = Depends(get_db)):
-    internships = get_internships_by_site(site_id, db)
-    return internships
-
-@internship_router.patch('/{internship_id}', response_model=InternshipOutput)
-async def update_internship_route(internship_id: int, internship: InternshipUpdate, db: Session = Depends(get_db)):
-    updated_internship = update_internship(internship_id, internship, db)
-    if not updated_internship:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Internado no encontrado")
-    return updated_internship
-
-@internship_router.delete('/{internship_id}')
-async def delete_internship_route(internship_id: int, db: Session = Depends(get_db)):
-    deleted = delete_internship(internship_id, db)
-    if not deleted:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Internado no encontrado")
-    return deleted
-
-# ----------------------  INTERNSHIP APPLICATION  ----------------------
-
-internship_application_router = APIRouter(prefix="/internship-applications", tags=["Internship Applications"])
-
-@internship_application_router.post('/', response_model=InternshipApplicationOutput)
-async def create_internship_application_route(internship_application: InternshipApplicationInput, db: Session = Depends(get_db)):
-    created_application = create_internship_application(internship_application, db)
-    if not created_application:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="No se pudo crear la aplicación al internado")
-    return created_application
-
-@internship_application_router.get('/', response_model=List[InternshipApplicationOutput])
-async def get_all_internship_applications_route(db: Session = Depends(get_db)):
-    applications = get_all_internship_applications(db)
-    return applications
-
-@internship_application_router.get('/{application_id}', response_model=InternshipApplicationOutput)
-async def get_internship_application_route(application_id: int, db: Session = Depends(get_db)):
-    application = get_internship_application(application_id, db)
-    if not application:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Aplicación no encontrada")
-    return application
-
-@internship_application_router.get('/academicId/{academic_id}', response_model=List[InternshipApplicationOutput])
-async def get_all_internship_applications_by_academic_route(academic_id: str, db: Session = Depends(get_db)):
-    applications = get_all_internship_applications_by_academic(academic_id, db)
-    return applications
-
-@internship_application_router.get('/academicId/{academic_id}/pending', response_model=Optional[InternshipApplicationOutput])
-async def get_internship_applications_latest_by_academic_route(academic_id: str, db: Session = Depends(get_db)):
-    applications = get_internship_applications_latest_by_academic(academic_id, db)
-    return applications
-
-@internship_application_router.get('/{application_id}/for-update', response_model=InternshipApplicationOutput)
-async def get_internship_application_for_update_route(application_id: int, db: Session = Depends(get_db)):
-    application = get_internship_application_for_update(application_id, db)
-    if not application:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Aplicación no encontrada")
-    return application
-
-@internship_application_router.patch('/{application_id}', response_model=InternshipApplicationOutput)
-async def update_internship_application_route(application_id: int, application: InternshipApplicationUpdate, db: Session = Depends(get_db)):
-    updated_application = update_internship_application(application_id, application, db)
-    if not updated_application:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Aplicación no encontrada")
-    return updated_application
-
-@internship_application_router.post('/{application_id}/accept', response_model=InternshipOutput)
-async def update_accept_internship_application_route(application_id: int, application: InternshipApplicationUpdate, db: Session = Depends(get_db)):
-    internship = update_accept_internship_application(application_id, application, db)
-    if not internship:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Aplicación no encontrada o no se pudo crear el internado")
-    return internship
-
-@internship_application_router.delete('/{application_id}')
-async def delete_internship_application_route(application_id: int, db: Session = Depends(get_db)):
-    deleted = delete_internship_application(application_id, db)
-    if not deleted:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Aplicación no encontrada")
-    return deleted
-
-# ---------------------- INTERNSHIP DOCUMENT ----------------------
-
-internship_document_router = APIRouter(prefix="/internships", tags=["Documentos"])
-
-@internship_document_router.post('/{internship_id}/documents', response_model=InternshipDocumentOutput)
-async def create_internship_document_route(
-    internship_id: int,
-    document_type: DocumentTypeEnum = Form(...),
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db),
-    request: Request = None
+@internship_router.get("", response_model=List[InternshipOutput])
+def list_internships(
+    user: CurrentUser, db: DbSession,
+    promotion_id: Optional[int] = None, site_id: Optional[int] = None,
+    academic_id: Optional[str] = None, status: Optional[InternshipStatusEnum] = None,
 ):
-    uploaded_document = await create_internship_document(
-        db=db,
-        internship_id=internship_id,
-        document_type=document_type,
-        file=file,
-        request=request
+    """Administradores: todos (con filtros). Estudiantes: solo los suyos, del más reciente al más antiguo."""
+    return controller.list_internships(
+        db, user, promotion_id=promotion_id, site_id=site_id, academic_id=academic_id, status=status,
     )
-    if not uploaded_document:
-        raise HTTPException(
-            status_code=400, 
-            detail="No se pudo crear el documento del internado.")
-    return uploaded_document
-
-@internship_document_router.get('/{internship_id}/documents', response_model=List[InternshipDocumentOutput])
-async def get_internship_documents_route(internship_id: int, db: Session = Depends(get_db)):
-    internship_documents = get_all_internship_documents(internship_id, db)
-    return internship_documents
-
-@internship_document_router.get('/{internship_id}/documents/{document_id}', response_model=InternshipDocumentOutput)
-async def get_internship_documents_by_id_route(internship_id: int, document_id: int, db: Session = Depends(get_db)):
-    internship_document = get_internship_documents_by_id(internship_id, document_id, db)
-    if not internship_document:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Documento de internado no encontrado")
-    return internship_document
-
-@internship_document_router.patch('/{internship_id}/documents/{document_id}', response_model=InternshipDocumentOutput)
-async def update_internship_document_route(internship_id: int, document_id: int, document: InternshipDocumentUpdate, db: Session = Depends(get_db)):
-    updated_document = update_internship_document(internship_id, document_id, document, db)
-    if not updated_document:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Documento de internado no encontrado")
-    return updated_document
-
-@internship_document_router.delete('/{internship_id}/documents/{document_id}')
-async def delete_internship_document_route(internship_id: int, document_id: int, db: Session = Depends(get_db)):
-    deleted = delete_internship_document(internship_id, document_id, db)
-    if not deleted:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Documento de internado no encontrado")
-    return deleted
-
-@internship_document_router.get('/{internship_id}/documents/{document_id}/view', name='view_internship_document')
-async def view_internship_document_route(internship_id: int, document_id: int, db: Session = Depends(get_db)):
-    return view_internship_document(internship_id, document_id, db)
 
 
-@internship_document_router.get('/{internship_id}/documents/{document_id}/download', name='download_internship_document')
-async def download_internship_document_route(internship_id: int, document_id: int, db: Session = Depends(get_db)):
-    return download_internship_document(internship_id, document_id, db)
+@internship_router.get("/{internship_id}", response_model=InternshipOutput)
+def get_internship(internship_id: int, user: CurrentUser, db: DbSession):
+    return controller.get_internship(db, user, internship_id)
 
+
+@internship_router.patch("/{internship_id}", response_model=InternshipOutput)
+def update_internship(internship_id: int, data: InternshipUpdate, admin: AdminUser, db: DbSession):
+    """Asigna o cambia la sede (respetando el cupo) o el estatus del internado."""
+    return controller.update_internship(db, admin, internship_id, data)
+
+
+@internship_router.delete("/{internship_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_internship(internship_id: int, admin: AdminUser, db: DbSession):
+    """Da de baja el internado; la asignación vuelve a quedar pendiente."""
+    controller.delete_internship(db, admin, internship_id)
+
+
+# ----------------------  INTERNSHIP DOCUMENT  ----------------------
+
+@internship_router.get("/{internship_id}/documents", response_model=List[InternshipDocumentOutput], tags=["Documentos"])
+def list_documents(internship_id: int, user: CurrentUser, db: DbSession):
+    return controller.list_documents(db, user, internship_id)
+
+
+@internship_router.post(
+    "/{internship_id}/documents", response_model=InternshipDocumentOutput,
+    status_code=status.HTTP_201_CREATED, tags=["Documentos"],
+)
+def upload_document(
+    internship_id: int, user: CurrentUser, db: DbSession,
+    document_type: DocumentTypeEnum = Form(...), file: UploadFile = File(...),
+):
+    """Sube un PDF (máximo MAX_UPLOAD_MB). Solo puede haber un documento activo por tipo."""
+    return controller.upload_document(db, user, internship_id, document_type, file)
+
+
+@internship_router.get("/{internship_id}/documents/{document_id}", response_model=InternshipDocumentOutput, tags=["Documentos"])
+def get_document(internship_id: int, document_id: int, user: CurrentUser, db: DbSession):
+    return controller.get_document(db, user, internship_id, document_id)
+
+
+@internship_router.get("/{internship_id}/documents/{document_id}/file", response_class=FileResponse, tags=["Documentos"])
+def get_document_file(internship_id: int, document_id: int, user: CurrentUser, db: DbSession, download: bool = False):
+    """Devuelve el PDF. `download=true` lo descarga; si no, se muestra en el navegador."""
+    path, document = controller.get_document_file(db, user, internship_id, document_id)
+    return FileResponse(
+        path,
+        media_type="application/pdf",
+        filename=document.original_filename or f"documento-{document.document_id}.pdf",
+        content_disposition_type="attachment" if download else "inline",
+    )
+
+
+@internship_router.delete("/{internship_id}/documents/{document_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Documentos"])
+def delete_document(internship_id: int, document_id: int, user: CurrentUser, db: DbSession):
+    controller.delete_document(db, user, internship_id, document_id)

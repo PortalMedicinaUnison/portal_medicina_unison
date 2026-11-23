@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getReportsByStudentRequest } from '../../../../services/reportService';
+import { getMyReportsRequest } from '../../../../services/reportService';
 
 
 export default function useGetReportsByStudent(id) {
@@ -13,7 +13,7 @@ export default function useGetReportsByStudent(id) {
     setError(null);
     
     try {
-      const response = await getReportsByStudentRequest(id);
+      const response = await getMyReportsRequest();
       setReports(response.data);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error fetching reports');

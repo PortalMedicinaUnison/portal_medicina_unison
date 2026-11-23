@@ -1,99 +1,47 @@
-from fastapi import HTTPException, status, Depends, Request
 from sqlalchemy.orm import Session
-from core.dependencies import get_db
-from core.auth import create_access_token, decode_access_token, get_access_token
-from utils.security import verify_password, get_user_role
-from repos.user import UserRepo 
+
+from core.errors import bad_request, conflict, unauthorized
+from core.security import create_access_token, hash_password, verify_password
 from models.user import User
-from schemas.auth import LoginForm, TokenResponse, TokenRequest
+from repos.user import UserEnrollmentRepo, UserRepo
+from schemas.auth import LoginInput, RegisterInput, TokenResponse
 
 
-def authenticate_user(form_data: LoginForm, db: Session) -> TokenResponse:
-    """
-    Autentica al usuario y retorna un TokenResponse con el JWT.
-    """
-    user_repo = UserRepo(db)
-    user = user_repo.get_by_email(form_data.email)
-    
-    if not user or not verify_password(form_data.password, user.password):
-        raise HTTPException(
-            status_code = status.HTTP_401_UNAUTHORIZED,
-            detail = "Incorrect username or password",
-            headers = {"WWW-Authenticate": "Bearer"},
-        )
-    
-    token = create_access_token(data={
-        "sub": user.user_id,
-    })
-    return TokenResponse(access_token=token, token_type="bearer")
+def login(db: Session, data: LoginInput) -> TokenResponse:
+    user = UserRepo(db).get_by_email(data.email)
+    if not verify_password(data.password, user.password if user else None):
+        raise unauthorized("Correo o contraseña incorrectos.")
+    return TokenResponse(access_token=create_access_token(user.user_id))
 
 
-def get_current_user(token: str, db: Session) -> User:
-    """
-    Valida el token y retorna el usuario autenticado.
-    """
-    payload = decode_access_token(token)
+def register(db: Session, data: RegisterInput) -> User:
+    """Crea la cuenta de un estudiante pre-registrado. Nunca crea administradores."""
+    users = UserRepo(db)
+    enrollment = UserEnrollmentRepo(db).get_by_academic_id(data.academic_id)
+    if enrollment is None:
+        raise bad_request("Tu expediente no está pre-registrado. Contacta a la coordinación del internado.")
+    if users.get_by_academic_id(data.academic_id, include_inactive=True):
+        raise conflict("Ya existe una cuenta con este expediente.")
+    if users.get_by_email(data.email, include_inactive=True):
+        raise conflict("Ya existe una cuenta con este correo.")
 
-    if not payload or payload.get("sub") is None:
-        raise HTTPException(
-            status_code = status.HTTP_401_UNAUTHORIZED,
-            detail = "Could not validate credentials",
-            headers = {"WWW-Authenticate": "Bearer"},
-        )
-
-    user_id = int(payload["sub"])
-    
-    user_repo = UserRepo(db)
-    user = user_repo.get_by_id(user_id)
-    
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    user = User(
+        academic_id=data.academic_id,
+        first_name=data.first_name,
+        last_name=data.last_name,
+        second_last_name=data.second_last_name,
+        email=data.email,
+        phone_number=data.phone_number,
+        password=hash_password(data.password),
+        is_admin=False,
+        is_super_admin=False,
+    )
+    db.add(user)
+    enrollment.is_enrolled = True
+    db.commit()
+    db.refresh(user)
     return user
 
-def authorize_user(user: User, role: str):
-    """
-    Verifica si el usuario tiene el rol necesario para acceder a un recurso.
-    """
-    user_role = get_user_role(user)
-    if user_role != role:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User does not have enough privileges",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
 
-def refresh_token(token_request: TokenRequest, db: Session = Depends(get_db)):
-    """
-    Renueva el token JWT basado en el token actual.
-    """
-    payload = decode_access_token(token_request.token)
-
-    if not payload or payload.get("sub") is None:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid token")
-    
-    user_id: str = payload.get("sub")
-    user_repo = UserRepo(db)
-    user = user_repo.get_by_id(user_id)
-
-    if user is None:
-        raise HTTPException(
-            status_code=401, 
-            detail="User not found")
-    
-    new_token = create_access_token(data={
-        "sub": user.user_id,
-    })
-    return TokenResponse(access_token=new_token, token_type="bearer")
-
-def get_current_user_from_cookie(request: Request, db: Session):
-    """
-    Extrae el token desde la cookie, lo valida y retorna el usuario.
-    """
-    token = get_access_token(request)
-    return get_current_user(token, db)
+def refresh_token(user: User) -> TokenResponse:
+    return TokenResponse(access_token=create_access_token(user.user_id))

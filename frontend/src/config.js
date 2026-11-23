@@ -1,5 +1,6 @@
 export const DEFAULT_PROFILE_IMAGE = '/default_picture.jpg';
-export const adminAbs = (sub) => `/admin${sub}`;
+export const ADMIN_HOME = '/admin';
+export const adminAbs = (sub) => `${ADMIN_HOME}${sub}`;
 export const userAbs = (sub) => {
   // Remove leading slash if present to avoid double slashes
   const cleanSub = sub.startsWith('/') ? sub.slice(1) : sub;

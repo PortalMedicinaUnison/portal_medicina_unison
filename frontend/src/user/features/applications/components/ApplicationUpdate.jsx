@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
-import useUpdateApplication from '../../applications/hooks/useUpdateApplication'
-import useCreateInternship from '../../internships/hooks/useCreateInternship';
+import useRespondApplication from '../hooks/useRespondApplication';
 import { cleanFormData } from "../../../../utils/utils";
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
@@ -17,8 +16,7 @@ const INITIAL_FORM = {
 
 function ApplicationUpdate({ application, fetching, fetchError, refetch, applicationId, user }) {
   const navigate = useNavigate();
-  const { updateApplication, loading: saving, error: saveError, success: saved, reset } = useUpdateApplication();
-  const { createInternship, loading: creatingInternship, error: internshipError, success: internshipCreated, reset: resetCreate } = useCreateInternship();
+  const { accept, decline, loading: saving, error: saveError, result, reset } = useRespondApplication();
 
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [validationError, setValidationError] = useState('');
@@ -36,65 +34,28 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
     setShowConfirmDecline(true);
   };
 
+  const validateTerms = () => {
+    if (!applicationId) {
+      setValidationError("No se encontró tu asignación.");
+      return false;
+    }
+    if (!cleanFormData(formData).termsAccepted) {
+      setValidationError("Debes aceptar los términos y condiciones.");
+      return false;
+    }
+    return true;
+  };
+
   const handleConfirmAccept = async () => {
     setShowConfirmAccept(false);
-
-    if (!applicationId) {
-      setValidationError("ID de la aplicación al internado no proporcionado.");
-      return;
-    }
-
-    const cleanedData = cleanFormData(formData);
-
-    const errors = [];
-    if (!cleanedData.termsAccepted) errors.push("Debe aceptar los términos y condiciones.");
-    if (errors.length > 0) {
-      setValidationError(errors.join(" | "));
-      return;
-    }
-
-    const payload = {
-      status: 2,
-    };
-    
-    const response = await updateApplication(applicationId, payload);
-    console.log("Update response:", response);
-
-    if (response && response.data) {
-      const internshipPayload = {
-        application_id: applicationId,
-        site_id: null,
-        status: 1,
-      };
-
-      console.log("Creating internship with payload:", internshipPayload);
-
-      await createInternship(internshipPayload);
-    }
+    if (!validateTerms()) return;
+    await accept(applicationId);
   };
 
   const handleConfirmDecline = async () => {
     setShowConfirmDecline(false);
-
-    if (!applicationId) {
-      setValidationError("ID de la aplicación al internado no proporcionado.");
-      return;
-    }
-
-    const cleanedData = cleanFormData(formData);
-
-    const errors = [];
-    if (!cleanedData.termsAccepted) errors.push("Debe aceptar los términos y condiciones.");
-    if (errors.length > 0) {
-      setValidationError(errors.join(" | "));
-      return;
-    }
-
-    const payload = {
-      status: 3,
-    };
-
-    await updateApplication(applicationId, payload);
+    if (!validateTerms()) return;
+    await decline(applicationId);
   };
 
   const handleCloseConfirmAccept = () => setShowConfirmAccept(false);
@@ -110,21 +71,16 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
 
       if (validationError) setValidationError("");
       if (saveError) reset();
-      if (internshipError) resetCreate();
-
     },
-    [validationError, saveError, internshipError, reset, resetCreate]
+    [validationError, saveError, reset]
   );
 
 // ---------------------- EFFECTS ----------------------
 
+  // La página de redirección decide a dónde ir según el nuevo estado (internado o declinada).
   useEffect(() => {
-    if (saved && internshipCreated) {
-      navigate(ROUTES.USER.INTERNSHIP_REDIRECT);
-    } else if (saved && !creatingInternship && internshipError) {
-      setValidationError("La aplicación se guardó pero hubo un error al crear el internship. Contacta al administrador.");
-    }
-  }, [saved, internshipCreated, creatingInternship, internshipError, navigate]);
+    if (result) navigate(ROUTES.USER.INTERNSHIP_REDIRECT, { replace: true });
+  }, [result, navigate]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -164,7 +120,7 @@ return (
         <div className="alert-error">
           <strong className="font-bold">Error: </strong>
             <span className="block sm:inline">
-              {validationError || saveError || internshipError}
+              {validationError || saveError}
             </span>
         </div>
       )}

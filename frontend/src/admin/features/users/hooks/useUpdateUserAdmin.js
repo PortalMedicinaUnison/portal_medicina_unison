@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { updateUserRequest } from '../../../../services/userService';
+import { setUserRoleRequest, updateUserRequest } from '../../../../services/userService';
 
 
 export default function useUpdateUser() {
@@ -14,7 +14,10 @@ export default function useUpdateUser() {
     setSuccess(false);
 
     try {
-      await updateUserRequest(id, formData);
+      // El rol se cambia en su propio endpoint (solo super administradores).
+      const { is_admin: isAdmin, ...profile } = formData;
+      if (isAdmin !== undefined) await setUserRoleRequest(id, isAdmin);
+      if (Object.keys(profile).length) await updateUserRequest(id, profile);
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error updating user');
