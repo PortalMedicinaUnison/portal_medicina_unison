@@ -27,6 +27,14 @@ test/
 *.sln
 *.sw?
 *.db
+*.db-*
 __pycache__/
 *.pyc
+.pytest_cache/
 uploads/
+
+# Variables de entorno (contienen secretos: no se versionan)
+.env
+
+# Datos locales del backend (BD SQLite y archivos subidos)
+backend/data/
