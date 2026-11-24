@@ -1,84 +1,71 @@
+from typing import List, Optional
+
 from sqlalchemy.orm import Session
+
+from core.errors import not_found
+from models.communication import Announcement, AnnouncementTypeEnum, Survey
+from models.user import User
 from repos.communication import AnnouncementRepo, SurveyRepo
-from models.communication import Announcement, Survey
-from schemas.communication import (
-    AnnouncementInput, AnnouncementInputUpdate,
-    SurveyInput, SurveyInputUpdate)
-from utils.utils import orm_to_dict, map_to_model
+from schemas.communication import AnnouncementInput, AnnouncementUpdate, SurveyInput, SurveyUpdate
+from utils.dates import local_today
 
 
-# ---------------------- ANNOUCEMENT ----------------------
+# ---------------------- ANNOUNCEMENT ----------------------
 
-def create_announcement(announcement: AnnouncementInput, db: Session):
-    new_announcement = map_to_model(announcement, Announcement)
-    announcement_repo = AnnouncementRepo(db)
-    created_announcement = announcement_repo.create(new_announcement)
-    announcement_response = orm_to_dict(created_announcement)
-    return announcement_response
+def list_announcements(
+    db: Session, user: User, is_visible: Optional[bool], announcement_type: Optional[AnnouncementTypeEnum],
+) -> List[Announcement]:
+    """Los estudiantes solo ven avisos visibles."""
+    visible = is_visible if user.is_staff else True
+    return AnnouncementRepo(db).list(is_visible=visible, announcement_type=announcement_type)
 
-def get_all_announcements(db: Session):
-    announcement_repo = AnnouncementRepo(db)
-    announcements = announcement_repo.get_all()
-    if not announcements:
-        return []
-    announcements_response = [orm_to_dict(announcement) for announcement in announcements]
-    return announcements_response
 
-def get_announcement(announcement_id: int, db: Session):
-    announcement_repo = AnnouncementRepo(db)
-    announcement = announcement_repo.get_by_id(announcement_id)
-    if not announcement:
-        return None
-    announcement_response = orm_to_dict(announcement)
-    return announcement_response
+def get_announcement(db: Session, user: User, announcement_id: int) -> Announcement:
+    announcement = AnnouncementRepo(db).get(announcement_id)
+    if announcement is None or (not user.is_staff and not announcement.is_visible):
+        raise not_found("Aviso no encontrado.")
+    return announcement
 
-def update_announcement(announcement_id: int, announcement: AnnouncementInputUpdate, db: Session):
-    update_data = announcement.dict(exclude_unset=True)
-    announcement_repo = AnnouncementRepo(db)
-    updated_announcement = announcement_repo.update(announcement_id, update_data)
-    if not updated_announcement:
-        return None
-    updated_announcement_response = orm_to_dict(updated_announcement)
-    return updated_announcement_response
-    
-def delete_announcement(announcement_id: int, db: Session):
-    announcement_repo = AnnouncementRepo(db)
-    return announcement_repo.delete(announcement_id)
+
+def create_announcement(db: Session, data: AnnouncementInput) -> Announcement:
+    return AnnouncementRepo(db).add(Announcement(**data.model_dump()))
+
+
+def update_announcement(db: Session, user: User, announcement_id: int, data: AnnouncementUpdate) -> Announcement:
+    announcement = get_announcement(db, user, announcement_id)
+    return AnnouncementRepo(db).update(announcement, data.model_dump(exclude_unset=True))
+
+
+def delete_announcement(db: Session, user: User, announcement_id: int) -> None:
+    announcement = get_announcement(db, user, announcement_id)
+    AnnouncementRepo(db).soft_delete(announcement)
+
 
 # ---------------------- SURVEY ----------------------
 
-def create_survey(survey: SurveyInput, db: Session):
-    new_survey = map_to_model(survey, Survey)
-    survey_repo = SurveyRepo(db)
-    created_survey = survey_repo.create(new_survey)
-    survey_response = orm_to_dict(created_survey)
-    return survey_response
+def list_surveys(db: Session, user: User, is_visible: Optional[bool], mandatory: Optional[bool]) -> List[Survey]:
+    """Los estudiantes solo ven encuestas visibles y vigentes."""
+    if user.is_staff:
+        return SurveyRepo(db).list(is_visible=is_visible, mandatory=mandatory)
+    return SurveyRepo(db).list(is_visible=True, mandatory=mandatory, not_expired_on=local_today())
 
-def get_all_surveys(db: Session):
-    survey_repo = SurveyRepo(db)
-    surveys = survey_repo.get_all()
-    if not surveys:
-        return []
-    surveys_response = [orm_to_dict(survey) for survey in surveys]
-    return surveys_response
 
-def get_survey(survey_id: int, db: Session):
-    survey_repo = SurveyRepo(db)
-    survey = survey_repo.get_by_id(survey_id)
-    if not survey:
-        return None
-    survey_response = orm_to_dict(survey)
-    return survey_response
+def get_survey(db: Session, user: User, survey_id: int) -> Survey:
+    survey = SurveyRepo(db).get(survey_id)
+    if survey is None or (not user.is_staff and (not survey.is_visible or survey.expiration_date < local_today())):
+        raise not_found("Encuesta no encontrada.")
+    return survey
 
-def update_survey(survey_id: int, survey: SurveyInputUpdate, db: Session):
-    update_data = survey.dict(exclude_unset=True)
-    survey_repo = SurveyRepo(db)
-    updated_survey = survey_repo.update(survey_id, update_data)
-    if not updated_survey:
-        return None
-    updated_survey_response = orm_to_dict(updated_survey)
-    return updated_survey_response
-    
-def delete_survey(survey_id: int, db: Session):
-    survey_repo = SurveyRepo(db)
-    return survey_repo.delete(survey_id)
+
+def create_survey(db: Session, data: SurveyInput) -> Survey:
+    return SurveyRepo(db).add(Survey(**data.model_dump()))
+
+
+def update_survey(db: Session, user: User, survey_id: int, data: SurveyUpdate) -> Survey:
+    survey = get_survey(db, user, survey_id)
+    return SurveyRepo(db).update(survey, data.model_dump(exclude_unset=True))
+
+
+def delete_survey(db: Session, user: User, survey_id: int) -> None:
+    survey = get_survey(db, user, survey_id)
+    SurveyRepo(db).soft_delete(survey)

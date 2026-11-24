@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getSurveyByIdRequest } from '../../../../services/communicationService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useSurvey(id) {
@@ -16,7 +17,7 @@ export default function useSurvey(id) {
       const response = await getSurveyByIdRequest(id);
       setSurvey(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching survey');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setSurvey(null);
     } finally {
       setLoading(false);

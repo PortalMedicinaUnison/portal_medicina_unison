@@ -2,19 +2,21 @@ import { useState } from 'react';
 import { useUser } from './contexts/UserContext';
 import LoadingSpinner from './utils/ui/LoadingSpinner';
 
-import StudentSidebar from './user/components/StudentSidebar';
+import StudentSidebar from './components/StudentSidebar';
 import AdminSidebar from './admin/components/AdminSidebar';
 import Navbar from './components/Navbar';
 
 
 function Layout({ children }) {
-  const { userRole, loading, error } = useUser();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { isAdmin, loading } = useUser();
+  // Abierta en escritorio; cerrada en móvil (cada página monta su Layout, así no se reabre al navegar).
+  const [isSidebarOpen, setIsSidebarOpen] = useState(
+    () => typeof window === 'undefined' || window.matchMedia('(min-width: 768px)').matches
+  );
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <div>Error: {error.message}</div>;
 
-  const Sidebar = userRole === 'admin' ? AdminSidebar : StudentSidebar;
+  const Sidebar = isAdmin ? AdminSidebar : StudentSidebar;
   
   const toggleSidebar = () => setIsSidebarOpen((v) => !v);
   const closeMobileSidebar = () => setIsSidebarOpen(false);

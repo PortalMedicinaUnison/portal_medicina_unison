@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { createUserEnrollmentRequest } from '../../../../../services/userService';
+import { getErrorMessage } from '../../../../../utils/errors';
 
 
 export default function useCreateEnrollment() {
@@ -24,7 +25,7 @@ export default function useCreateEnrollment() {
       setSuccess(true);
       return response;
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error creating enrollment');
+      setError(getErrorMessage(err, 'No se pudo guardar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

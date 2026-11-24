@@ -36,7 +36,7 @@ function InstitutionUpdate({ institution, fetching, fetchError, refetch, institu
     e.preventDefault();
 
     if (!institutionId) {
-        setValidationError('ID de anuncio no proporcionado.');
+        setValidationError('ID de institución no proporcionado.');
         return;
     }
 
@@ -44,7 +44,7 @@ function InstitutionUpdate({ institution, fetching, fetchError, refetch, institu
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.name) errors.push('El nombre es obligatorio');
+    if (!cleanedData.name) errors.push('La razón social es obligatoria.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -71,7 +71,7 @@ function InstitutionUpdate({ institution, fetching, fetchError, refetch, institu
     if (saved) {
       navigate(adminAbs(ROUTES.ADMIN.INSTITUTION_DETAIL(institutionId)));
     }
-  }, [saved, navigate]);
+  }, [saved, navigate, institutionId]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -116,11 +116,11 @@ return (
         </div>
       )}
 
-<div className="info-container">
+      <div className="info-container">
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razon social *</dt>
+              <dt className="item-header">Razón social *</dt>
               <dd className="item-text">
                 <input
                   name="name"

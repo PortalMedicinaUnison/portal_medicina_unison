@@ -1,29 +1,21 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { ROUTES, adminAbs } from '../../../../config';
 import useDeleteApplication from '../hooks/useDeleteApplication';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import { APPLICATION_STATUS, APPLICATION_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
 import { formatDateTime } from '../../../../utils/utils';
 
 
-function ApplicationDetail({ application, fetching, fetchError, refetch, applicationId }) {    
+function ApplicationDetail({ application, fetching, fetchError, refetch, applicationId }) {
   const navigate = useNavigate();
-  const { deleteApplication, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteApplication();
-  
+  const { deleteApplication, loading: deleting, success: deleted, error: deleteError, reset } = useDeleteApplication();
+
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
-
-  const STATUS_OPTIONS = {
-    1: 'Pendiente',
-    2: 'Aceptado',
-    3: 'Declinado'
-  };
-
-  const getStatusName = (statusEnum) => {
-    return STATUS_OPTIONS[statusEnum] || 'Desconocido';
-  };
 
 // ---------------------- HANDLERS ----------------------
 
@@ -41,15 +33,14 @@ function ApplicationDetail({ application, fetching, fetchError, refetch, applica
   };
 
 // ---------------------- EFFECTS ----------------------
-    
+
   useEffect(() => {
     if (deleted) {
       setShowConfirmDelete(false);
       reset();
-      navigate(-1);
+      navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_LIST), { replace: true });
     }
-  }
-  , [deleted, navigate, reset]);
+  }, [deleted, navigate, reset]);
 
   useEffect(() => {
     if (deleteError) {
@@ -66,57 +57,91 @@ function ApplicationDetail({ application, fetching, fetchError, refetch, applica
     return (
       <DataLoadError
         title="No se pudo cargar la información"
-        message="Intenta recargar o vuelve a la lista."
-        details={fetchError}
+        message={fetchError}
         onRetry={refetch}
-        onSecondary={() => navigate(-1)}
-        secondaryLabel="Volver"
+        onSecondary={() => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_LIST))}
+        secondaryLabel="Ir a la lista"
       />
     );
   }
-  
+
   if (!application) {
     return (
       <DataLoadError
         title="404"
-        message="No encontramos información para este anuncio."
+        message="No encontramos información para esta aplicación."
         onRetry={refetch}
         retryLabel='Recargar'
-        onSecondary={() => navigate(-1)}
-        secondaryLabel="Volver"
+        onSecondary={() => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_LIST))}
+        secondaryLabel="Ir a la lista"
       />
     );
   }
 
 // ---------------------- RENDER ----------------------
 
+  const { student, promotion } = application;
+  const isAnswered = Number(application.status) !== APPLICATION_STATUS.PENDING;
+
   return (
     <div className="info-container">
       <div className="item-container">
         <dl className="item-list">
           <div className="item-row">
-            <dt className="item-header">Expediente del alumno</dt>
-            <dd className="item-text">{application.student_id}</dd>
+            <dt className="item-header">Alumno</dt>
+            <dd className="item-text">
+              {student
+                ? <>{student.first_name} {student.last_name} {student.second_last_name}</>
+                : 'Sin datos del alumno'}
+            </dd>
+          </div>
+          <div className="item-row">
+            <dt className="item-header">Expediente</dt>
+            <dd className="item-text">{application.academic_id}</dd>
+          </div>
+          <div className="item-row">
+            <dt className="item-header">Correo</dt>
+            <dd className="item-text">{student?.email ?? '—'}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Promoción</dt>
-            <dd className="item-text">{application.promotion.year} - {application.promotion.period}</dd>
+            <dd className="item-text">
+              {promotion
+                ? `${promotion.year} - ${labelOf(PERIOD_LABELS, promotion.period)}${promotion.is_finished ? ' (finalizada)' : ''}`
+                : '—'}
+            </dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Estatus</dt>
-            <dd className="item-text">{getStatusName(application.status)}</dd>
+            <dd className="item-text">{labelOf(APPLICATION_STATUS_LABELS, application.status)}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Fecha de aceptación/desistimiento</dt>
+            <dt className="item-header">Fecha de asignación</dt>
             <dd className="item-text">{formatDateTime(application.created_at)}</dd>
           </div>
+          {isAnswered && (
+            <div className="item-row">
+              <dt className="item-header">Fecha de respuesta</dt>
+              <dd className="item-text">{formatDateTime(application.updated_at)}</dd>
+            </div>
+          )}
+          {application.internship_id != null && (
+            <div className="item-row">
+              <dt className="item-header">Internado</dt>
+              <dd className="item-text">
+                <Link to={adminAbs(ROUTES.ADMIN.INTERNSHIP_DETAIL(application.internship_id))}>
+                  Ver internado
+                </Link>
+              </dd>
+            </div>
+          )}
         </dl>
       </div>
 
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>
         <ConfirmDialogContent
           title="Confirmar eliminación"
-          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar?"
+          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar la aplicación?"
           onConfirm={handleConfirmDelete}
           primaryLabel="Eliminar"
           secondaryLabel="Cancelar"
@@ -128,15 +153,15 @@ function ApplicationDetail({ application, fetching, fetchError, refetch, applica
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro"
+          message={deleteError || 'Ocurrió un problema al eliminar la aplicación.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />
       </Modal>
 
       <div className="info-actions mt-16">
-        <button 
-          type="button" 
+        <button
+          type="button"
           className='btn-tertiary'
           onClick={handleDeleteButton}
           disabled={deleting}
@@ -144,7 +169,7 @@ function ApplicationDetail({ application, fetching, fetchError, refetch, applica
           {deleting ? 'Eliminando...' : 'Eliminar'}
         </button>
       </div>
-    </div>        
+    </div>
   );
 }
 

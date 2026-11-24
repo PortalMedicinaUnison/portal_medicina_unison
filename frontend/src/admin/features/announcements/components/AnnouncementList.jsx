@@ -7,6 +7,7 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import { ANNOUNCEMENT_TYPE_LABELS, labelOf } from '../../../../utils/constants';
 
 
 function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
@@ -22,26 +23,17 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
-  
-  const ANNOUNCEMENT_TYPES = {
-    1: 'General',
-    2: 'Internado'
-  };
-
-  const getAnnouncementTypeName = (typeEnum) => {
-    return ANNOUNCEMENT_TYPES[typeEnum] || 'Desconocido';
-  };
 
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
     if (!announcements) return [];
-    return announcements.filter((announcement) => {
-      if (typeFilter !== '' && announcement.announcement_type !== Number(typeFilter)) return false;
-      if (statusFilter !== '' && announcement.is_visible !== (statusFilter === 'true')) return false;
+    return announcements.filter((item) => {
+      if (typeFilter !== '' && item.announcement_type !== Number(typeFilter)) return false;
+      if (statusFilter !== '' && item.is_visible !== (statusFilter === 'true')) return false;
       if (!searchQuery) return true;
 
-      const title = String(announcement.title).toLowerCase();
-      const description = String(announcement.description).toLowerCase();
+      const title = String(item.title).toLowerCase();
+      const description = String(item.description).toLowerCase();
       return title.includes(searchQuery) || description.includes(searchQuery);
     });
   }, [announcements, searchQuery, statusFilter, typeFilter]);
@@ -123,8 +115,9 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
           aria-label="Filtrar por ambito"
         >
           <option value="">Ámbito</option>
-          <option value="1">General</option>
-          <option value="2">Internado</option>
+          {Object.entries(ANNOUNCEMENT_TYPE_LABELS).map(([value, label]) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
         </select>
         <select
           className="btn-tertiary--light"
@@ -164,7 +157,7 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
               <tr key={item.announcement_id}>
                 <td className="text-left">{item.title}</td>
                 <td className="text-left">{item.description}</td>
-                <td>{getAnnouncementTypeName(item.announcement_type)}</td>
+                <td>{labelOf(ANNOUNCEMENT_TYPE_LABELS, item.announcement_type)}</td>
                 <td>{item.is_visible ? 'Activo' : 'Inactivo'}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
@@ -198,7 +191,7 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro"
+          message={deleteError || 'Ocurrió un problema al eliminar el registro.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />

@@ -1,17 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-import os
+
+from core.errors import register_exception_handlers
 from core.settings import settings
-from db.database import initialize_database
 from routers import routers
 
-
-app = FastAPI(    
-    title="Medical Internships Platform",
-    description="API for managing medical internships and related data",
+app = FastAPI(
+    title="Portal Internado de Medicina Unison",
+    description="API para la gestión del internado médico de pregrado.",
     version="1.0.0",
-    )
+    # Sin documentación interactiva en producción.
+    docs_url="/docs" if settings.ENVIRONMENT != "prod" else None,
+    redoc_url="/redoc" if settings.ENVIRONMENT != "prod" else None,
+    openapi_url="/openapi.json" if settings.ENVIRONMENT != "prod" else None,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,16 +23,12 @@ app.add_middleware(
     allow_headers=settings.CORS_HEADERS,
 )
 
-@app.on_event("startup")
-async def startup_db():
-    initialize_database()
-
-# Crear directorio de evidencia si no existe
-evidence_dir = os.path.join("app", "evidence_files")
-os.makedirs(evidence_dir, exist_ok=True)
-
-# Montar el directorio de evidencia como archivos estáticos
-app.mount("/evidence_files", StaticFiles(directory=evidence_dir), name="evidence_files")
+register_exception_handlers(app)
 
 for router in routers:
     app.include_router(router)
+
+
+@app.get("/health", tags=["Sistema"])
+def health():
+    return {"status": "ok"}

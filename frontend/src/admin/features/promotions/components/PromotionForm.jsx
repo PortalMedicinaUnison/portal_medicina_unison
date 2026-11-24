@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useCreatePromotion from '../hooks/useCreatePromotion';
 import { cleanFormData } from "../../../../utils/utils";
+import { PERIOD_LABELS } from '../../../../utils/constants';
 
 
 const INITIAL_FORM = {
@@ -18,6 +19,10 @@ function PromotionForm() {
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [createdId, setCreatedId] = useState(null);
   const [validationError, setValidationError] = useState('');
+
+  // El backend exige al crear: año actual <= año <= año actual + 5.
+  const currentYear = new Date().getFullYear();
+  const maxYear = currentYear + 5;
 
 // ---------------------- HANDLERS ----------------------
 
@@ -44,10 +49,10 @@ function PromotionForm() {
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.year) errors.push('El año es obligatorio');
-    if (cleanedData.year < 2025) errors.push('El año debe ser mayor o igual a 2025');
-    if (!cleanedData.period) errors.push('El periodo es obligatorio');
-    if (cleanedData.period < 1 || cleanedData.period > 2) errors.push('El periodo debe ser 1 o 2');
+    if (!cleanedData.year) errors.push('El año es obligatorio.');
+    else if (cleanedData.year < currentYear) errors.push(`El año debe ser mayor o igual a ${currentYear}.`);
+    else if (cleanedData.year > maxYear) errors.push(`El año no puede ser mayor a ${maxYear}.`);
+    if (cleanedData.period !== 1 && cleanedData.period !== 2) errors.push('Selecciona un periodo válido.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -117,8 +122,9 @@ function PromotionForm() {
                   value={formData.year}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="2025"
-                  min={2025}
+                  placeholder={String(currentYear)}
+                  min={currentYear}
+                  max={maxYear}
                   disabled={saving}
                   required
                 />
@@ -135,14 +141,15 @@ function PromotionForm() {
                   disabled={saving}
                   required
                 >
-                  <option value={0}>Seleccionar periodo</option>
-                  <option value={1}>1</option>
-                  <option value={2}>2</option>
+                  <option value="">Seleccionar periodo</option>
+                  {Object.entries(PERIOD_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
                 </select>
               </dd>
             </div>
             <div className="item-row mt-6">
-              <dd className="item-text">Para añadir una sede, primero crea la promoción y luego dirigete a editar esa promoción</dd>
+              <dd className="item-text">Para añadir una sede, primero crea la promoción y luego dirígete a editar esa promoción</dd>
             </div>
           </dl>
         </div>

@@ -1,94 +1,104 @@
+from typing import List, Optional
+
 from sqlalchemy.orm import Session
+
+from core.errors import bad_request, conflict, not_found
 from models.promotion import Promotion, PromotionSiteDetail
+from repos.internship import InternshipApplicationRepo, InternshipRepo
 from repos.promotion import PromotionRepo, PromotionSiteDetailRepo
+from repos.site import SiteRepo
 from schemas.promotion import (
-    PromotionInput, PromotionInputUpdate,
-    PromotionSiteDetailInput, PromotionSiteDetailInputUpdate
+    PromotionInput, PromotionSiteDetailInput, PromotionSiteDetailUpdate, PromotionUpdate,
 )
-from utils.utils import orm_to_dict, map_to_model
 
 
 # ---------------------- PROMOTION ----------------------
 
-def create_promotion(promotion: PromotionInput, db: Session):
-    new_promotion = map_to_model(promotion, Promotion)
-    promotion_repo = PromotionRepo(db)
-    created_promotion = promotion_repo.create(new_promotion)
-    promotion_response = orm_to_dict(created_promotion)
-    return promotion_response
-
-def get_all_promotions(db: Session):
-    promotion_repo = PromotionRepo(db)
-    promotions = promotion_repo.get_all()
-    if not promotions:
-        return []
-    promotions_response = [orm_to_dict(promotion) for promotion in promotions]
-    return promotions_response
-
-def get_promotion(promotion_id: int, db: Session):
-    promotion_repo = PromotionRepo(db)
-    promotion = promotion_repo.get_by_id(promotion_id)
-    if not promotion:
-        return None
-    promotion_response = orm_to_dict(promotion)
-    return promotion_response
-
-def update_promotion(promotion_id: int, promotion_input: PromotionInputUpdate, db: Session):
-    update_data = promotion_input.dict(exclude_unset=True)
-    promotion_repo = PromotionRepo(db)
-    updated_promotion = promotion_repo.update(promotion_id, update_data)
-    if not updated_promotion:
-        return None
-    promotion_response = orm_to_dict(updated_promotion)
-    return promotion_response
-
-def delete_promotion(promotion_id: int, db: Session):
-    promotion_repo = PromotionRepo(db)
-    return promotion_repo.delete(promotion_id)
+def list_promotions(db: Session, year: Optional[int], period: Optional[int], is_finished: Optional[bool]) -> List[Promotion]:
+    return PromotionRepo(db).list(year=year, period=period, is_finished=is_finished)
 
 
-# ---------------------- PROMOTION SITE DETAIL ----------------------
+def get_promotion(db: Session, promotion_id: int) -> Promotion:
+    promotion = PromotionRepo(db).get(promotion_id)
+    if promotion is None:
+        raise not_found("Promoción no encontrada.")
+    return promotion
 
-def create_promotion_site_detail(psd: PromotionSiteDetailInput, db: Session):
-    new_psd = map_to_model(psd, PromotionSiteDetail)
-    psd_repo = PromotionSiteDetailRepo(db)
-    created_psd = psd_repo.create(new_psd)
-    psd_response = orm_to_dict(created_psd)
-    return psd_response
 
-def get_all_promotion_site_details(db: Session):
-    psd_repo = PromotionSiteDetailRepo(db)
-    psds = psd_repo.get_all()
-    if not psds:
-        return []
-    # psds_response = [orm_to_dict(psd) for psd in psds]
-    return psds
+def create_promotion(db: Session, data: PromotionInput) -> Promotion:
+    repo = PromotionRepo(db)
+    existing = db.query(Promotion).filter(Promotion.year == data.year, Promotion.period == data.period).first()
+    if existing and existing.is_active:
+        raise conflict("Ya existe una promoción con ese año y periodo.")
+    if existing:
+        return repo.update(existing, {**data.model_dump(), "is_active": True})
+    return repo.add(Promotion(**data.model_dump()))
 
-def get_promotion_site_detail(psd_id: int, db: Session):
-    psd_repo = PromotionSiteDetailRepo(db)
-    psd = psd_repo.get_by_id(psd_id)
-    if not psd:
-        return None
-    # psd_response = orm_to_dict(psd)
+
+def update_promotion(db: Session, promotion_id: int, data: PromotionUpdate) -> Promotion:
+    repo = PromotionRepo(db)
+    promotion = get_promotion(db, promotion_id)
+    payload = data.model_dump(exclude_unset=True)
+    year, period = payload.get("year", promotion.year), payload.get("period", promotion.period)
+    if (year, period) != (promotion.year, promotion.period):
+        duplicate = db.query(Promotion).filter(Promotion.year == year, Promotion.period == period).first()
+        if duplicate:
+            raise conflict("Ya existe una promoción con ese año y periodo.")
+    return repo.update(promotion, payload)
+
+
+def delete_promotion(db: Session, promotion_id: int) -> None:
+    promotion = get_promotion(db, promotion_id)
+    if InternshipApplicationRepo(db).count_by_promotion(promotion_id):
+        raise conflict("La promoción tiene asignaciones de estudiantes; elimínalas primero.")
+    for psd in PromotionSiteDetailRepo(db).list(promotion_id=promotion_id):
+        psd.is_active = False
+    PromotionRepo(db).soft_delete(promotion)
+
+
+# ---------------------- PROMOTION SITE DETAIL (cupos) ----------------------
+
+def _with_occupied(db: Session, psd: PromotionSiteDetail) -> PromotionSiteDetail:
+    psd.occupied = InternshipRepo(db).count_in_site(psd.promotion_id, psd.site_id)
     return psd
 
-def get_promotion_site_details_by_promotion(promotion_id: int, db: Session):
-    psd_repo = PromotionSiteDetailRepo(db)
-    psds = psd_repo.get_by_promotion_id(promotion_id)
-    if not psds:
-        return []
-    # psds_response = [orm_to_dict(psd) for psd in psds]
-    return psds
 
-def update_promotion_site_detail(psd_id: int, psd_input: PromotionSiteDetailInputUpdate, db: Session):
-    update_data = psd_input.dict(exclude_unset=True)
-    psd_repo = PromotionSiteDetailRepo(db)
-    updated_psd = psd_repo.update(psd_id, update_data)
-    if not updated_psd:
-        return None
-    psd_response = orm_to_dict(updated_psd)
-    return psd_response
+def list_promotion_site_details(db: Session, promotion_id: Optional[int], site_id: Optional[int]) -> List[PromotionSiteDetail]:
+    return [_with_occupied(db, psd) for psd in PromotionSiteDetailRepo(db).list(promotion_id=promotion_id, site_id=site_id)]
 
-def delete_promotion_site_detail(psd_id: int, db: Session):
-    psd_repo = PromotionSiteDetailRepo(db)
-    return psd_repo.delete(psd_id)
+
+def get_promotion_site_detail(db: Session, psd_id: int) -> PromotionSiteDetail:
+    psd = PromotionSiteDetailRepo(db).get(psd_id)
+    if psd is None:
+        raise not_found("Cupo de sede no encontrado.")
+    return _with_occupied(db, psd)
+
+
+def create_promotion_site_detail(db: Session, data: PromotionSiteDetailInput) -> PromotionSiteDetail:
+    repo = PromotionSiteDetailRepo(db)
+    get_promotion(db, data.promotion_id)
+    if SiteRepo(db).get(data.site_id) is None:
+        raise bad_request("La sede seleccionada no existe.")
+    existing = repo.get_by_promotion_site(data.promotion_id, data.site_id, include_inactive=True)
+    if existing and existing.is_active:
+        raise conflict("Esta sede ya tiene cupo en la promoción.")
+    if existing:
+        psd = repo.update(existing, {"capacity": data.capacity, "is_active": True})
+    else:
+        psd = repo.add(PromotionSiteDetail(**data.model_dump()))
+    return _with_occupied(db, psd)
+
+
+def update_promotion_site_detail(db: Session, psd_id: int, data: PromotionSiteDetailUpdate) -> PromotionSiteDetail:
+    psd = get_promotion_site_detail(db, psd_id)
+    if data.capacity < psd.occupied:
+        raise conflict(f"La capacidad no puede ser menor que los internos ya asignados ({psd.occupied}).")
+    psd = PromotionSiteDetailRepo(db).update(psd, {"capacity": data.capacity})
+    return _with_occupied(db, psd)
+
+
+def delete_promotion_site_detail(db: Session, psd_id: int) -> None:
+    psd = get_promotion_site_detail(db, psd_id)
+    if psd.occupied:
+        raise conflict(f"La sede tiene {psd.occupied} interno(s) asignado(s) en esta promoción; reasígnalos primero.")
+    PromotionSiteDetailRepo(db).soft_delete(psd)

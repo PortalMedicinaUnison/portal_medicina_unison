@@ -12,43 +12,45 @@ export function validateEmail(email) {
   return { valid: true };
 }
 
+// Expediente: 9 dígitos que empiezan con 2 (igual que el backend).
 export function isValidAcademicId(academicId) {
-  const regex = /^\d{9}$/;
-  return regex.test(academicId);
+  return /^2\d{8}$/.test(academicId);
 }
 
 export function validateAcademicId(academicId) {
   if (!isValidAcademicId(academicId)) {
-    return { valid: false, error: 'El expediente debe ser un número de exactamente 9 dígitos.' };
+    return { valid: false, error: 'El expediente debe tener 9 dígitos y empezar con 2.' };
   }
   return { valid: true };
 }
 
+// Mismas reglas que el backend (utils/validation.py): 8+ caracteres, una mayúscula y un número.
 export function validatePassword(password) {
-  const minLength = /^.{8,}$/;
-  const hasUppercase = /[A-Z]/;
-  const hasLowercase = /[a-z]/;
-  const hasNumber = /\d/;
-  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
-
-  if (!minLength.test(password)) {
+  if (!password || password.length < 8) {
     return { valid: false, error: 'La contraseña debe tener al menos 8 caracteres.' };
   }
-  if (!hasUppercase.test(password)) {
+  if (new TextEncoder().encode(password).length > 72) {
+    return { valid: false, error: 'La contraseña es demasiado larga (máximo 72 caracteres).' };
+  }
+  if (!/[A-Z]/.test(password)) {
     return { valid: false, error: 'La contraseña debe incluir al menos una letra mayúscula.' };
   }
-  if (!hasLowercase.test(password)) {
-    return { valid: false, error: 'La contraseña debe incluir al menos una letra minúscula.' };
-  }
-  if (!hasNumber.test(password)) {
+  if (!/\d/.test(password)) {
     return { valid: false, error: 'La contraseña debe incluir al menos un número.' };
   }
-  if (!hasSpecialChar.test(password)) {
-    return { valid: false, error: 'La contraseña debe incluir al menos un símbolo especial.' };
-  }
   return { valid: true };
-};
+}
 
 export const isValidCity = (city) => {
   return SONORA_MUNICIPALITIES.includes(city);
 };
+// URL absoluta http(s). Se usa para validar enlaces (evidencias, encuestas) y para decidir si se enlazan.
+export function isHttpUrl(value) {
+  if (!value) return false;
+  try {
+    const { protocol } = new URL(String(value).trim());
+    return protocol === 'http:' || protocol === 'https:';
+  } catch {
+    return false;
+  }
+}

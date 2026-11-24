@@ -1,44 +1,45 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
+import { useUser } from '../../../../contexts/UserContext';
 import useDeleteUser from '../hooks/useDeleteUser';
 import DropdownMenu from '../../../../utils/ui/DropdownMenu';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import { ROLE_LABELS, labelOf } from '../../../../utils/constants';
+import { formatFullName } from '../../../../utils/utils';
 
 
 function UserList({ users, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
+  const { user: currentUser, isSuperAdmin } = useUser();
   const { deleteUser, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteUser();
-  
+
   const [item, setItem] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
 
 // ---------------------- FILTERS AND SEARCH ----------------------
- 
+
   const [search, setSearch] = useState('');
-  
+
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
     if (!users) return [];
     return users.filter((item) => {
       if (!searchQuery) return true;
 
-      const academicId = String(item.academic_id).toLowerCase()
-      const firstName = String(item.first_name).toLowerCase()
-      const lastName = String(item.last_name).toLowerCase()
-      const secondLastName = String(item.second_last_name).toLowerCase()
-      return (
-        academicId.includes(searchQuery) ||
-        firstName.includes(searchQuery) ||
-        lastName.includes(searchQuery) ||
-        secondLastName.includes(searchQuery)
-      );      
+      const academicId = String(item.academic_id ?? '').toLowerCase();
+      const fullName = formatFullName(item).toLowerCase();
+      return academicId.includes(searchQuery) || fullName.includes(searchQuery);
     });
   }, [users, searchQuery]);
+
+  // El backend no permite desactivar la propia cuenta ni, sin ser super administrador, a otros administradores.
+  const canDeactivate = (target) =>
+    target.user_id !== currentUser?.user_id && (isSuperAdmin || target.role === 'student');
 
 // ---------------------- HANDLERS ----------------------
 
@@ -118,7 +119,7 @@ function UserList({ users, fetching, fetchError, refetch }) {
               <th className='w-4/12'>Nombre</th>
               <th className='w-2/12'>Expediente</th>
               <th className='w-3/12'>Correo</th>
-              <th className='w-2/12'>Internado</th>
+              <th className='w-2/12'>Rol</th>
               <th className='w-1/12'></th>
             </tr>
           </thead>
@@ -127,24 +128,28 @@ function UserList({ users, fetching, fetchError, refetch }) {
               <tr>
                 <td colSpan={5} className="text-center py-6">
                   {search
-                  ? 'No se encontraron avisos que coincidan con los filtros.' 
-                  : 'No hay avisos disponibles.'
+                  ? 'No se encontraron usuarios que coincidan con la búsqueda.'
+                  : 'No hay usuarios registrados.'
                   }
                 </td>
               </tr>
             ) : (
               filtered.map((item) => (
-              <tr key={item.announcement_id}>
-                <td className="text-left">{item.first_name} {item.last_name} {item.second_last_name}</td>
-                <td>{item.academic_id}</td>
+              <tr key={item.user_id}>
+                <td className="text-left">{formatFullName(item)}</td>
+                <td>{item.academic_id || '—'}</td>
                 <td>{item.email}</td>
-                <td>{item.internship_id ? 'Inscrito' : 'No inscrito'}</td>
+                <td>{labelOf(ROLE_LABELS, item.role)}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[
-                      { label: 'Ver', onClick: () => handleViewButton(item.announcement_id) },
-                      { label: 'Editar', onClick: () => handleEditButton(item.announcement_id) },
-                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.announcement_id), className: 'text-red-600' },
+                      { label: 'Ver', onClick: () => handleViewButton(item.user_id) },
+                      {
+                        label: 'Desactivar',
+                        onClick: () => handleDeleteButton(item.user_id),
+                        className: 'text-red-600',
+                        disabled: !canDeactivate(item),
+                      },
                     ]}
                     disabled={deleting}
                   />
@@ -158,10 +163,10 @@ function UserList({ users, fetching, fetchError, refetch }) {
 
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>
         <ConfirmDialogContent
-          title="Confirmar eliminación"
-          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar?"
+          title="Confirmar desactivación"
+          message="El usuario ya no podrá iniciar sesión en el portal. ¿Deseas desactivarlo?"
           onConfirm={handleConfirmDelete}
-          primaryLabel="Eliminar"
+          primaryLabel={deleting ? 'Desactivando...' : 'Desactivar'}
           secondaryLabel="Cancelar"
           onCancel={handleCloseConfirm}
           danger
@@ -171,14 +176,14 @@ function UserList({ users, fetching, fetchError, refetch }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el anuncio"
+          message={deleteError || 'Ocurrió un problema al desactivar el usuario.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />
       </Modal>
-      
+
     </div>
   );
 }
-    
+
 export default UserList;

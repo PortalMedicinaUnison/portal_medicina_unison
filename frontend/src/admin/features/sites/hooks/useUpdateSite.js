@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { updateSiteRequest } from '../../../../services/siteService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useUpdateSite() {
@@ -17,7 +18,7 @@ export default function useUpdateSite() {
       await updateSiteRequest(id, formData);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating site');
+      setError(getErrorMessage(err, 'No se pudieron guardar los cambios.'));
       setSuccess(false);
     } finally {
       setLoading(false);

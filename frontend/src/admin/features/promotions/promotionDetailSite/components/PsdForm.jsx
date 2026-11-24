@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import useCreatePsd from '../hooks/useCreatePsd';
 import useGetSites from '../../../sites/hooks/useGetSites';
 import { cleanFormData } from '../../../../../utils/utils';
@@ -9,12 +9,18 @@ const INITIAL_FORM = {
   capacity: '',
 };
 
-function PsdForm({ promotionId, onClose, onSuccess }) {
-  const { createPsd, loading: saving, success: saved, error: saveError, reset } = useCreatePsd();
+// Mismo límite que el backend (schemas/promotion.py: Capacity).
+const MAX_CAPACITY = 1000;
+
+function PsdForm({ promotionId, assignedSiteIds = [], onClose, onSuccess }) {
+  const { createPsd, loading: saving, error: saveError, reset } = useCreatePsd();
   const { sites, loading: sitesFetching, error: sitesError } = useGetSites();
 
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [validationError, setValidationError] = useState('');
+
+  // Las sedes que ya tienen cupo en la promoción no se ofrecen (el backend respondería 409).
+  const availableSites = sites.filter((site) => !assignedSiteIds.includes(site.site_id));
 
   // ---------------------- HANDLERS ----------------------
   const handleChange = useCallback((e) => {
@@ -38,7 +44,9 @@ function PsdForm({ promotionId, onClose, onSuccess }) {
     const errors = [];
     if (!cleanedData.promotionId) errors.push('No se recibió el ID de la promoción.');
     if (!cleanedData.siteId) errors.push('La sede es requerida.');
-    if (!cleanedData.capacity || cleanedData.capacity < 1) errors.push('El número de cupos debe ser al menos 1.');
+    if (!Number.isInteger(cleanedData.capacity) || cleanedData.capacity < 1 || cleanedData.capacity > MAX_CAPACITY) {
+      errors.push(`El número de cupos debe ser un entero entre 1 y ${MAX_CAPACITY}.`);
+    }
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -50,20 +58,19 @@ function PsdForm({ promotionId, onClose, onSuccess }) {
       capacity: cleanedData.capacity,
     };
 
-    console.log('Submitting PSD form with payload:', payload);
-
-    await createPsd(payload);
+    // Se avisa al padre desde aquí (y no con un efecto) para que la lista se recargue
+    // aunque el modal se haya cerrado mientras se guardaba.
+    const response = await createPsd(payload);
+    if (response) onSuccess?.(response.data);
   };
 
-  // ---------------------- EFFECTS ----------------------
-  useEffect(() => {
-    if (saved) {
-      setFormData(INITIAL_FORM);
-      onSuccess?.();
-    }
-  }, [saved, onSuccess]);
-
   // ---------------------- RENDER ----------------------
+
+  const siteOptionLabel = sitesFetching
+    ? 'Cargando sedes...'
+    : availableSites.length === 0
+      ? 'No hay sedes disponibles'
+      : 'Seleccione una sede';
 
   return (
     <form className="component-container" onSubmit={handleSubmit}>
@@ -88,8 +95,8 @@ function PsdForm({ promotionId, onClose, onSuccess }) {
               disabled={sitesFetching || saving}
               required
             >
-              <option value="">{sitesFetching ? 'Cargando sedes...' : 'Seleccione una sede'}</option>
-              {sites.map(site => (
+              <option value="">{siteOptionLabel}</option>
+              {availableSites.map(site => (
                 <option key={site.site_id} value={site.site_id}>
                   {site.name}
                 </option>
@@ -109,6 +116,8 @@ function PsdForm({ promotionId, onClose, onSuccess }) {
               className="form-input--half w-full"
               placeholder="1"
               min={1}
+              max={MAX_CAPACITY}
+              step={1}
               required
               disabled={saving}
             />

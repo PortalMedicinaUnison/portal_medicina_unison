@@ -1,5 +1,6 @@
 export const DEFAULT_PROFILE_IMAGE = '/default_picture.jpg';
-export const adminAbs = (sub) => `/admin${sub}`;
+export const ADMIN_HOME = '/admin';
+export const adminAbs = (sub) => `${ADMIN_HOME}${sub}`;
 export const userAbs = (sub) => {
   // Remove leading slash if present to avoid double slashes
   const cleanSub = sub.startsWith('/') ? sub.slice(1) : sub;
@@ -17,13 +18,19 @@ export const ROUTES = {
     USER: {
         PROFILE: '/profile',
         EDIT_PROFILE: '/profile/edit',
-        REMOVE_USER: '/delete-account',
-        CHANGE_PASSWORD: '/reset-password',
+        USER_DELETE: (userId) => `/users/${userId}/delete`,
         
         REPORTS_LIST: '/reports',
         REPORT_CREATE: '/reports/create',
-        REPORT_INFO: (reportId) => `/reports/${reportId}`,
+        REPORT_DETAIL: (reportId) => `/reports/${reportId}`,
         REPORT_EDIT: (reportId) => `/reports/${reportId}/edit`,
+
+        SURVEYS_LIST: '/surveys',
+
+        INTERNSHIP: '/my-internship',
+        INTERNSHIP_APPLICATION_STATUS: '/my-internship/application',
+        INTERNSHIP_APPLICATION_DECLINED: '/my-internship/declined',
+        INTERNSHIP_REDIRECT: '/my-internship/redirect',        
     },
 
     ADMIN: {

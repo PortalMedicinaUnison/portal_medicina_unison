@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../../config';
 import useCreateEnrollment from '../hooks/useCreateEnrollment';
+import EnrollmentCsvImport from './EnrollmentCsvImport';
 import { cleanFormData } from "../../../../../utils/utils";
+import { validateAcademicId } from "../../../../../utils/validations";
 
 
 const INITIAL_FORM = {
@@ -38,7 +40,12 @@ function EnrollmentForm() {
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.academicId) errors.push('El expediente académico es obligatorio');
+    if (!cleanedData.academicId) {
+      errors.push('El expediente es obligatorio.');
+    } else {
+      const { valid, error } = validateAcademicId(cleanedData.academicId);
+      if (!valid) errors.push(error);
+    }
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -76,7 +83,7 @@ function EnrollmentForm() {
     <form className="component-container" onSubmit={handleSubmit}>
       {saved && (
         <div className="alert-success">
-          Anuncio registrado exitosamente.{' '}
+          Alumno pre-registrado exitosamente.{' '}
           {createdId && (
             <Link
               to={adminAbs(ROUTES.ADMIN.USER_ENROLLMENT_DETAIL(createdId))}
@@ -109,7 +116,9 @@ function EnrollmentForm() {
                   value={formData.academicId}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="Expediente del alumno"
+                  placeholder="219201234"
+                  inputMode="numeric"
+                  maxLength={9}
                   disabled={saving}
                   required
                 />
@@ -119,12 +128,7 @@ function EnrollmentForm() {
         </div>
 
         <div className="info-actions mt-16">
-          <button 
-              type="button" 
-              className='item-link'
-          >
-              Importar desde csv
-          </button>
+          <EnrollmentCsvImport disabled={saving} />
         </div>
 
         <div className="button-group">

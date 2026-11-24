@@ -7,6 +7,7 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import { PERIOD_LABELS, labelOf } from '../../../../utils/constants';
 
 
 function PromotionList({ promotions, fetching, fetchError, refetch }) {
@@ -120,8 +121,9 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
           aria-label="Filtrar por periodo"
         >
           <option value="">Periodo</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
+          {Object.entries(PERIOD_LABELS).map(([value, label]) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
         </select>
         <select
           className="btn-tertiary--light"
@@ -148,7 +150,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={5} className="text-center py-6">
+                <td colSpan={4} className="text-center py-6">
                 {(yearFilter || periodFilter || statusFilter)
                   ? 'No se encontraron promociones que coincidan con los filtros.' 
                   : 'No hay promociones disponibles.'
@@ -159,7 +161,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
               filtered.map((item) => (
               <tr key={item.promotion_id}>
                 <td>{item.year}</td>
-                <td>{item.period}</td>
+                <td>{labelOf(PERIOD_LABELS, item.period)}</td>
                 <td>{item.is_finished ? 'Finalizado' : 'No finalizado'}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
@@ -193,7 +195,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro."
+          message={deleteError || 'Ocurrió un problema al eliminar el registro.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />

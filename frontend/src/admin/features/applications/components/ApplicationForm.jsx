@@ -5,12 +5,12 @@ import useCreateApplication from '../hooks/useCreateApplication';
 import useGetPromotions from '../../promotions/hooks/useGetPromotions';
 import useGetUsers from '../../users/hooks/useGetUsers'
 import { cleanFormData } from "../../../../utils/utils";
+import { PERIOD_LABELS, labelOf } from '../../../../utils/constants';
 
 
 const INITIAL_FORM = {
   promotionId: '',
-  studentId: '',
-  status: 1
+  academicId: '',
 };
 
 function ApplicationForm() {
@@ -22,6 +22,12 @@ function ApplicationForm() {
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [createdId, setCreatedId] = useState(null);
   const [validationError, setValidationError] = useState('');
+
+  // Solo se puede asignar a promociones que no han finalizado (el backend responde 409 si lo está).
+  const openPromotions = useMemo(
+    () => (promotions ?? []).filter((promotion) => !promotion.is_finished),
+    [promotions]
+  );
 
 // ---------------------- HANDLERS ----------------------
 
@@ -39,26 +45,25 @@ function ApplicationForm() {
 
   // Lookup del usuario cuando hay 9 dígitos
   const matchedUser = useMemo(() => {
-    const student_id = formData.studentId?.trim();
-    if (!student_id || !/^\d{9}$/.test(student_id)) return null;
-    if (!Array.isArray(users)) return null;
-    return users.find(user => String(user.academic_id) === student_id) || null;
-  }, [formData.studentId, users]);
+    const academic_id = formData.academicId?.trim();
+    if (!academic_id || !/^\d{9}$/.test(academic_id)) return null;
+    if (fetchingUsers || usersError || !Array.isArray(users)) return null;
+    return users.find(user => String(user.academic_id) === academic_id) || null;
+  }, [formData.academicId, users, fetchingUsers, usersError]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const cleanedData = cleanFormData({
       promotionId: Number(formData.promotionId),
-      studentId: formData.studentId,
-      status: Number(formData.status)
+      academicId: formData.academicId,
     });
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
     if (!cleanedData.promotionId) errors.push('La promoción es obligatoria.');
-    if (!cleanedData.studentId) errors.push('El expediente del alumno es obligatorio.');
-    if (cleanedData.studentId && !/^\d{9}$/.test(cleanedData.studentId)) {
+    if (!cleanedData.academicId) errors.push('El expediente del alumno es obligatorio.');
+    if (cleanedData.academicId && !/^\d{9}$/.test(cleanedData.academicId)) {
       errors.push('El expediente del alumno debe tener 9 dígitos numéricos.');
     }
     if (errors.length > 0) {
@@ -68,8 +73,7 @@ function ApplicationForm() {
 
     const payload = {
       promotion_id: cleanedData.promotionId,
-      student_id: cleanedData.studentId,
-      status: cleanedData.status
+      academic_id: cleanedData.academicId,
     };
     
     const response = await createApplication(payload);
@@ -100,7 +104,7 @@ function ApplicationForm() {
     <form className="component-container" onSubmit={handleSubmit}>
       {saved && (
         <div className="alert-success">
-          Tu aplicación se registró exitosamente.{' '}
+          La aplicación se registró exitosamente.{' '}
           {createdId && (
             <Link
               to={adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_DETAIL(createdId))}
@@ -129,28 +133,34 @@ function ApplicationForm() {
               <dd className="item-text">
                 <select
                   name="promotionId"
-                  checked={formData.promotionId}
+                  value={formData.promotionId}
                   onChange={handleChange}
                   className="form-input--half"
-                  disabled={saving || fetchingPromotions || promotionsError}
+                  disabled={saving || fetchingPromotions || Boolean(promotionsError)}
                   required
                 >
-                  <option value="">Selecciona una promoción</option>
-                  {promotions && promotions.map(promotion => (
+                  <option value="">{fetchingPromotions ? 'Cargando promociones...' : 'Selecciona una promoción'}</option>
+                  {openPromotions.map(promotion => (
                     <option key={promotion.promotion_id} value={promotion.promotion_id}>
-                      {promotion.year} - {promotion.period}
+                      {promotion.year} - {labelOf(PERIOD_LABELS, promotion.period)}
                     </option>
                   ))}
                 </select>
+                {promotionsError && (
+                  <p className="text-sm text-red-600 mt-1">{promotionsError}</p>
+                )}
+                {!fetchingPromotions && !promotionsError && openPromotions.length === 0 && (
+                  <p className="text-sm text-gray-500 mt-1">No hay promociones abiertas para asignar.</p>
+                )}
               </dd>
             </div>
             <div className="item-row">
               <dt className="item-header">Expediente del alumno *</dt>
               <dd className="item-text">
                 <input
-                  name="studentId"
+                  name="academicId"
                   type="text"
-                  value={formData.studentId}
+                  value={formData.academicId}
                   onChange={handleChange}
                   className="form-input--half"
                   placeholder="222222222"

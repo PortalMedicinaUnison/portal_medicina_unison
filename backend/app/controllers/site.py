@@ -1,85 +1,103 @@
+from typing import List, Optional
+
 from sqlalchemy.orm import Session
-from repos.site import SiteRepo, InstitutionRepo
-from models.site import Site, Institution
-from schemas.site import (
-    SiteInput, SiteInputUpdate,
-    InstitutionInput, InstitutionInputUpdate
-)
-from utils.utils import orm_to_dict, map_to_model
+
+from core.errors import bad_request, conflict, not_found
+from models.site import Institution, Site
+from repos.internship import InternshipRepo
+from repos.promotion import PromotionSiteDetailRepo
+from repos.site import InstitutionRepo, SiteRepo
+from schemas.site import InstitutionInput, InstitutionUpdate, SiteInput, SiteUpdate
+
+
+# ---------------------- INSTITUTION ----------------------
+
+def list_institutions(db: Session) -> List[Institution]:
+    return InstitutionRepo(db).list()
+
+
+def get_institution(db: Session, institution_id: int) -> Institution:
+    institution = InstitutionRepo(db).get(institution_id)
+    if institution is None:
+        raise not_found("Institución no encontrada.")
+    return institution
+
+
+def create_institution(db: Session, data: InstitutionInput) -> Institution:
+    repo = InstitutionRepo(db)
+    existing = repo.get_by_name(data.name)
+    if existing and existing.is_active:
+        raise conflict("Ya existe una institución con ese nombre.")
+    if existing:
+        return repo.update(existing, {"name": data.name, "is_active": True})
+    return repo.add(Institution(name=data.name))
+
+
+def update_institution(db: Session, institution_id: int, data: InstitutionUpdate) -> Institution:
+    repo = InstitutionRepo(db)
+    institution = get_institution(db, institution_id)
+    payload = data.model_dump(exclude_unset=True)
+    if "name" in payload:
+        duplicate = repo.get_by_name(payload["name"])
+        if duplicate and duplicate.institution_id != institution.institution_id:
+            raise conflict("Ya existe una institución con ese nombre.")
+    return repo.update(institution, payload)
+
+
+def delete_institution(db: Session, institution_id: int) -> None:
+    institution = get_institution(db, institution_id)
+    if SiteRepo(db).count_active_by_institution(institution_id):
+        raise conflict("La institución tiene sedes activas; elimínalas o cámbialas de institución primero.")
+    InstitutionRepo(db).soft_delete(institution)
 
 
 # ---------------------- SITE ----------------------
 
-def create_site(site: SiteInput, db: Session):
-    new_site = map_to_model(site, Site)
-    site_repo = SiteRepo(db)
-    created_site = site_repo.create(new_site)
-    new_site_response = orm_to_dict(created_site)
-    return new_site_response
+def list_sites(db: Session, institution_id: Optional[int], city: Optional[str]) -> List[Site]:
+    return SiteRepo(db).list(institution_id=institution_id, city=city)
 
-def get_all_sites(db: Session):
-    site_repo = SiteRepo(db)
-    sites = site_repo.get_all()
-    if not sites:
-        return []
-    # sites_response = [orm_to_dict(site) for site in sites]
-    return sites
 
-def get_site(site_id: int, db: Session):
-    site_repo = SiteRepo(db)
-    read_site = site_repo.get_by_id(site_id)
-    if not read_site:
-        return None
-    # site_response = orm_to_dict(read_site)
-    return read_site
+def get_site(db: Session, site_id: int) -> Site:
+    site = SiteRepo(db).get(site_id)
+    if site is None:
+        raise not_found("Sede no encontrada.")
+    return site
 
-def update_site(site_id: int, site_input: SiteInputUpdate, db: Session):
-    update_data = site_input.dict(exclude_unset=True)
-    site_repo = SiteRepo(db)
-    updated_site = site_repo.update(site_id, update_data)
-    if not updated_site:
-        return None
-    site_response = orm_to_dict(updated_site)
-    return site_response
-    
-def delete_site(site_id: int, db: Session):
-    site_repo = SiteRepo(db)
-    return site_repo.delete(site_id)
 
-# ---------------------- INSTITUTION ----------------------
+def _check_institution(db: Session, institution_id: int) -> None:
+    if InstitutionRepo(db).get(institution_id) is None:
+        raise bad_request("La institución seleccionada no existe.")
 
-def create_institution(institution: InstitutionInput, db: Session):
-    new_institution = map_to_model(institution, Institution)
-    institution_repo = InstitutionRepo(db)
-    created_institution = institution_repo.create(new_institution)
-    new_institution_response = orm_to_dict(created_institution)
-    return new_institution_response
 
-def get_all_institutions(db: Session):
-    institution_repo = InstitutionRepo(db)
-    institutions = institution_repo.get_all()
-    if not institutions:
-        return []
-    institutions_response = [orm_to_dict(institution) for institution in institutions]
-    return institutions_response
+def create_site(db: Session, data: SiteInput) -> Site:
+    repo = SiteRepo(db)
+    _check_institution(db, data.institution_id)
+    payload = data.model_dump()
+    existing = repo.get_by_name(data.name)
+    if existing and existing.is_active:
+        raise conflict("Ya existe una sede con ese nombre.")
+    if existing:
+        return repo.update(existing, {**payload, "is_active": True})
+    return repo.add(Site(**payload))
 
-def get_institution(institution_id: int, db: Session):
-    institution_repo = InstitutionRepo(db)
-    read_institution = institution_repo.get_by_id(institution_id)
-    if not read_institution:
-        return None
-    institution_response = orm_to_dict(read_institution)
-    return institution_response
 
-def update_institution(institution_id: int, institution: InstitutionInputUpdate, db: Session):
-    update_data = institution.dict(exclude_unset=True)
-    institution_repo = InstitutionRepo(db)
-    updated_institution = institution_repo.update(institution_id, update_data)
-    if not updated_institution:
-        return None
-    institution_response = orm_to_dict(updated_institution)
-    return institution_response
+def update_site(db: Session, site_id: int, data: SiteUpdate) -> Site:
+    repo = SiteRepo(db)
+    site = get_site(db, site_id)
+    payload = data.model_dump(exclude_unset=True)
+    if "institution_id" in payload:
+        _check_institution(db, payload["institution_id"])
+    if "name" in payload:
+        duplicate = repo.get_by_name(payload["name"])
+        if duplicate and duplicate.site_id != site.site_id:
+            raise conflict("Ya existe una sede con ese nombre.")
+    return repo.update(site, payload)
 
-def delete_institution(institution_id: int, db: Session):
-    institution_repo = InstitutionRepo(db)
-    return institution_repo.delete(institution_id)
+
+def delete_site(db: Session, site_id: int) -> None:
+    site = get_site(db, site_id)
+    if InternshipRepo(db).count_by_site(site_id):
+        raise conflict("La sede tiene internos asignados; reasígnalos antes de eliminarla.")
+    if PromotionSiteDetailRepo(db).list(site_id=site_id):
+        raise conflict("La sede tiene cupos en alguna promoción; elimínalos antes de eliminarla.")
+    SiteRepo(db).soft_delete(site)

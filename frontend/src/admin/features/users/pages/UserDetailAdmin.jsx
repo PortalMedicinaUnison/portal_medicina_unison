@@ -1,7 +1,9 @@
+import { useParams } from 'react-router-dom';
 import useUserAdmin from '../hooks/useUserAdmin';
 import Layout from "../../../../Layout";
 import PageLayout from '../../../../components/PageLayout';
 import UserDetailAdmin from "../components/UserDetailAdmin";
+import { formatFullName } from '../../../../utils/utils';
 
 
 function UserPage() {
@@ -11,12 +13,12 @@ function UserPage() {
   const pageTitle = fetching
   ? 'Cargando...'
   : user
-    ? `${user.firs_name} ${user.last_name} ${user.second_last_name}`
+    ? formatFullName(user)
     : ' ';
 
   return (
     <Layout>
-      <PageLayout 
+      <PageLayout
         title={pageTitle}
       >
         <UserDetailAdmin

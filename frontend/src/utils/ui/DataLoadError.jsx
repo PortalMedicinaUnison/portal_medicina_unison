@@ -1,5 +1,3 @@
-import React from 'react';
-
 function DataLoadError({
   title = 'No se pudieron cargar los datos',
   titleClassName,
@@ -8,7 +6,10 @@ function DataLoadError({
   retryLabel = 'Reintentar',
   onSecondary,             // opcional: () => void (por ejemplo, ir a inicio o volver)
   secondaryLabel = 'Volver',
+  details,                 // opcional: mensaje concreto del error (p. ej. el `detail` del backend)
 }) {
+  const detailText = details == null ? '' : String(details).trim();
+
   return (
     <div
       className="flex items-center justify-center min-h-[60vh] h-full"
@@ -18,13 +19,16 @@ function DataLoadError({
       <div className="grid place-items-center w-full">
         <div className="text-center">
           <p className="text-base font-semibold text-indigo-600">ERROR</p>
-          <h1 className={`text-3xl font-bold tracking-tight text-balance text-gray-900 ${titleClassName}`}>
+          <h1 className={`text-3xl font-bold tracking-tight text-balance text-gray-900 ${titleClassName ?? ''}`}>
 
             {title}
           </h1>
           <p className="mt-4 text-base font-light text-pretty text-gray-500">
             {message}
           </p>
+          {detailText && detailText !== message && (
+            <p className="mt-2 text-sm text-pretty text-gray-600">{detailText}</p>
+          )}
 
           <div className="mt-10 flex items-center justify-center gap-x-3">
             {onRetry && (

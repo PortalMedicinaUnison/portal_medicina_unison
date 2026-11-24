@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { updatePromotionRequest } from '../../../../services/promotionService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useUpdatePromotion() {
@@ -17,7 +18,7 @@ export default function useUpdatePromotion() {
       await updatePromotionRequest(id, formData);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating promotion');
+      setError(getErrorMessage(err, 'No se pudieron guardar los cambios.'));
       setSuccess(false);
     } finally {
       setLoading(false);

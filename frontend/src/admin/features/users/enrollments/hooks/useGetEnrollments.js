@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllUserEnrollmentsRequest } from '../../../../../services/userService'
+import { getErrorMessage } from '../../../../../utils/errors';
 
 
 export default function useGetEnrollments () {
@@ -15,7 +16,7 @@ export default function useGetEnrollments () {
       const response = await getAllUserEnrollmentsRequest();
       setEnrollments(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching enrollments');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setEnrollments([]);
     } finally {
       setLoading(false);

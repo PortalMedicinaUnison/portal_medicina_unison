@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllSurveysRequest } from '../../../../services/communicationService'
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useGetSurveys () {
@@ -15,7 +16,7 @@ export default function useGetSurveys () {
       const response = await getAllSurveysRequest();
       setSurveys(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching surveys');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setSurveys([]);
     } finally {
       setLoading(false);

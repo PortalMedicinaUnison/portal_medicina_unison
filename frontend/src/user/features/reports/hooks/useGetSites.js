@@ -1,57 +1,32 @@
-import { useState, useEffect } from 'react';
-import api from '../../../../api';
+import { useState, useEffect, useCallback } from 'react';
+import { getAllSitesRequest } from '../../../../services/siteService';
+import { getErrorMessage } from '../../../../utils/errors';
 
-const useGetSites = () => {
-  const [sites, setSites] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  const fetchSites = async () => {
+// Catálogo de sedes para el formulario de reportes (el backend las devuelve ordenadas por nombre).
+export default function useGetSites() {
+  const [sites, setSites]     = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState(null);
+
+  const getSites = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      // TODO: Implementar endpoint correcto o verificar permisos
-      // Por ahora, simulamos datos para desarrollo
-      // const response = await api.get('/sites');
-      
-      // Datos de ejemplo para desarrollo
-      const mockSites = [
-        { 
-          site_id: 1, 
-          name: 'Hospital General',
-          city: 'Hermosillo',
-          institution_id: 1
-        },
-        { 
-          site_id: 2, 
-          name: 'Clínica ISSSTE',
-          city: 'Hermosillo',
-          institution_id: 2
-        },
-        { 
-          site_id: 3, 
-          name: 'Hospital Infantil',
-          city: 'Hermosillo',
-          institution_id: 1
-        }
-      ];
-      
-      // Simular respuesta de API
-      setSites(mockSites);
+      const response = await getAllSitesRequest();
+      setSites(response.data);
     } catch (err) {
-      setError(err.message);
-      console.error('Error fetching sites:', err);
+      setError(getErrorMessage(err, 'No se pudieron cargar las sedes.'));
+      setSites([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchSites();
   }, []);
 
-  return { sites, loading, error, refetch: fetchSites };
-};
+  useEffect(() => {
+    getSites();
+  }, [getSites]);
 
-export default useGetSites;
+  return { sites, loading, error, refetch: getSites };
+}

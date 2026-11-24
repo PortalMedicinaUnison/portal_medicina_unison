@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllInstitutionsRequest } from '../../../../services/siteService'
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useGetInstitutions () {
@@ -15,7 +16,7 @@ export default function useGetInstitutions () {
       const response = await getAllInstitutionsRequest();
       setInstitutions(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching institutions');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setInstitutions([]);
     } finally {
       setLoading(false);

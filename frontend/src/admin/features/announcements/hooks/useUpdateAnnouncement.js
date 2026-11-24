@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { updateAnnouncementRequest } from '../../../../services/communicationService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useUpdateAnnouncement() {
@@ -7,17 +8,17 @@ export default function useUpdateAnnouncement() {
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updateAnnouncement = useCallback(async (announcementID, payload) => {  
+  const updateAnnouncement = useCallback(async (id, payload) => {  
     if (loading) return;
     setLoading(true);
     setError(null);
     setSuccess(false);
 
     try {
-      await updateAnnouncementRequest(announcementID, payload);
+      await updateAnnouncementRequest(id, payload);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating announcement');
+      setError(getErrorMessage(err, 'No se pudieron guardar los cambios.'));
       setSuccess(false);
     } finally {
       setLoading(false);

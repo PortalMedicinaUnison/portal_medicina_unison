@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useCreateSurvey from '../hooks/useCreateSurvey';
-import { cleanFormData } from "../../../../utils/utils";
+import { cleanFormData, todayISO } from "../../../../utils/utils";
 
 
 const INITIAL_FORM = {
@@ -11,6 +11,7 @@ const INITIAL_FORM = {
   description: '',
   expirationDate: '',
   mandatory: false,
+  isVisible: true,
 };
 
 function SurveyForm() {
@@ -41,15 +42,14 @@ function SurveyForm() {
     const cleanedData = cleanFormData(formData);
 
     // ---------------------- VALIDATIONS ----------------------
+    // Las fechas 'YYYY-MM-DD' se comparan como texto: `new Date('YYYY-MM-DD')` es medianoche UTC
+    // y rechazaría el día de hoy. El backend acepta hoy o una fecha posterior.
     const errors = [];
     if (!cleanedData.title) errors.push('El título es obligatorio.');
     if (!cleanedData.url) errors.push('La URL de la encuesta es obligatoria.');
-    if (!cleanedData.description) errors.push('La descripción es obligatoria.');
-    if (!cleanedData.expirationDate) errors.push('La fecha de expiración es obligatoria.');
-    if (new Date(cleanedData.expirationDate) <= new Date()) errors.push('La fecha de expiración debe ser una fecha futura.');
-    if (cleanedData.mandatory === undefined || cleanedData.mandatory === null) {
-        errors.push('Debe indicar si la encuesta es obligatoria o no.');
-      }            
+    else if (!/^https?:\/\//i.test(cleanedData.url)) errors.push('La URL debe empezar con http:// o https://.');
+    if (!cleanedData.expirationDate) errors.push('La fecha de vencimiento es obligatoria.');
+    else if (cleanedData.expirationDate < todayISO()) errors.push('La fecha de vencimiento no puede ser anterior a hoy.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -60,7 +60,8 @@ function SurveyForm() {
       url: cleanedData.url,
       description: cleanedData.description,
       expiration_date: cleanedData.expirationDate,
-      mandatory: cleanedData.mandatory,  
+      mandatory: cleanedData.mandatory,
+      is_visible: cleanedData.isVisible,
     };
     
     const response = await createSurvey(payload);
@@ -154,9 +155,8 @@ function SurveyForm() {
                   onChange={handleChange}
                   rows="2"
                   className="form-input--half"
-                  placeholder="Descripción de la encuesta"
+                  placeholder="Descripción de la encuesta (opcional)"
                   disabled={saving}
-                  required
                 />
               </dd>
             </div>
@@ -169,6 +169,7 @@ function SurveyForm() {
                     value={formData.expirationDate}
                     onChange={handleChange}
                     className="form-input--half"
+                    min={todayISO()}
                     disabled={saving}
                     required
                   />
@@ -181,6 +182,19 @@ function SurveyForm() {
                   name="mandatory"
                   type="checkbox"
                   checked={formData.mandatory}
+                  onChange={handleChange}
+                  className="form-checkbox"
+                  disabled={saving}
+                />
+              </dd>
+            </div>
+            <div className="item-row">
+              <dt className="item-header">Visible</dt>
+              <dd className="item-text">
+                <input
+                  name="isVisible"
+                  type="checkbox"
+                  checked={formData.isVisible}
                   onChange={handleChange}
                   className="form-checkbox"
                   disabled={saving}

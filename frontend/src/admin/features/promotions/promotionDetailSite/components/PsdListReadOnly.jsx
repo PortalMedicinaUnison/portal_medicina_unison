@@ -13,12 +13,10 @@ function PsdListReadOnly({ promotionId }) {
   if (fetchError) {
     return (
       <DataLoadError
-        title="No se pudo cargar la información"
-        message="Intenta recargar la página."
+        title="No se pudieron cargar los cupos"
+        message="Intenta recargar la información."
         details={fetchError}
         onRetry={refetch}
-        onSecondary={() => navigate(-1)}
-        secondaryLabel="Volver"
       />
     );
   }
@@ -31,29 +29,29 @@ function PsdListReadOnly({ promotionId }) {
           <thead>
             <tr>
               <th className='w-8/12'>Sede</th>
-              <th className='w-4/12'>Capacidad</th>
+              <th className='w-4/12'>Ocupados / Cupos</th>
             </tr>
           </thead>
           <tbody>
             {!psds || psds.length === 0 ? (
               <tr>
-                <td colSpan={3} className="text-center py-6">
-                  No hay sedes disponibles.
+                <td colSpan={2} className="text-center py-6">
+                  Esta promoción aún no tiene sedes asignadas.
                 </td>
               </tr>
             ) : (
-              psds.map((item) => (
-              <tr key={item.psd_id}>
-                <td className="text-left">{item.site.name}</td>
-                <td>{item.capacity}</td>
+              psds.map((psd) => (
+              <tr key={psd.psd_id}>
+                <td className="text-left">{psd.site?.name}</td>
+                <td>{psd.occupied ?? 0} / {psd.capacity}</td>
               </tr>
               ))
             )}
           </tbody>
         </table>
-      </div>      
+      </div>
     </div>
   );
 }
-    
+
 export default PsdListReadOnly;

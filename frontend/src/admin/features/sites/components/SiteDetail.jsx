@@ -89,7 +89,7 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
           </div>
           <div className="item-row">
             <dt className="item-header">Institución</dt>
-            <dd className="item-text">{site.institution.name}</dd>
+            <dd className="item-text">{site.institution?.name ?? '—'}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Ciudad</dt>
@@ -106,43 +106,51 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
           </div>
 
           <div className="item-row">
-            <dt className="item-header">Email del jefe de enseñanza</dt>
+            <dt className="item-header">Correo del jefe de enseñanza</dt>
             <dd className="item-text">
-              <a href={`mailto:${site.teaching_head_email}`} className="text-blue-600 hover:underline">
-                {site.teaching_head_email}
-              </a>
+              {site.teaching_head_email ? (
+                <a href={`mailto:${site.teaching_head_email}`} className="text-blue-600 hover:underline">
+                  {site.teaching_head_email}
+                </a>
+              ) : '—'}
             </dd>
           </div>
 
           <div className="item-row">
             <dt className="item-header">Teléfono del jefe de enseñanza</dt>
             <dd className="item-text">
-              <a href={`tel:${site.teaching_head_phone}`} className="text-blue-600 hover:underline">
-                {site.teaching_head_phone}
-              </a>
+              {site.teaching_head_phone ? (
+                <a href={`tel:${site.teaching_head_phone}`} className="text-blue-600 hover:underline">
+                  {site.teaching_head_phone}
+                </a>
+              ) : '—'}
             </dd>
           </div>
 
           <div className="item-row">
             <dt className="item-header">Subjefe de enseñanza</dt>
-            <dd className="item-text">{site.teaching_deputy_name}</dd>
+            <dd className="item-text">{site.teaching_deputy_name || '—'}</dd>
           </div>
 
           <div className="item-row">
-            <dt className="item-header">Email del suplente</dt>
+            <dt className="item-header">Correo del subjefe de enseñanza</dt>
             <dd className="item-text">
-              <a href={`mailto:${site.teaching_deputy_email}`} className="text-blue-600 hover:underline">
-                {site.teaching_deputy_email}
-              </a>
+              {site.teaching_deputy_email ? (
+                <a href={`mailto:${site.teaching_deputy_email}`} className="text-blue-600 hover:underline">
+                  {site.teaching_deputy_email}
+                </a>
+              ) : '—'}
             </dd>
           </div>
 
           <div className="item-row">
-            <dt className="item-header">Teléfono del suplente</dt>
+            <dt className="item-header">Teléfono del subjefe de enseñanza</dt>
             <dd className="item-text">
-              <a href={`tel:${site.teaching_deputy_phone}`} className="text-blue-600 hover:underline">
-                {site.teaching_deputy_phone}
-              </a>
+              {site.teaching_deputy_phone ? (
+                <a href={`tel:${site.teaching_deputy_phone}`} className="text-blue-600 hover:underline">
+                  {site.teaching_deputy_phone}
+                </a>
+              ) : '—'}
             </dd>
           </div>
         </dl>
@@ -163,7 +171,7 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro"
+          message={deleteError || 'Ocurrió un problema al eliminar el registro.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />
@@ -180,7 +188,7 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
         </button>
       </div>
     </div>
-);
+  );
 }
 
 export default SiteDetail;

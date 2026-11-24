@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { deletePsdRequest } from '../../../../../services/promotionService';
+import { getErrorMessage } from '../../../../../utils/errors';
 
 
 export default function useDeletePsd() {
@@ -17,7 +18,7 @@ export default function useDeletePsd() {
       await deletePsdRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error deleting promotion site detail');
+      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

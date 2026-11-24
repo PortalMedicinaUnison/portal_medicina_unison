@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { deletePromotionRequest } from '../../../../services/promotionService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useDeletePromotion() {
@@ -17,7 +18,7 @@ export default function useDeletePromotion() {
       await deletePromotionRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error deleting promotion');
+      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getSiteByIdRequest } from '../../../../services/siteService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useSite(id) {
@@ -16,7 +17,7 @@ export default function useSite(id) {
       const response = await getSiteByIdRequest(id);
       setSite(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching site');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setSite(null);
     } finally {
       setLoading(false);

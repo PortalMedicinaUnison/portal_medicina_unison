@@ -1,45 +1,62 @@
-from pydantic import BaseModel, field_validator
-from typing import Optional
 from datetime import date
+from typing import Optional
+
+from pydantic import BaseModel, model_validator
+
 from models.report import ReportTypeEnum
-from utils.validation import is_valid_other_type_report
+from schemas.common import OptionalHttpUrlStr, OptionalStr, ORMModel, PastOrTodayDate, RequiredStr, UTCDateTime
+from schemas.site import SiteBasicOutput
+from schemas.user import UserBasicOutput
+
+OTHER_TYPE_REQUIRED = "Describe el tipo de reporte cuando eliges «Otro»."
 
 
 class ReportInput(BaseModel):
-    internship_id: int
+    """Lo envía el estudiante; el expediente y el internado se toman de su sesión."""
     site_id: int
-    date: date
-    type: ReportTypeEnum
-    other_type: Optional[str] = None
-    description: str
-    evidence: Optional[str] = None
+    date_report: PastOrTodayDate
+    report_type: ReportTypeEnum
+    other_type: OptionalStr(25) = None
+    description: RequiredStr(10000)
+    evidence_url: OptionalHttpUrlStr = None
     anonymity: bool = False
-    is_open: bool = True
-    admin_comment: Optional[str] = None
 
-    @field_validator("other_type")
-    def validate_other_type(cls, other_type):
-        is_valid_other_type_report(other_type)
-        return other_type
+    @model_validator(mode="after")
+    def check_other_type(self):
+        if self.report_type == ReportTypeEnum.OTHER and not self.other_type:
+            raise ValueError(OTHER_TYPE_REQUIRED)
+        if self.report_type != ReportTypeEnum.OTHER:
+            self.other_type = None
+        return self
 
-class ReportInputUpdate(BaseModel):
-    evidence: Optional[str] = None
-    anonymity: Optional[bool] = None
 
-class ReportInputUpdateByAdmin(BaseModel):
-    is_open: Optional[bool] = None
-    admin_comment: Optional[str] = None
+class ReportUpdate(BaseModel):
+    site_id: int = None
+    date_report: PastOrTodayDate = None
+    report_type: ReportTypeEnum = None
+    other_type: OptionalStr(25) = None
+    description: RequiredStr(10000) = None
+    evidence_url: OptionalHttpUrlStr = None
+    anonymity: bool = None
 
-class ReportOutput(BaseModel):
+
+class ReportStatusUpdate(BaseModel):
+    is_open: bool
+
+
+class ReportOutput(ORMModel):
     report_id: int
-    student_id: int
-    internship_id: int
+    academic_id: Optional[str] = None  # None si el reporte es anónimo y lo consulta un administrador
+    student: Optional[UserBasicOutput] = None
     site_id: int
-    date: date
-    type: ReportTypeEnum
+    site: SiteBasicOutput
+    internship_id: Optional[int] = None
+    date_report: date
+    report_type: ReportTypeEnum
     other_type: Optional[str] = None
     description: str
-    evidence: Optional[str] = None
+    evidence_url: Optional[str] = None
     anonymity: bool
     is_open: bool
-    admin_comment: Optional[str] = None
+    created_at: UTCDateTime
+    updated_at: UTCDateTime

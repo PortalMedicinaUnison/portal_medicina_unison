@@ -1,66 +1,65 @@
 import api from '../api';
 import { API_ENDPOINTS } from '../config/apiEndpoints';
 
-// ------------ Internships ------------
+// Los estudiantes solo reciben sus propios datos (el backend filtra por la sesión),
+// ordenados del más reciente al más antiguo.
 
-export const createInternshipRequest = (data) =>
-  api.post(API_ENDPOINTS.INTERNSHIPS.CREATE, data);
-
-export const getInternshipByIdRequest = (id) =>
-  api.get(API_ENDPOINTS.INTERNSHIPS.GET(id));
-
-export const getAllInternshipsRequest = () =>
-  api.get(API_ENDPOINTS.INTERNSHIPS.GET_ALL);
-
-export const getInternshipsByStudentRequest = (studentId) =>
-  api.get(API_ENDPOINTS.INTERNSHIPS.GET_BY_STUDENT(studentId));
-
-export const getInternshipsBySiteRequest = (siteId) =>
-  api.get(API_ENDPOINTS.INTERNSHIPS.GET_BY_SITE(siteId));
-
-export const updateInternshipRequest = (id, data) =>
-  api.patch(API_ENDPOINTS.INTERNSHIPS.UPDATE(id), data);
-
-export const deleteInternshipRequest = (id) =>
-  api.delete(API_ENDPOINTS.INTERNSHIPS.DELETE(id));
-
-
-// ------------ Internship Enrollments ------------
+// ----------------- Asignaciones (internship applications) ----------------
 
 export const createInternshipApplicationRequest = (data) =>
-  api.post(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.CREATE, data);
+  api.post(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.LIST, data);
+
+// params: { promotion_id, academic_id, status }
+export const getAllInternshipApplicationsRequest = (params = {}) =>
+  api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.LIST, { params });
 
 export const getInternshipApplicationByIdRequest = (id) =>
-  api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.GET(id));
+  api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.DETAIL(id));
 
-export const getInternshipApplicationsByStudentRequest = (studentId) =>
-  api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.GET_BY_STUDENT(studentId));
+// Acepta la asignación: crea el internado en la misma operación. Devuelve el internado.
+export const acceptInternshipApplicationRequest = (id) =>
+  api.post(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.ACCEPT(id));
 
-export const getInternshipApplicationsByStatusRequest = (isAccepted) =>
-  api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.GET_BY_STATUS(isAccepted));
-
-export const getAllInternshipApplicationsRequest = () =>
-  api.get(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.GET_ALL);
-
-export const updateInternshipApplicationRequest = (id, data) =>
-  api.patch(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.UPDATE(id), data);
+export const declineInternshipApplicationRequest = (id) =>
+  api.post(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.DECLINE(id));
 
 export const deleteInternshipApplicationRequest = (id) =>
-  api.delete(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.DELETE(id));
+  api.delete(API_ENDPOINTS.INTERNSHIP_APPLICATIONS.DETAIL(id));
 
-// ------------ Internship Documents ------------
+// ----------------- Internados ----------------
 
-export const createInternshipDocumentRequest = (data) =>
-  api.post(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.CREATE, data);
+// params: { promotion_id, site_id, academic_id, status }
+export const getAllInternshipsRequest = (params = {}) =>
+  api.get(API_ENDPOINTS.INTERNSHIPS.LIST, { params });
 
-export const getInternshipDocumentByIdRequest = (id) =>
-  api.get(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.GET(id));
+export const getInternshipByIdRequest = (id) =>
+  api.get(API_ENDPOINTS.INTERNSHIPS.DETAIL(id));
+
+// data: { site_id, status }. La sede debe tener cupo en la promoción.
+export const updateInternshipRequest = (id, data) =>
+  api.patch(API_ENDPOINTS.INTERNSHIPS.DETAIL(id), data);
+
+export const deleteInternshipRequest = (id) =>
+  api.delete(API_ENDPOINTS.INTERNSHIPS.DETAIL(id));
+
+// ----------------- Documentos del internado ----------------
+
+// formData: FormData con `document_type` y `file` (PDF).
+export const createInternshipDocumentRequest = (internshipId, formData) =>
+  api.post(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.LIST(internshipId), formData);
 
 export const getDocumentsByInternshipRequest = (internshipId) =>
-  api.get(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.GET_BY_INTERNSHIP(internshipId));
+  api.get(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.LIST(internshipId));
 
-export const updateInternshipDocumentRequest = (id, data) =>
-  api.patch(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.UPDATE(id), data);
+export const getInternshipDocumentByIdRequest = (internshipId, docId) =>
+  api.get(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.DETAIL(internshipId, docId));
 
-export const deleteInternshipDocumentRequest = (id) =>
-  api.delete(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.DELETE(id));
+export const deleteInternshipDocumentRequest = (internshipId, docId) =>
+  api.delete(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.DETAIL(internshipId, docId));
+
+// El archivo requiere el token, así que se descarga como Blob (no sirve un enlace directo).
+export const getInternshipDocumentFileRequest = (internshipId, docId, { download = false } = {}) =>
+  api.get(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.FILE(internshipId, docId), {
+    params: { download },
+    responseType: 'blob',
+  });

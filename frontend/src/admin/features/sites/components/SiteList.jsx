@@ -33,36 +33,36 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
       if (cityFilter !== '' && site.city !== cityFilter) return false;
       if (!searchQuery) return true;
       
-      const name = String(site.name).toLowerCase();
-      const teachingHeadName = String(site.teaching_head_name).toLowerCase();
-      const institutionName = String(site.institution.name).toLowerCase();
+      const name = String(site.name ?? '').toLowerCase();
+      const teachingHeadName = String(site.teaching_head_name ?? '').toLowerCase();
+      const institutionName = String(site.institution?.name ?? '').toLowerCase();
       return name.includes(searchQuery) || teachingHeadName.includes(searchQuery) || institutionName.includes(searchQuery);
     });
   }, [sites, searchQuery, institutionFilter, cityFilter]);
 
 // ---------------------- HANDLERS ----------------------
 
-const handleViewButton = (id) => navigate(adminAbs(ROUTES.ADMIN.SITE_DETAIL(id)));
-const handleEditButton = (id) => navigate(adminAbs(ROUTES.ADMIN.SITE_EDIT(id)));
-const handleDeleteButton = (id) => {
-  setItem(id)
-  setShowConfirmDelete(true);
-};
+  const handleViewButton = (id) => navigate(adminAbs(ROUTES.ADMIN.SITE_DETAIL(id)));
+  const handleEditButton = (id) => navigate(adminAbs(ROUTES.ADMIN.SITE_EDIT(id)));
+  const handleDeleteButton = (id) => {
+    setItem(id)
+    setShowConfirmDelete(true);
+  };
 
-const handleConfirmDelete = async () => {
-  if (item == null) return
-  await deleteSite(item);
-};
+  const handleConfirmDelete = async () => {
+    if (item == null) return
+    await deleteSite(item);
+  };
 
-const handleCloseConfirm = () => {
-  setShowConfirmDelete(false);
-  setItem(null);
-}
+  const handleCloseConfirm = () => {
+    setShowConfirmDelete(false);
+    setItem(null);
+  }
 
-const handleCloseError = () => {
-  setShowErrorDialog(false);
-  reset();
-};
+  const handleCloseError = () => {
+    setShowErrorDialog(false);
+    reset();
+  };
 
 // ---------------------- EFFECTS ----------------------
 
@@ -123,14 +123,14 @@ const handleCloseError = () => {
           className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por razon social, institución o jefe"
+          placeholder="Buscar por razón social, institución o jefe"
         />
         <select
           className="btn-tertiary--light"
           value={institutionFilter}
           onChange={(e) => setInstitutionFilter(e.target.value)}
           aria-label="Filtrar por institución"
-          disabled={fetchingInstitutions || institutionsError}
+          disabled={fetchingInstitutions || Boolean(institutionsError)}
         >
         <option value="">Institución</option>
         {institutions.map(institution => (
@@ -158,7 +158,7 @@ const handleCloseError = () => {
         <table className="table">
           <thead>
             <tr>
-              <th className='w-3/12'>Razon social</th>
+              <th className='w-3/12'>Razón social</th>
               <th className='w-3/12'>Institución</th>
               <th className='w-2/12'>Ciudad</th>
               <th className='w-3/12'>Jefe de enseñanza</th>
@@ -179,7 +179,7 @@ const handleCloseError = () => {
               filtered.map((item) => (
               <tr key={item.site_id}>
                 <td className="text-left">{item.name}</td>
-                <td className="text-left">{item.institution.name}</td>
+                <td className="text-left">{item.institution?.name ?? '—'}</td>
                 <td>{item.city}</td>
                 <td className="text-left">{item.teaching_head_name}</td>
                 <td className="relative overflow-visible text-right">
@@ -214,7 +214,7 @@ const handleCloseError = () => {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro"
+          message={deleteError || 'Ocurrió un problema al eliminar el registro.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />

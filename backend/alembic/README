@@ -1,0 +1,10 @@
+Migraciones de la base de datos (Alembic).
+
+Desde backend/ con el entorno virtual activo:
+
+    alembic upgrade head                               # aplica las migraciones pendientes
+    alembic revision --autogenerate -m "descripción"   # genera una migración a partir de los modelos
+    alembic check                                      # verifica que los modelos y las migraciones coincidan
+
+La URL de la base de datos se toma de DATABASE_URL (igual que la aplicación).
+Revisa siempre la migración generada antes de aplicarla.

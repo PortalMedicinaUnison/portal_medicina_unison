@@ -100,7 +100,7 @@ function InstitutionList({ institutions, fetching, fetchError, refetch }) {
           className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por razon social"
+          placeholder="Buscar por razón social"
         />
       </div>
 
@@ -108,7 +108,7 @@ function InstitutionList({ institutions, fetching, fetchError, refetch }) {
         <table className="table">
           <thead>
             <tr>
-              <th className='w-6/12'>Razon social</th>
+              <th className='w-6/12'>Razón social</th>
               <th className='w-5/12'></th>
               <th className='w-1/12'></th>
             </tr>
@@ -160,7 +160,7 @@ function InstitutionList({ institutions, fetching, fetchError, refetch }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro."
+          message={deleteError || 'Ocurrió un problema al eliminar el registro.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />

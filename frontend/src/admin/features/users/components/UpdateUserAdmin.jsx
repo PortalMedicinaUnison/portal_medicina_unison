@@ -1,81 +1,95 @@
-import { useState } from "react";
-import useUserAdmin from "../hooks/useUserAdmin";
-import useUpdateUser from "../hooks/useUpdateUserAdmin";
-import LoadingSpinner from "../../../../utils/ui/LoadingSpinner";
+import { useState, useEffect } from 'react';
+import { useUser } from '../../../../contexts/UserContext';
+import useUpdateUserAdmin from '../hooks/useUpdateUserAdmin';
+import Modal from '../../../../utils/ui/Modal';
+import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import { ROLE_LABELS } from '../../../../utils/constants';
+import { formatFullName } from '../../../../utils/utils';
 
-function UpdateUserAdmin({ academicId, onClose, onSuccess }) {
-    const { user, loading, error, refetch } = useUserAdmin(academicId);
-    const { updateUser, error: updateError } = useUpdateUser();
-    const [submitting, setSubmitting] = useState(false);
 
-    if (loading) return <LoadingSpinner />;
-    if (error) return <p>Error es: {String(error)}</p>;
-    if (!userAdmin) return <p>No se encontró el usuario.</p>;
+// Cambia el rol de un usuario entre Estudiante y Administrador.
+// Igual que el backend: solo un super administrador, nunca sobre sí mismo ni sobre otro super administrador.
+function UpdateUserAdmin({ user, onSuccess }) {
+  const { user: currentUser, isSuperAdmin } = useUser();
+  const { updateUser, loading: saving, success: saved, error: saveError, reset } = useUpdateUserAdmin();
 
-    const nextIsAdmin = !Boolean(userAdmin.is_admin);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-    const handleConfirm = async () => {
-      try {
-          setSubmitting(true);
-          const ok = await updateUserAdmin(userAdmin.user_id, { is_admin: nextIsAdmin });
-          if (ok) {
-          await refetch?.();
-          onSuccess?.(nextIsAdmin);
-          onClose?.();
-          }
-      } finally {
-          setSubmitting(false);
-      }
+  const canChangeRole = Boolean(
+    isSuperAdmin && user && user.role !== 'super_admin' && user.user_id !== currentUser?.user_id
+  );
+  const nextIsAdmin = user?.role !== 'admin';
+  const nextRoleLabel = nextIsAdmin ? ROLE_LABELS.admin : ROLE_LABELS.student;
+
+// ---------------------- HANDLERS ----------------------
+
+  const handleOpenConfirm = () => setShowConfirm(true);
+
+  const handleConfirm = async () => {
+    if (!user) return;
+    await updateUser(user.user_id, { is_admin: nextIsAdmin });
   };
 
-    return (
-      <div className="flex w-full justify-center items-center">
-          <div className="w-full ">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="justify-self-center mb-4"
-                width="90" height="90" 
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="gray"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            >
-                <circle cx="10.5" cy="10.5" r="8"/>
-                <path d="M10.5 11.5v-5"/>
-                <circle cx="10.5" cy="14.5" r="1"/>
-            </svg>
+  const handleClose = () => {
+    if (saving) return;
+    setShowConfirm(false);
+    reset();
+  };
 
-            <div className="text-center mb-8">
-                <p>
-                El rol del usuario <strong>{userAdmin?.first_name + ' ' + userAdmin?.last_name || userId}</strong> cambiará a
-                <strong>{nextIsAdmin ? ' Administrador' : ' Alumno'}</strong>. ¿Estás seguro?
-                </p>
-            </div>
+// ---------------------- EFFECTS ----------------------
 
-            <div className="flex gap-16">
-            <button
-              type="button"
-              onClick={handleConfirm}
-              disabled={submitting}
-              className="btn-primary_full bg-red-600 hover:bg-red-700 focus:ring-red-500"
-            >
-              {submitting ? 'Guardando...' : 'Sí, estoy seguro'}
-            </button>
-  
+  useEffect(() => {
+    if (saved) {
+      setShowConfirm(false);
+      reset();
+      onSuccess?.();
+    }
+  }, [saved, reset, onSuccess]);
 
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn-secondary_full"
-              disabled={submitting}
-            >
-              Cancelar
-            </button>
-            </div>
-          </div>
-      </div>
-    );
-  }
-  
-  export default UpdateUserAdmin;
+// ---------------------- RENDER ----------------------
+
+  if (!canChangeRole) return null;
+
+  return (
+    <>
+      <button
+        type="button"
+        className="btn-tertiary"
+        onClick={handleOpenConfirm}
+        disabled={saving}
+      >
+        {`Cambiar rol a ${nextRoleLabel}`}
+      </button>
+
+      <Modal open={showConfirm} onClose={handleClose}>
+        {saveError ? (
+          <ConfirmDialogContent
+            title="No se pudo cambiar el rol"
+            message={saveError}
+            onConfirm={handleClose}
+            primaryLabel="Aceptar"
+          />
+        ) : (
+          <ConfirmDialogContent
+            title="Confirmar cambio de rol"
+            message={
+              <p>
+                El rol de <strong>{formatFullName(user)}</strong> cambiará a <strong>{nextRoleLabel}</strong>.
+                {nextIsAdmin
+                  ? ' Tendrá acceso al panel de administración.'
+                  : ' Perderá el acceso al panel de administración.'}
+                {' '}¿Deseas continuar?
+              </p>
+            }
+            onConfirm={handleConfirm}
+            primaryLabel={saving ? 'Guardando...' : 'Cambiar rol'}
+            secondaryLabel="Cancelar"
+            onCancel={handleClose}
+          />
+        )}
+      </Modal>
+    </>
+  );
+}
+
+export default UpdateUserAdmin;

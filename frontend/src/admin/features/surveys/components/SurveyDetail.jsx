@@ -5,6 +5,7 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import { formatDate } from '../../../../utils/utils';
 
 
 function SurveyDetail({ survey, fetching, fetchError, refetch, surveyId }) {    
@@ -79,6 +80,9 @@ function SurveyDetail({ survey, fetching, fetchError, refetch, surveyId }) {
 
 // ---------------------- RENDER ----------------------
 
+  // Solo se enlazan URLs http(s) (el backend ya lo valida; evita enlaces `javascript:`).
+  const hasHttpUrl = /^https?:\/\//i.test(survey.url ?? '');
+
   return (
     <div className="info-container">
       <div className="item-container">
@@ -89,19 +93,29 @@ function SurveyDetail({ survey, fetching, fetchError, refetch, surveyId }) {
           </div>
           <div className="item-row">
             <dt className="item-header">Enlace</dt>
-            <dd className="item-text">{survey.url}</dd>
+            <dd className="item-text break-all">
+              {hasHttpUrl ? (
+                <a href={survey.url} target="_blank" rel="noopener noreferrer">
+                  {survey.url}
+                </a>
+              ) : (survey.url || '—')}
+            </dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Descripción</dt>
-            <dd className="item-text">{survey.description}</dd>
+            <dd className="item-text">{survey.description || '—'}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Fecha de vencimiento</dt>
-            <dd className="item-text">{survey.expiration_date}</dd>
+            <dd className="item-text">{formatDate(survey.expiration_date)}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Obligatoriedad</dt>
-            <dd className="item-text">{survey.mandatory}</dd>
+            <dt className="item-header">¿Obligatoria?</dt>
+            <dd className="item-text">{survey.mandatory ? 'Sí' : 'No'}</dd>
+          </div>
+          <div className="item-row">
+            <dt className="item-header">Visibilidad</dt>
+            <dd className="item-text">{survey.is_visible ? 'Visible' : 'Oculta'}</dd>
           </div>
         </dl>
       </div>
@@ -121,7 +135,7 @@ function SurveyDetail({ survey, fetching, fetchError, refetch, surveyId }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro"
+          message={deleteError || 'Ocurrió un problema al eliminar el registro.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />

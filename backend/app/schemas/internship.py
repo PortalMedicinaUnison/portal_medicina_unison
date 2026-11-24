@@ -1,70 +1,59 @@
-from pydantic import BaseModel
-from models.internship import DocumentTypeEnum, InternshipStatusEnum, ApplicationStatusEnum
-from schemas.promotion import PromotionOutput
 from typing import Optional
-from datetime import datetime
+
+from pydantic import BaseModel
+
+from models.internship import ApplicationStatusEnum, DocumentTypeEnum, InternshipStatusEnum
+from schemas.common import AcademicId, ORMModel, UTCDateTime
+from schemas.promotion import PromotionOutput
+from schemas.site import SiteBasicOutput
+from schemas.user import UserBasicOutput
 
 
 # ---------------------- INTERNSHIP APPLICATION ----------------------
 
 class InternshipApplicationInput(BaseModel):
     promotion_id: int
-    student_id: int
-    status: ApplicationStatusEnum
+    academic_id: AcademicId
 
-class InternshipApplicationUpdate(BaseModel):
-    status: Optional[ApplicationStatusEnum] = None
 
-class InternshipApplicationOutput(BaseModel):
+class InternshipApplicationOutput(ORMModel):
     application_id: int
     promotion_id: int
-    student_id: int
+    academic_id: str
     status: ApplicationStatusEnum
-    created_at: datetime
+    created_at: UTCDateTime
+    updated_at: UTCDateTime
     promotion: PromotionOutput
+    student: Optional[UserBasicOutput] = None
+    internship_id: Optional[int] = None
+
 
 # ---------------------- INTERNSHIP ----------------------
 
-class InternshipInput(BaseModel):
-    promotion_id: int
-    application_id: int
-    student_id: int
-    site_id: int
-    status: InternshipStatusEnum
-
 class InternshipUpdate(BaseModel):
-    promotion_id: Optional[int] = None
-    application_id: Optional[int] = None
-    student_id: Optional[int] = None
     site_id: Optional[int] = None
-    status: Optional[InternshipStatusEnum] = None
+    status: InternshipStatusEnum = None
 
-class InternshipOutput(BaseModel):
+
+class InternshipOutput(ORMModel):
     internship_id: int
-    promotion_id: int
     application_id: int
-    student_id: int
-    site_id: int
+    academic_id: str
+    promotion_id: int
+    site_id: Optional[int] = None
     status: InternshipStatusEnum
+    created_at: UTCDateTime
+    updated_at: UTCDateTime
+    application: InternshipApplicationOutput
+    site: Optional[SiteBasicOutput] = None
+
 
 # ---------------------- INTERNSHIP DOCUMENT ----------------------
 
-class InternshipDocumentInput(BaseModel):
-    internship_id: int
-    document_type: DocumentTypeEnum
-    path: str
-    is_verified: bool = False
-
-class InternshipDocumentUpdate(BaseModel):
-    document_type: Optional[DocumentTypeEnum] = None
-    path: Optional[str] = None
-
-class InternshipDocumentUpdateByAdmin(BaseModel):
-    is_verified: Optional[bool]
-
-class InternshipDocumentOutput(BaseModel):
+class InternshipDocumentOutput(ORMModel):
     document_id: int
     internship_id: int
     document_type: DocumentTypeEnum
-    path: str
-    is_verified: bool
+    media_type: str
+    original_filename: Optional[str] = None
+    created_at: UTCDateTime

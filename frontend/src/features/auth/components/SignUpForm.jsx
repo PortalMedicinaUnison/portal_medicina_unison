@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from 'react-router-dom';
-import { DEFAULT_PROFILE_IMAGE, ROUTES } from '../../../config';
+import { ROUTES } from '../../../config';
 import useSignUp from '../hooks/useSignUp';
 import { cleanFormData } from "../../../utils/utils";
+import { validateAcademicId, validateEmail, validatePassword } from "../../../utils/validations";
 
 
 const INITIAL_FORM = {
@@ -49,26 +50,26 @@ function SignUpForm() {
     if (!cleanedData.firstName) errors.push('El nombre es requerido.');
     if (!cleanedData.lastName) errors.push('El apellido paterno es requerido.');
     if (!cleanedData.academicId) errors.push('El número de expediente es requerido.');
+    else if (!validateAcademicId(cleanedData.academicId).valid) errors.push(validateAcademicId(cleanedData.academicId).error);
     if (!cleanedData.email) errors.push('El correo es requerido.');
+    else if (!validateEmail(cleanedData.email).valid) errors.push(validateEmail(cleanedData.email).error);
     if (cleanedData.email !== cleanedData.confirmEmail) errors.push('Los correos no coinciden.');
     if (!cleanedData.password) errors.push('La contraseña es requerida.');
+    else if (!validatePassword(cleanedData.password).valid) errors.push(validatePassword(cleanedData.password).error);
     if (cleanedData.password !== cleanedData.confirmPassword) errors.push('Las contraseñas no coinciden.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
 
+    // El rol lo decide el backend: el registro siempre crea una cuenta de estudiante.
     const payload = {
       first_name: cleanedData.firstName,
       last_name: cleanedData.lastName,
-      second_last_name: cleanedData.secondLastName || '',
+      second_last_name: cleanedData.secondLastName || null,
       academic_id: cleanedData.academicId,
       email: cleanedData.email,
-      phone_number: '',
-      profile_photo: DEFAULT_PROFILE_IMAGE,
       password: cleanedData.password,
-      is_admin: false,
-      is_super_admin: false,
     };
 
     await signUpUser(payload);

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useDeleteInstitution from '../hooks/useDeleteInstitution';
+import InstitutionSiteList from './InstitutionSiteList';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
@@ -84,10 +85,14 @@ function InstitutionDetail({ institution, fetching, fetchError, refetch, institu
       <div className="item-container">
         <dl className="item-list">
           <div className="item-row">
-            <dt className="item-header">Razon social</dt>
+            <dt className="item-header">Razón social</dt>
             <dd className="item-text">{institution.name}</dd>
           </div>
         </dl>
+      </div>
+
+      <div className="mt-16">
+        <InstitutionSiteList institutionId={institutionId} />
       </div>
 
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>
@@ -105,7 +110,7 @@ function InstitutionDetail({ institution, fetching, fetchError, refetch, institu
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro"
+          message={deleteError || 'Ocurrió un problema al eliminar el registro.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />

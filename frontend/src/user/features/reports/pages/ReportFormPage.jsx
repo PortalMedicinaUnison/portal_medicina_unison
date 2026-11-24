@@ -6,7 +6,7 @@ function ReportFormPage() {
   return ( 
     <Layout>
       <PageLayout 
-        title="Crear Nuevo Reporte" 
+        title="Crear reporte" 
       >
         <ReportForm/>
       </PageLayout>

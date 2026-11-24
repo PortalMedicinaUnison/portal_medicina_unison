@@ -1,30 +1,31 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getAllAnnouncementsRequest } from '../../../../services/communicationService'
+import { getAllReportsRequest } from '../../../../services/reportService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
-export default function useGetAnnouncements () {
-  const [announcements, setAnnouncements] = useState([]);
-  const [loading, setLoading]             = useState(false);
-  const [error, setError]                 = useState(null);
+export default function useGetReports() {
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
 
-  const getAnnouncements = useCallback(async () => {
+  const getReports = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      const response = await getAllAnnouncementsRequest();
-      setAnnouncements(response.data);
+      const response = await getAllReportsRequest();
+      setReports(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching announcements');
-      setAnnouncements([]);
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
+      setReports([]);
     } finally {
       setLoading(false);
     }
   }, []);
-    
+
   useEffect(() => {
-    getAnnouncements();
-  }, [getAnnouncements]);
-    
-  return { announcements, loading, error, refetch: getAnnouncements };
-};
+    getReports();
+  }, [getReports]);
+
+  return { reports, loading, error, refetch: getReports };
+}

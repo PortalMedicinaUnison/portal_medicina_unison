@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { deleteSiteRequest } from '../../../../services/siteService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useDeleteSite() {
@@ -17,7 +18,7 @@ export default function useDeleteSite() {
       await deleteSiteRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error deleting site');
+      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

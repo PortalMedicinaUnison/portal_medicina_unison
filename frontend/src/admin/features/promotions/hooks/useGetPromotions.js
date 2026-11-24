@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllPromotionsRequest } from '../../../../services/promotionService'
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useGetPromotions () {
@@ -15,7 +16,7 @@ export default function useGetPromotions () {
       const response = await getAllPromotionsRequest();
       setPromotions(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching promotions');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setPromotions([]);
     } finally {
       setLoading(false);

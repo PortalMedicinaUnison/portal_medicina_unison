@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { updateInstitutionRequest } from '../../../../services/siteService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useUpdateInstitution() {
@@ -17,7 +18,7 @@ export default function useUpdateInstitution() {
       await updateInstitutionRequest(id, formData);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error updating institution');
+      setError(getErrorMessage(err, 'No se pudieron guardar los cambios.'));
       setSuccess(false);
     } finally {
       setLoading(false);

@@ -1,38 +1,67 @@
-import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { ROUTES  } from '../config';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignUpPage from '../features/auth/pages/SignUpPage';
-import HomePage from '../pages/HomePage';
-import UserFormPage from '../features/profile/pages/UserFormPage';
-import UserInfoPage from '../features/profile/pages/UserInfoPage';
+import HomePage from '../user/features/announcements/pages/AnnouncementCardPage';
+import NotFoundPage from '../pages/NotFoundPage';
+
+// Profile pages
+import ProfileUpdatePage from '../features/profile/pages/ProfileUpdatePage';
+import ProfilePage from '../features/profile/pages/ProfilePage';
 
 // Reports pages
-import ReportsListPage from './features/reports/pages/ReportsListPage';
+import ReportListPage from './features/reports/pages/ReportListPage';
 import ReportFormPage from './features/reports/pages/ReportFormPage';
-import ReportInfoPage from './features/reports/pages/ReportInfoPage';
-import ReportEditPage from './features/reports/pages/ReportEditPage';
+import ReportDetailPage from './features/reports/pages/ReportDetailPage';
+import ReportUpdatePage from './features/reports/pages/ReportUpdatePage';
+
+// Internship pages
+import ApplicationRedirectPage from '../user/features/applications/pages/ApplicationRedirectPage';
+import ApplicationUpdatePage from '../user/features/applications/pages/ApplicationUpdatePage';
+import ApplicationDeclinedPage from '../user/features/applications/pages/ApplicationDeclinedPage';
+
+import InternshipDetailPage from '../user/features/internships/pages/InternshipDetailPage';
+
+// Survey pages
+import SurveyPage from '../user/features/surveys/pages/SurveyCardPage';
+
 
 function UserRoutes() {
   return (
-
     <Routes>
-      <Route path={ROUTES.AUTH.LOGIN} element={<LoginPage />} />
-      <Route path={ROUTES.AUTH.SIGNUP} element={<SignUpPage />} />
-      
-      <Route element={<ProtectedRoute />}>
-        <Route path={ROUTES.HOME} element={<HomePage />} />
-        <Route path={ROUTES.USER.PROFILE} element={<UserInfoPage />} />
-        <Route path={ROUTES.USER.EDIT_PROFILE} element={<UserFormPage />} />
-        
-        {/* Reports routes */}
-        <Route path={ROUTES.USER.REPORTS_LIST} element={<ReportsListPage />} />
-        <Route path={ROUTES.USER.REPORT_CREATE} element={<ReportFormPage />} />
-        <Route path={ROUTES.USER.REPORT_INFO(':reportId')} element={<ReportInfoPage />} />
-        <Route path={ROUTES.USER.REPORT_EDIT(':reportId')} element={<ReportEditPage />} />
+      <Route path="login" element={<LoginPage />} />
+      <Route path="signup" element={<SignUpPage />} />
+
+      {/* Perfil: cualquier usuario con sesión (también administradores) */}
+      <Route element={<ProtectedRoute allow="any" />}>
+        <Route path="profile" element={<ProfilePage />} />
+        <Route path="profile/edit" element={<ProfileUpdatePage />} />
       </Route>
+
+      {/* Área del estudiante */}
+      <Route element={<ProtectedRoute allow="student" />}>
+        <Route index element={<HomePage />} />
+
+        {/* Reports routes */}
+        <Route path="reports" element={<ReportListPage />} />
+        <Route path="reports/create" element={<ReportFormPage />} />
+        <Route path="reports/:reportId" element={<ReportDetailPage />} />
+        <Route path="reports/:reportId/edit" element={<ReportUpdatePage />} />
+
+        {/* Applications routes */}
+        <Route path="my-internship/application" element={<ApplicationUpdatePage />} />
+        <Route path="my-internship/declined" element={<ApplicationDeclinedPage />} />
+
+        {/* Internships routes */}
+        <Route path="my-internship" element={<InternshipDetailPage />} />
+        <Route path="my-internship/redirect" element={<ApplicationRedirectPage />} />
+
+        {/* Surveys routes */}
+        <Route path="surveys" element={<SurveyPage />} />
+      </Route>
+
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

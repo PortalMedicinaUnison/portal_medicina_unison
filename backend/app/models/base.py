@@ -1,11 +1,21 @@
-from datetime import datetime
-from sqlalchemy import DateTime, func, Boolean
-from sqlalchemy.orm import Mapped, mapped_column, declarative_base
+from datetime import datetime, timezone
 
-Base = declarative_base()
+from sqlalchemy import Boolean, DateTime
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+
+def utcnow() -> datetime:
+    """Fecha y hora actual en UTC, sin zona (así se guarda en la BD)."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
+class Base(DeclarativeBase):
+    pass
+
 
 class BaseModel(Base):
     __abstract__ = True
+
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=utcnow, onupdate=utcnow)

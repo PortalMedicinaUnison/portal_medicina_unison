@@ -1,0 +1,45 @@
+import { useState, useEffect, useCallback } from 'react';
+import { getAllInternshipsRequest } from '../../../../services/internshipService';
+import { getErrorMessage } from '../../../../utils/errors';
+
+
+export default function useInternshipByAcademic(id) {
+  const [internship, setInternship] = useState(null);
+  // Con un id se empieza cargando: así no se muestra "no encontrado" antes de la primera petición.
+  const [loading, setLoading]       = useState(Boolean(id));
+  const [error, setError]           = useState(null);
+
+  const getInternship = useCallback(async (id) => {
+    if (!id) return Promise.resolve();
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // El backend devuelve solo los internados del estudiante, del más reciente al más antiguo.
+      const response = await getAllInternshipsRequest();
+      setInternship(response.data[0] ?? null);
+    } catch (err) {
+      setError(getErrorMessage(err, 'No se pudo cargar tu internado.'));
+      setInternship(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!id) {
+      setInternship(null);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+    getInternship(id);
+  }, [id, getInternship]);
+
+  const refetch = useCallback(() => {
+    if (!id) return Promise.resolve();
+    return getInternship(id);
+  }, [id, getInternship]);
+
+  return { internship, loading, error, refetch, getInternship };
+};

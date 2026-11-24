@@ -6,27 +6,10 @@ from .communication import AnnouncementRepo, SurveyRepo
 from .report import ReportRepo
 
 __all__ = [
-    # User
-    "UserEnrollmentRepo",
-    "UserRepo",
-
-    # Site
-    "SiteRepo",
-    "InstitutionRepo",
-
-    # Promotion
-    "PromotionRepo",
-    "PromotionSiteDetailRepo",
-
-    # Internship
-    "InternshipRepo",
-    "InternshipApplicationRepo",
-    "InternshipDocumentRepo",
-
-    # Communication
-    "AnnouncementRepo",
-    "SurveyRepo",
-
-    # Report
+    "UserEnrollmentRepo", "UserRepo",
+    "SiteRepo", "InstitutionRepo",
+    "PromotionRepo", "PromotionSiteDetailRepo",
+    "InternshipRepo", "InternshipApplicationRepo", "InternshipDocumentRepo",
+    "AnnouncementRepo", "SurveyRepo",
     "ReportRepo",
 ]

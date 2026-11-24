@@ -6,7 +6,7 @@ function SurveyFormPage() {
     return (
         <Layout>
         <PageLayout 
-            title="Registrar nuevo anuncio" 
+            title="Registrar nueva encuesta" 
         >
             <SurveyForm/>
         </PageLayout>

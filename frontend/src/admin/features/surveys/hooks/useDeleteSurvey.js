@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { deleteSurveyRequest } from '../../../../services/communicationService';
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useDeleteSurvey() {
@@ -17,7 +18,7 @@ export default function useDeleteSurvey() {
       await deleteSurveyRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error deleting survey');
+      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
       setSuccess(false);
     } finally {
       setLoading(false);

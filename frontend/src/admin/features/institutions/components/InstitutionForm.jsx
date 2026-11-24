@@ -38,7 +38,7 @@ function InstitutionForm() {
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.name) errors.push('El nombre es obligatorio');
+    if (!cleanedData.name) errors.push('La razón social es obligatoria.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -98,7 +98,7 @@ function InstitutionForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razon social *</dt>
+              <dt className="item-header">Razón social *</dt>
               <dd className="item-text">
                 <input
                   name="name"

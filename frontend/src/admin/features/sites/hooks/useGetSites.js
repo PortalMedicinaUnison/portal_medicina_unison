@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllSitesRequest } from '../../../../services/siteService'
+import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useGetSites () {
@@ -15,7 +16,7 @@ export default function useGetSites () {
       const response = await getAllSitesRequest();
       setSites(response.data);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error fetching sites');
+      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
       setSites([]);
     } finally {
       setLoading(false);

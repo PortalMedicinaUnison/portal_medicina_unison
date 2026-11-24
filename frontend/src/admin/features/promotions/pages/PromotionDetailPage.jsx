@@ -14,7 +14,7 @@ function PromotionPage() {
   const pageTitle = fetching
   ? 'Cargando...'
   : promotion
-    ? `${promotion.year} - ${promotion.period}`
+    ? `Promoción ${promotion.year} - ${promotion.period}`
     : ' ';
 
   const actions = (

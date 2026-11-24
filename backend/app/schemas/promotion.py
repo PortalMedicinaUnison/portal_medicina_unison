@@ -1,59 +1,63 @@
-from pydantic import BaseModel, field_validator
+from typing import Annotated
+
+from pydantic import AfterValidator, BaseModel, Field
+
+from schemas.common import ORMModel
 from schemas.site import SiteBasicOutput
-from utils.validation import is_valid_period, is_valid_year, is_valid_capacity
-from typing import Optional
+from utils.dates import local_today
+from utils.validation import validate_period, validate_year
+
+
+def _validate_new_year(year: int) -> int:
+    validate_year(year)
+    if year < local_today().year:
+        raise ValueError("El año de la promoción no puede ser anterior al actual.")
+    return year
+
+
+Period = Annotated[int, AfterValidator(validate_period)]
+Year = Annotated[int, AfterValidator(validate_year)]
+NewYear = Annotated[int, AfterValidator(_validate_new_year)]
+Capacity = Annotated[int, Field(ge=1, le=1000)]
 
 
 # ---------------------- PROMOTIONS ----------------------
 
 class PromotionInput(BaseModel):
-    year: int
-    period: int
-    is_finished: bool
+    year: NewYear
+    period: Period
+    is_finished: bool = False
 
-    @field_validator("year")
-    def validate_year(cls, year):
-        if year:
-            is_valid_year(year)
-        return year
 
-    @field_validator("period")
-    def validate_period(cls, period):
-        if period:
-            is_valid_period(period)
-        return period
+class PromotionUpdate(BaseModel):
+    year: Year = None
+    period: Period = None
+    is_finished: bool = None
 
-class PromotionInputUpdate(BaseModel):
-    year: Optional[int]
-    period: Optional[int]
-    is_finished: Optional[bool] = False
 
-class PromotionOutput(BaseModel):
+class PromotionOutput(ORMModel):
     promotion_id: int
     year: int
     period: int
     is_finished: bool
+
 
 # ---------------------- PROMOTION SITE DETAIL ----------------------
 
 class PromotionSiteDetailInput(BaseModel):
     promotion_id: int
     site_id: int
-    capacity: int
+    capacity: Capacity
 
-class PromotionSiteDetailInputUpdate(BaseModel):
-    site_id: Optional[int]
-    capacity: Optional[int]
 
-    @field_validator("capacity")
-    def validate_capacity(cls, capacity):
-        if capacity:
-            is_valid_capacity(capacity)
-        return capacity
+class PromotionSiteDetailUpdate(BaseModel):
+    capacity: Capacity
 
-class PromotionSiteDetailOutput(BaseModel):
+
+class PromotionSiteDetailOutput(ORMModel):
     psd_id: int
     promotion_id: int
     site_id: int
     capacity: int
+    occupied: int = 0
     site: SiteBasicOutput
