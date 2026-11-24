@@ -12,6 +12,9 @@ import { cleanFormData, todayISO } from '../../../../utils/utils';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import { isHttpUrl } from '../../../../utils/validations';
+import { addReportAttachmentRequest } from '../../../../services/reportService';
+import { getErrorMessage } from '../../../../utils/errors';
+import { EVIDENCE_ACCEPT, MAX_EVIDENCE_FILES, formatFileSize, getEvidenceError } from '../../../../features/expediente/fileRules';
 
 
 // Límites del backend (schemas/report.py y models/report.py).
@@ -60,6 +63,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
   // Al crear, la fecha del reporte parte de hoy (se puede cambiar a un día anterior).
   const [formData, setFormData] = useState(() => (isEdit ? INITIAL_FORM : { ...INITIAL_FORM, dateReport: todayISO() }));
   const [createdId, setCreatedId] = useState(null);
+  // Archivos de evidencia elegidos al crear: se adjuntan en cuanto se envía el reporte.
+  const [evidenceFiles, setEvidenceFiles] = useState([]);
+  const [attaching, setAttaching] = useState(false);
+  const [attachWarning, setAttachWarning] = useState(null);
   const [validationError, setValidationError] = useState('');
 
   const saving = creating || updating;
@@ -144,11 +151,43 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
       return;
     }
 
+    setAttachWarning(null);
     const response = await createReport(payload);
     if (response?.data?.report_id) {
-      setCreatedId(response.data.report_id);
+      const newId = response.data.report_id;
+      const failed = [];
+      setAttaching(true);
+      for (const file of evidenceFiles) {
+        try {
+          await addReportAttachmentRequest(newId, file);
+        } catch (err) {
+          failed.push(`${file.name} (${getErrorMessage(err, 'no se pudo adjuntar')})`);
+        }
+      }
+      setAttaching(false);
+      if (failed.length) {
+        setAttachWarning(`El reporte se envió, pero no se adjuntó: ${failed.join('; ')}. Puedes adjuntarlo desde el detalle del reporte.`);
+      }
+      setCreatedId(newId);
+      setEvidenceFiles([]);
       setFormData({ ...INITIAL_FORM, siteId: defaultSiteId, dateReport: todayISO() });
     }
+  };
+
+  const handleEvidenceFiles = (event) => {
+    const files = [...(event.target.files ?? [])];
+    event.target.value = '';
+    if (!files.length) return;
+    const all = [...evidenceFiles, ...files];
+    const problem = all.length > MAX_EVIDENCE_FILES
+      ? `Puedes adjuntar hasta ${MAX_EVIDENCE_FILES} archivos.`
+      : files.map(getEvidenceError).find(Boolean);
+    if (problem) {
+      setValidationError(problem);
+      return;
+    }
+    setValidationError('');
+    setEvidenceFiles(all);
   };
 
 // ---------------------- EFFECTS ----------------------
@@ -227,7 +266,7 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
     <form className="component-container" onSubmit={handleSubmit}>
       {created && (
         <div className="alert-success">
-          Reporte registrado exitosamente.{' '}
+          Reporte enviado. La coordinación lo revisará.{' '}
           {createdId && (
             <Link
               to={ROUTES.USER.REPORT_DETAIL(createdId)}
@@ -238,6 +277,8 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
           )}
         </div>
       )}
+
+      {attachWarning && <div className="alert-error">{attachWarning}</div>}
 
       {(validationError || saveError) && (
         <div className="alert-error">
@@ -373,6 +414,32 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
                 </p>
               </dd>
             </div>
+            {!isEdit && (
+              <div className="item-row">
+                <dt className="item-header"><label htmlFor="report-evidence-files">Archivos de evidencia (opcional)</label></dt>
+                <dd className="item-text">
+                  <input id="report-evidence-files" type="file" multiple accept={EVIDENCE_ACCEPT} onChange={handleEvidenceFiles}
+                    disabled={saving || attaching || evidenceFiles.length >= MAX_EVIDENCE_FILES}
+                    className="block text-sm file:mr-3 file:rounded-md file:border file:border-gray-300 file:bg-white file:px-3 file:py-1.5 file:text-sm" />
+                  <p className="mt-1 text-xs text-gray-500">
+                    PDF o imágenes JPG, PNG o WebP; hasta {MAX_EVIDENCE_FILES} archivos. Si el reporte es anónimo, revisa que no muestren tu nombre.
+                  </p>
+                  {evidenceFiles.length > 0 && (
+                    <ul className="mt-2 divide-y rounded-md border border-gray-200 text-sm">
+                      {evidenceFiles.map((file, index) => (
+                        <li key={`${file.name}-${index}`} className="flex items-center justify-between gap-3 px-3 py-1.5">
+                          <span className="min-w-0 truncate">{file.name} <span className="text-xs text-gray-500">· {formatFileSize(file.size)}</span></span>
+                          <button type="button" className="btn-tertiary py-1.5 text-xs text-red-600" disabled={saving || attaching}
+                            onClick={() => setEvidenceFiles((prev) => prev.filter((_, i) => i !== index))}>
+                            Quitar
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </dd>
+              </div>
+            )}
             <div className="item-row">
               <dt className="item-header"><label htmlFor="report-anonymity">¿Deseas que el reporte sea anónimo?</label></dt>
               <dd className="item-text">
@@ -398,16 +465,16 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
             type="button"
             className="btn-secondary"
             onClick={handleCancel}
-            disabled={saving}
+            disabled={saving || attaching}
           >
             Cancelar
           </button>
           <button
             type="submit"
             className="btn-primary"
-            disabled={saving}
+            disabled={saving || attaching}
           >
-            {saving ? 'Guardando...' : (isEdit ? 'Guardar' : 'Enviar reporte')}
+            {attaching ? 'Adjuntando archivos...' : saving ? 'Guardando...' : (isEdit ? 'Guardar' : 'Enviar reporte')}
           </button>
         </div>
       </div>

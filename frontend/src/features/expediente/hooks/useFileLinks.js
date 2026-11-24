@@ -38,7 +38,7 @@ export default function useFileLinks() {
     }
     try {
       const response = await fetcher();
-      if (!win.closed) win.location.href = createObjectUrl(response.data, 'application/pdf');
+      if (!win.closed) win.location.href = createObjectUrl(response.data, response.data?.type || 'application/pdf');
     } catch (err) {
       win.close();
       setError(await getBlobErrorMessage(err, 'No se pudo abrir el documento.'));

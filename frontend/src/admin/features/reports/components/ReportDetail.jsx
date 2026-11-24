@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import ReportAttachments from '../../../../components/ReportAttachments';
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useDeleteReport from '../hooks/useDeleteReport';
@@ -174,16 +175,15 @@ function ReportDetail({ report, fetching, fetchError, refetch }) {
           </div>
           <div className="item-row">
             <dt className="item-header">Evidencia</dt>
-            <dd className="item-text break-all">
-              {!report.evidence_url
-                ? 'Sin evidencia'
-                : isHttpUrl(report.evidence_url)
-                  ? (
-                    <a href={report.evidence_url} target="_blank" rel="noopener noreferrer">
-                      {report.evidence_url}
-                    </a>
-                  )
-                  : report.evidence_url}
+            <dd className="item-text">
+              {report.evidence_url && (
+                <p className="mb-3 break-all">
+                  {isHttpUrl(report.evidence_url)
+                    ? <a href={report.evidence_url} target="_blank" rel="noopener noreferrer">{report.evidence_url}</a>
+                    : report.evidence_url}
+                </p>
+              )}
+              <ReportAttachments report={report} />
             </dd>
           </div>
           <div className="item-row">
@@ -235,7 +235,7 @@ function ReportDetail({ report, fetching, fetchError, refetch }) {
         </button>
         <button
           type="button"
-          className='btn-tertiary'
+          className='btn-tertiary text-red-600'
           onClick={handleDeleteButton}
           disabled={deleting}
         >

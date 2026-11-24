@@ -99,5 +99,8 @@ export const API_ENDPOINTS = {
     LIST: '/reports',
     DETAIL: (id) => `/reports/${id}`,
     STATUS: (id) => `/reports/${id}/status`,
+    ATTACHMENTS: (id) => `/reports/${id}/attachments`,
+    ATTACHMENT: (id, attachmentId) => `/reports/${id}/attachments/${attachmentId}`,
+    ATTACHMENT_FILE: (id, attachmentId) => `/reports/${id}/attachments/${attachmentId}/file`,
   },
 };

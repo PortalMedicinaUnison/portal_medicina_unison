@@ -26,3 +26,22 @@ export const setReportStatusRequest = (id, isOpen) =>
 
 export const deleteReportRequest = (id) =>
   api.delete(API_ENDPOINTS.REPORTS.DETAIL(id));
+
+// ----------------- Evidencias (PDF o imágenes, hasta 5 por reporte) ----------------
+
+// Solo el estudiante dueño, mientras el reporte siga abierto. Devuelven el reporte actualizado.
+export const addReportAttachmentRequest = (reportId, file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return api.post(API_ENDPOINTS.REPORTS.ATTACHMENTS(reportId), formData);
+};
+
+export const deleteReportAttachmentRequest = (reportId, attachmentId) =>
+  api.delete(API_ENDPOINTS.REPORTS.ATTACHMENT(reportId, attachmentId));
+
+// El estudiante dueño o la coordinación. download=true lo descarga; si no, se abre en el navegador.
+export const getReportAttachmentFileRequest = (reportId, attachmentId, { download = false } = {}) =>
+  api.get(API_ENDPOINTS.REPORTS.ATTACHMENT_FILE(reportId, attachmentId), {
+    params: download ? { download: true } : {},
+    responseType: 'blob',
+  });
