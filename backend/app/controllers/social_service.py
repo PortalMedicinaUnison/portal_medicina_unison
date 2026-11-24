@@ -2,29 +2,23 @@
 Servicio social: mismo flujo que el internado (asignación → aceptación → plaza → documentos),
 pero solo para estudiantes que ya acreditaron (finalizaron) el internado.
 """
-from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
-from fastapi import UploadFile
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from controllers import document_rules
 from core.errors import bad_request, conflict, not_found
-from core.settings import settings
+from models.document import DocumentStageEnum
 from models.internship import ApplicationStatusEnum, InternshipStatusEnum
 from models.promotion import ProgramEnum
-from models.social_service import (
-    SocialService, SocialServiceApplication, SocialServiceDocument,
-    SocialServiceDocumentTypeEnum, SocialServiceStatusEnum,
-)
+from models.social_service import SocialService, SocialServiceApplication, SocialServiceStatusEnum
 from models.user import User
 from repos.internship import InternshipRepo
 from repos.promotion import PromotionRepo, PromotionSiteDetailRepo
 from repos.site import SiteRepo
-from repos.social_service import SocialServiceApplicationRepo, SocialServiceDocumentRepo, SocialServiceRepo
+from repos.social_service import SocialServiceApplicationRepo, SocialServiceRepo
 from repos.user import UserRepo
 from schemas.social_service import SocialServiceApplicationInput, SocialServiceUpdate
-from utils.file_handlers import resolve_upload, save_pdf_upload
 
 
 def _scope_academic_id(user: User, academic_id: Optional[str]) -> Optional[str]:
@@ -42,15 +36,23 @@ def list_applications(
     db: Session, user: User,
     promotion_id: Optional[int], academic_id: Optional[str], status: Optional[ApplicationStatusEnum],
 ) -> List[SocialServiceApplication]:
-    return SocialServiceApplicationRepo(db).list(
+    applications = SocialServiceApplicationRepo(db).list(
         promotion_id=promotion_id, academic_id=_scope_academic_id(user, academic_id), status=status,
     )
+    return document_rules.attach_inscription_progress(db, ProgramEnum.SOCIAL_SERVICE, applications)
 
 
 def get_application(db: Session, user: User, application_id: int) -> SocialServiceApplication:
     application = SocialServiceApplicationRepo(db).get(application_id)
     if application is None or (not user.is_staff and application.academic_id != user.academic_id):
         raise not_found("Asignación de servicio social no encontrada.")
+    return application
+
+
+def get_application_detail(db: Session, user: User, application_id: int) -> SocialServiceApplication:
+    """Como get_application, con el avance del expediente de inscripción."""
+    application = get_application(db, user, application_id)
+    document_rules.attach_inscription_progress(db, ProgramEnum.SOCIAL_SERVICE, [application])
     return application
 
 
@@ -94,6 +96,7 @@ def accept_application(db: Session, user: User, application_id: int) -> SocialSe
     """Acepta la asignación y crea el servicio social en la misma transacción."""
     application = get_application(db, user, application_id)
     _ensure_pending(application)
+    document_rules.ensure_inscription_submitted(db, ProgramEnum.SOCIAL_SERVICE, application.application_id)
     application.status = ApplicationStatusEnum.ACCEPTED
 
     service = SocialServiceRepo(db).get_by_application_any(application.application_id)
@@ -146,11 +149,26 @@ def get_social_service(db: Session, user: User, social_service_id: int) -> Socia
 
 
 def update_social_service(db: Session, user: User, social_service_id: int, data: SocialServiceUpdate) -> SocialService:
-    """La coordinación asigna la plaza (respetando el cupo de la promoción) o cambia el estatus."""
+    """
+    La coordinación registra la plaza que eligió el estudiante (respetando el cupo de la promoción)
+    o cambia el estatus. Registrar la primera plaza exige el expediente de inscripción completo y
+    liberar el servicio social, los documentos obligatorios de las etapas durante y liberación aprobados.
+    """
     service = get_social_service(db, user, social_service_id)
     payload = data.model_dump(exclude_unset=True)
     target_site = payload.get("site_id", service.site_id)
     target_status = payload.get("status", service.status)
+
+    if service.site_id is None and target_site is not None:
+        document_rules.ensure_stages_complete(
+            db, ProgramEnum.SOCIAL_SERVICE, service.application_id, [DocumentStageEnum.INSCRIPTION],
+            "Antes de registrar la plaza deben estar aprobados los documentos obligatorios de inscripción.",
+        )
+    if target_status == SocialServiceStatusEnum.FINISHED and service.status != SocialServiceStatusEnum.FINISHED:
+        document_rules.ensure_stages_complete(
+            db, ProgramEnum.SOCIAL_SERVICE, service.application_id, document_rules.CLOSING_STAGES,
+            "Para liberar el servicio social deben estar aprobados los documentos obligatorios del servicio social.",
+        )
     takes_seat = target_site is not None and target_status != SocialServiceStatusEnum.FINISHED
     seat_changed = target_site != service.site_id or (
         service.status == SocialServiceStatusEnum.FINISHED and target_status != SocialServiceStatusEnum.FINISHED
@@ -176,54 +194,4 @@ def delete_social_service(db: Session, user: User, social_service_id: int) -> No
     service.is_active = False
     service.application.status = ApplicationStatusEnum.PENDING
     db.commit()
-
-
-# ---------------------- SOCIAL SERVICE DOCUMENT ----------------------
-
-def list_documents(db: Session, user: User, social_service_id: int) -> List[SocialServiceDocument]:
-    get_social_service(db, user, social_service_id)
-    return SocialServiceDocumentRepo(db).list(social_service_id)
-
-
-def get_document(db: Session, user: User, social_service_id: int, document_id: int) -> SocialServiceDocument:
-    get_social_service(db, user, social_service_id)
-    document = SocialServiceDocumentRepo(db).get_for_social_service(social_service_id, document_id)
-    if document is None:
-        raise not_found("Documento no encontrado.")
-    return document
-
-
-def upload_document(
-    db: Session, user: User, social_service_id: int,
-    document_type: SocialServiceDocumentTypeEnum, file: UploadFile,
-) -> SocialServiceDocument:
-    get_social_service(db, user, social_service_id)
-    repo = SocialServiceDocumentRepo(db)
-    if repo.get_active_by_type(social_service_id, document_type):
-        raise conflict("Ya hay un documento de este tipo; elimínalo para subir uno nuevo.")
-
-    relative_path, original_name = save_pdf_upload(file, f"social-service-documents/{social_service_id}")
-    document = SocialServiceDocument(
-        social_service_id=social_service_id,
-        document_type=document_type,
-        path=relative_path,
-        media_type="application/pdf",
-        original_filename=original_name,
-    )
-    try:
-        return repo.add(document)
-    except IntegrityError:
-        db.rollback()
-        (settings.UPLOAD_DIR / relative_path).unlink(missing_ok=True)
-        raise conflict("Ya hay un documento de este tipo; elimínalo para subir uno nuevo.")
-
-
-def get_document_file(db: Session, user: User, social_service_id: int, document_id: int) -> Tuple[Path, SocialServiceDocument]:
-    document = get_document(db, user, social_service_id, document_id)
-    return resolve_upload(document.path), document
-
-
-def delete_document(db: Session, user: User, social_service_id: int, document_id: int) -> None:
-    document = get_document(db, user, social_service_id, document_id)
-    SocialServiceDocumentRepo(db).soft_delete(document)
 

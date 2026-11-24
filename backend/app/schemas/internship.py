@@ -2,8 +2,9 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from models.internship import ApplicationStatusEnum, DocumentTypeEnum, InternshipStatusEnum
+from models.internship import ApplicationStatusEnum, InternshipStatusEnum
 from schemas.common import AcademicId, ORMModel, UTCDateTime
+from schemas.document import InscriptionProgress
 from schemas.promotion import PromotionOutput
 from schemas.site import SiteBasicOutput
 from schemas.user import UserBasicOutput
@@ -26,6 +27,8 @@ class InternshipApplicationOutput(ORMModel):
     promotion: PromotionOutput
     student: Optional[UserBasicOutput] = None
     internship_id: Optional[int] = None
+    # Se calcula al listar o consultar asignaciones (no en las anidadas dentro del internado).
+    inscription_progress: Optional[InscriptionProgress] = None
 
 
 # ---------------------- INTERNSHIP ----------------------
@@ -46,14 +49,3 @@ class InternshipOutput(ORMModel):
     updated_at: UTCDateTime
     application: InternshipApplicationOutput
     site: Optional[SiteBasicOutput] = None
-
-
-# ---------------------- INTERNSHIP DOCUMENT ----------------------
-
-class InternshipDocumentOutput(ORMModel):
-    document_id: int
-    internship_id: int
-    document_type: DocumentTypeEnum
-    media_type: str
-    original_filename: Optional[str] = None
-    created_at: UTCDateTime

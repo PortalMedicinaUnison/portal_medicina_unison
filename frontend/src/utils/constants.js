@@ -24,9 +24,6 @@ export const APPLICATION_STATUS_LABELS = { 1: 'Pendiente', 2: 'Aceptada', 3: 'De
 export const INTERNSHIP_STATUS = { ACTIVE: 1, SUSPENDED: 2, FINISHED: 3 };
 export const INTERNSHIP_STATUS_LABELS = { 1: 'Activo', 2: 'Suspendido', 3: 'Finalizado' };
 
-export const DOCUMENT_TYPES = { BITACORA: 1, COMPLETION_LETTER: 2, KARDEX: 3, CERTIFICATE: 4 };
-export const DOCUMENT_TYPE_LABELS = { 1: 'Bitácora', 2: 'Carta de finalización', 3: 'Kárdex', 4: 'Certificado' };
-
 export const REPORT_TYPES = {
   ACCIDENT: 1, INSECURE_CONDITION: 2, WORK_HARASSMENT: 3, SEXUAL_HARASSMENT: 4,
   DISCRIMINATION: 5, ROBBERY: 6, OTHER: 7,
@@ -52,10 +49,18 @@ export const PROGRAM_LABELS = { 1: 'Internado', 2: 'Servicio social' };
 export const SOCIAL_SERVICE_STATUS = { ACTIVE: 1, SUSPENDED: 2, FINISHED: 3 };
 export const SOCIAL_SERVICE_STATUS_LABELS = { 1: 'Activo', 2: 'Suspendido', 3: 'Liberado' };
 
-export const SOCIAL_SERVICE_DOCUMENT_TYPES = {
-  ASSIGNMENT_LETTER: 1, FIRST_REPORT: 2, SECOND_REPORT: 3, THIRD_REPORT: 4, FINAL_REPORT: 5, COMPLETION_CERTIFICATE: 6,
+// Expediente: etapas del catálogo de documentos y revisión de cada archivo.
+export const DOCUMENT_STAGES = { INSCRIPTION: 1, IN_PROGRESS: 2, COMPLETION: 3 };
+export const DOCUMENT_STAGE_LABELS = { 1: 'Inscripción', 2: 'Durante el programa', 3: 'Término o liberación' };
+// Nombre de cada etapa según el programa (internado / servicio social).
+export const DOCUMENT_STAGE_LABELS_BY_PROGRAM = {
+  1: { 1: 'Inscripción', 2: 'Durante el internado', 3: 'Término del internado' },
+  2: { 1: 'Inscripción', 2: 'Durante el servicio social', 3: 'Liberación' },
 };
-export const SOCIAL_SERVICE_DOCUMENT_TYPE_LABELS = {
-  1: 'Carta de asignación', 2: 'Primer informe', 3: 'Segundo informe', 4: 'Tercer informe',
-  5: 'Informe final', 6: 'Constancia de terminación',
-};
+
+// Quién sube el documento: el alumno (lo revisa la coordinación) o la coordinación (queda aprobado).
+export const DOCUMENT_PROVIDERS = { STUDENT: 1, COORDINATION: 2 };
+export const DOCUMENT_PROVIDER_LABELS = { 1: 'El alumno', 2: 'La coordinación' };
+
+export const REVIEW_STATUS = { PENDING: 1, APPROVED: 2, REJECTED: 3 };
+export const REVIEW_STATUS_LABELS = { 1: 'En revisión', 2: 'Aprobado', 3: 'Con observaciones' };

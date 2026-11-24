@@ -9,6 +9,7 @@ import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 import { APPLICATION_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
 import { formatFullName } from '../../../../utils/utils';
+import InscriptionProgress from '../../../../features/expediente/components/InscriptionProgress';
 
 
 
@@ -124,16 +125,17 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
           <thead>
             <tr>
               <th className='w-2/12'>Expediente</th>
-              <th className='w-4/12'>Alumno</th>
-              <th className='w-3/12'>Promoción</th>
+              <th className='w-3/12'>Alumno</th>
+              <th className='w-2/12'>Promoción</th>
               <th className='w-2/12'>Estatus</th>
+              <th className='w-2/12'>Documentos</th>
               <th className='w-1/12'></th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={5} className="text-center py-6">
+                <td colSpan={6} className="text-center py-6">
                 {search || statusFilter
                   ? 'No se encontraron aplicaciones que coincidan con los filtros.'
                   : 'No hay aplicaciones disponibles.'
@@ -147,6 +149,7 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
                 <td className="text-left">{formatFullName(item.student) || 'Sin datos del alumno'}</td>
                 <td>{item.promotion ? `${item.promotion.year} - ${labelOf(PERIOD_LABELS, item.promotion.period)}` : '—'}</td>
                 <td>{labelOf(APPLICATION_STATUS_LABELS, item.status)}</td>
+                <td><InscriptionProgress progress={item.inscription_progress} /></td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[

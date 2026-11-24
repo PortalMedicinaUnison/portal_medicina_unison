@@ -59,6 +59,9 @@ FIELD_LABELS = {
     "date_report": "Fecha del reporte", "report_type": "Tipo de reporte", "other_type": "Otro tipo",
     "evidence_url": "Evidencia", "anonymity": "Anonimato", "is_open": "Abierto",
     "token": "Enlace", "accept_privacy_notice": "Aviso de privacidad",
+    "program": "Programa", "stage": "Etapa", "is_required": "Obligatorio", "allows_multiple": "Varios archivos",
+    "validity_months": "Vigencia (meses)", "sort_order": "Orden", "requirement_id": "Documento",
+    "review_status": "Revisión", "review_comment": "Observaciones",
 }
 
 ERROR_MESSAGES = {

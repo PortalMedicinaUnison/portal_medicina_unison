@@ -1,15 +1,15 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, File, Form, UploadFile, status
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, status
 
 from controllers import social_service as controller
 from core.dependencies import AdminUser, CurrentUser, DbSession
 from models.internship import ApplicationStatusEnum
-from models.social_service import SocialServiceDocumentTypeEnum, SocialServiceStatusEnum
+from models.promotion import ProgramEnum
+from models.social_service import SocialServiceStatusEnum
+from routers.document import add_expediente_routes
 from schemas.social_service import (
-    SocialServiceApplicationInput, SocialServiceApplicationOutput, SocialServiceDocumentOutput,
-    SocialServiceOutput, SocialServiceUpdate,
+    SocialServiceApplicationInput, SocialServiceApplicationOutput, SocialServiceOutput, SocialServiceUpdate,
 )
 
 # ----------------------  SOCIAL SERVICE APPLICATION  ----------------------
@@ -39,7 +39,7 @@ def create_application(data: SocialServiceApplicationInput, _admin: AdminUser, d
 
 @social_service_application_router.get("/{application_id}", response_model=SocialServiceApplicationOutput)
 def get_application(application_id: int, user: CurrentUser, db: DbSession):
-    return controller.get_application(db, user, application_id)
+    return controller.get_application_detail(db, user, application_id)
 
 
 @social_service_application_router.post("/{application_id}/accept", response_model=SocialServiceOutput)
@@ -92,50 +92,5 @@ def delete_social_service(social_service_id: int, admin: AdminUser, db: DbSessio
     controller.delete_social_service(db, admin, social_service_id)
 
 
-# ----------------------  SOCIAL SERVICE DOCUMENT  ----------------------
-
-@social_service_router.get(
-    "/{social_service_id}/documents", response_model=List[SocialServiceDocumentOutput], tags=["Documentos"],
-)
-def list_documents(social_service_id: int, user: CurrentUser, db: DbSession):
-    return controller.list_documents(db, user, social_service_id)
-
-
-@social_service_router.post(
-    "/{social_service_id}/documents", response_model=SocialServiceDocumentOutput,
-    status_code=status.HTTP_201_CREATED, tags=["Documentos"],
-)
-def upload_document(
-    social_service_id: int, user: CurrentUser, db: DbSession,
-    document_type: SocialServiceDocumentTypeEnum = Form(...), file: UploadFile = File(...),
-):
-    """Sube un PDF (máximo MAX_UPLOAD_MB). Solo puede haber un documento activo por tipo."""
-    return controller.upload_document(db, user, social_service_id, document_type, file)
-
-
-@social_service_router.get(
-    "/{social_service_id}/documents/{document_id}", response_model=SocialServiceDocumentOutput, tags=["Documentos"],
-)
-def get_document(social_service_id: int, document_id: int, user: CurrentUser, db: DbSession):
-    return controller.get_document(db, user, social_service_id, document_id)
-
-
-@social_service_router.get(
-    "/{social_service_id}/documents/{document_id}/file", response_class=FileResponse, tags=["Documentos"],
-)
-def get_document_file(social_service_id: int, document_id: int, user: CurrentUser, db: DbSession, download: bool = False):
-    """Devuelve el PDF. `download=true` lo descarga; si no, se muestra en el navegador."""
-    path, document = controller.get_document_file(db, user, social_service_id, document_id)
-    return FileResponse(
-        path,
-        media_type="application/pdf",
-        filename=document.original_filename or f"documento-{document.document_id}.pdf",
-        content_disposition_type="attachment" if download else "inline",
-    )
-
-
-@social_service_router.delete(
-    "/{social_service_id}/documents/{document_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Documentos"],
-)
-def delete_document(social_service_id: int, document_id: int, user: CurrentUser, db: DbSession):
-    controller.delete_document(db, user, social_service_id, document_id)
+# Expediente: /social-service-applications/{application_id}/documents...
+add_expediente_routes(social_service_application_router, ProgramEnum.SOCIAL_SERVICE)

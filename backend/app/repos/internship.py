@@ -1,9 +1,6 @@
 from typing import List, Optional
 
-from models.internship import (
-    ApplicationStatusEnum, DocumentTypeEnum, Internship, InternshipApplication,
-    InternshipDocument, InternshipStatusEnum,
-)
+from models.internship import ApplicationStatusEnum, Internship, InternshipApplication, InternshipStatusEnum
 from .base import BaseRepo
 
 
@@ -80,27 +77,3 @@ class InternshipRepo(BaseRepo[Internship]):
 
     def count_by_site(self, site_id: int) -> int:
         return self.query().filter(Internship.site_id == site_id).count()
-
-
-class InternshipDocumentRepo(BaseRepo[InternshipDocument]):
-    model = InternshipDocument
-
-    def list(self, internship_id: int) -> List[InternshipDocument]:
-        return (
-            self.query()
-            .filter(InternshipDocument.internship_id == internship_id)
-            .order_by(InternshipDocument.document_type, InternshipDocument.created_at.desc())
-            .all()
-        )
-
-    def get_for_internship(self, internship_id: int, document_id: int) -> Optional[InternshipDocument]:
-        return self.query().filter(
-            InternshipDocument.internship_id == internship_id,
-            InternshipDocument.document_id == document_id,
-        ).first()
-
-    def get_active_by_type(self, internship_id: int, document_type: DocumentTypeEnum) -> Optional[InternshipDocument]:
-        return self.query().filter(
-            InternshipDocument.internship_id == internship_id,
-            InternshipDocument.document_type == document_type,
-        ).first()

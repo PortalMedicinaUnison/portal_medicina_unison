@@ -4,12 +4,12 @@ import { ROUTES, adminAbs } from '../../../../config';
 import useUpdateInternship from '../hooks/useUpdateInternship';
 import useDeleteInternship from '../hooks/useDeleteInternship';
 import useGetPsdsByPromotion from '../hooks/useGetPsdsByPromotion';
-import DocumentList from '../documents/components/DocumentList';
+import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
-import { INTERNSHIP_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { INTERNSHIP_STATUS_LABELS, PERIOD_LABELS, PROGRAMS, labelOf } from '../../../../utils/constants';
 
 
 function InternshipDetail({ internship, fetching, fetchError, refetch }) {
@@ -264,7 +264,7 @@ function InternshipDetail({ internship, fetching, fetchError, refetch }) {
 
       <div className="mt-16">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Documentos</h3>
-        <DocumentList internshipId={internship.internship_id} />
+        <ExpedientePanel program={PROGRAMS.INTERNSHIP} applicationId={internship.application_id} mode="admin" started />
       </div>
 
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>

@@ -89,11 +89,6 @@ export const ROUTES = {
         INTERNSHIP_APPLICATION_EDIT: (applicationId) => `/internship-applications/${applicationId}/edit`,
         INTERNSHIP_APPLICATION_DELETE: (applicationId) => `/internship-applications/${applicationId}/delete`,
 
-        INTERNSHIP_DOCUMENT_LIST: (internshipId) => `/internships/${internshipId}/documents`,
-        INTERNSHIP_DOCUMENT_CREATE: (internshipId) => `/internships/${internshipId}/documents/create`,
-        INTERNSHIP_DOCUMENT_DETAIL: (internshipId, documentId) => `/internships/${internshipId}/documents/${documentId}`,
-        INTERNSHIP_DOCUMENT_EDIT: (internshipId, documentId) => `/internships/${internshipId}/documents/${documentId}/edit`,
-        INTERNSHIP_DOCUMENT_DELETE: (internshipId, documentId) => `/internships/${internshipId}/documents/${documentId}/delete`,
 
         SOCIAL_SERVICE_LIST: '/social-services',
         SOCIAL_SERVICE_DETAIL: (socialServiceId) => `/social-services/${socialServiceId}`,
@@ -101,6 +96,8 @@ export const ROUTES = {
         SOCIAL_SERVICE_APPLICATION_LIST: '/social-service-applications',
         SOCIAL_SERVICE_APPLICATION_CREATE: '/social-service-applications/create',
         SOCIAL_SERVICE_APPLICATION_DETAIL: (applicationId) => `/social-service-applications/${applicationId}`,
+
+        DOCUMENT_REQUIREMENTS: '/document-requirements',
 
         ANNOUNCEMENTS_LIST: '/announcements',
         ANNOUNCEMENT_CREATE: '/announcements/create',

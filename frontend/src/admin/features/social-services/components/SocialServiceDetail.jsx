@@ -4,12 +4,12 @@ import { ROUTES, adminAbs } from '../../../../config';
 import useUpdateSocialService from '../hooks/useUpdateSocialService';
 import useDeleteSocialService from '../hooks/useDeleteSocialService';
 import useGetPsdsByPromotion from '../../internships/hooks/useGetPsdsByPromotion';
-import SocialServiceDocumentList from '../documents/components/SocialServiceDocumentList';
+import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
-import { SOCIAL_SERVICE_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { PROGRAMS, SOCIAL_SERVICE_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
 import { formatFullName } from '../../../../utils/utils';
 
 
@@ -263,7 +263,7 @@ function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
 
       <div className="mt-16">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Documentos</h3>
-        <SocialServiceDocumentList socialServiceId={socialService.social_service_id} />
+        <ExpedientePanel program={PROGRAMS.SOCIAL_SERVICE} applicationId={socialService.application_id} mode="admin" started />
       </div>
 
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>

@@ -2,7 +2,7 @@ from datetime import date, timedelta
 
 import pytest
 
-from tests.conftest import PDF_BYTES, auth
+from tests.conftest import auth
 
 
 @pytest.fixture()
@@ -133,28 +133,6 @@ def test_plaza_assignment_uses_social_service_capacity(client, admin, student, o
     released = client.patch(f"/social-services/{first['social_service_id']}", json={"status": 3}, headers=headers)
     assert released.status_code == 200 and released.json()["status"] == 3
     assert client.patch(f"/social-services/{second['social_service_id']}", json={"site_id": site_b}, headers=headers).status_code == 200
-
-
-def test_social_service_documents(client, admin, student, other_student, ss_catalog):
-    service = _accepted_ss(client, admin, student, ss_catalog)
-    base = f"/social-services/{service['social_service_id']}/documents"
-    headers = auth(student)
-    uploaded = client.post(base, headers=headers, data={"document_type": "1"},
-                           files={"file": ("asignacion.pdf", PDF_BYTES, "application/pdf")})
-    assert uploaded.status_code == 201, uploaded.text
-    document = uploaded.json()
-    assert document["document_type"] == 1 and document["original_filename"] == "asignacion.pdf"
-    assert client.post(base, headers=headers, data={"document_type": "1"},
-                       files={"file": ("otra.pdf", PDF_BYTES, "application/pdf")}).status_code == 409
-    assert client.post(base, headers=headers, data={"document_type": "2"},
-                       files={"file": ("x.pdf", b"no es pdf", "application/pdf")}).status_code == 400
-
-    file_url = f"{base}/{document['document_id']}/file"
-    assert client.get(file_url, headers=headers).content == PDF_BYTES
-    assert client.get(file_url, headers=auth(admin)).status_code == 200
-    assert client.get(base, headers=auth(other_student)).status_code == 404
-    assert client.delete(f"{base}/{document['document_id']}", headers=headers).status_code == 204
-    assert client.get(base, headers=headers).json() == []
 
 
 def test_report_during_social_service_is_linked_and_masked(client, admin, student, ss_catalog):

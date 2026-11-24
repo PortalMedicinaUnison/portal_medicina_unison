@@ -2,14 +2,9 @@ from .base import Base
 from .user import UserEnrollment, User
 from .site import Institution, Site
 from .promotion import Promotion, PromotionSiteDetail, ProgramEnum
-from .internship import (
-    InternshipApplication, Internship, InternshipDocument,
-    ApplicationStatusEnum, InternshipStatusEnum, DocumentTypeEnum,
-)
-from .social_service import (
-    SocialServiceApplication, SocialService, SocialServiceDocument,
-    SocialServiceStatusEnum, SocialServiceDocumentTypeEnum,
-)
+from .internship import InternshipApplication, Internship, ApplicationStatusEnum, InternshipStatusEnum
+from .social_service import SocialServiceApplication, SocialService, SocialServiceStatusEnum
+from .document import DocumentRequirement, ApplicationDocument, DocumentProviderEnum, DocumentStageEnum, ReviewStatusEnum
 from .communication import Announcement, Survey, AnnouncementTypeEnum
 from .report import Report, ReportTypeEnum
 from .password_reset import PasswordResetToken
@@ -22,10 +17,9 @@ __all__ = [
     "UserEnrollment", "User",
     "Institution", "Site",
     "Promotion", "PromotionSiteDetail", "ProgramEnum",
-    "InternshipApplication", "Internship", "InternshipDocument",
-    "ApplicationStatusEnum", "InternshipStatusEnum", "DocumentTypeEnum",
-    "SocialServiceApplication", "SocialService", "SocialServiceDocument",
-    "SocialServiceStatusEnum", "SocialServiceDocumentTypeEnum",
+    "InternshipApplication", "Internship", "ApplicationStatusEnum", "InternshipStatusEnum",
+    "SocialServiceApplication", "SocialService", "SocialServiceStatusEnum",
+    "DocumentRequirement", "ApplicationDocument", "DocumentProviderEnum", "DocumentStageEnum", "ReviewStatusEnum",
     "Announcement", "Survey", "AnnouncementTypeEnum",
     "Report", "ReportTypeEnum",
     "PasswordResetToken",

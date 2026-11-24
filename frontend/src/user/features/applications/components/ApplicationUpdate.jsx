@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
-import { APPLICATION_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { APPLICATION_STATUS_LABELS, PERIOD_LABELS, PROGRAMS, DOCUMENT_STAGES, labelOf } from '../../../../utils/constants';
+import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
 import useRespondApplication from '../hooks/useRespondApplication';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
@@ -113,6 +114,9 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
 // ---------------------- RENDER ----------------------
 
   const { promotion } = application;
+  // Para aceptar hay que haber subido los obligatorios de inscripción (el backend también lo exige).
+  const inscription = application.inscription_progress;
+  const documentsReady = !inscription || inscription.all_submitted;
   const promotionLabel = `${promotion.year} - ${labelOf(PERIOD_LABELS, promotion.period)}`;
   const fullName = [user?.first_name, user?.last_name, user?.second_last_name].filter(Boolean).join(' ');
 
@@ -129,6 +133,20 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
             <dd className="item-text">{labelOf(APPLICATION_STATUS_LABELS, application.status)}</dd>
           </div>
         </dl>
+      </div>
+
+      <div className="w-full lg:w-3/4 mb-12">
+        <h3 className="text-lg font-semibold text-gray-900">Documentos de inscripción</h3>
+        <p className="mt-1 mb-4 text-sm text-gray-600">
+          Sube tus documentos en PDF. La coordinación los revisa; tu sede se registra cuando todos los obligatorios estén aprobados.
+        </p>
+        <ExpedientePanel
+          program={PROGRAMS.INTERNSHIP}
+          applicationId={application.application_id}
+          stages={[DOCUMENT_STAGES.INSCRIPTION]}
+          closed={Boolean(promotion?.is_finished)}
+          onChange={refetch}
+        />
       </div>
 
       <div className="w-3/4">
@@ -210,6 +228,19 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
         />
       </Modal>
 
+      {!documentsReady && (
+
+        <div className="mb-4 rounded-md bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-inset ring-amber-200" role="status">
+
+          Para aceptar, primero sube todos los documentos obligatorios de inscripción
+
+          {inscription ? ` (${inscription.submitted} de ${inscription.required})` : ''} y corrige los que tengan observaciones.
+
+        </div>
+
+      )}
+
+
       <div className="button-group">
         <button
           type="button"
@@ -221,8 +252,8 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
         </button>
         <button
           type="submit"
-          className="btn-primary"
-          disabled={saving}
+          className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={saving || !documentsReady}
         >
           {saving ? 'Guardando...' : 'Aceptar mi participación'}
         </button>

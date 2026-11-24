@@ -1,15 +1,13 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, File, Form, UploadFile, status
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, status
 
 from controllers import internship as controller
 from core.dependencies import AdminUser, CurrentUser, DbSession
-from models.internship import ApplicationStatusEnum, DocumentTypeEnum, InternshipStatusEnum
-from schemas.internship import (
-    InternshipApplicationInput, InternshipApplicationOutput, InternshipDocumentOutput,
-    InternshipOutput, InternshipUpdate,
-)
+from models.internship import ApplicationStatusEnum, InternshipStatusEnum
+from models.promotion import ProgramEnum
+from routers.document import add_expediente_routes
+from schemas.internship import InternshipApplicationInput, InternshipApplicationOutput, InternshipOutput, InternshipUpdate
 
 # ----------------------  INTERNSHIP APPLICATION  ----------------------
 
@@ -33,7 +31,7 @@ def create_application(data: InternshipApplicationInput, _admin: AdminUser, db: 
 
 @internship_application_router.get("/{application_id}", response_model=InternshipApplicationOutput)
 def get_application(application_id: int, user: CurrentUser, db: DbSession):
-    return controller.get_application(db, user, application_id)
+    return controller.get_application_detail(db, user, application_id)
 
 
 @internship_application_router.post("/{application_id}/accept", response_model=InternshipOutput)
@@ -86,42 +84,5 @@ def delete_internship(internship_id: int, admin: AdminUser, db: DbSession):
     controller.delete_internship(db, admin, internship_id)
 
 
-# ----------------------  INTERNSHIP DOCUMENT  ----------------------
-
-@internship_router.get("/{internship_id}/documents", response_model=List[InternshipDocumentOutput], tags=["Documentos"])
-def list_documents(internship_id: int, user: CurrentUser, db: DbSession):
-    return controller.list_documents(db, user, internship_id)
-
-
-@internship_router.post(
-    "/{internship_id}/documents", response_model=InternshipDocumentOutput,
-    status_code=status.HTTP_201_CREATED, tags=["Documentos"],
-)
-def upload_document(
-    internship_id: int, user: CurrentUser, db: DbSession,
-    document_type: DocumentTypeEnum = Form(...), file: UploadFile = File(...),
-):
-    """Sube un PDF (máximo MAX_UPLOAD_MB). Solo puede haber un documento activo por tipo."""
-    return controller.upload_document(db, user, internship_id, document_type, file)
-
-
-@internship_router.get("/{internship_id}/documents/{document_id}", response_model=InternshipDocumentOutput, tags=["Documentos"])
-def get_document(internship_id: int, document_id: int, user: CurrentUser, db: DbSession):
-    return controller.get_document(db, user, internship_id, document_id)
-
-
-@internship_router.get("/{internship_id}/documents/{document_id}/file", response_class=FileResponse, tags=["Documentos"])
-def get_document_file(internship_id: int, document_id: int, user: CurrentUser, db: DbSession, download: bool = False):
-    """Devuelve el PDF. `download=true` lo descarga; si no, se muestra en el navegador."""
-    path, document = controller.get_document_file(db, user, internship_id, document_id)
-    return FileResponse(
-        path,
-        media_type="application/pdf",
-        filename=document.original_filename or f"documento-{document.document_id}.pdf",
-        content_disposition_type="attachment" if download else "inline",
-    )
-
-
-@internship_router.delete("/{internship_id}/documents/{document_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Documentos"])
-def delete_document(internship_id: int, document_id: int, user: CurrentUser, db: DbSession):
-    controller.delete_document(db, user, internship_id, document_id)
+# Expediente: /internship-applications/{application_id}/documents...
+add_expediente_routes(internship_application_router, ProgramEnum.INTERNSHIP)

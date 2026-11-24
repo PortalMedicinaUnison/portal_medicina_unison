@@ -55,6 +55,8 @@ export const API_ENDPOINTS = {
     DETAIL: (id) => `/internship-applications/${id}`,
     ACCEPT: (id) => `/internship-applications/${id}/accept`,
     DECLINE: (id) => `/internship-applications/${id}/decline`,
+    DOCUMENTS: (id) => `/internship-applications/${id}/documents`,
+    DOCUMENT: (id, docId) => `/internship-applications/${id}/documents/${docId}`,
   },
 
   INTERNSHIPS: {
@@ -62,17 +64,13 @@ export const API_ENDPOINTS = {
     DETAIL: (id) => `/internships/${id}`,
   },
 
-  INTERNSHIP_DOCUMENTS: {
-    LIST: (internshipId) => `/internships/${internshipId}/documents`,
-    DETAIL: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}`,
-    FILE: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}/file`,
-  },
-
   SOCIAL_SERVICE_APPLICATIONS: {
     LIST: '/social-service-applications',
     DETAIL: (id) => `/social-service-applications/${id}`,
     ACCEPT: (id) => `/social-service-applications/${id}/accept`,
     DECLINE: (id) => `/social-service-applications/${id}/decline`,
+    DOCUMENTS: (id) => `/social-service-applications/${id}/documents`,
+    DOCUMENT: (id, docId) => `/social-service-applications/${id}/documents/${docId}`,
   },
 
   SOCIAL_SERVICES: {
@@ -80,10 +78,11 @@ export const API_ENDPOINTS = {
     DETAIL: (id) => `/social-services/${id}`,
   },
 
-  SOCIAL_SERVICE_DOCUMENTS: {
-    LIST: (socialServiceId) => `/social-services/${socialServiceId}/documents`,
-    DETAIL: (socialServiceId, docId) => `/social-services/${socialServiceId}/documents/${docId}`,
-    FILE: (socialServiceId, docId) => `/social-services/${socialServiceId}/documents/${docId}/file`,
+  // Catálogo de documentos por programa y etapa (con formato descargable).
+  DOCUMENT_REQUIREMENTS: {
+    LIST: '/document-requirements',
+    DETAIL: (id) => `/document-requirements/${id}`,
+    TEMPLATE: (id) => `/document-requirements/${id}/template`,
   },
 
   ANNOUNCEMENTS: {

@@ -1,7 +1,7 @@
 from enum import IntEnum
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import ForeignKey, Index, Integer, String, UniqueConstraint, text
+from sqlalchemy import ForeignKey, Index, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import BaseModel
@@ -11,13 +11,6 @@ if TYPE_CHECKING:
     from .promotion import Promotion
     from .site import Site
     from .user import User
-
-
-class DocumentTypeEnum(IntEnum):
-    BITACORA = 1
-    COMPLETION_LETTER = 2
-    KARDEX = 3
-    CERTIFICATE = 4
 
 
 class InternshipStatusEnum(IntEnum):
@@ -37,7 +30,7 @@ class ApplicationStatusEnum(IntEnum):
 class InternshipApplication(BaseModel):
     """
     Asignación de un estudiante a una promoción. El estudiante la acepta
-    (se crea su internado) o la declina.
+    (se crea su internado) o la declina. Es también su expediente (ver models/document.py).
     """
     __tablename__ = "internship_applications"
     __table_args__ = (
@@ -89,7 +82,6 @@ class Internship(BaseModel):
 
     application: Mapped["InternshipApplication"] = relationship(lazy="joined")
     site: Mapped[Optional["Site"]] = relationship(lazy="joined")
-    documents: Mapped[List["InternshipDocument"]] = relationship(back_populates="internship")
 
     @property
     def academic_id(self) -> str:
@@ -102,30 +94,3 @@ class Internship(BaseModel):
     def __repr__(self):
         return f"<Internship(internship_id={self.internship_id}, site_id={self.site_id}, status={self.status.name})>"
 
-
-# ----------------------  INTERNSHIP DOCUMENT  ----------------------
-
-class InternshipDocument(BaseModel):
-    """Documento PDF del internado. Solo puede haber uno activo por tipo."""
-    __tablename__ = "internship_documents"
-    __table_args__ = (
-        Index(
-            "uq_active_doc_per_type",
-            "internship_id", "document_type",
-            unique=True,
-            sqlite_where=text("is_active = 1"),
-            postgresql_where=text("is_active"),
-        ),
-    )
-
-    document_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    internship_id: Mapped[int] = mapped_column(Integer, ForeignKey("internships.internship_id"), nullable=False)
-    document_type: Mapped[DocumentTypeEnum] = mapped_column(IntEnumType(DocumentTypeEnum), nullable=False)
-    path: Mapped[str] = mapped_column(String(1024), nullable=False)
-    media_type: Mapped[str] = mapped_column(String(100), nullable=False, default="application/pdf")
-    original_filename: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-
-    internship: Mapped["Internship"] = relationship(back_populates="documents")
-
-    def __repr__(self):
-        return f"<InternshipDocument(internship_id={self.internship_id}, document_type={self.document_type.name})>"
