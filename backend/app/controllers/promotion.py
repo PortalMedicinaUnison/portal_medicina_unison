@@ -79,10 +79,11 @@ def update_promotion(db: Session, promotion_id: int, data: PromotionUpdate) -> P
     """
     Si cambia la fecha de inicio sin indicar la de término, el término se recalcula a doce meses.
     Cambiar año o periodo (forma anterior) aplica las fechas habituales del programa.
+    Con `seats` se guardan también los cupos (como en set_seats), en la misma transacción: si algo no
+    procede no se guarda nada.
     """
-    repo = PromotionRepo(db)
     promotion = get_promotion(db, promotion_id)
-    payload = data.model_dump(exclude_unset=True)
+    payload = data.model_dump(exclude_unset=True, exclude={"seats"})
     if "start_date" not in payload and ("year" in payload or "period" in payload):
         year, period = payload.get("year", promotion.year), payload.get("period", promotion.period)
         if (year, period) != (promotion.year, promotion.period):
@@ -100,7 +101,14 @@ def update_promotion(db: Session, promotion_id: int, data: PromotionUpdate) -> P
         duplicate = _same_semester(db, promotion.program, year, period)
         if duplicate:
             raise _duplicate(duplicate)
-    return repo.update(promotion, payload)
+    changes = _seat_changes(db, promotion, data.seats, "No se guardaron los cambios.") if data.seats is not None else []
+
+    for key, value in payload.items():
+        setattr(promotion, key, value)
+    _apply_seat_changes(db, promotion.promotion_id, changes)
+    db.commit()
+    db.refresh(promotion)
+    return promotion
 
 
 def delete_promotion(db: Session, promotion_id: int) -> None:
@@ -182,24 +190,23 @@ def delete_promotion_site_detail(db: Session, psd_id: int) -> None:
     PromotionSiteDetailRepo(db).soft_delete(psd)
 
 
-def set_seats(db: Session, promotion_id: int, data: SeatsInput) -> List[PromotionSiteDetail]:
+def _seat_changes(db: Session, promotion: Promotion, rows, failure: str) -> list:
     """
-    Guarda los cupos de varias sedes a la vez (0 = sin cupo); las sedes que no se envían no cambian.
-    Se valida todo antes de guardar: si una fila no es válida no se guarda ninguna.
+    Valida los cupos de varias sedes (0 = sin cupo). Si alguna fila no procede (sede inexistente o que no
+    ofrece el programa, cupo menor que los ya asignados) responde 409 con todos los motivos.
     """
-    promotion = get_promotion(db, promotion_id)
-    site_ids = [row.site_id for row in data.seats]
+    site_ids = [row.site_id for row in rows]
     if len(set(site_ids)) != len(site_ids):
         raise bad_request("Una sede aparece más de una vez.")
 
     repo, sites = PromotionSiteDetailRepo(db), SiteRepo(db)
     errors, changes = [], []
-    for row in data.seats:
+    for row in rows:
         site = sites.get(row.site_id)
         if site is None:
             errors.append(f"La sede {row.site_id} no existe.")
             continue
-        psd = repo.get_by_promotion_site(promotion_id, row.site_id, include_inactive=True)
+        psd = repo.get_by_promotion_site(promotion.promotion_id, row.site_id, include_inactive=True)
         active = psd is not None and psd.is_active
         occupied = occupied_seats(db, promotion, row.site_id)
         if row.capacity < occupied:
@@ -211,8 +218,12 @@ def set_seats(db: Session, promotion_id: int, data: SeatsInput) -> List[Promotio
         else:
             changes.append((row, psd, active))
     if errors:
-        raise conflict("No se guardó ningún cupo. " + " ".join(errors))
+        raise conflict(f"{failure} " + " ".join(errors))
+    return changes
 
+
+def _apply_seat_changes(db: Session, promotion_id: int, changes: list) -> None:
+    """Aplica los cambios ya validados por _seat_changes (sin confirmar la transacción)."""
     for row, psd, active in changes:
         if row.capacity == 0:
             if active:
@@ -221,5 +232,11 @@ def set_seats(db: Session, promotion_id: int, data: SeatsInput) -> List[Promotio
             db.add(PromotionSiteDetail(promotion_id=promotion_id, site_id=row.site_id, capacity=row.capacity))
         else:
             psd.capacity, psd.is_active = row.capacity, True
+
+
+def set_seats(db: Session, promotion_id: int, data: SeatsInput) -> List[PromotionSiteDetail]:
+    """Guarda los cupos de varias sedes a la vez; las sedes que no se envían no cambian. Todo o nada."""
+    promotion = get_promotion(db, promotion_id)
+    _apply_seat_changes(db, promotion_id, _seat_changes(db, promotion, data.seats, "No se guardó ningún cupo."))
     db.commit()
     return list_promotion_site_details(db, promotion_id=promotion_id, site_id=None)

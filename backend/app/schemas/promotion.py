@@ -23,6 +23,16 @@ NewYear = Annotated[int, AfterValidator(_validate_new_year)]
 Capacity = Annotated[int, Field(ge=1, le=1000)]
 
 
+# ---------------------- CUPOS (varias sedes a la vez) ----------------------
+
+class SeatRow(BaseModel):
+    site_id: int
+    capacity: int = Field(ge=0, le=1000)   # 0 = la sede deja de tener cupo en la promoción
+
+
+SeatRows = Annotated[List[SeatRow], Field(max_length=1000)]
+
+
 # ---------------------- PROMOTIONS ----------------------
 
 def _check_dates(start: Optional[date], end: Optional[date]) -> None:
@@ -63,11 +73,13 @@ class PromotionInput(BaseModel):
 
 
 class PromotionUpdate(BaseModel):
+    """Datos de la promoción y, si se envían, cupos de varias sedes: se guarda todo o nada."""
     start_date: date = None
     end_date: date = None
     year: Year = None
     period: Period = None
     is_finished: bool = None
+    seats: Optional[SeatRows] = None
 
     @model_validator(mode="after")
     def valid_range(self):
@@ -108,12 +120,7 @@ class PromotionSiteDetailOutput(ORMModel):
     site: SiteBasicOutput
 
 
-class SeatRow(BaseModel):
-    site_id: int
-    capacity: int = Field(ge=0, le=1000)   # 0 = la sede deja de tener cupo en la promoción
-
-
 class SeatsInput(BaseModel):
     """Cupos de varias sedes a la vez; las sedes que no se envían no cambian."""
-    seats: List[SeatRow] = Field(max_length=1000)
+    seats: SeatRows
 

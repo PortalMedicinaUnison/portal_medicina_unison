@@ -156,3 +156,33 @@ def test_sites_by_program(client, admin, catalog):
     client.patch(f"/sites/{catalog['site_a']['site_id']}", headers=headers, json={"for_internship": False})
     adjusted = _seats(client, admin, promotion_id, [{"site_id": catalog["site_a"]["site_id"], "capacity": 2}])
     assert adjusted.status_code == 200 and _capacities(client, admin, promotion_id) == {"Hospital A": 2}
+
+
+def test_promotion_and_seats_are_saved_together(client, admin, student, catalog):
+    promotion_id = catalog["promotion"]["promotion_id"]
+    url = f"/promotions/{promotion_id}"
+    site_a, site_b = catalog["site_a"]["site_id"], catalog["site_b"]["site_id"]
+    end = lambda: client.get(url, headers=auth(admin)).json()["end_date"]  # noqa: E731
+
+    both = client.patch(url, headers=auth(admin), json={
+        "end_date": f"{YEAR + 1}-01-31", "seats": [{"site_id": site_a, "capacity": 4}, {"site_id": site_b, "capacity": 2}],
+    })
+    assert both.status_code == 200, both.text
+    assert both.json()["end_date"] == f"{YEAR + 1}-01-31"
+    assert _capacities(client, admin, promotion_id) == {"Hospital A": 4, "Hospital B": 2}
+
+    # Un cupo que no procede impide guardar también las fechas...
+    internship = _accepted_internship(client, admin, student, catalog)
+    assert client.patch(f"/internships/{internship['internship_id']}", headers=auth(admin), json={"site_id": site_a}).status_code == 200
+    bad_seat = client.patch(url, headers=auth(admin), json={"end_date": f"{YEAR + 1}-02-28", "seats": [{"site_id": site_a, "capacity": 0}]})
+    assert bad_seat.status_code == 409 and bad_seat.json()["detail"].startswith("No se guardaron los cambios.")
+    assert end() == f"{YEAR + 1}-01-31" and _capacities(client, admin, promotion_id)["Hospital A"] == 4
+
+    # ...y una fecha que no procede impide guardar los cupos.
+    bad_date = client.patch(url, headers=auth(admin), json={"end_date": f"{YEAR - 1}-06-30", "seats": [{"site_id": site_b, "capacity": 9}]})
+    assert bad_date.status_code == 400
+    assert _capacities(client, admin, promotion_id)["Hospital B"] == 2
+
+    # Sin `seats`, los cupos no cambian.
+    assert client.patch(url, headers=auth(admin), json={"is_finished": True}).status_code == 200
+    assert _capacities(client, admin, promotion_id) == {"Hospital A": 4, "Hospital B": 2}

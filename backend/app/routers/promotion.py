@@ -37,6 +37,7 @@ def get_promotion(promotion_id: int, _user: CurrentUser, db: DbSession):
 
 @promotion_router.patch("/{promotion_id}", response_model=PromotionOutput)
 def update_promotion(promotion_id: int, data: PromotionUpdate, _admin: AdminUser, db: DbSession):
+    """Fechas, estatus y, opcionalmente, `seats` (cupos de varias sedes): se guarda todo o nada."""
     return controller.update_promotion(db, promotion_id, data)
 
 
