@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import field_validator, model_validator
@@ -29,6 +29,26 @@ class Settings(BaseSettings):
     UPLOAD_DIR: Path = BACKEND_DIR / "uploads"
     MAX_UPLOAD_MB: int = 10
     MAX_PHOTO_MB: int = 2
+
+    # Dirección pública del frontend (para los enlaces de los correos).
+    FRONTEND_URL: str = "http://localhost:5173"
+
+    # Restablecimiento de contraseña: vigencia de los enlaces.
+    PASSWORD_RESET_HOURS: int = 24          # enlaces generados por la coordinación
+    PASSWORD_RESET_EMAIL_MINUTES: int = 60  # enlaces enviados por correo
+
+    # Correo saliente (opcional). Sin SMTP_HOST el restablecimiento lo hace la coordinación.
+    # Sirve cualquier cuenta con SMTP, p. ej. una cuenta institucional o de Gmail (sin costo).
+    SMTP_HOST: Optional[str] = None
+    SMTP_PORT: int = 587
+    SMTP_USER: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    SMTP_FROM: Optional[str] = None
+    SMTP_STARTTLS: bool = True
+    SMTP_SSL: bool = False
+
+    # Versión del aviso de privacidad: al cambiarla, todos deben aceptarlo de nuevo.
+    PRIVACY_NOTICE_VERSION: str = "2026-11"
 
     # CORS: en .env se escribe como JSON, p. ej. ORIGINS=["https://portal.unison.mx"]
     ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
@@ -60,9 +80,11 @@ class Settings(BaseSettings):
         return value
 
     @model_validator(mode="after")
-    def check_production_secret(self):
+    def check_production_settings(self):
         if self.ENVIRONMENT == "prod" and len(self.SECRET_KEY) < 32:
             raise ValueError("En producción SECRET_KEY debe tener al menos 32 caracteres.")
+        if self.ENVIRONMENT == "prod" and self.email_enabled and "localhost" in self.FRONTEND_URL:
+            raise ValueError("Con el correo activado, FRONTEND_URL debe ser la dirección pública del portal.")
         return self
 
     @property
@@ -72,6 +94,10 @@ class Settings(BaseSettings):
     @property
     def max_photo_bytes(self) -> int:
         return self.MAX_PHOTO_MB * 1024 * 1024
+
+    @property
+    def email_enabled(self) -> bool:
+        return bool(self.SMTP_HOST and self.SMTP_FROM)
 
 
 settings = Settings()

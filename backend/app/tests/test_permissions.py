@@ -14,7 +14,11 @@ from core.dependencies import get_current_user, require_admin, require_student, 
 from main import app
 from tests.conftest import auth
 
-PUBLIC_ROUTES = {("POST", "/auth/login"), ("POST", "/auth/register"), ("GET", "/health")}
+PUBLIC_ROUTES = {
+    ("POST", "/auth/login"), ("POST", "/auth/register"), ("GET", "/health"),
+    ("GET", "/auth/password-reset/options"), ("POST", "/auth/password-reset/request"),
+    ("POST", "/auth/password-reset/verify"), ("POST", "/auth/password-reset/confirm"),
+}
 
 
 def _dependency_calls(dependant):

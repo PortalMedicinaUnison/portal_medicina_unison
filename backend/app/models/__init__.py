@@ -12,6 +12,7 @@ from .social_service import (
 )
 from .communication import Announcement, Survey, AnnouncementTypeEnum
 from .report import Report, ReportTypeEnum
+from .password_reset import PasswordResetToken
 
 # La historia clínica (models/medical_record.py) queda fuera por ahora:
 # es opcional y se retomará al final del proyecto.
@@ -27,4 +28,5 @@ __all__ = [
     "SocialServiceStatusEnum", "SocialServiceDocumentTypeEnum",
     "Announcement", "Survey", "AnnouncementTypeEnum",
     "Report", "ReportTypeEnum",
+    "PasswordResetToken",
 ]

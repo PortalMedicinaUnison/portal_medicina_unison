@@ -58,6 +58,7 @@ FIELD_LABELS = {
     "is_visible": "Visible", "url": "URL", "expiration_date": "Fecha de expiración", "mandatory": "Obligatoria",
     "date_report": "Fecha del reporte", "report_type": "Tipo de reporte", "other_type": "Otro tipo",
     "evidence_url": "Evidencia", "anonymity": "Anonimato", "is_open": "Abierto",
+    "token": "Enlace", "accept_privacy_notice": "Aviso de privacidad",
 }
 
 ERROR_MESSAGES = {

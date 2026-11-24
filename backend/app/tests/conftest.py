@@ -70,7 +70,7 @@ def client(session_factory):
 
 
 def auth(user: User) -> dict:
-    return {"Authorization": f"Bearer {create_access_token(user.user_id)}"}
+    return {"Authorization": f"Bearer {create_access_token(user.user_id, user.token_version)}"}
 
 
 @pytest.fixture()

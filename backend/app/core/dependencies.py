@@ -39,6 +39,8 @@ def get_current_user(
     user = db.get(User, user_id)
     if user is None or not user.is_active:
         raise unauthorized("Tu cuenta no existe o está desactivada.")
+    if payload.get("ver", 0) != user.token_version:
+        raise unauthorized("Tu contraseña cambió. Inicia sesión de nuevo.")
     return user
 
 

@@ -22,10 +22,11 @@ def verify_password(password: str, hashed_password: Optional[str]) -> bool:
         return False
 
 
-def create_access_token(user_id: int, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(user_id: int, token_version: int = 0, expires_delta: Optional[timedelta] = None) -> str:
+    """`ver` es la versión de la contraseña: si el usuario la cambia, este token deja de servir."""
     now = datetime.now(timezone.utc)
     expire = now + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
-    payload = {"sub": str(user_id), "iat": now, "exp": expire}
+    payload = {"sub": str(user_id), "ver": token_version, "iat": now, "exp": expire}
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
 

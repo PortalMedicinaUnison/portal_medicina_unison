@@ -15,6 +15,7 @@ import sys
 from core.security import hash_password
 from core.settings import settings
 from db.database import SessionLocal
+from models.base import utcnow
 from models import (
     ApplicationStatusEnum, Institution, Internship, InternshipApplication, InternshipStatusEnum,
     ProgramEnum, Promotion, PromotionSiteDetail, Site, SocialServiceApplication, User, UserEnrollment,
@@ -93,14 +94,15 @@ def seed_demo(_args: argparse.Namespace) -> None:
         for number in range(1, 6):
             get_or_create(UserEnrollment, academic_id=f"22200000{number}")
 
+        accepted = dict(privacy_notice_version=settings.PRIVACY_NOTICE_VERSION, privacy_accepted_at=utcnow())
         get_or_create(User, email="admin@demo.unison.mx", defaults=dict(
             first_name="Coordinación", last_name="Demo", password=hash_password("Admin1234"),
-            is_admin=True, is_super_admin=True))
+            is_admin=True, is_super_admin=True, **accepted))
         enrollment = db.query(UserEnrollment).filter_by(academic_id="222000001").first()
         enrollment.is_enrolled = True
         get_or_create(User, email="alumno@demo.unison.mx", defaults=dict(
             academic_id="222000001", first_name="Alumno", last_name="Demo",
-            password=hash_password("Alumno1234")))
+            password=hash_password("Alumno1234"), **accepted))
         db.flush()
         get_or_create(InternshipApplication, promotion_id=promotion.promotion_id, academic_id="222000001",
                       defaults=dict(status=ApplicationStatusEnum.PENDING))
@@ -126,7 +128,7 @@ def seed_demo(_args: argparse.Namespace) -> None:
         db.query(UserEnrollment).filter_by(academic_id="222000002").first().is_enrolled = True
         get_or_create(User, email="egresado@demo.unison.mx", defaults=dict(
             academic_id="222000002", first_name="Egresado", last_name="Demo",
-            password=hash_password("Alumno1234")))
+            password=hash_password("Alumno1234"), **accepted))
         db.flush()
         past_application = get_or_create(InternshipApplication, promotion_id=past.promotion_id, academic_id="222000002",
                                          defaults=dict(status=ApplicationStatusEnum.ACCEPTED))
