@@ -124,10 +124,10 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                         </div>
                         <div>
                             <SidebarCollapse
-                                title="Internados"
+                                title="Internado"
                                 links={[
-                                    { label: 'Internados', to: adminAbs(ROUTES.ADMIN.INTERNSHIP_LIST), className: 'sidebar-item-link' },
-                                    { label: 'Aplicaciones', to: adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_LIST), className: 'sidebar-item-link' },
+                                    { label: 'Inscripciones', to: adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_LIST), className: 'sidebar-item-link' },
+                                    { label: 'Resultados del acto', to: adminAbs(ROUTES.ADMIN.INTERNSHIP_PLAZA_RESULTS), className: 'sidebar-item-link' },
                                 ]}
                                 icon={
                                     <svg
@@ -146,8 +146,8 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             <SidebarCollapse
                                 title="Servicio social"
                                 links={[
-                                    { label: 'Servicios sociales', to: adminAbs(ROUTES.ADMIN.SOCIAL_SERVICE_LIST), className: 'sidebar-item-link' },
-                                    { label: 'Asignaciones', to: adminAbs(ROUTES.ADMIN.SOCIAL_SERVICE_APPLICATION_LIST), className: 'sidebar-item-link' },
+                                    { label: 'Inscripciones', to: adminAbs(ROUTES.ADMIN.SOCIAL_SERVICE_APPLICATION_LIST), className: 'sidebar-item-link' },
+                                    { label: 'Resultados del acto', to: adminAbs(ROUTES.ADMIN.SOCIAL_SERVICE_PLAZA_RESULTS), className: 'sidebar-item-link' },
                                 ]}
                                 icon={
                                     <svg

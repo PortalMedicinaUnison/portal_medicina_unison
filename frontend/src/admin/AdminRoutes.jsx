@@ -1,9 +1,11 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 
-import ApplicationListPage from '../admin/features/applications/pages/ApplicationListPage.jsx';
-import ApplicationFormPage from '../admin/features/applications/pages/ApplicationFormPage.jsx';
-import ApplicationDetailPage from '../admin/features/applications/pages/ApplicationDetailPage.jsx';
+import InscriptionListPage from './features/inscriptions/pages/InscriptionListPage.jsx';
+import InscriptionDetailPage from './features/inscriptions/pages/InscriptionDetailPage.jsx';
+import PlazaResultsPage from './features/inscriptions/pages/PlazaResultsPage.jsx';
+import RecordRedirectPage from './features/inscriptions/pages/RecordRedirectPage.jsx';
+import { PROGRAMS } from '../utils/constants';
 
 import UserListPage from '../admin/features/users/pages/UserListPage.jsx';
 import UserDetailAdmin from './features/users/pages/UserDetailAdmin.jsx';
@@ -40,15 +42,8 @@ import EnrollmentDetailPage from '../admin/features/users/enrollments/pages/Enro
 import ReportListPage from '../admin/features/reports/pages/ReportListPage.jsx';
 import ReportDetailPage from '../admin/features/reports/pages/ReportDetailPage.jsx';
 
-import InternshipListPage from '../admin/features/internships/pages/InternshipListPage.jsx';
-import InternshipDetailPage from '../admin/features/internships/pages/InternshipDetailPage.jsx';
 
-import SocialServiceApplicationListPage from '../admin/features/social-service-applications/pages/SocialServiceApplicationListPage.jsx';
-import SocialServiceApplicationFormPage from '../admin/features/social-service-applications/pages/SocialServiceApplicationFormPage.jsx';
-import SocialServiceApplicationDetailPage from '../admin/features/social-service-applications/pages/SocialServiceApplicationDetailPage.jsx';
 
-import SocialServiceListPage from '../admin/features/social-services/pages/SocialServiceListPage.jsx';
-import SocialServiceDetailPage from '../admin/features/social-services/pages/SocialServiceDetailPage.jsx';
 import DocumentRequirementListPage from './features/document-requirements/pages/DocumentRequirementListPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 
@@ -59,10 +54,11 @@ function AdminRoutes() {
       <Route element={<ProtectedRoute allow="admin" />}>
         <Route index element={<Navigate to="internship-applications" replace />} />
 
-        {/* Applications */}
-        <Route path="internship-applications" element={<ApplicationListPage />} />
-        <Route path="internship-applications/create" element={<ApplicationFormPage />} />
-        <Route path="internship-applications/:applicationId" element={<ApplicationDetailPage />} />
+        {/* Inscripciones al internado (asignación + internado en una sola vista) */}
+        <Route path="internship-applications" element={<InscriptionListPage key="internship" program={PROGRAMS.INTERNSHIP} />} />
+        <Route path="internship-applications/act" element={<PlazaResultsPage key="internship-act" program={PROGRAMS.INTERNSHIP} />} />
+        <Route path="internship-applications/create" element={<Navigate to="/admin/internship-applications" replace />} />
+        <Route path="internship-applications/:applicationId" element={<InscriptionDetailPage key="internship-detail" program={PROGRAMS.INTERNSHIP} />} />
 
         {/* Users */}
         <Route path="users" element={<UserListPage />} />
@@ -107,18 +103,19 @@ function AdminRoutes() {
         <Route path="reports" element={<ReportListPage />} />
         <Route path="reports/:reportId" element={<ReportDetailPage />} />
 
-        {/* Internships */}
-        <Route path="internships" element={<InternshipListPage />} />
-        <Route path="internships/:internshipId" element={<InternshipDetailPage />} />
+        {/* Enlaces anteriores a internados: llevan a su inscripción */}
+        <Route path="internships" element={<Navigate to="/admin/internship-applications" replace />} />
+        <Route path="internships/:recordId" element={<RecordRedirectPage program={PROGRAMS.INTERNSHIP} />} />
 
         {/* Social service applications */}
-        <Route path="social-service-applications" element={<SocialServiceApplicationListPage />} />
-        <Route path="social-service-applications/create" element={<SocialServiceApplicationFormPage />} />
-        <Route path="social-service-applications/:applicationId" element={<SocialServiceApplicationDetailPage />} />
+        <Route path="social-service-applications" element={<InscriptionListPage key="social-service" program={PROGRAMS.SOCIAL_SERVICE} />} />
+        <Route path="social-service-applications/act" element={<PlazaResultsPage key="social-service-act" program={PROGRAMS.SOCIAL_SERVICE} />} />
+        <Route path="social-service-applications/create" element={<Navigate to="/admin/social-service-applications" replace />} />
+        <Route path="social-service-applications/:applicationId" element={<InscriptionDetailPage key="social-service-detail" program={PROGRAMS.SOCIAL_SERVICE} />} />
 
         {/* Social services */}
-        <Route path="social-services" element={<SocialServiceListPage />} />
-        <Route path="social-services/:socialServiceId" element={<SocialServiceDetailPage />} />
+        <Route path="social-services" element={<Navigate to="/admin/social-service-applications" replace />} />
+        <Route path="social-services/:recordId" element={<RecordRedirectPage program={PROGRAMS.SOCIAL_SERVICE} />} />
 
         <Route path="document-requirements" element={<DocumentRequirementListPage />} />
       </Route>

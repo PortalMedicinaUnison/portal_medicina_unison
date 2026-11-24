@@ -1,0 +1,196 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Layout from '../../../../Layout';
+import PageLayout from '../../../../components/PageLayout';
+import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../utils/ui/DataLoadError';
+import Modal from '../../../../utils/ui/Modal';
+import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
+import {
+  deleteInscriptionRequest, deleteProgramRecordRequest, getInscriptionRequest, updateInscriptionRequest,
+} from '../../../../services/inscriptionService';
+import { getErrorMessage } from '../../../../utils/errors';
+import { formatDateTime, formatFullName, promotionLabel } from '../../../../utils/utils';
+import { INSCRIPTION_PROGRAMS, inscriptionStatus } from '../programs';
+import DocumentsStatus from '../components/DocumentsStatus';
+import RecordManagement from '../components/RecordManagement';
+
+
+function AverageEditor({ config, application, onSaved }) {
+  const [value, setValue] = useState(application.average != null ? String(application.average) : '');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const current = application.average != null ? String(application.average) : '';
+
+  const handleSave = async () => {
+    const text = value.trim().replace(',', '.');
+    const number = text === '' ? null : Number(text);
+    if (number != null && !(Number.isFinite(number) && number >= 0 && number <= 100)) {
+      setError('El promedio debe estar entre 0 y 100.');
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      await updateInscriptionRequest(config.program, application.application_id, { average: number });
+      await onSaved?.();
+    } catch (err) {
+      setError(getErrorMessage(err, 'No se pudo guardar el promedio.'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-center gap-3">
+        <input type="text" inputMode="decimal" className="form-input w-28 grow-0" value={value} placeholder="—"
+          onChange={(e) => { setValue(e.target.value); setError(null); }} aria-label="Promedio general" />
+        <button type="button" className="btn-secondary text-sm disabled:opacity-50" onClick={handleSave}
+          disabled={saving || value.trim().replace(',', '.') === current}>
+          {saving ? 'Guardando...' : 'Guardar promedio'}
+        </button>
+      </div>
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      <p className="mt-1 text-xs text-gray-500">De 0 a 100 con dos decimales; ordena la elección de {config.placeLabel.toLowerCase()} en el acto.</p>
+    </div>
+  );
+}
+
+/**
+ * Ficha completa de una inscripción: datos de la asignación, sede o plaza y estatus del
+ * programa, y documentos. Sustituye a los detalles separados de asignación y de internado.
+ */
+function InscriptionDetailPage({ program }) {
+  const config = INSCRIPTION_PROGRAMS[program];
+  const { applicationId } = useParams();
+  const navigate = useNavigate();
+  const [application, setApplication] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [confirm, setConfirm] = useState(null); // 'record' | 'application'
+  const [actionError, setActionError] = useState(null);
+  const [working, setWorking] = useState(false);
+  const loaded = useRef(false);
+
+  const load = useCallback(async () => {
+    if (!loaded.current) setLoading(true);
+    try {
+      const { data } = await getInscriptionRequest(program, applicationId);
+      setApplication(data);
+      setError(null);
+      loaded.current = true;
+    } catch (err) {
+      setError(getErrorMessage(err, 'No se pudo cargar la inscripción.'));
+    } finally {
+      setLoading(false);
+    }
+  }, [program, applicationId]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const record = application?.[config.recordKey];
+  const listUrl = application ? `${config.listPath}?promotion_id=${application.promotion_id}` : config.listPath;
+
+  const handleConfirm = async () => {
+    const what = confirm;
+    setConfirm(null);
+    setWorking(true);
+    setActionError(null);
+    try {
+      if (what === 'record') {
+        await deleteProgramRecordRequest(program, record[config.recordIdKey]);
+        await load();
+      } else {
+        await deleteInscriptionRequest(program, application.application_id);
+        navigate(listUrl, { replace: true });
+      }
+    } catch (err) {
+      setActionError(getErrorMessage(err, 'No se pudo completar la acción.'));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const title = application ? `${config.name} · ${formatFullName(application.student) || application.academic_id}` : config.name;
+
+  return (
+    <Layout>
+      <PageLayout title={title}>
+        {loading && <LoadingSpinner />}
+        {!loading && error && <DataLoadError title="No se pudo cargar la inscripción" message={error} onRetry={load} onSecondary={() => navigate(listUrl)} secondaryLabel="Volver a la lista" />}
+        {!loading && application && (
+          <div className="info-container">
+            <div className="item-container">
+              <dl className="item-list">
+                <div className="item-row"><dt className="item-header">Expediente</dt><dd className="item-text font-mono">{application.academic_id}</dd></div>
+                <div className="item-row"><dt className="item-header">Correo</dt><dd className="item-text">{application.student?.email ?? '—'}</dd></div>
+                <div className="item-row">
+                  <dt className="item-header">Promoción</dt>
+                  <dd className="item-text">{promotionLabel(application.promotion)}{application.promotion?.is_finished ? ' (finalizada)' : ''}</dd>
+                </div>
+                <div className="item-row"><dt className="item-header">Estatus</dt><dd className="item-text">{inscriptionStatus(application, config).label}</dd></div>
+                <div className="item-row">
+                  <dt className="item-header">Promedio general</dt>
+                  <dd className="item-text">
+                    <AverageEditor key={application.average ?? 'none'} config={config} application={application} onSaved={load} />
+                  </dd>
+                </div>
+                <div className="item-row"><dt className="item-header">Documentos de inscripción</dt><dd className="item-text"><DocumentsStatus progress={application.inscription_progress} /></dd></div>
+                <div className="item-row"><dt className="item-header">Asignado</dt><dd className="item-text">{formatDateTime(application.created_at)}</dd></div>
+              </dl>
+            </div>
+
+            {record && (
+              <div className="mt-12">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900">Administrar {config.recordName}</h3>
+                <RecordManagement key={`${record.site_id}-${record.status}`} config={config} application={application} onChange={load} />
+              </div>
+            )}
+            {!record && (
+              <p className="mt-8 text-sm text-gray-600">
+                El {config.recordName} se crea cuando el alumno acepta su asignación; entonces podrás registrar
+                su {config.placeLabel.toLowerCase()}.
+              </p>
+            )}
+
+            <div className="mt-12">
+              <h3 className="mb-4 text-lg font-semibold text-gray-900">Documentos</h3>
+              <ExpedientePanel program={program} applicationId={application.application_id} mode="admin" started={Boolean(record)} onChange={load} />
+            </div>
+
+            {actionError && <div className="alert-error mt-8">{actionError}</div>}
+            <div className="info-actions mt-16">
+              {record ? (
+                <button type="button" className="btn-tertiary" onClick={() => setConfirm('record')} disabled={working}>
+                  Eliminar {config.recordName}
+                </button>
+              ) : (
+                <button type="button" className="btn-tertiary" onClick={() => setConfirm('application')} disabled={working}>
+                  Eliminar asignación
+                </button>
+              )}
+            </div>
+
+            <Modal open={Boolean(confirm)} onClose={() => setConfirm(null)}>
+              <ConfirmDialogContent
+                title={confirm === 'record' ? `Eliminar ${config.recordName}` : 'Eliminar asignación'}
+                message={confirm === 'record'
+                  ? `Se eliminará el ${config.recordName} (y su ${config.placeLabel.toLowerCase()}) y la asignación volverá a quedar pendiente de aceptar. ¿Continuar?`
+                  : 'El alumno dejará de estar asignado a esta promoción. ¿Continuar?'}
+                onConfirm={handleConfirm}
+                onCancel={() => setConfirm(null)}
+                primaryLabel="Eliminar"
+                secondaryLabel="Cancelar"
+                danger
+              />
+            </Modal>
+          </div>
+        )}
+      </PageLayout>
+    </Layout>
+  );
+}
+
+export default InscriptionDetailPage;
