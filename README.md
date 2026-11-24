@@ -51,7 +51,7 @@ internados (ni dos servicios sociales) en curso a la vez.
 
 ## Documentos requeridos
 
-- **Catálogo** (*Internado y servicio social → Documentos requeridos*): la coordinación define qué se pide en cada
+- **Catálogo** (*Internado* o *Servicio social → Documentos requeridos*): la coordinación define qué se pide en cada
   programa y etapa (inscripción, durante, término/liberación), si es obligatorio, si admite varios archivos, su antigüedad
   máxima y un **formato descargable** (PDF, Word, Excel u OpenDocument). Retirar un documento ya no lo pide, pero conserva
   los archivos que ya se subieron.

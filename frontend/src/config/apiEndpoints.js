@@ -43,7 +43,6 @@ export const API_ENDPOINTS = {
   PROMOTIONS: {
     LIST: '/promotions',
     DETAIL: (id) => `/promotions/${id}`,
-    SEATS: (id) => `/promotions/${id}/seats`,
   },
 
   PSD: {

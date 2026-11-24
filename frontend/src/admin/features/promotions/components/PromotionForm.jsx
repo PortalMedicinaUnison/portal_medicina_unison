@@ -6,7 +6,8 @@ import useGetPromotions from '../hooks/useGetPromotions';
 import { PROGRAMS, PROGRAM_LABELS } from '../../../../utils/constants';
 import { promotionLabel } from '../../../../utils/utils';
 import { USUAL_START_HINT, datesLabel, isISODate, nextUsualStart, oneYearAfter, semesterTaken } from '../promotionDates';
-import { programFromParams, promotionListPath } from '../promotionPaths';
+import { promotionListPath } from '../promotionPaths';
+import { programFromParams } from '../../../../utils/programParams';
 
 const MAX_YEARS_AHEAD = 5;  // como el backend
 

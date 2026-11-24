@@ -4,7 +4,8 @@ import PageLayout from '../../../../components/PageLayout';
 import useGetPromotions from '../hooks/useGetPromotions';
 import PromotionsList from '../components/PromotionList';
 import { PROGRAM_LABELS } from '../../../../utils/constants';
-import { programFromParams, promotionCreatePath } from '../promotionPaths';
+import { promotionCreatePath } from '../promotionPaths';
+import { programFromParams } from '../../../../utils/programParams';
 
 
 // Una sola pantalla para ambos programas: el menú de Internado y el de Servicio social la abren con ?program=.

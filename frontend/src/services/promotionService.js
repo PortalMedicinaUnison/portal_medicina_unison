@@ -13,16 +13,13 @@ export const getAllPromotionsRequest = (params = {}) =>
 export const getPromotionByIdRequest = (id) =>
   api.get(API_ENDPOINTS.PROMOTIONS.DETAIL(id));
 
+// data: { start_date, end_date, is_finished, seats: [{ site_id, capacity }] } (todo opcional);
+// fechas y cupos se guardan todo o nada.
 export const updatePromotionRequest = (id, data) =>
   api.patch(API_ENDPOINTS.PROMOTIONS.DETAIL(id), data);
 
 export const deletePromotionRequest = (id) =>
   api.delete(API_ENDPOINTS.PROMOTIONS.DETAIL(id));
-
-// Cupos de varias sedes a la vez: [{ site_id, capacity }] (0 = sin cupo). Todo o nada; devuelve
-// todos los cupos de la promoción.
-export const setSeatsRequest = (promotionId, seats) =>
-  api.patch(API_ENDPOINTS.PROMOTIONS.SEATS(promotionId), { seats });
 
 // ----------------- Cupos por sede (promotion site details) ----------------
 
