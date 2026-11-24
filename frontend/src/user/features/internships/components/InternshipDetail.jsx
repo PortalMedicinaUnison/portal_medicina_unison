@@ -6,6 +6,7 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
 import RecordExitNotice from '../../../../components/RecordExitNotice';
+import SiteInfo from '../../../../components/SiteInfo';
 
 
 function InternshipDetail({ internship, fetching, fetchError, refetch }) {
@@ -73,9 +74,7 @@ function InternshipDetail({ internship, fetching, fetchError, refetch }) {
           <div className="item-row">
             <dt className="item-header">Sede</dt>
             <dd className="item-text">
-              {site
-                ? `${site.name} (${site.city})`
-                : <span className="italic text-gray-500">Pendiente de asignación de sede</span>}
+              <SiteInfo site={site} emptyText="Pendiente de asignación de sede" />
             </dd>
           </div>
         </dl>
