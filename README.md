@@ -1,8 +1,8 @@
 # Portal Internado de Medicina Unison
 
-Plataforma para gestionar el internado médico de pregrado de la Universidad de Sonora:
-pre-registro de estudiantes, promociones y cupos por sede, asignación y aceptación del
-internado, documentos, reportes de incidentes, avisos y encuestas.
+Plataforma para gestionar el internado médico de pregrado y el servicio social de los
+estudiantes de Medicina de la Universidad de Sonora: pre-registro, promociones y cupos por
+sede, asignación y aceptación, documentos, reportes de incidentes, avisos y encuestas.
 
 - **Backend:** FastAPI + SQLAlchemy 2 + Alembic, SQLite (Python 3.11+).
 - **Frontend:** React 18 + Vite 8 + Tailwind CSS (Node.js 20.19+ o 22.12+).
@@ -22,12 +22,16 @@ frontend/
 
 ## Flujo principal
 
+El estudiante primero **acredita el internado** y después hace el **servicio social**. Ambos siguen el mismo flujo:
+
 1. La coordinación **pre-registra** los expedientes (uno por uno o importando un CSV).
 2. El estudiante **crea su cuenta** con su expediente pre-registrado.
-3. La coordinación crea la **promoción** (año y periodo) y define el **cupo de cada sede**.
-4. La coordinación **asigna** al estudiante a la promoción; el estudiante **acepta** (se crea su internado) o **declina**.
-5. La coordinación **asigna la sede** del internado, respetando el cupo.
+3. La coordinación crea la **promoción** del programa (internado o servicio social, con año y periodo) y define el **cupo de cada sede**.
+4. La coordinación **asigna** al estudiante a la promoción; el estudiante **acepta** (se crea su internado o servicio social) o **declina**.
+5. La coordinación **asigna la sede** (plaza, en servicio social) respetando el cupo, y al terminar marca el internado como **finalizado** (acreditado) o el servicio social como **liberado**.
 6. El estudiante sube sus **documentos** (PDF), levanta **reportes** de incidentes y consulta **avisos** y **encuestas**.
+
+Solo se puede asignar servicio social a quien ya tiene el internado finalizado (acreditado).
 
 ## Variables de entorno (backend)
 
@@ -84,7 +88,7 @@ uvicorn main:app --reload
 ```
 
 - Documentación interactiva: <http://127.0.0.1:8000/docs>
-- `seed-demo` crea sedes, una promoción con cupos y dos cuentas: `admin@demo.unison.mx / Admin1234` y `alumno@demo.unison.mx / Alumno1234`.
+- `seed-demo` crea sedes y centros de salud, promociones de internado y de servicio social con cupos, y tres cuentas: `admin@demo.unison.mx / Admin1234`, `alumno@demo.unison.mx / Alumno1234` (asignación de internado pendiente) y `egresado@demo.unison.mx / Alumno1234` (internado acreditado y asignación de servicio social pendiente).
 - Primer administrador real: `python cli.py create-admin --email coordinacion@unison.mx --first-name Nombre --last-name Apellido --super` (pide la contraseña).
 
 ### Frontend

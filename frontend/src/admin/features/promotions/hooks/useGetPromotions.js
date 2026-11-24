@@ -6,7 +6,7 @@ import { getErrorMessage } from '../../../../utils/errors';
 // program: 1 internado, 2 servicio social; sin valor trae ambos.
 export default function useGetPromotions ({ program } = {}) {
   const [promotions, setPromotions] = useState([]);
-  const [loading, setLoading]       = useState(false);
+  const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
 
   const getPromotions = useCallback(async () => {

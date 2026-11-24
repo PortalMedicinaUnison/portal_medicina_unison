@@ -42,6 +42,13 @@ import ReportDetailPage from '../admin/features/reports/pages/ReportDetailPage.j
 
 import InternshipListPage from '../admin/features/internships/pages/InternshipListPage.jsx';
 import InternshipDetailPage from '../admin/features/internships/pages/InternshipDetailPage.jsx';
+
+import SocialServiceApplicationListPage from '../admin/features/social-service-applications/pages/SocialServiceApplicationListPage.jsx';
+import SocialServiceApplicationFormPage from '../admin/features/social-service-applications/pages/SocialServiceApplicationFormPage.jsx';
+import SocialServiceApplicationDetailPage from '../admin/features/social-service-applications/pages/SocialServiceApplicationDetailPage.jsx';
+
+import SocialServiceListPage from '../admin/features/social-services/pages/SocialServiceListPage.jsx';
+import SocialServiceDetailPage from '../admin/features/social-services/pages/SocialServiceDetailPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 
 
@@ -102,6 +109,15 @@ function AdminRoutes() {
         {/* Internships */}
         <Route path="internships" element={<InternshipListPage />} />
         <Route path="internships/:internshipId" element={<InternshipDetailPage />} />
+
+        {/* Social service applications */}
+        <Route path="social-service-applications" element={<SocialServiceApplicationListPage />} />
+        <Route path="social-service-applications/create" element={<SocialServiceApplicationFormPage />} />
+        <Route path="social-service-applications/:applicationId" element={<SocialServiceApplicationDetailPage />} />
+
+        {/* Social services */}
+        <Route path="social-services" element={<SocialServiceListPage />} />
+        <Route path="social-services/:socialServiceId" element={<SocialServiceDetailPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

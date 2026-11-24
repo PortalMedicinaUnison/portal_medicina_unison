@@ -23,6 +23,12 @@ import ApplicationDeclinedPage from '../user/features/applications/pages/Applica
 
 import InternshipDetailPage from '../user/features/internships/pages/InternshipDetailPage';
 
+// Social service pages
+import SocialServiceApplicationRedirectPage from './features/social-service/pages/SocialServiceApplicationRedirectPage';
+import SocialServiceApplicationUpdatePage from './features/social-service/pages/SocialServiceApplicationUpdatePage';
+import SocialServiceApplicationDeclinedPage from './features/social-service/pages/SocialServiceApplicationDeclinedPage';
+import SocialServiceDetailPage from './features/social-service/pages/SocialServiceDetailPage';
+
 // Survey pages
 import SurveyPage from '../user/features/surveys/pages/SurveyCardPage';
 
@@ -56,6 +62,12 @@ function UserRoutes() {
         {/* Internships routes */}
         <Route path="my-internship" element={<InternshipDetailPage />} />
         <Route path="my-internship/redirect" element={<ApplicationRedirectPage />} />
+
+        {/* Social service routes (mismo flujo que el internado) */}
+        <Route path="my-social-service" element={<SocialServiceDetailPage />} />
+        <Route path="my-social-service/redirect" element={<SocialServiceApplicationRedirectPage />} />
+        <Route path="my-social-service/application" element={<SocialServiceApplicationUpdatePage />} />
+        <Route path="my-social-service/declined" element={<SocialServiceApplicationDeclinedPage />} />
 
         {/* Surveys routes */}
         <Route path="surveys" element={<SurveyPage />} />
