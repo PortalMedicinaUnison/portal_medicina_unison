@@ -36,5 +36,5 @@ def add_inscription_routes(router: APIRouter, program: ProgramEnum, application_
 
     @router.patch("/{application_id}", response_model=application_output)
     def update_application(application_id: int, data: ApplicationUpdate, admin: AdminUser, db: DbSession):
-        """Corrige datos de la asignación (por ahora, el promedio)."""
+        """Promedio y, con `record`, sede o plaza y estatus del internado o servicio social: todo o nada."""
         return controller.update_application(db, admin, program, application_id, data)

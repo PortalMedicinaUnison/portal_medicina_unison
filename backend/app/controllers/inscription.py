@@ -43,6 +43,9 @@ PROGRAMS = {
         "update_record": lambda db, user, record, site_id: internship_controller.update_internship(
             db, user, record.internship_id, InternshipUpdate(site_id=site_id),
         ),
+        "update_record_fields": lambda db, user, record, fields: internship_controller.update_internship(
+            db, user, record.internship_id, InternshipUpdate(**fields),
+        ),
     },
     ProgramEnum.SOCIAL_SERVICE: {
         "controller": social_service_controller,
@@ -54,6 +57,9 @@ PROGRAMS = {
         "exits": SOCIAL_SERVICE_EXITS,
         "update_record": lambda db, user, record, site_id: social_service_controller.update_social_service(
             db, user, record.social_service_id, SocialServiceUpdate(site_id=site_id),
+        ),
+        "update_record_fields": lambda db, user, record, fields: social_service_controller.update_social_service(
+            db, user, record.social_service_id, SocialServiceUpdate(**fields),
         ),
     },
 }
@@ -153,12 +159,29 @@ def candidates(db: Session, program: ProgramEnum, promotion_id: int) -> List[Can
 # ---------------------- EDITAR LA ASIGNACIÓN ----------------------
 
 def update_application(db: Session, user: User, program: ProgramEnum, application_id: int, data: ApplicationUpdate) -> Application:
-    repo = PROGRAMS[program]["application_repo"](db)
-    application = repo.get(application_id)
+    """
+    Corrige el promedio y, con `record`, la sede o plaza y el estatus del internado o servicio social
+    (con las mismas reglas que la edición directa). Todo en una transacción: si algo no procede, no se
+    guarda nada.
+    """
+    config = PROGRAMS[program]
+    application = config["application_repo"](db).get(application_id)
     if application is None:
         raise not_found("Asignación no encontrada.")
-    repo.update(application, data.model_dump(exclude_unset=True))
-    return PROGRAMS[program]["controller"].get_application_detail(db, user, application_id)
+    for key, value in data.model_dump(exclude_unset=True, exclude={"record"}).items():
+        setattr(application, key, value)
+    if data.record is None:
+        db.commit()
+    else:
+        record = config["record"](application)
+        try:
+            if record is None:
+                raise conflict("El alumno aún no acepta su asignación.")
+            config["update_record_fields"](db, user, record, data.record.model_dump(exclude_unset=True))  # confirma todo
+        except HTTPException:
+            db.rollback()
+            raise
+    return config["controller"].get_application_detail(db, user, application_id)
 
 
 # ---------------------- RESULTADOS DEL ACTO ----------------------

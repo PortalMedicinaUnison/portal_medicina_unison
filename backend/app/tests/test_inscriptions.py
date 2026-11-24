@@ -123,3 +123,27 @@ def test_social_service_bulk_and_plaza_results(client, admin, student, ss_catalo
     assert rows == [{"application_id": application["application_id"], "ok": True, "detail": None}]
     listed = client.get(base, headers=auth(admin)).json()[0]
     assert listed["social_service"]["site"]["site_id"] == ss_catalog["site_b"]["site_id"] and listed["average"] == 91
+
+
+def test_one_save_for_average_site_and_status(client, admin, student, other_student, catalog):
+    from tests.test_internships import _accepted_internship, _assign
+
+    internship = _accepted_internship(client, admin, student, catalog)
+    url = f"/internship-applications/{internship['application_id']}"
+    site_a = catalog["site_a"]["site_id"]
+
+    both = client.patch(url, headers=auth(admin), json={"average": 91.5, "record": {"site_id": site_a}})
+    assert both.status_code == 200, both.text
+    assert both.json()["average"] == 91.5 and both.json()["internship"]["site_id"] == site_a
+
+    # Todo o nada: una renuncia sin fecha ni motivo no procede y el promedio tampoco cambia.
+    bad = client.patch(url, headers=auth(admin), json={"average": 70, "record": {"status": 4}})
+    assert bad.status_code == 400
+    assert client.get(url, headers=auth(admin)).json()["average"] == 91.5
+
+    # Sin internado (aún no acepta) solo se puede corregir el promedio.
+    pending = _assign(client, admin, catalog, other_student.academic_id)
+    pending_url = f"/internship-applications/{pending['application_id']}"
+    assert client.patch(pending_url, headers=auth(admin), json={"average": 80, "record": {"site_id": site_a}}).status_code == 409
+    assert client.get(pending_url, headers=auth(admin)).json()["average"] is None
+    assert client.patch(pending_url, headers=auth(admin), json={"average": 80}).json()["average"] == 80

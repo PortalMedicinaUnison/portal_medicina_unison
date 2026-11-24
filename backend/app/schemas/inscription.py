@@ -4,6 +4,8 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
+from schemas.common import NotFutureDate, OptionalStr
+
 Average = Optional[float]
 
 
@@ -21,8 +23,23 @@ class AverageField(BaseModel):
         return _round_average(value)
 
 
+class RecordUpdate(BaseModel):
+    """
+    Sede o plaza y estatus del internado o servicio social de la asignación (1 en curso, 2 suspendido,
+    3 finalizado o liberado, 4 renuncia, 5 baja; la renuncia y la baja con fecha y motivo).
+    """
+    site_id: Optional[int] = None
+    status: int = Field(default=None, ge=1, le=5)
+    exit_date: NotFutureDate = None
+    exit_reason: OptionalStr(500) = None
+
+
 class ApplicationUpdate(AverageField):
-    """Datos que la coordinación corrige en una asignación."""
+    """
+    Lo que la coordinación corrige en una asignación: el promedio y, con `record`, la sede o plaza y el
+    estatus de su internado o servicio social. Se guarda todo junto o nada.
+    """
+    record: Optional[RecordUpdate] = None
 
 
 class StudentAssignmentRow(AverageField):
