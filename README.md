@@ -5,7 +5,7 @@ pre-registro de estudiantes, promociones y cupos por sede, asignación y aceptac
 internado, documentos, reportes de incidentes, avisos y encuestas.
 
 - **Backend:** FastAPI + SQLAlchemy 2 + Alembic, SQLite (Python 3.11+).
-- **Frontend:** React 18 + Vite + Tailwind CSS.
+- **Frontend:** React 18 + Vite 8 + Tailwind CSS (Node.js 20.19+ o 22.12+).
 - **Autenticación:** JWT (`Authorization: Bearer <token>`), roles `student`, `admin` y `super_admin`.
 
 ```
