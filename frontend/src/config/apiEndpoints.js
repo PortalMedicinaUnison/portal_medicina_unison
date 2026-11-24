@@ -11,8 +11,11 @@ export const API_ENDPOINTS = {
     LIST: '/users',
     ME: '/users/me',
     ME_PASSWORD: '/users/me/password',
+    ME_PHOTO: '/users/me/photo',
     DETAIL: (id) => `/users/${id}`,
     ROLE: (id) => `/users/${id}/role`,
+    REACTIVATE: (id) => `/users/${id}/reactivate`,
+    PHOTO: (id) => `/users/${id}/photo`,
   },
 
   USER_ENROLLMENTS: {

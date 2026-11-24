@@ -3,6 +3,7 @@ import { ROUTES } from '../config';
 import { useUser } from '../contexts/UserContext';
 import useAuth from '../features/auth/hooks/useAuth';
 import DropdownMenu from '../utils/ui/DropdownMenu';
+import UserAvatar from './UserAvatar';
 
 function Navbar({ toggleSidebar, openToggleButton }) {
   const navigate = useNavigate();
@@ -37,16 +38,9 @@ function Navbar({ toggleSidebar, openToggleButton }) {
                   <span className="text-[10px] text-gray-900">{user.email}</span>
                 </div>
 
-                <img
-                  src={user.profile_photo || "/default-avatar.png"}
-                  alt="User Photo"
-                  className={`size-10 rounded-full ring-1 ${
-                    isOpen ? 'ring-gray-300' : 'ring-transparent'
-                  }`}
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = "/default-avatar.png";
-                  }}
+                <UserAvatar
+                  user={user}
+                  className={`size-10 rounded-full ring-1 ${isOpen ? 'ring-gray-300' : 'ring-transparent'}`}
                 />
               </div>
             )}

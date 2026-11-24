@@ -5,7 +5,8 @@ import UserList from '../components/UserList';
 
 
 function UserListPage() {
-  const { users, loading: fetching, error: fetchError, refetch } = useGetUsers();
+  // Incluye cuentas desactivadas: la lista filtra por estado y permite reactivarlas.
+  const { users, loading: fetching, error: fetchError, refetch } = useGetUsers({ includeInactive: true });
     
   return (
     <Layout>

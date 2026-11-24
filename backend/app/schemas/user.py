@@ -52,12 +52,13 @@ class UserOutput(ORMModel):
     second_last_name: Optional[str] = None
     email: str
     phone_number: Optional[str] = None
-    profile_photo: Optional[str] = None
+    has_photo: bool = False
     is_admin: bool
     is_super_admin: bool
     role: str
     is_active: bool
     created_at: UTCDateTime
+    updated_at: UTCDateTime
 
 
 class UserUpdate(BaseModel):

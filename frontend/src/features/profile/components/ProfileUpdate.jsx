@@ -7,6 +7,7 @@ import { cleanFormData } from "../../../utils/utils";
 import { validateEmail } from '../../../utils/validations';
 import LoadingSpinner from '../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../utils/ui/DataLoadError';
+import ProfilePhotoEditor from './ProfilePhotoEditor';
 
 
 // Límite de los nombres en el backend (schemas/user.py).
@@ -133,17 +134,7 @@ return (
       )}
 
       <div className="info-container">
-        <div className="user-info-photo">
-          <img
-            src={user.profile_photo || "/default-avatar.png"}
-            alt="Foto de perfil"
-            className="user-profile-photo"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = "/default-avatar.png";
-            }}
-          />
-        </div>
+        <ProfilePhotoEditor user={user} />
 
         <div className="item-container">
           <dl className="item-list">

@@ -29,8 +29,11 @@ class UserEnrollmentRepo(BaseRepo[UserEnrollment]):
 class UserRepo(BaseRepo[User]):
     model = User
 
-    def list(self, is_admin: Optional[bool] = None, academic_id: Optional[str] = None, search: Optional[str] = None) -> List[User]:
-        query = self.query()
+    def list(
+        self, is_admin: Optional[bool] = None, academic_id: Optional[str] = None,
+        search: Optional[str] = None, include_inactive: bool = False,
+    ) -> List[User]:
+        query = self.session.query(User) if include_inactive else self.query()
         if is_admin is True:
             query = query.filter(or_(User.is_admin.is_(True), User.is_super_admin.is_(True)))
         elif is_admin is False:
@@ -45,6 +48,10 @@ class UserRepo(BaseRepo[User]):
                 User.academic_id.ilike(pattern),
             ))
         return query.order_by(User.last_name, User.first_name).all()
+
+    def get_any(self, user_id: int) -> Optional[User]:
+        """Incluye cuentas desactivadas (solo para administración)."""
+        return self.session.get(User, user_id)
 
     def get_by_email(self, email: str, include_inactive: bool = False) -> Optional[User]:
         query = self.session.query(User) if include_inactive else self.query()

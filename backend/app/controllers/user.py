@@ -1,5 +1,7 @@
-from typing import List, Optional
+from pathlib import Path
+from typing import List, Optional, Tuple
 
+from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 from core.errors import bad_request, conflict, forbidden, not_found
@@ -10,17 +12,22 @@ from schemas.user import (
     EnrollmentBulkResult, EnrollmentInput, EnrollmentUpdate,
     PasswordChangeInput, UserRoleUpdate, UserUpdate,
 )
+from utils.file_handlers import delete_upload, image_media_type, resolve_upload, save_image_upload
 from utils.validation import validate_academic_id
 
 
 # ---------------------- USERS ----------------------
 
-def list_users(db: Session, is_admin: Optional[bool], academic_id: Optional[str], search: Optional[str]) -> List[User]:
-    return UserRepo(db).list(is_admin=is_admin, academic_id=academic_id, search=search)
+def list_users(
+    db: Session, is_admin: Optional[bool], academic_id: Optional[str], search: Optional[str],
+    include_inactive: bool = False,
+) -> List[User]:
+    return UserRepo(db).list(is_admin=is_admin, academic_id=academic_id, search=search, include_inactive=include_inactive)
 
 
 def get_user(db: Session, user_id: int) -> User:
-    user = UserRepo(db).get(user_id)
+    """Para administración: también devuelve cuentas desactivadas."""
+    user = UserRepo(db).get_any(user_id)
     if user is None:
         raise not_found("Usuario no encontrado.")
     return user
@@ -67,13 +74,54 @@ def deactivate_user(db: Session, actor: User, user_id: int) -> None:
         raise bad_request("No puedes desactivar tu propia cuenta desde aquí.")
     if target.is_staff and not actor.is_super_admin:
         raise forbidden("Solo un super administrador puede desactivar administradores.")
+    if not target.is_active:
+        raise conflict("La cuenta ya está desactivada.")
     UserRepo(db).soft_delete(target)
+
+
+def reactivate_user(db: Session, actor: User, user_id: int) -> User:
+    target = get_user(db, user_id)
+    if target.is_active:
+        raise conflict("La cuenta ya está activa.")
+    if target.is_staff and not actor.is_super_admin:
+        raise forbidden("Solo un super administrador puede reactivar administradores.")
+    return UserRepo(db).update(target, {"is_active": True})
 
 
 def deactivate_own_account(db: Session, user: User) -> None:
     if user.is_super_admin:
         raise bad_request("Un super administrador no puede desactivar su propia cuenta.")
     UserRepo(db).soft_delete(user)
+
+
+# ---------------------- FOTO DE PERFIL ----------------------
+
+def upload_own_photo(db: Session, user: User, file: UploadFile) -> User:
+    new_path = save_image_upload(file, "profile-photos")
+    old_path = user.profile_photo
+    updated = UserRepo(db).update(user, {"profile_photo": new_path})
+    delete_upload(old_path)
+    return updated
+
+
+def delete_own_photo(db: Session, user: User) -> User:
+    old_path = user.profile_photo
+    updated = UserRepo(db).update(user, {"profile_photo": None})
+    delete_upload(old_path)
+    return updated
+
+
+def get_photo_file(db: Session, viewer: User, user_id: int) -> Tuple[Path, str]:
+    """La foto la ven el propio usuario y la coordinación."""
+    if viewer.user_id == user_id:
+        target = viewer
+    elif viewer.is_staff:
+        target = get_user(db, user_id)
+    else:
+        raise not_found("Foto no encontrada.")
+    if not target.profile_photo:
+        raise not_found("El usuario no tiene foto.")
+    return resolve_upload(target.profile_photo), image_media_type(target.profile_photo)
 
 
 # ---------------------- USER ENROLLMENTS ----------------------

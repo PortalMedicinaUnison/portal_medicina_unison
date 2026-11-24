@@ -47,6 +47,7 @@ DATABASE_URL=sqlite:///data/portal.db
 | `TIMEZONE` | no | `America/Hermosillo` | Zona horaria para "hoy" (fechas de reportes, vencimiento de encuestas, año de promociones), independiente de la del servidor. |
 | `UPLOAD_DIR` | no | `backend/uploads` | Carpeta de los documentos subidos. |
 | `MAX_UPLOAD_MB` | no | `10` | Tamaño máximo de cada PDF. |
+| `MAX_PHOTO_MB` | no | `2` | Tamaño máximo de la foto de perfil (JPEG, PNG o WebP). |
 | `ORIGINS` | no | `["http://localhost:5173","http://127.0.0.1:5173"]` | Orígenes permitidos por CORS (JSON). |
 
 Frontend: `VITE_API_URL` (por defecto `http://localhost:8000`); se puede definir en `frontend/.env.local`.
@@ -156,7 +157,6 @@ docker compose -f docker-compose.prod.yml cp backend:/backend/uploads ./uploads-
 ## Pendiente
 
 - Historia clínica (opcional): hay un prototipo del formulario en el frontend sin persistencia ni rutas.
-- Foto de perfil (el backend aún no tiene endpoint de subida).
 
 ## Licencia
 
