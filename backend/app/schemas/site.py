@@ -1,6 +1,6 @@
 from typing import Annotated, Optional
 
-from pydantic import AfterValidator, BaseModel
+from pydantic import AfterValidator, BaseModel, model_validator
 
 from schemas.common import OptionalEmail, OptionalStr, ORMModel, RequiredStr
 from utils.constants import MUNICIPALITY_SET
@@ -49,6 +49,14 @@ class SiteInput(BaseModel):
     teaching_deputy_name: OptionalStr(100) = None
     teaching_deputy_email: OptionalEmail = None
     teaching_deputy_phone: OptionalStr(15) = None
+    for_internship: bool = True
+    for_social_service: bool = True
+
+    @model_validator(mode="after")
+    def at_least_one_program(self):
+        if not (self.for_internship or self.for_social_service):
+            raise ValueError("La sede debe ofrecer cupos para el internado, el servicio social o ambos.")
+        return self
 
 
 class SiteUpdate(BaseModel):
@@ -62,6 +70,8 @@ class SiteUpdate(BaseModel):
     teaching_deputy_name: OptionalStr(100) = None
     teaching_deputy_email: OptionalEmail = None
     teaching_deputy_phone: OptionalStr(15) = None
+    for_internship: bool = None
+    for_social_service: bool = None
 
 
 class SiteBasicOutput(ORMModel):
@@ -82,4 +92,6 @@ class SiteOutput(ORMModel):
     teaching_deputy_name: Optional[str] = None
     teaching_deputy_email: Optional[str] = None
     teaching_deputy_phone: Optional[str] = None
+    for_internship: bool = True
+    for_social_service: bool = True
     institution: Optional[InstitutionBasic] = None

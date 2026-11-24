@@ -3,6 +3,7 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from core.errors import bad_request, conflict, not_found
+from models.promotion import ProgramEnum
 from models.site import Institution, Site
 from repos.internship import InternshipRepo
 from repos.promotion import PromotionSiteDetailRepo
@@ -54,8 +55,10 @@ def delete_institution(db: Session, institution_id: int) -> None:
 
 # ---------------------- SITE ----------------------
 
-def list_sites(db: Session, institution_id: Optional[int], city: Optional[str]) -> List[Site]:
-    return SiteRepo(db).list(institution_id=institution_id, city=city)
+def list_sites(
+    db: Session, institution_id: Optional[int], city: Optional[str], program: Optional[ProgramEnum] = None,
+) -> List[Site]:
+    return SiteRepo(db).list(institution_id=institution_id, city=city, program=program)
 
 
 def get_site(db: Session, site_id: int) -> Site:
@@ -92,6 +95,8 @@ def update_site(db: Session, site_id: int, data: SiteUpdate) -> Site:
         duplicate = repo.get_by_name(payload["name"])
         if duplicate and duplicate.site_id != site.site_id:
             raise conflict("Ya existe una sede con ese nombre.")
+    if not (payload.get("for_internship", site.for_internship) or payload.get("for_social_service", site.for_social_service)):
+        raise bad_request("La sede debe ofrecer cupos para el internado, el servicio social o ambos.")
     return repo.update(site, payload)
 
 
