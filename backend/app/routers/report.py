@@ -1,6 +1,7 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, File, UploadFile, status
+from fastapi.responses import FileResponse
 
 from controllers import report as controller
 from core.dependencies import AdminUser, CurrentUser, DbSession, StudentUser
@@ -48,3 +49,26 @@ def set_report_status(report_id: int, data: ReportStatusUpdate, admin: AdminUser
 @report_router.delete("/{report_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_report(report_id: int, user: CurrentUser, db: DbSession):
     controller.delete_report(db, user, report_id)
+
+
+# ----------------------  EVIDENCIAS  ----------------------
+
+@report_router.post("/{report_id}/attachments", response_model=ReportOutput, status_code=status.HTTP_201_CREATED)
+def add_attachment(report_id: int, student: StudentUser, db: DbSession, file: UploadFile = File(...)):
+    """El estudiante adjunta una evidencia (PDF o imagen JPEG, PNG o WebP; hasta 5) mientras el reporte esté abierto."""
+    return controller.to_output(controller.add_attachment(db, student, report_id, file), student)
+
+
+@report_router.get("/{report_id}/attachments/{attachment_id}/file", response_class=FileResponse)
+def get_attachment_file(report_id: int, attachment_id: int, user: CurrentUser, db: DbSession, download: bool = False):
+    """El estudiante dueño o la coordinación; en los reportes anónimos el archivo se entrega con un nombre genérico."""
+    path, filename, media_type = controller.get_attachment_file(db, user, report_id, attachment_id)
+    return FileResponse(path, media_type=media_type, filename=filename,
+                        content_disposition_type="attachment" if download else "inline")
+
+
+@report_router.delete("/{report_id}/attachments/{attachment_id}", response_model=ReportOutput)
+def delete_attachment(report_id: int, attachment_id: int, student: StudentUser, db: DbSession):
+    """El estudiante quita una evidencia mientras el reporte siga abierto."""
+    return controller.to_output(controller.delete_attachment(db, student, report_id, attachment_id), student)
+

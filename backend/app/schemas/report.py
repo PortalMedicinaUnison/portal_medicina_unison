@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, model_validator
 
@@ -44,6 +44,14 @@ class ReportStatusUpdate(BaseModel):
     is_open: bool
 
 
+class ReportAttachmentOutput(ORMModel):
+    attachment_id: int
+    original_filename: Optional[str] = None  # genérico si el reporte es anónimo y lo consulta la coordinación
+    media_type: str
+    size: int
+    created_at: UTCDateTime
+
+
 class ReportOutput(ORMModel):
     report_id: int
     academic_id: Optional[str] = None  # None si el reporte es anónimo y lo consulta un administrador
@@ -59,5 +67,6 @@ class ReportOutput(ORMModel):
     evidence_url: Optional[str] = None
     anonymity: bool
     is_open: bool
+    attachments: List[ReportAttachmentOutput] = []
     created_at: UTCDateTime
     updated_at: UTCDateTime
