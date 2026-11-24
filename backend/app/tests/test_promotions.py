@@ -42,7 +42,10 @@ def test_promotion_date_validation(client, admin):
     assert _post(client, admin, program=1).json()["detail"] == "Indica la fecha de inicio de la promoción."
     backwards = _post(client, admin, program=1, start_date=f"{YEAR}-07-01", end_date=f"{YEAR}-06-30")
     assert backwards.status_code == 422 and "posterior" in backwards.json()["detail"]
-    assert _post(client, admin, program=1, start_date=f"{YEAR - 1}-07-01").status_code == 422
+    assert _post(client, admin, program=1, start_date=f"{YEAR - 1}-07-01").json()["detail"] == "La promoción no puede empezar antes del año actual."
+    assert _post(client, admin, program=1, start_date=f"{YEAR + 6}-07-01").json()["detail"] == "La fecha de inicio no es válida."
+    too_long = _post(client, admin, program=1, start_date=f"{YEAR}-07-01", end_date=f"{YEAR + 4}-06-30")
+    assert too_long.json()["detail"] == "La fecha de término no es válida."
     assert _post(client, admin, program=1, start_date="julio").status_code == 422
 
 

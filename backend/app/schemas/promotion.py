@@ -3,7 +3,7 @@ from typing import Annotated, List, Optional
 
 from pydantic import AfterValidator, BaseModel, Field, model_validator
 
-from models.promotion import ProgramEnum
+from models.promotion import ProgramEnum, date_range_problem
 from schemas.common import ORMModel
 from schemas.site import SiteBasicOutput
 from utils.dates import local_today
@@ -26,8 +26,19 @@ Capacity = Annotated[int, Field(ge=1, le=1000)]
 # ---------------------- PROMOTIONS ----------------------
 
 def _check_dates(start: Optional[date], end: Optional[date]) -> None:
-    if start and end and end <= start:
-        raise ValueError("La fecha de término debe ser posterior a la de inicio.")
+    problem = date_range_problem(start, end)
+    if problem:
+        raise ValueError(problem)
+
+
+def _check_start(start: Optional[date], allow_past: bool) -> None:
+    if start is None:
+        return
+    this_year = local_today().year
+    if not allow_past and start.year < this_year:
+        raise ValueError("La promoción no puede empezar antes del año actual.")
+    if not 2000 <= start.year <= this_year + 5:
+        raise ValueError("La fecha de inicio no es válida.")
 
 
 class PromotionInput(BaseModel):
@@ -46,8 +57,7 @@ class PromotionInput(BaseModel):
     def start_or_period(self):
         if self.start_date is None and (self.year is None or self.period is None):
             raise ValueError("Indica la fecha de inicio de la promoción.")
-        if self.start_date is not None and self.start_date.year < local_today().year:
-            raise ValueError("La promoción no puede empezar antes del año actual.")
+        _check_start(self.start_date, allow_past=False)
         _check_dates(self.start_date, self.end_date)
         return self
 
@@ -61,6 +71,7 @@ class PromotionUpdate(BaseModel):
 
     @model_validator(mode="after")
     def valid_range(self):
+        _check_start(self.start_date, allow_past=True)  # al editar se admiten promociones de años anteriores
         _check_dates(self.start_date, self.end_date)
         return self
 

@@ -41,6 +41,17 @@ def default_dates(program: int, year: int, period: int) -> Tuple[date, date]:
     return start, one_year_after(start)
 
 
+def date_range_problem(start: Optional[date], end: Optional[date]) -> Optional[str]:
+    """Mensaje si el término no es posterior al inicio o está fuera de rango (más de tres años después)."""
+    if start is None or end is None:
+        return None
+    if end <= start:
+        return "La fecha de término debe ser posterior a la de inicio."
+    if end.year > start.year + 3:
+        return "La fecha de término no es válida."
+    return None
+
+
 # ----------------------  PROMOTION  ----------------------
 
 class Promotion(BaseModel):

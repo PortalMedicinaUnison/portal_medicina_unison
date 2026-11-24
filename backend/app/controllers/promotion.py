@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from core.errors import bad_request, conflict, not_found
 from models.promotion import (
-    ProgramEnum, Promotion, PromotionSiteDetail, default_dates, one_year_after, period_of,
+    ProgramEnum, Promotion, PromotionSiteDetail, date_range_problem, default_dates, one_year_after, period_of,
 )
 from repos.internship import InternshipApplicationRepo, InternshipRepo
 from repos.promotion import PromotionRepo, PromotionSiteDetailRepo
@@ -50,8 +50,9 @@ def _duplicate(promotion: Promotion) -> Exception:
 
 
 def _check_range(start: Optional[date], end: Optional[date]) -> None:
-    if start and end and end <= start:
-        raise bad_request("La fecha de término debe ser posterior a la de inicio.")
+    problem = date_range_problem(start, end)
+    if problem:
+        raise bad_request(problem)
 
 
 def create_promotion(db: Session, data: PromotionInput) -> Promotion:
