@@ -1,4 +1,5 @@
 """Operaciones de inscripción comunes al internado y al servicio social (en bloque y del acto público)."""
+from datetime import date
 from typing import List, Optional
 
 from pydantic import BaseModel, Field, field_validator
@@ -59,3 +60,20 @@ class PlazaResultOutput(BaseModel):
     application_id: int
     ok: bool
     detail: Optional[str] = None
+
+
+class PreviousExit(BaseModel):
+    """Renuncia o baja anterior del estudiante en el programa (p. ej. para el art. 55: un año después)."""
+    status: int                 # 4 renuncia, 5 baja
+    exit_date: Optional[date] = None
+    promotion_label: str
+
+
+class CandidateOutput(BaseModel):
+    user_id: int
+    academic_id: Optional[str] = None
+    first_name: str
+    last_name: str
+    second_last_name: Optional[str] = None
+    email: str
+    previous_exit: Optional[PreviousExit] = None

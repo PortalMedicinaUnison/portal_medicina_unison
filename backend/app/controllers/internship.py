@@ -2,10 +2,12 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from controllers import document_rules
+from controllers import document_rules, record_exit
 from core.errors import bad_request, conflict, not_found
 from models.document import DocumentStageEnum
-from models.internship import ApplicationStatusEnum, Internship, InternshipApplication, InternshipStatusEnum
+from models.internship import (
+    INTERNSHIP_EXITS, INTERNSHIP_IN_COURSE, ApplicationStatusEnum, Internship, InternshipApplication, InternshipStatusEnum,
+)
 from models.promotion import ProgramEnum
 from models.user import User
 from repos.internship import InternshipApplicationRepo, InternshipRepo
@@ -61,7 +63,7 @@ def create_application(db: Session, data: InternshipApplicationInput) -> Interns
     internships = InternshipRepo(db).list(academic_id=data.academic_id)
     if any(i.status == InternshipStatusEnum.FINISHED for i in internships):
         raise conflict("El estudiante ya acreditó el internado.")
-    if any(i.status != InternshipStatusEnum.FINISHED for i in internships):
+    if any(i.status in INTERNSHIP_IN_COURSE for i in internships):
         raise conflict("El estudiante ya tiene un internado en curso.")
 
     existing = repo.get_by_promotion_student(data.promotion_id, data.academic_id, include_inactive=True)
@@ -83,6 +85,8 @@ def accept_application(db: Session, user: User, application_id: int) -> Internsh
     """Acepta la asignación (con los documentos obligatorios de inscripción ya subidos) y crea el internado."""
     application = get_application(db, user, application_id)
     _ensure_pending(application)
+    if any(i.status in INTERNSHIP_IN_COURSE for i in InternshipRepo(db).list(academic_id=application.academic_id)):
+        raise conflict("Ya tienes un internado en curso en otra promoción.")
     document_rules.ensure_inscription_submitted(db, ProgramEnum.INTERNSHIP, application.application_id)
     application.status = ApplicationStatusEnum.ACCEPTED
 
@@ -140,11 +144,21 @@ def update_internship(db: Session, user: User, internship_id: int, data: Interns
     La coordinación registra la sede que eligió el estudiante (respetando el cupo de la promoción)
     o cambia el estatus. Registrar la primera sede exige el expediente de inscripción completo y
     finalizar el internado, los documentos obligatorios de las etapas durante y término aprobados.
+    La renuncia y la baja llevan fecha y motivo y liberan el lugar (ver record_exit).
     """
     internship = get_internship(db, user, internship_id)
     payload = data.model_dump(exclude_unset=True)
     target_site = payload.get("site_id", internship.site_id)
     target_status = payload.get("status", internship.status)
+    record_exit.apply_exit(
+        internship, payload, INTERNSHIP_EXITS, InternshipStatusEnum.FINISHED,
+        "El internado ya está finalizado: no se puede registrar renuncia ni baja.",
+    )
+    if internship.status in INTERNSHIP_EXITS and target_status in INTERNSHIP_IN_COURSE:
+        record_exit.ensure_no_other_record([
+            other for other in InternshipRepo(db).list(academic_id=internship.academic_id)
+            if other.internship_id != internship.internship_id and other.status not in INTERNSHIP_EXITS
+        ], "internado")
 
     if internship.site_id is None and target_site is not None:
         document_rules.ensure_stages_complete(
@@ -156,10 +170,8 @@ def update_internship(db: Session, user: User, internship_id: int, data: Interns
             db, ProgramEnum.INTERNSHIP, internship.application_id, document_rules.CLOSING_STAGES,
             "Para finalizar el internado deben estar aprobados los documentos obligatorios del internado.",
         )
-    takes_seat = target_site is not None and target_status != InternshipStatusEnum.FINISHED
-    seat_changed = target_site != internship.site_id or (
-        internship.status == InternshipStatusEnum.FINISHED and target_status != InternshipStatusEnum.FINISHED
-    )
+    takes_seat = target_site is not None and target_status in INTERNSHIP_IN_COURSE
+    seat_changed = target_site != internship.site_id or internship.status not in INTERNSHIP_IN_COURSE
 
     if takes_seat and seat_changed:
         if SiteRepo(db).get(target_site) is None:
@@ -174,7 +186,7 @@ def update_internship(db: Session, user: User, internship_id: int, data: Interns
 
 
 def delete_internship(db: Session, user: User, internship_id: int) -> None:
-    """Da de baja el internado y regresa la asignación a pendiente."""
+    """Elimina el internado (p. ej. si se aceptó por error) y regresa la asignación a pendiente."""
     internship = get_internship(db, user, internship_id)
     internship.is_active = False
     internship.application.status = ApplicationStatusEnum.PENDING

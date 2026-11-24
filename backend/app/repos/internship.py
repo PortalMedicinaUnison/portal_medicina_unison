@@ -2,7 +2,9 @@ from typing import List, Optional
 
 from sqlalchemy.orm import selectinload
 
-from models.internship import ApplicationStatusEnum, Internship, InternshipApplication, InternshipStatusEnum
+from models.internship import (
+    INTERNSHIP_IN_COURSE, ApplicationStatusEnum, Internship, InternshipApplication, InternshipStatusEnum,
+)
 from .base import BaseRepo
 
 
@@ -75,7 +77,7 @@ class InternshipRepo(BaseRepo[Internship]):
         query = self._joined().filter(
             InternshipApplication.promotion_id == promotion_id,
             Internship.site_id == site_id,
-            Internship.status != InternshipStatusEnum.FINISHED,
+            Internship.status.in_(INTERNSHIP_IN_COURSE),
         )
         if exclude_internship_id is not None:
             query = query.filter(Internship.internship_id != exclude_internship_id)

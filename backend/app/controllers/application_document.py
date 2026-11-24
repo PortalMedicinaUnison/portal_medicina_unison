@@ -25,9 +25,9 @@ from models.base import utcnow
 from models.document import (
     ApplicationDocument, DocumentProviderEnum, DocumentRequirement, DocumentStageEnum, ReviewStatusEnum,
 )
-from models.internship import ApplicationStatusEnum, InternshipApplication, InternshipStatusEnum
+from models.internship import INTERNSHIP_EXITS, ApplicationStatusEnum, InternshipApplication, InternshipStatusEnum
 from models.promotion import ProgramEnum
-from models.social_service import SocialServiceApplication, SocialServiceStatusEnum
+from models.social_service import SOCIAL_SERVICE_EXITS, SocialServiceApplication, SocialServiceStatusEnum
 from models.user import User
 from repos.document import ApplicationDocumentRepo, DocumentRequirementRepo, application_column
 from schemas.document import DocumentReviewInput
@@ -66,17 +66,21 @@ def _ensure_student_can_edit(program: ProgramEnum, application: Application, req
     if application.promotion.is_finished:
         raise conflict("La promoción ya terminó: ya no se pueden modificar sus documentos.")
     if program == ProgramEnum.INTERNSHIP:
-        record, finished, closed_message = (
-            application.internship, InternshipStatusEnum.FINISHED, "Tu internado ya está finalizado: ya no se pueden modificar sus documentos.",
+        record, finished, exits, name, closed_message = (
+            application.internship, InternshipStatusEnum.FINISHED, INTERNSHIP_EXITS, "internado",
+            "Tu internado ya está finalizado: ya no se pueden modificar sus documentos.",
         )
     else:
-        record, finished, closed_message = (
-            application.social_service, SocialServiceStatusEnum.FINISHED, "Tu servicio social ya está liberado: ya no se pueden modificar sus documentos.",
+        record, finished, exits, name, closed_message = (
+            application.social_service, SocialServiceStatusEnum.FINISHED, SOCIAL_SERVICE_EXITS, "servicio social",
+            "Tu servicio social ya está liberado: ya no se pueden modificar sus documentos.",
         )
     if requirement.stage != DocumentStageEnum.INSCRIPTION and record is None:
         raise conflict("Podrás subir este documento cuando aceptes tu asignación.")
     if record is not None and record.status == finished:
         raise conflict(closed_message)
+    if record is not None and record.status in exits:
+        raise conflict(f"Tu {name} terminó por {'renuncia' if record.status == exits[0] else 'baja'}: ya no se pueden modificar sus documentos.")
 
 
 # ---------------------- CONSULTA ----------------------

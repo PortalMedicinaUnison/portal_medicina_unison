@@ -6,12 +6,14 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from controllers import document_rules
+from controllers import document_rules, record_exit
 from core.errors import bad_request, conflict, not_found
 from models.document import DocumentStageEnum
 from models.internship import ApplicationStatusEnum, InternshipStatusEnum
 from models.promotion import ProgramEnum
-from models.social_service import SocialService, SocialServiceApplication, SocialServiceStatusEnum
+from models.social_service import (
+    SOCIAL_SERVICE_EXITS, SOCIAL_SERVICE_IN_COURSE, SocialService, SocialServiceApplication, SocialServiceStatusEnum,
+)
 from models.user import User
 from repos.internship import InternshipRepo
 from repos.promotion import PromotionRepo, PromotionSiteDetailRepo
@@ -73,7 +75,7 @@ def create_application(db: Session, data: SocialServiceApplicationInput) -> Soci
     services = SocialServiceRepo(db).list(academic_id=data.academic_id)
     if any(s.status == SocialServiceStatusEnum.FINISHED for s in services):
         raise conflict("El estudiante ya liberó su servicio social.")
-    if any(s.status != SocialServiceStatusEnum.FINISHED for s in services):
+    if any(s.status in SOCIAL_SERVICE_IN_COURSE for s in services):
         raise conflict("El estudiante ya tiene un servicio social en curso.")
 
     existing = repo.get_by_promotion_student(data.promotion_id, data.academic_id, include_inactive=True)
@@ -95,6 +97,8 @@ def accept_application(db: Session, user: User, application_id: int) -> SocialSe
     """Acepta la asignación y crea el servicio social en la misma transacción."""
     application = get_application(db, user, application_id)
     _ensure_pending(application)
+    if any(s.status in SOCIAL_SERVICE_IN_COURSE for s in SocialServiceRepo(db).list(academic_id=application.academic_id)):
+        raise conflict("Ya tienes un servicio social en curso en otra promoción.")
     document_rules.ensure_inscription_submitted(db, ProgramEnum.SOCIAL_SERVICE, application.application_id)
     application.status = ApplicationStatusEnum.ACCEPTED
 
@@ -152,11 +156,21 @@ def update_social_service(db: Session, user: User, social_service_id: int, data:
     La coordinación registra la plaza que eligió el estudiante (respetando el cupo de la promoción)
     o cambia el estatus. Registrar la primera plaza exige el expediente de inscripción completo y
     liberar el servicio social, los documentos obligatorios de las etapas durante y liberación aprobados.
+    La renuncia y la baja llevan fecha y motivo y liberan la plaza (ver record_exit).
     """
     service = get_social_service(db, user, social_service_id)
     payload = data.model_dump(exclude_unset=True)
     target_site = payload.get("site_id", service.site_id)
     target_status = payload.get("status", service.status)
+    record_exit.apply_exit(
+        service, payload, SOCIAL_SERVICE_EXITS, SocialServiceStatusEnum.FINISHED,
+        "El servicio social ya está liberado: no se puede registrar renuncia ni baja.",
+    )
+    if service.status in SOCIAL_SERVICE_EXITS and target_status in SOCIAL_SERVICE_IN_COURSE:
+        record_exit.ensure_no_other_record([
+            other for other in SocialServiceRepo(db).list(academic_id=service.academic_id)
+            if other.social_service_id != service.social_service_id and other.status not in SOCIAL_SERVICE_EXITS
+        ], "servicio social")
 
     if service.site_id is None and target_site is not None:
         document_rules.ensure_stages_complete(
@@ -168,10 +182,8 @@ def update_social_service(db: Session, user: User, social_service_id: int, data:
             db, ProgramEnum.SOCIAL_SERVICE, service.application_id, document_rules.CLOSING_STAGES,
             "Para liberar el servicio social deben estar aprobados los documentos obligatorios del servicio social.",
         )
-    takes_seat = target_site is not None and target_status != SocialServiceStatusEnum.FINISHED
-    seat_changed = target_site != service.site_id or (
-        service.status == SocialServiceStatusEnum.FINISHED and target_status != SocialServiceStatusEnum.FINISHED
-    )
+    takes_seat = target_site is not None and target_status in SOCIAL_SERVICE_IN_COURSE
+    seat_changed = target_site != service.site_id or service.status not in SOCIAL_SERVICE_IN_COURSE
 
     if takes_seat and seat_changed:
         if SiteRepo(db).get(target_site) is None:
@@ -188,7 +200,7 @@ def update_social_service(db: Session, user: User, social_service_id: int, data:
 
 
 def delete_social_service(db: Session, user: User, social_service_id: int) -> None:
-    """Da de baja el servicio social y regresa la asignación a pendiente."""
+    """Elimina el servicio social (p. ej. si se aceptó por error) y regresa la asignación a pendiente."""
     service = get_social_service(db, user, social_service_id)
     service.is_active = False
     service.application.status = ApplicationStatusEnum.PENDING

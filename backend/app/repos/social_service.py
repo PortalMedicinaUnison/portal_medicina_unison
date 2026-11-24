@@ -3,7 +3,9 @@ from typing import List, Optional
 from sqlalchemy.orm import selectinload
 
 from models.internship import ApplicationStatusEnum
-from models.social_service import SocialService, SocialServiceApplication, SocialServiceStatusEnum
+from models.social_service import (
+    SOCIAL_SERVICE_IN_COURSE, SocialService, SocialServiceApplication, SocialServiceStatusEnum,
+)
 from .base import BaseRepo
 
 
@@ -78,7 +80,7 @@ class SocialServiceRepo(BaseRepo[SocialService]):
         query = self._joined().filter(
             SocialServiceApplication.promotion_id == promotion_id,
             SocialService.site_id == site_id,
-            SocialService.status != SocialServiceStatusEnum.FINISHED,
+            SocialService.status.in_(SOCIAL_SERVICE_IN_COURSE),
         )
         if exclude_social_service_id is not None:
             query = query.filter(SocialService.social_service_id != exclude_social_service_id)

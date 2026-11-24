@@ -1,7 +1,8 @@
+from datetime import date
 from enum import IntEnum
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import Float, ForeignKey, Index, Integer, String, UniqueConstraint
+from sqlalchemy import Date, Float, ForeignKey, Index, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import BaseModel
@@ -18,6 +19,13 @@ class SocialServiceStatusEnum(IntEnum):
     ACTIVE = 1
     SUSPENDED = 2
     FINISHED = 3  # liberado
+    WITHDRAWN = 4  # renuncia
+    DISMISSED = 5  # baja (cancelación)
+
+
+# En curso: ocupan su lugar en la sede. Renuncia y baja terminan sin acreditar y liberan el lugar.
+SOCIAL_SERVICE_IN_COURSE = (SocialServiceStatusEnum.ACTIVE, SocialServiceStatusEnum.SUSPENDED)
+SOCIAL_SERVICE_EXITS = (SocialServiceStatusEnum.WITHDRAWN, SocialServiceStatusEnum.DISMISSED)
 
 
 # ----------------------  SOCIAL SERVICE APPLICATION  ----------------------
@@ -76,6 +84,9 @@ class SocialService(BaseModel):
     status: Mapped[SocialServiceStatusEnum] = mapped_column(
         IntEnumType(SocialServiceStatusEnum), nullable=False, default=SocialServiceStatusEnum.ACTIVE
     )
+    # Renuncia o baja: fecha en que se hizo efectiva y motivo.
+    exit_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    exit_reason: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
 
     application: Mapped["SocialServiceApplication"] = relationship(lazy="joined")
     site: Mapped[Optional["Site"]] = relationship(lazy="joined")

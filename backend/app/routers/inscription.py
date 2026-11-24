@@ -6,9 +6,8 @@ from controllers import inscription as controller
 from core.dependencies import AdminUser, DbSession
 from models.promotion import ProgramEnum
 from schemas.inscription import (
-    ApplicationUpdate, BulkAssignmentInput, BulkAssignmentResult, PlazaResultOutput, PlazaResultsInput,
+    ApplicationUpdate, BulkAssignmentInput, BulkAssignmentResult, CandidateOutput, PlazaResultOutput, PlazaResultsInput,
 )
-from schemas.user import UserBasicOutput
 
 
 def add_inscription_routes(router: APIRouter, program: ProgramEnum, application_output) -> None:
@@ -17,9 +16,12 @@ def add_inscription_routes(router: APIRouter, program: ProgramEnum, application_
     para que "candidates" no se interprete como un identificador.
     """
 
-    @router.get("/candidates", response_model=List[UserBasicOutput])
+    @router.get("/candidates", response_model=List[CandidateOutput])
     def list_candidates(promotion_id: int, _admin: AdminUser, db: DbSession):
-        """Estudiantes que se pueden asignar a la promoción (sin asignación en ella ni el programa en curso o acreditado)."""
+        """
+        Estudiantes que se pueden asignar a la promoción (sin asignación en ella ni el programa en curso
+        o acreditado). `previous_exit` indica su última renuncia o baja en el programa, si la hubo.
+        """
         return controller.candidates(db, program, promotion_id)
 
     @router.post("/bulk", response_model=BulkAssignmentResult)

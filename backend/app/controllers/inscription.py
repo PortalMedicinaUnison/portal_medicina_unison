@@ -14,15 +14,16 @@ from sqlalchemy.orm import Session
 from controllers import internship as internship_controller
 from controllers import social_service as social_service_controller
 from core.errors import bad_request, conflict, not_found
-from models.internship import InternshipApplication, InternshipStatusEnum
+from models.internship import INTERNSHIP_EXITS, INTERNSHIP_IN_COURSE, InternshipApplication, InternshipStatusEnum
 from models.promotion import ProgramEnum
-from models.social_service import SocialServiceApplication
+from models.social_service import SOCIAL_SERVICE_EXITS, SOCIAL_SERVICE_IN_COURSE, SocialServiceApplication
 from models.user import User
 from repos.internship import InternshipApplicationRepo, InternshipRepo
 from repos.promotion import PromotionRepo
 from repos.social_service import SocialServiceApplicationRepo, SocialServiceRepo
 from schemas.inscription import (
-    ApplicationUpdate, BulkAssignmentInput, BulkAssignmentResult, BulkSkip, PlazaResultOutput, PlazaResultsInput,
+    ApplicationUpdate, BulkAssignmentInput, BulkAssignmentResult, BulkSkip, CandidateOutput, PlazaResultOutput,
+    PlazaResultsInput, PreviousExit,
 )
 from schemas.internship import InternshipApplicationInput, InternshipUpdate
 from schemas.social_service import SocialServiceApplicationInput, SocialServiceUpdate
@@ -36,6 +37,9 @@ PROGRAMS = {
         "application_repo": InternshipApplicationRepo,
         "application_input": InternshipApplicationInput,
         "record": lambda application: application.internship,
+        "record_repo": InternshipRepo,
+        "in_course": INTERNSHIP_IN_COURSE,
+        "exits": INTERNSHIP_EXITS,
         "update_record": lambda db, user, record, site_id: internship_controller.update_internship(
             db, user, record.internship_id, InternshipUpdate(site_id=site_id),
         ),
@@ -45,6 +49,9 @@ PROGRAMS = {
         "application_repo": SocialServiceApplicationRepo,
         "application_input": SocialServiceApplicationInput,
         "record": lambda application: application.social_service,
+        "record_repo": SocialServiceRepo,
+        "in_course": SOCIAL_SERVICE_IN_COURSE,
+        "exits": SOCIAL_SERVICE_EXITS,
         "update_record": lambda db, user, record, site_id: social_service_controller.update_social_service(
             db, user, record.social_service_id, SocialServiceUpdate(site_id=site_id),
         ),
@@ -99,12 +106,15 @@ def bulk_assign(db: Session, program: ProgramEnum, data: BulkAssignmentInput) ->
 
 # ---------------------- CANDIDATOS ----------------------
 
-def candidates(db: Session, program: ProgramEnum, promotion_id: int) -> List[User]:
+def candidates(db: Session, program: ProgramEnum, promotion_id: int) -> List[CandidateOutput]:
     """
     Estudiantes que se pueden asignar a la promoción: registrados, sin asignación en ella y sin el
     programa en curso o ya acreditado. Para servicio social, además, con el internado acreditado.
+    Quien renunció o causó baja vuelve a ser candidato; se indica su última salida para que la
+    coordinación aplique los plazos (servicio social: un año después de la renuncia, art. 55).
     """
     _promotion_of_program(db, program, promotion_id)
+    config = PROGRAMS[program]
     students = (
         db.query(User)
         .filter(
@@ -114,16 +124,30 @@ def candidates(db: Session, program: ProgramEnum, promotion_id: int) -> List[Use
         .order_by(User.last_name, User.second_last_name, User.first_name)
         .all()
     )
-    assigned = {a.academic_id for a in PROGRAMS[program]["application_repo"](db).list(promotion_id=promotion_id)}
-    if program == ProgramEnum.INTERNSHIP:
-        busy = {i.academic_id for i in InternshipRepo(db).list()}
-        return [s for s in students if s.academic_id not in assigned and s.academic_id not in busy]
-    accredited = {i.academic_id for i in InternshipRepo(db).list(status=InternshipStatusEnum.FINISHED)}
-    busy = {s.academic_id for s in SocialServiceRepo(db).list()}
-    return [
-        s for s in students
-        if s.academic_id in accredited and s.academic_id not in assigned and s.academic_id not in busy
-    ]
+    assigned = {a.academic_id for a in config["application_repo"](db).list(promotion_id=promotion_id)}
+    records = config["record_repo"](db).list()  # del más reciente al más antiguo
+    busy = {r.academic_id for r in records if r.status not in config["exits"]}
+    last_exit = {}
+    for record in records:
+        if record.status in config["exits"]:
+            last_exit.setdefault(record.academic_id, record)
+    if program == ProgramEnum.SOCIAL_SERVICE:
+        accredited = {i.academic_id for i in InternshipRepo(db).list(status=InternshipStatusEnum.FINISHED)}
+        students = [s for s in students if s.academic_id in accredited]
+
+    result = []
+    for student in students:
+        if student.academic_id in assigned or student.academic_id in busy:
+            continue
+        candidate = CandidateOutput.model_validate(student, from_attributes=True)
+        exit_record = last_exit.get(student.academic_id)
+        if exit_record is not None:
+            candidate.previous_exit = PreviousExit(
+                status=int(exit_record.status), exit_date=exit_record.exit_date,
+                promotion_label=exit_record.application.promotion.label,
+            )
+        result.append(candidate)
+    return result
 
 
 # ---------------------- EDITAR LA ASIGNACIÓN ----------------------
@@ -149,6 +173,8 @@ def record_plaza_results(db: Session, user: User, program: ProgramEnum, data: Pl
             record = config["record"](application)
             if record is None:
                 raise conflict("Aún no acepta su asignación.")
+            if record.status not in config["in_course"]:
+                raise conflict("Ya no está en curso (finalizó, renunció o causó baja).")
             config["update_record"](db, user, record, row.site_id)
             results.append(PlazaResultOutput(application_id=row.application_id, ok=True))
         except HTTPException as exc:

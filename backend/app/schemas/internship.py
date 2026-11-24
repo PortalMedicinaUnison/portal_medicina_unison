@@ -1,9 +1,10 @@
+from datetime import date
 from typing import Optional
 
 from pydantic import BaseModel
 
 from models.internship import ApplicationStatusEnum, InternshipStatusEnum
-from schemas.common import AcademicId, ORMModel, UTCDateTime
+from schemas.common import AcademicId, NotFutureDate, OptionalStr, ORMModel, UTCDateTime
 from schemas.document import InscriptionProgress
 from schemas.inscription import AverageField
 from schemas.promotion import PromotionOutput
@@ -24,6 +25,8 @@ class InternshipSummary(ORMModel):
     status: InternshipStatusEnum
     site_id: Optional[int] = None
     site: Optional[SiteBasicOutput] = None
+    exit_date: Optional[date] = None
+    exit_reason: Optional[str] = None
 
 
 class InternshipApplicationOutput(ORMModel):
@@ -45,8 +48,11 @@ class InternshipApplicationOutput(ORMModel):
 # ---------------------- INTERNSHIP ----------------------
 
 class InternshipUpdate(BaseModel):
+    """Renuncia (4) o baja (5): con `exit_date` (no posterior a hoy) y `exit_reason`."""
     site_id: Optional[int] = None
     status: InternshipStatusEnum = None
+    exit_date: NotFutureDate = None
+    exit_reason: OptionalStr(500) = None
 
 
 class InternshipOutput(ORMModel):
@@ -56,6 +62,8 @@ class InternshipOutput(ORMModel):
     promotion_id: int
     site_id: Optional[int] = None
     status: InternshipStatusEnum
+    exit_date: Optional[date] = None
+    exit_reason: Optional[str] = None
     created_at: UTCDateTime
     updated_at: UTCDateTime
     application: InternshipApplicationOutput

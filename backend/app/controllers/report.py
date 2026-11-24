@@ -3,12 +3,12 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from core.errors import bad_request, conflict, not_found
-from models.internship import InternshipStatusEnum
+from models.internship import INTERNSHIP_IN_COURSE
 from models.report import Report, ReportTypeEnum
 from models.user import User
 from repos.internship import InternshipRepo
 from repos.social_service import SocialServiceRepo
-from models.social_service import SocialServiceStatusEnum
+from models.social_service import SOCIAL_SERVICE_IN_COURSE
 from repos.report import ReportRepo
 from repos.site import SiteRepo
 from schemas.report import OTHER_TYPE_REQUIRED, ReportInput, ReportOutput, ReportStatusUpdate, ReportUpdate
@@ -62,11 +62,11 @@ def create_report(db: Session, student: User, data: ReportInput) -> Report:
     _check_site(db, data.site_id)
     current = [
         internship for internship in InternshipRepo(db).list(academic_id=student.academic_id)
-        if internship.status != InternshipStatusEnum.FINISHED
+        if internship.status in INTERNSHIP_IN_COURSE
     ]
     current_social_service = [
         service for service in SocialServiceRepo(db).list(academic_id=student.academic_id)
-        if service.status != SocialServiceStatusEnum.FINISHED
+        if service.status in SOCIAL_SERVICE_IN_COURSE
     ]
     report = Report(
         **data.model_dump(),
