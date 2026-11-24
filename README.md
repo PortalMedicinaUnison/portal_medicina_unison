@@ -27,7 +27,7 @@ El estudiante primero **acredita el internado** y después hace el **servicio so
 1. La coordinación **pre-registra** los expedientes (uno por uno o importando un CSV).
 2. El estudiante **crea su cuenta** con su expediente pre-registrado.
 3. La coordinación crea la **promoción** del programa (internado o servicio social, con año y periodo) y define el **cupo de cada sede**.
-4. La coordinación **asigna** al estudiante a la promoción. El estudiante sube sus **documentos de inscripción** (PDF) y **acepta** (se crea su internado o servicio social) o **declina**.
+4. La coordinación **asigna** al estudiante a la promoción. El estudiante sube sus **documentos de inscripción** (PDF); con todos los obligatorios subidos puede **aceptar** (se crea su internado o servicio social). También puede **declinar**.
 5. La coordinación **revisa** cada documento (aprobado o con observaciones). Con los obligatorios de inscripción aprobados, **registra la sede** (plaza, en servicio social) que el estudiante eligió en el acto público, respetando el cupo.
 6. Durante el programa el estudiante sube los documentos de las etapas *durante* y *término* (en servicio social, *liberación*). Con los obligatorios aprobados, la coordinación marca el internado como **finalizado** (acreditado) o el servicio social como **liberado**.
 7. El estudiante levanta **reportes** de incidentes y consulta **avisos** y **encuestas**.
@@ -44,9 +44,13 @@ Solo se puede asignar servicio social a quien ya tiene el internado finalizado (
   según la convocatoria de 2026 (los documentos extra del artículo 21 de los *Lineamientos* quedan como opcionales) y la
   liberación según el artículo 60. En **Reportes trimestrales** el alumno sube por ahora el acuse de la plataforma de servicio
   social de la Unison; si después se piden los reportes, basta con cambiar las indicaciones de ese mismo documento.
-- Cada archivo queda **en revisión** hasta que la coordinación lo **aprueba** o le pone **observaciones** (el alumno las ve
-  y sube el corregido). El alumno no puede cambiar documentos aprobados ni modificar los de una asignación declinada, una
-  promoción terminada o un programa finalizado/liberado; la coordinación puede subirlos por él.
+- **Quién lo sube.** Cada documento lo sube *el alumno* o *la coordinación*. Los del alumno quedan **en revisión** hasta
+  que la coordinación los **aprueba** o les pone **observaciones** (el alumno las ve y sube el corregido); la coordinación no
+  los sube ni los borra. Los de la coordinación (de inicio, la constancia de culminación y las calificaciones por rotación
+  del internado, que emite la sede) solo los sube ella y quedan aprobados. Fuera de eso, la coordinación solo sube los
+  formatos descargables del catálogo.
+- El alumno no puede cambiar documentos aprobados ni modificar los de una asignación declinada, una promoción terminada o
+  un programa finalizado/liberado.
 
 ## Contraseñas y aviso de privacidad
 

@@ -81,9 +81,10 @@ def _ensure_pending(application: InternshipApplication) -> None:
 
 
 def accept_application(db: Session, user: User, application_id: int) -> Internship:
-    """Acepta la asignación y crea el internado en la misma transacción."""
+    """Acepta la asignación (con los documentos obligatorios de inscripción ya subidos) y crea el internado."""
     application = get_application(db, user, application_id)
     _ensure_pending(application)
+    document_rules.ensure_inscription_submitted(db, ProgramEnum.INTERNSHIP, application.application_id)
     application.status = ApplicationStatusEnum.ACCEPTED
 
     internship = InternshipRepo(db).get_by_application_any(application.application_id)

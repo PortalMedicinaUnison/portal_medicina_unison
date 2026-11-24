@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, computed_field, model_validator
 
-from models.document import DocumentStageEnum, ReviewStatusEnum
+from models.document import DocumentProviderEnum, DocumentStageEnum, ReviewStatusEnum
 from models.promotion import ProgramEnum
 from schemas.common import OptionalStr, ORMModel, RequiredStr, UTCDateTime
 
@@ -15,6 +15,7 @@ class DocumentRequirementInput(BaseModel):
     name: RequiredStr(150)
     description: OptionalStr(2000) = None
     is_required: bool = True
+    provided_by: DocumentProviderEnum = DocumentProviderEnum.STUDENT
     allows_multiple: bool = False
     validity_months: Optional[int] = Field(default=None, ge=1, le=60)
     sort_order: int = Field(default=0, ge=0, le=10000)
@@ -26,6 +27,7 @@ class DocumentRequirementUpdate(BaseModel):
     name: RequiredStr(150) = None
     description: OptionalStr(2000) = None
     is_required: bool = None
+    provided_by: DocumentProviderEnum = None
     allows_multiple: bool = None
     validity_months: Optional[int] = Field(default=None, ge=1, le=60)
     sort_order: int = Field(default=None, ge=0, le=10000)
@@ -38,6 +40,7 @@ class DocumentRequirementOutput(ORMModel):
     name: str
     description: Optional[str] = None
     is_required: bool
+    provided_by: DocumentProviderEnum
     allows_multiple: bool
     validity_months: Optional[int] = None
     sort_order: int
@@ -77,9 +80,18 @@ class DocumentReviewInput(BaseModel):
 
 
 class InscriptionProgress(BaseModel):
-    """Avance del expediente de inscripción: requisitos obligatorios que ya tienen un archivo aprobado."""
+    """
+    Avance de los documentos obligatorios de inscripción: `submitted` ya tienen un archivo en revisión
+    o aprobado (basta para aceptar la asignación); `approved`, uno aprobado (para registrar la plaza).
+    """
     required: int
+    submitted: int
     approved: int
+
+    @computed_field
+    @property
+    def all_submitted(self) -> bool:
+        return self.submitted >= self.required
 
     @computed_field
     @property

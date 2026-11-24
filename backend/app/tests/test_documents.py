@@ -7,6 +7,7 @@ from tests.test_social_service import _accredit_internship, _assign_ss, ss_catal
 INTERNSHIP, SOCIAL_SERVICE = 1, 2
 INSCRIPTION, IN_PROGRESS, COMPLETION = 1, 2, 3
 PENDING, APPROVED, REJECTED = 1, 2, 3
+BY_STUDENT, BY_COORDINATION = 1, 2
 DOCX_BYTES = b"PK\x03\x04" + b"\x00" * 64
 
 
@@ -145,7 +146,7 @@ def test_student_builds_inscription_expediente(client, admin, student, other_stu
     assert client.get(file_url, params={"download": True}, headers=auth(admin)).headers["content-disposition"].startswith("attachment")
 
     progress = client.get(base, headers=auth(student)).json()["inscription_progress"]
-    assert progress == {"required": 1, "approved": 0, "complete": False}
+    assert progress == {"required": 1, "submitted": 1, "approved": 0, "all_submitted": True, "complete": False}
 
     # Un requisito de un solo archivo: el nuevo reemplaza al anterior.
     replacement = _upload(client, student, app_id, ficha["requirement_id"], filename="ficha-v2.pdf").json()
@@ -161,7 +162,9 @@ def test_student_builds_inscription_expediente(client, admin, student, other_stu
 
     assert client.get(base, headers=auth(student)).json()["inscription_progress"]["complete"] is True
     listed = client.get("/internship-applications", headers=auth(admin)).json()
-    assert listed[0]["inscription_progress"] == {"required": 1, "approved": 1, "complete": True}
+    assert listed[0]["inscription_progress"] == {
+        "required": 1, "submitted": 1, "approved": 1, "all_submitted": True, "complete": True,
+    }
 
 
 def test_review_with_observations_and_resubmission(client, admin, student, catalog):
@@ -202,16 +205,73 @@ def test_multiple_files_and_deletion_after_accepting(client, admin, student, cat
     assert [d["original_filename"] for d in remaining] == ["pediatria.pdf"]
 
 
-def test_coordination_uploads_on_behalf_and_fixes_closed_expedientes(client, admin, student, catalog):
+def test_each_document_is_uploaded_by_student_or_coordination(client, admin, student, catalog):
     ficha = _requirement(client, admin, "Ficha")
+    constancia = _requirement(client, admin, "Constancia de culminación", stage=COMPLETION, provided_by=BY_COORDINATION)
+    assert constancia["provided_by"] == BY_COORDINATION and ficha["provided_by"] == BY_STUDENT
     application = _assign(client, admin, catalog, student)
     app_id = application["application_id"]
-    assert client.post(f"/internship-applications/{app_id}/decline", headers=auth(student)).status_code == 200
+    base = f"/internship-applications/{app_id}/documents"
 
+    # La coordinación no sube documentos del alumno: solo los revisa.
+    by_admin = _upload(client, admin, app_id, ficha["requirement_id"])
+    assert by_admin.status_code == 403 and "lo sube el alumno" in by_admin.json()["detail"]
+    ficha_doc = _upload(client, student, app_id, ficha["requirement_id"]).json()
+    assert client.delete(f"{base}/{ficha_doc['document_id']}", headers=auth(admin)).status_code == 403
+
+    # Antes de aceptar, ni la coordinación sube documentos de término.
+    assert _upload(client, admin, app_id, constancia["requirement_id"]).status_code == 409
+    _accept(client, student, application)
+
+    # Los de la coordinación los sube solo ella y quedan aprobados.
+    by_student = _upload(client, student, app_id, constancia["requirement_id"])
+    assert by_student.status_code == 403 and "lo sube la coordinación" in by_student.json()["detail"]
+    uploaded = _upload(client, admin, app_id, constancia["requirement_id"])
+    assert uploaded.status_code == 201, uploaded.text
+    document = uploaded.json()
+    assert document["review_status"] == APPROVED and document["reviewed_at"] is not None
+    assert document["uploaded_by_coordination"] is True
+    assert _review(client, admin, app_id, document["document_id"], PENDING).status_code == 409
+
+    file_url = f"{base}/{document['document_id']}/file"
+    assert client.get(file_url, headers=auth(student)).status_code == 200
+    assert client.delete(f"{base}/{document['document_id']}", headers=auth(student)).status_code == 403
+    assert client.delete(f"{base}/{document['document_id']}", headers=auth(admin)).status_code == 204
+
+
+def test_declined_assignment_closes_student_documents(client, admin, student, catalog):
+    ficha = _requirement(client, admin, "Ficha")
+    app_id = _assign(client, admin, catalog, student)["application_id"]
+    assert client.post(f"/internship-applications/{app_id}/decline", headers=auth(student)).status_code == 200
     closed = _upload(client, student, app_id, ficha["requirement_id"])
     assert closed.status_code == 409 and "Declinaste" in closed.json()["detail"]
-    by_admin = _upload(client, admin, app_id, ficha["requirement_id"])
-    assert by_admin.status_code == 201 and by_admin.json()["uploaded_by_coordination"] is True
+
+
+def test_accepting_requires_the_inscription_documents(client, admin, student, catalog):
+    ficha = _requirement(client, admin, "Ficha de inscripción")
+    curp = _requirement(client, admin, "CURP")
+    _requirement(client, admin, "Dictamen", is_required=False)
+    application = _assign(client, admin, catalog, student)
+    app_id = application["application_id"]
+    accept_url = f"/internship-applications/{app_id}/accept"
+
+    blocked = client.post(accept_url, headers=auth(student))
+    assert blocked.status_code == 409
+    assert "Antes de aceptar" in blocked.json()["detail"]
+    assert "Ficha de inscripción" in blocked.json()["detail"] and "CURP" in blocked.json()["detail"]
+    assert "Dictamen" not in blocked.json()["detail"]
+
+    _upload(client, student, app_id, ficha["requirement_id"])
+    curp_doc = _upload(client, student, app_id, curp["requirement_id"]).json()
+    # Uno con observaciones no cuenta: hay que corregirlo.
+    _review(client, admin, app_id, curp_doc["document_id"], REJECTED, "Ilegible")
+    progress = client.get(f"/internship-applications/{app_id}", headers=auth(student)).json()["inscription_progress"]
+    assert progress["submitted"] == 1 and progress["all_submitted"] is False
+    again = client.post(accept_url, headers=auth(student))
+    assert again.status_code == 409 and "CURP" in again.json()["detail"] and "Ficha" not in again.json()["detail"]
+
+    _upload(client, student, app_id, curp["requirement_id"])
+    assert client.post(accept_url, headers=auth(student)).status_code == 200
 
 
 def test_retired_requirement_keeps_uploaded_files(client, admin, student, catalog):
@@ -225,7 +285,7 @@ def test_retired_requirement_keeps_uploaded_files(client, admin, student, catalo
     assert _upload(client, student, app_id, ficha["requirement_id"]).status_code == 400
     # Ya no cuenta para el avance de inscripción.
     progress = client.get(f"/internship-applications/{app_id}", headers=auth(student)).json()["inscription_progress"]
-    assert progress == {"required": 0, "approved": 0, "complete": True}
+    assert progress == {"required": 0, "submitted": 0, "approved": 0, "all_submitted": True, "complete": True}
 
 
 # ---------------------- REGLAS AL AVANZAR ----------------------
@@ -234,28 +294,29 @@ def test_site_requires_complete_inscription_and_finish_requires_completion(clien
     ficha = _requirement(client, admin, "Ficha de inscripción")
     _requirement(client, admin, "Dictamen", is_required=False)
     bitacora = _requirement(client, admin, "Bitácora", stage=IN_PROGRESS, allows_multiple=True)
-    constancia = _requirement(client, admin, "Constancia de culminación", stage=COMPLETION)
+    constancia = _requirement(client, admin, "Constancia de culminación", stage=COMPLETION, provided_by=BY_COORDINATION)
     application = _assign(client, admin, catalog, student)
-    internship = _accept(client, student, application)
     app_id = application["application_id"]
+    ficha_doc = _upload(client, student, app_id, ficha["requirement_id"]).json()
+    internship = _accept(client, student, application)
     url = f"/internships/{internship['internship_id']}"
     site = {"site_id": catalog["site_a"]["site_id"]}
 
+    # Subido pero aún en revisión: no basta para registrar la sede.
     blocked = client.patch(url, headers=auth(admin), json=site)
     assert blocked.status_code == 409
     assert "documentos obligatorios de inscripción" in blocked.json()["detail"] and "Ficha de inscripción" in blocked.json()["detail"]
     assert "Dictamen" not in blocked.json()["detail"]
 
-    ficha_doc = _upload(client, student, app_id, ficha["requirement_id"]).json()
     _review(client, admin, app_id, ficha_doc["document_id"], APPROVED)
     assert client.patch(url, headers=auth(admin), json=site).status_code == 200
 
     not_yet = client.patch(url, headers=auth(admin), json={"status": 3})
     assert not_yet.status_code == 409
     assert "Bitácora" in not_yet.json()["detail"] and "Constancia de culminación" in not_yet.json()["detail"]
-    for requirement in (bitacora, constancia):
-        uploaded = _upload(client, student, app_id, requirement["requirement_id"]).json()
-        _review(client, admin, app_id, uploaded["document_id"], APPROVED)
+    bitacora_doc = _upload(client, student, app_id, bitacora["requirement_id"]).json()
+    _review(client, admin, app_id, bitacora_doc["document_id"], APPROVED)
+    assert _upload(client, admin, app_id, constancia["requirement_id"]).status_code == 201  # queda aprobada
     assert client.patch(url, headers=auth(admin), json={"status": 3}).status_code == 200
 
     # Internado finalizado: el expediente queda cerrado para el estudiante.

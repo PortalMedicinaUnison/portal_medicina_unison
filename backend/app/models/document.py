@@ -20,6 +20,12 @@ class DocumentStageEnum(IntEnum):
     COMPLETION = 3    # Término del internado / liberación del servicio social
 
 
+class DocumentProviderEnum(IntEnum):
+    """Quién sube el documento al expediente."""
+    STUDENT = 1        # el alumno; la coordinación lo revisa
+    COORDINATION = 2   # la coordinación (p. ej. la constancia que emite la institución de salud); queda aprobado
+
+
 class ReviewStatusEnum(IntEnum):
     PENDING = 1    # En revisión
     APPROVED = 2   # Aprobado
@@ -42,6 +48,9 @@ class DocumentRequirement(BaseModel):
     name: Mapped[str] = mapped_column(String(150), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     is_required: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    provided_by: Mapped[DocumentProviderEnum] = mapped_column(
+        IntEnumType(DocumentProviderEnum), nullable=False, default=DocumentProviderEnum.STUDENT, server_default="1",
+    )
     # Varios archivos para el mismo requisito (p. ej. bitácoras o reportes trimestrales).
     allows_multiple: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     # Antigüedad máxima del documento en meses (informativa: la revisa la coordinación).

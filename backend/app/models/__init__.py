@@ -4,7 +4,7 @@ from .site import Institution, Site
 from .promotion import Promotion, PromotionSiteDetail, ProgramEnum
 from .internship import InternshipApplication, Internship, ApplicationStatusEnum, InternshipStatusEnum
 from .social_service import SocialServiceApplication, SocialService, SocialServiceStatusEnum
-from .document import DocumentRequirement, ApplicationDocument, DocumentStageEnum, ReviewStatusEnum
+from .document import DocumentRequirement, ApplicationDocument, DocumentProviderEnum, DocumentStageEnum, ReviewStatusEnum
 from .communication import Announcement, Survey, AnnouncementTypeEnum
 from .report import Report, ReportTypeEnum
 from .password_reset import PasswordResetToken
@@ -19,7 +19,7 @@ __all__ = [
     "Promotion", "PromotionSiteDetail", "ProgramEnum",
     "InternshipApplication", "Internship", "ApplicationStatusEnum", "InternshipStatusEnum",
     "SocialServiceApplication", "SocialService", "SocialServiceStatusEnum",
-    "DocumentRequirement", "ApplicationDocument", "DocumentStageEnum", "ReviewStatusEnum",
+    "DocumentRequirement", "ApplicationDocument", "DocumentProviderEnum", "DocumentStageEnum", "ReviewStatusEnum",
     "Announcement", "Survey", "AnnouncementTypeEnum",
     "Report", "ReportTypeEnum",
     "PasswordResetToken",

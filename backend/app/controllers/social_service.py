@@ -96,6 +96,7 @@ def accept_application(db: Session, user: User, application_id: int) -> SocialSe
     """Acepta la asignación y crea el servicio social en la misma transacción."""
     application = get_application(db, user, application_id)
     _ensure_pending(application)
+    document_rules.ensure_inscription_submitted(db, ProgramEnum.SOCIAL_SERVICE, application.application_id)
     application.status = ApplicationStatusEnum.ACCEPTED
 
     service = SocialServiceRepo(db).get_by_application_any(application.application_id)

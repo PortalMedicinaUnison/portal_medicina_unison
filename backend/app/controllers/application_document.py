@@ -1,8 +1,11 @@
 """
-Expediente de cada asignación (internado o servicio social): el estudiante sube los documentos
-del catálogo y la coordinación los revisa (aprobado o con observaciones).
+Expediente de cada asignación (internado o servicio social). Cada documento del catálogo dice
+quién lo sube (provided_by):
+- Los del alumno: los sube el estudiante y la coordinación los revisa (aprobado o con observaciones).
+- Los de la coordinación (p. ej. la constancia de culminación que emite la institución de salud):
+  solo los sube la coordinación y quedan aprobados; el estudiante los consulta.
 
-Reglas para el estudiante (la coordinación puede corregir cualquier expediente):
+Reglas para el estudiante:
 - Inscripción: desde que tiene la asignación (pendiente o aceptada).
 - Durante y término: cuando ya aceptó (existe su internado o servicio social).
 - No puede cambiar ni borrar documentos aprobados.
@@ -17,9 +20,11 @@ from sqlalchemy.orm import Session
 
 from controllers import internship as internship_controller
 from controllers import social_service as social_service_controller
-from core.errors import bad_request, conflict, not_found
+from core.errors import bad_request, conflict, forbidden, not_found
 from models.base import utcnow
-from models.document import ApplicationDocument, DocumentRequirement, DocumentStageEnum, ReviewStatusEnum
+from models.document import (
+    ApplicationDocument, DocumentProviderEnum, DocumentRequirement, DocumentStageEnum, ReviewStatusEnum,
+)
 from models.internship import ApplicationStatusEnum, InternshipApplication, InternshipStatusEnum
 from models.promotion import ProgramEnum
 from models.social_service import SocialServiceApplication, SocialServiceStatusEnum
@@ -40,6 +45,19 @@ def get_application(db: Session, user: User, program: ProgramEnum, application_i
     if program == ProgramEnum.INTERNSHIP:
         return internship_controller.get_application(db, user, application_id)
     return social_service_controller.get_application(db, user, application_id)
+
+
+def _program_record(program: ProgramEnum, application: Application):
+    """Internado o servicio social de la asignación (None si aún no la acepta)."""
+    return application.internship if program == ProgramEnum.INTERNSHIP else application.social_service
+
+
+def _ensure_can_upload(user: User, requirement: DocumentRequirement) -> None:
+    by_coordination = requirement.provided_by == DocumentProviderEnum.COORDINATION
+    if user.is_staff and not by_coordination:
+        raise forbidden("Este documento lo sube el alumno; la coordinación puede aprobarlo o ponerle observaciones.")
+    if not user.is_staff and by_coordination:
+        raise forbidden("Este documento lo sube la coordinación.")
 
 
 def _ensure_student_can_edit(program: ProgramEnum, application: Application, requirement: DocumentRequirement) -> None:
@@ -92,14 +110,18 @@ def upload_document(
 ) -> ApplicationDocument:
     """
     Sube un PDF para un requisito. Si el requisito admite un solo archivo, el nuevo reemplaza al
-    anterior (que se conserva como histórico). Todo archivo nuevo queda en revisión.
+    anterior (que se conserva como histórico). Lo que sube el alumno queda en revisión; lo que sube
+    la coordinación, aprobado.
     """
     application = get_application(db, user, program, application_id)
     requirement = DocumentRequirementRepo(db).get(requirement_id)
     if requirement is None or requirement.program != program:
         raise bad_request("El documento seleccionado no está en el catálogo de este programa.")
+    _ensure_can_upload(user, requirement)
     if not user.is_staff:
         _ensure_student_can_edit(program, application, requirement)
+    elif requirement.stage != DocumentStageEnum.INSCRIPTION and _program_record(program, application) is None:
+        raise conflict("El alumno aún no acepta su asignación.")
 
     repo = ApplicationDocumentRepo(db)
     existing = repo.list_for_requirement(program, application_id, requirement_id)
@@ -115,13 +137,17 @@ def upload_document(
     path, original_name = save_pdf_upload(file, f"application-documents/{UPLOAD_DIRS[program]}/{application_id}")
     for old in replaced:
         old.is_active = False
+    review = (
+        {"review_status": ReviewStatusEnum.APPROVED, "reviewed_at": utcnow(), "reviewed_by_id": user.user_id}
+        if user.is_staff else {"review_status": ReviewStatusEnum.PENDING}
+    )
     document = ApplicationDocument(
         requirement_id=requirement.requirement_id,
         path=path,
         media_type="application/pdf",
         original_filename=original_name,
-        review_status=ReviewStatusEnum.PENDING,
         uploaded_by_id=user.user_id,
+        **review,
         **{application_column(program).key: application_id},
     )
     db.add(document)
@@ -137,7 +163,12 @@ def upload_document(
 
 def delete_document(db: Session, user: User, program: ProgramEnum, application_id: int, document_id: int) -> None:
     application, document = _get_document(db, user, program, application_id, document_id)
+    by_coordination = document.requirement.provided_by == DocumentProviderEnum.COORDINATION
+    if user.is_staff and not by_coordination:
+        raise forbidden("Los documentos del alumno no se eliminan; ponle observaciones para que suba otro.")
     if not user.is_staff:
+        if by_coordination:
+            raise forbidden("Este documento lo sube la coordinación.")
         if document.review_status == ReviewStatusEnum.APPROVED:
             raise conflict("No puedes eliminar un documento aprobado.")
         _ensure_student_can_edit(program, application, document.requirement)
@@ -149,8 +180,10 @@ def delete_document(db: Session, user: User, program: ProgramEnum, application_i
 def review_document(
     db: Session, reviewer: User, program: ProgramEnum, application_id: int, document_id: int, data: DocumentReviewInput,
 ) -> ApplicationDocument:
-    """Aprueba, marca con observaciones o regresa a revisión un documento."""
+    """Aprueba, marca con observaciones o regresa a revisión un documento del alumno."""
     _application, document = _get_document(db, reviewer, program, application_id, document_id)
+    if document.requirement.provided_by == DocumentProviderEnum.COORDINATION:
+        raise conflict("Los documentos que sube la coordinación no se revisan.")
     if data.review_status == ReviewStatusEnum.PENDING:
         payload = {"review_status": ReviewStatusEnum.PENDING, "review_comment": None, "reviewed_at": None, "reviewed_by_id": None}
     else:
