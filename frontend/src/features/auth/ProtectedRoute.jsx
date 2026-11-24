@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { ADMIN_HOME, ROUTES } from '../../config';
 import { useUser } from '../../contexts/UserContext';
+import PrivacyConsentGate from '../privacy/PrivacyConsentGate';
 import LoadingSpinner from '../../utils/ui/LoadingSpinner';
 
 /**
@@ -10,7 +11,7 @@ import LoadingSpinner from '../../utils/ui/LoadingSpinner';
  *  allow="admin"   → administradores y super administradores (un estudiante se manda al inicio)
  */
 const ProtectedRoute = ({ allow = 'any' }) => {
-  const { isAuthenticated, isAdmin, loading } = useUser();
+  const { user, isAuthenticated, isAdmin, loading } = useUser();
   const location = useLocation();
 
   if (loading) {
@@ -27,6 +28,9 @@ const ProtectedRoute = ({ allow = 'any' }) => {
 
   if (allow === 'admin' && !isAdmin) return <Navigate to={ROUTES.HOME} replace />;
   if (allow === 'student' && isAdmin) return <Navigate to={ADMIN_HOME} replace />;
+
+  // Hay que aceptar la versión vigente del aviso de privacidad antes de usar el portal.
+  if (!user.privacy_notice_accepted) return <PrivacyConsentGate />;
 
   return <Outlet />;
 };

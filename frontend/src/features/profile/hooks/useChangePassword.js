@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { changeMyPasswordRequest } from '../../../services/userService';
+import { setToken } from '../../../utils/auth';
 import { getErrorMessage } from '../../../utils/errors';
 
 
@@ -16,7 +17,9 @@ export default function useChangePassword() {
     setSuccess(false);
 
     try {
-      await changeMyPasswordRequest(data);
+      // El backend cierra las demás sesiones y devuelve un token nuevo para esta.
+      const { data: session } = await changeMyPasswordRequest(data);
+      if (session?.access_token) setToken(session.access_token);
       setSuccess(true);
       return true;
     } catch (err) {

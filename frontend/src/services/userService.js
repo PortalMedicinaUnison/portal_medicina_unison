@@ -9,8 +9,12 @@ export const getMeRequest = () =>
 export const updateMeRequest = (data) =>
   api.patch(API_ENDPOINTS.USERS.ME, data);
 
+// Devuelve { access_token }: las demás sesiones se cierran y esta sigue con el token nuevo.
 export const changeMyPasswordRequest = (data) =>
   api.put(API_ENDPOINTS.USERS.ME_PASSWORD, data);
+
+export const acceptPrivacyNoticeRequest = () =>
+  api.post(API_ENDPOINTS.USERS.ME_PRIVACY_NOTICE_ACCEPT);
 
 export const deactivateMeRequest = () =>
   api.delete(API_ENDPOINTS.USERS.ME);
@@ -49,6 +53,10 @@ export const deleteUserRequest = (id) =>
 
 export const reactivateUserRequest = (id) =>
   api.post(API_ENDPOINTS.USERS.REACTIVATE(id));
+
+// Enlace de un solo uso para que el usuario cree una contraseña nueva: { token, expires_at }.
+export const createPasswordResetLinkRequest = (id) =>
+  api.post(API_ENDPOINTS.USERS.PASSWORD_RESET(id));
 
 // ----------------- Pre-registro (enrollments) ----------------
 

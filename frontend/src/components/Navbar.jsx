@@ -46,6 +46,7 @@ function Navbar({ toggleSidebar, openToggleButton }) {
             )}
             actions={[
                 {label: 'Ver perfil', onClick: () => navigate(ROUTES.USER.PROFILE)},
+                {label: 'Aviso de privacidad', onClick: () => navigate(ROUTES.PRIVACY_NOTICE)},
                 {label: 'Cerrar sesión', onClick: logout, className: 'text-red-600'},
             ]}
             hover={false}

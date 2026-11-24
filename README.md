@@ -33,6 +33,22 @@ El estudiante primero **acredita el internado** y después hace el **servicio so
 
 Solo se puede asignar servicio social a quien ya tiene el internado finalizado (acreditado).
 
+## Contraseñas y aviso de privacidad
+
+- **Recuperar contraseña (sin costo).** Siempre disponible: en *Alumnos → Usuarios → (usuario) → Restablecer contraseña*
+  la coordinación genera un enlace de un solo uso (vigencia: `PASSWORD_RESET_HOURS`) y lo copia o lo envía desde su propio
+  correo. Opcional: si se configura `SMTP_*`, el usuario pide el enlace él mismo en *¿Olvidaste tu contraseña?* y le llega
+  por correo. Sirve una cuenta de Gmail o Google Workspace con
+  [contraseña de aplicación](https://support.google.com/accounts/answer/185833) (`SMTP_HOST=smtp.gmail.com`,
+  `SMTP_PORT=587`) o el servidor SMTP de la universidad, si lo hay. La respuesta no revela si un correo está registrado y
+  cada cuenta recibe como máximo un correo cada 5 minutos.
+- Al cambiar o restablecer la contraseña se cierran las demás sesiones abiertas de la cuenta.
+- **Aviso de privacidad** en `/privacy` (público). El registro exige aceptarlo, y las cuentas que aún no lo han aceptado
+  (p. ej. administradores creados por consola) lo aceptan al entrar. Para pedirlo de nuevo a todos tras un cambio
+  relevante, cambia `PRIVACY_NOTICE_VERSION`. El texto está en
+  `frontend/src/features/privacy/PrivacyNoticeContent.jsx`: es un **borrador** y los datos resaltados entre corchetes debe
+  validarlos la Unidad de Transparencia de la Unison antes de publicar el portal.
+
 ## Variables de entorno (backend)
 
 Se leen de variables de entorno o del archivo `backend/.env` (no se versiona). Ejemplo de `backend/.env` para desarrollo:
@@ -53,6 +69,15 @@ DATABASE_URL=sqlite:///data/portal.db
 | `MAX_UPLOAD_MB` | no | `10` | Tamaño máximo de cada PDF. |
 | `MAX_PHOTO_MB` | no | `2` | Tamaño máximo de la foto de perfil (JPEG, PNG o WebP). |
 | `ORIGINS` | no | `["http://localhost:5173","http://127.0.0.1:5173"]` | Orígenes permitidos por CORS (JSON). |
+| `PASSWORD_RESET_HOURS` | no | `24` | Vigencia de los enlaces que genera la coordinación. |
+| `PRIVACY_NOTICE_VERSION` | no | `2026-11` | Versión vigente del aviso de privacidad; al cambiarla, todos deben aceptarlo de nuevo. |
+| `SMTP_HOST` | no | — | Servidor de correo saliente. Sin él (o sin `SMTP_FROM`) la recuperación por correo queda desactivada. |
+| `SMTP_PORT` | no | `587` | Puerto SMTP. |
+| `SMTP_USER` / `SMTP_PASSWORD` | no | — | Credenciales SMTP (en Gmail, una contraseña de aplicación). |
+| `SMTP_FROM` | no | — | Remitente, p. ej. `Portal Medicina <cuenta@gmail.com>`. |
+| `SMTP_STARTTLS` / `SMTP_SSL` | no | `true` / `false` | STARTTLS (puerto 587) o SSL directo (puerto 465). |
+| `PASSWORD_RESET_EMAIL_MINUTES` | no | `60` | Vigencia de los enlaces enviados por correo. |
+| `FRONTEND_URL` | con correo | `http://localhost:5173` | Dirección pública del portal para los enlaces de los correos. En producción con correo activado es obligatoria. |
 
 Frontend: `VITE_API_URL` (por defecto `http://localhost:8000`); se puede definir en `frontend/.env.local`.
 
@@ -129,6 +154,12 @@ Requisitos: Linux con Docker y Docker Compose.
    ```env
    SECRET_KEY=<cadena aleatoria de 32+ caracteres>
    ENVIRONMENT=prod
+   # Opcional: recuperación de contraseña por correo
+   # FRONTEND_URL=https://<dirección del portal>
+   # SMTP_HOST=smtp.gmail.com
+   # SMTP_USER=<cuenta>
+   # SMTP_PASSWORD=<contraseña de aplicación>
+   # SMTP_FROM=Portal Medicina <cuenta>
    ```
 2. Levanta los servicios:
    ```bash
@@ -153,7 +184,9 @@ docker compose -f docker-compose.prod.yml cp backend:/backend/uploads ./uploads-
 
 ## Permisos
 
-- Todas las rutas requieren sesión excepto `POST /auth/login`, `POST /auth/register` y `GET /health`.
+- Todas las rutas requieren sesión excepto `POST /auth/login`, `POST /auth/register`, `GET /health` y las de
+  restablecimiento de contraseña (`/auth/password-reset/*`).
+- Un administrador solo puede generar enlaces de restablecimiento para estudiantes; para otros administradores, solo un `super_admin`.
 - Las rutas de administración responden 403 a estudiantes; los estudiantes solo ven y modifican sus propios datos.
 - Los reportes anónimos no muestran al estudiante a la coordinación.
 - Solo un `super_admin` puede cambiar roles.

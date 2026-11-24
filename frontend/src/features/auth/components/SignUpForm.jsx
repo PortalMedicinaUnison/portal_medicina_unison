@@ -15,6 +15,7 @@ const INITIAL_FORM = {
   confirmEmail: '',
   password: '',
   confirmPassword: '',
+  acceptPrivacyNotice: false,
 };
 
 function SignUpForm() {
@@ -57,6 +58,7 @@ function SignUpForm() {
     if (!cleanedData.password) errors.push('La contraseña es requerida.');
     else if (!validatePassword(cleanedData.password).valid) errors.push(validatePassword(cleanedData.password).error);
     if (cleanedData.password !== cleanedData.confirmPassword) errors.push('Las contraseñas no coinciden.');
+    if (!formData.acceptPrivacyNotice) errors.push('Debes aceptar el aviso de privacidad.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -70,6 +72,7 @@ function SignUpForm() {
       academic_id: cleanedData.academicId,
       email: cleanedData.email,
       password: cleanedData.password,
+      accept_privacy_notice: formData.acceptPrivacyNotice,
     };
 
     await signUpUser(payload);
@@ -217,6 +220,31 @@ function SignUpForm() {
             required
           />
         </div>
+      </div>
+
+      <div className="mb-6 flex items-start gap-3">
+        <input
+          id="signup-privacy"
+          name="acceptPrivacyNotice"
+          type="checkbox"
+          checked={formData.acceptPrivacyNotice}
+          onChange={handleChange}
+          className="mt-1 size-4 shrink-0 rounded border-gray-300"
+          disabled={saving}
+          required
+        />
+        <label htmlFor="signup-privacy" className="text-xs text-gray-700">
+          He leído y acepto el{' '}
+          <Link
+            to={ROUTES.PRIVACY_NOTICE}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-indigo-600 underline underline-offset-2"
+          >
+            aviso de privacidad
+          </Link>
+          , incluido el tratamiento de los datos sensibles de los documentos y reportes que suba al portal.
+        </label>
       </div>
 
       <div className="mb-6">

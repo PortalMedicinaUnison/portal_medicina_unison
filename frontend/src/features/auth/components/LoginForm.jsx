@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate, Link } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { ROUTES } from '../../../config';
 import useAuth from '../hooks/useAuth';
 import { cleanFormData } from "../../../utils/utils";
@@ -12,6 +12,8 @@ const INITIAL_FORM = {
 
 function LoginForm() {
   const navigate = useNavigate();
+  // Aviso que dejan otras pantallas al redirigir aquí (p. ej. tras restablecer la contraseña).
+  const notice = useLocation().state?.notice;
   const { login, loading: authenticating, error: authError, isAuthenticated, reset } = useAuth();
 
   const [formData, setFormData] = useState(INITIAL_FORM);
@@ -64,6 +66,10 @@ function LoginForm() {
 // ---------------------- RENDER ----------------------
   return (
     <form onSubmit={handleSubmit}>
+      {notice && !authError && (
+        <div className="alert-success mb-6" role="status">{notice}</div>
+      )}
+
       <div className="mb-6">
         <label className="form-label">Email:</label>
         <input
@@ -90,6 +96,11 @@ function LoginForm() {
             // disabled={saving}
             required
           />
+          <div className="mt-2 text-right">
+            <Link to={ROUTES.AUTH.FORGOT_PASSWORD} className="text-xs text-indigo-500 hover:text-indigo-600">
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </div>
       </div>
 
       <div className="mb-6">
@@ -112,7 +123,7 @@ function LoginForm() {
 
       <div className="mt-6">
         <p className="text-center text-xs text-gray-500">
-          ¿Ya tienes cuenta?{' '}
+          ¿No tienes cuenta?{' '}
           <Link to={ROUTES.AUTH.SIGNUP} className="text-indigo-500 hover:text-indigo-500">
             Regístrate aquí
           </Link>

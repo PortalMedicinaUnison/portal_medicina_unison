@@ -3,6 +3,9 @@ import ProtectedRoute from '../features/auth/ProtectedRoute';
 
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignUpPage from '../features/auth/pages/SignUpPage';
+import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage';
+import ResetPasswordPage from '../features/auth/pages/ResetPasswordPage';
+import PrivacyNoticePage from '../features/privacy/PrivacyNoticePage';
 import HomePage from '../user/features/announcements/pages/AnnouncementCardPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
@@ -38,6 +41,9 @@ function UserRoutes() {
     <Routes>
       <Route path="login" element={<LoginPage />} />
       <Route path="signup" element={<SignUpPage />} />
+      <Route path="forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="reset-password" element={<ResetPasswordPage />} />
+      <Route path="privacy" element={<PrivacyNoticePage />} />
 
       {/* Perfil: cualquier usuario con sesión (también administradores) */}
       <Route element={<ProtectedRoute allow="any" />}>

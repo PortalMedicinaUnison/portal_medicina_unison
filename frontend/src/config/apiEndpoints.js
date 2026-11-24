@@ -5,6 +5,10 @@ export const API_ENDPOINTS = {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
     REFRESH: '/auth/refresh',
+    PASSWORD_RESET_OPTIONS: '/auth/password-reset/options',
+    PASSWORD_RESET_REQUEST: '/auth/password-reset/request',
+    PASSWORD_RESET_VERIFY: '/auth/password-reset/verify',
+    PASSWORD_RESET_CONFIRM: '/auth/password-reset/confirm',
   },
 
   USERS: {
@@ -12,9 +16,11 @@ export const API_ENDPOINTS = {
     ME: '/users/me',
     ME_PASSWORD: '/users/me/password',
     ME_PHOTO: '/users/me/photo',
+    ME_PRIVACY_NOTICE_ACCEPT: '/users/me/privacy-notice/accept',
     DETAIL: (id) => `/users/${id}`,
     ROLE: (id) => `/users/${id}/role`,
     REACTIVATE: (id) => `/users/${id}/reactivate`,
+    PASSWORD_RESET: (id) => `/users/${id}/password-reset`,
     PHOTO: (id) => `/users/${id}/photo`,
   },
 
