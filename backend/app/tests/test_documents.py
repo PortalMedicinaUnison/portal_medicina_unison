@@ -243,7 +243,7 @@ def test_site_requires_complete_inscription_and_finish_requires_completion(clien
 
     blocked = client.patch(url, headers=auth(admin), json=site)
     assert blocked.status_code == 409
-    assert "expediente de inscripción" in blocked.json()["detail"] and "Ficha de inscripción" in blocked.json()["detail"]
+    assert "documentos obligatorios de inscripción" in blocked.json()["detail"] and "Ficha de inscripción" in blocked.json()["detail"]
     assert "Dictamen" not in blocked.json()["detail"]
 
     ficha_doc = _upload(client, student, app_id, ficha["requirement_id"]).json()

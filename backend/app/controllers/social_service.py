@@ -161,7 +161,7 @@ def update_social_service(db: Session, user: User, social_service_id: int, data:
     if service.site_id is None and target_site is not None:
         document_rules.ensure_stages_complete(
             db, ProgramEnum.SOCIAL_SERVICE, service.application_id, [DocumentStageEnum.INSCRIPTION],
-            "Antes de registrar la plaza, el expediente de inscripción debe estar completo.",
+            "Antes de registrar la plaza deben estar aprobados los documentos obligatorios de inscripción.",
         )
     if target_status == SocialServiceStatusEnum.FINISHED and service.status != SocialServiceStatusEnum.FINISHED:
         document_rules.ensure_stages_complete(

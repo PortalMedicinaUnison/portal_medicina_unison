@@ -44,16 +44,16 @@ def get_application(db: Session, user: User, program: ProgramEnum, application_i
 
 def _ensure_student_can_edit(program: ProgramEnum, application: Application, requirement: DocumentRequirement) -> None:
     if application.status == ApplicationStatusEnum.DECLINED:
-        raise conflict("Declinaste esta asignación: su expediente ya no se puede modificar.")
+        raise conflict("Declinaste esta asignación: ya no puedes modificar sus documentos.")
     if application.promotion.is_finished:
-        raise conflict("La promoción ya terminó: el expediente está cerrado.")
+        raise conflict("La promoción ya terminó: ya no se pueden modificar sus documentos.")
     if program == ProgramEnum.INTERNSHIP:
         record, finished, closed_message = (
-            application.internship, InternshipStatusEnum.FINISHED, "Tu internado ya está finalizado: el expediente está cerrado.",
+            application.internship, InternshipStatusEnum.FINISHED, "Tu internado ya está finalizado: ya no se pueden modificar sus documentos.",
         )
     else:
         record, finished, closed_message = (
-            application.social_service, SocialServiceStatusEnum.FINISHED, "Tu servicio social ya está liberado: el expediente está cerrado.",
+            application.social_service, SocialServiceStatusEnum.FINISHED, "Tu servicio social ya está liberado: ya no se pueden modificar sus documentos.",
         )
     if requirement.stage != DocumentStageEnum.INSCRIPTION and record is None:
         raise conflict("Podrás subir este documento cuando aceptes tu asignación.")

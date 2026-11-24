@@ -149,7 +149,7 @@ def update_internship(db: Session, user: User, internship_id: int, data: Interns
     if internship.site_id is None and target_site is not None:
         document_rules.ensure_stages_complete(
             db, ProgramEnum.INTERNSHIP, internship.application_id, [DocumentStageEnum.INSCRIPTION],
-            "Antes de registrar la sede, el expediente de inscripción debe estar completo.",
+            "Antes de registrar la sede deben estar aprobados los documentos obligatorios de inscripción.",
         )
     if target_status == InternshipStatusEnum.FINISHED and internship.status != InternshipStatusEnum.FINISHED:
         document_rules.ensure_stages_complete(
