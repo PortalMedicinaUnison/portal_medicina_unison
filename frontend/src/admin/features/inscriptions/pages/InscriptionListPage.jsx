@@ -10,6 +10,7 @@ import usePromotionPicker from '../hooks/usePromotionPicker';
 import useInscriptions from '../hooks/useInscriptions';
 import AssignStudentsDialog from '../components/AssignStudentsDialog';
 import DocumentsStatus from '../components/DocumentsStatus';
+import { promotionCreatePath } from '../../promotions/promotionPaths';
 
 const sortKey = (student) => normalizeText([student?.last_name, student?.second_last_name, student?.first_name].filter(Boolean).join(' '));
 
@@ -80,7 +81,10 @@ function InscriptionListPage({ program }) {
         {loadingPromotions && <LoadingSpinner />}
         {!loadingPromotions && promotionsError && <DataLoadError title="No se pudieron cargar las promociones" message={promotionsError} />}
         {!loadingPromotions && !promotionsError && promotions.length === 0 && (
-          <p className="text-sm text-gray-600">Aún no hay promociones de {config.name.toLowerCase()}. Créalas en Promociones.</p>
+          <p className="text-sm text-gray-600">
+            Aún no hay promociones de {config.name.toLowerCase()}.{' '}
+            <Link to={promotionCreatePath(config.program)} className="font-semibold underline">Crear la primera</Link>
+          </p>
         )}
 
         {promotion && (

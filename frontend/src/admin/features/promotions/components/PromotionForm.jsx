@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useCreatePromotion from '../hooks/useCreatePromotion';
 import useGetPromotions from '../hooks/useGetPromotions';
 import { PROGRAMS, PROGRAM_LABELS } from '../../../../utils/constants';
 import { promotionLabel } from '../../../../utils/utils';
 import { USUAL_START_HINT, datesLabel, isISODate, nextUsualStart, oneYearAfter, semesterTaken } from '../promotionDates';
+import { programFromParams, promotionListPath } from '../promotionPaths';
 
 const MAX_YEARS_AHEAD = 5;  // como el backend
 
@@ -16,7 +17,8 @@ const MAX_YEARS_AHEAD = 5;  // como el backend
 function PromotionForm() {
   const navigate = useNavigate();
   const { createPromotion, loading: saving, error: saveError, reset } = useCreatePromotion();
-  const [program, setProgram] = useState(PROGRAMS.INTERNSHIP);
+  const [searchParams] = useSearchParams();
+  const [program, setProgram] = useState(() => programFromParams(searchParams) ?? PROGRAMS.INTERNSHIP);
   const { promotions, loading: loadingPromotions } = useGetPromotions({ program });
 
   const [startDate, setStartDate] = useState('');
@@ -136,7 +138,7 @@ function PromotionForm() {
         </div>
 
         <div className="button-group">
-          <button type="button" className="btn-secondary" onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_LIST))} disabled={saving}>
+          <button type="button" className="btn-secondary" onClick={() => navigate(promotionListPath(program))} disabled={saving}>
             Cancelar
           </button>
           <button type="submit" className="btn-primary" disabled={saving || loadingPromotions}>

@@ -1,5 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
-import { NavLink, matchPath, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+
+// ¿La ubicación corresponde al enlace? Cuenta la ruta y los parámetros que fija el enlace
+// (p. ej. /admin/promotions?program=1): `inside` incluye sus subrutas; `current`, solo esa ruta.
+function linkState(to, location) {
+  const [path, query = ''] = to.split('?');
+  const params = new URLSearchParams(location.search);
+  const sameQuery = [...new URLSearchParams(query)].every(([key, value]) => params.get(key) === value);
+  return {
+    inside: sameQuery && (location.pathname === path || location.pathname.startsWith(`${path}/`)),
+    current: sameQuery && location.pathname === path,
+  };
+}
 
 /**
  * SidebarCollapse
@@ -27,12 +39,10 @@ export default function SidebarCollapse({
   const location = useLocation();
 
   // Abre automáticamente si alguna ruta hija está activa
-  const hasActiveChild = useMemo(() => {
-    return links.some(l =>
-      matchPath({ path: l.to, end: false }, location.pathname) ||
-      location.pathname.startsWith(l.to)
-    );
-  }, [links, location.pathname]);
+  const hasActiveChild = useMemo(
+    () => links.some((l) => linkState(l.to, location).inside),
+    [links, location],
+  );
 
   const [isOpen, setIsOpen] = useState(defaultOpen || hasActiveChild);
 
@@ -89,15 +99,19 @@ export default function SidebarCollapse({
       </button>
 
       <div className={`${isOpen ? 'block' : 'hidden'} py-1`}>
-        {links.map((l, i) => (
-          <NavLink
-            key={i}
-            to={l.to}
-            className={`sidebar-item-link ${linkClassName} ${l.className || ''}`}
-          >
-            {l.label}
-          </NavLink>
-        ))}
+        {links.map((l, i) => {
+          const { current } = linkState(l.to, location);
+          return (
+            <Link
+              key={i}
+              to={l.to}
+              aria-current={current ? 'page' : undefined}
+              className={`sidebar-item-link ${linkClassName} ${l.className || ''} ${current ? 'font-semibold text-indigo-700' : ''}`}
+            >
+              {l.label}
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

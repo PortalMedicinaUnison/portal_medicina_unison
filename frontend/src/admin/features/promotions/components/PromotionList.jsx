@@ -12,7 +12,8 @@ import { promotionLabel } from '../../../../utils/utils';
 import { INSCRIPTION_PROGRAMS } from '../../inscriptions/programs';
 
 
-function PromotionList({ promotions, fetching, fetchError, refetch }) {
+// program: si la pantalla ya viene filtrada por programa (?program=), no se muestra ese filtro ni su columna.
+function PromotionList({ promotions, fetching, fetchError, refetch, program = null }) {
   const navigate = useNavigate();
   const { deletePromotion, loading: deleting, success: deleted,  error: deleteError, reset } = useDeletePromotion();
   
@@ -107,17 +108,19 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
   return (
     <div className="table-container">
       <div className="table-container-actions">
-        <select
-          className="btn-tertiary--light"
-          value={programFilter}
-          onChange={(e) => setProgramFilter(e.target.value)}
-          aria-label="Filtrar por programa"
-        >
-          <option value="">Programa</option>
-          {Object.entries(PROGRAM_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>{label}</option>
-          ))}
-        </select>
+        {!program && (
+          <select
+            className="btn-tertiary--light"
+            value={programFilter}
+            onChange={(e) => setProgramFilter(e.target.value)}
+            aria-label="Filtrar por programa"
+          >
+            <option value="">Programa</option>
+            {Object.entries(PROGRAM_LABELS).map(([value, label]) => (
+              <option key={value} value={value}>{label}</option>
+            ))}
+          </select>
+        )}
         <select
           className="btn-tertiary--light"
           value={yearFilter}
@@ -145,8 +148,8 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
         <table className="table">
           <thead>
             <tr>
-              <th className='w-3/12'>Programa</th>
-              <th className='w-5/12'>Promoción</th>
+              {!program && <th className='w-3/12'>Programa</th>}
+              <th className={program ? 'w-8/12' : 'w-5/12'}>Promoción</th>
               <th className='w-3/12'>Estatus</th>
               <th className='w-1/12'></th>
             </tr>
@@ -154,7 +157,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={4} className="text-center py-6">
+                <td colSpan={program ? 3 : 4} className="text-center py-6">
                 {(programFilter || yearFilter || statusFilter)
                   ? 'No se encontraron promociones que coincidan con los filtros.' 
                   : 'No hay promociones disponibles.'
@@ -164,7 +167,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
             ) : (
               filtered.map((item) => (
               <tr key={item.promotion_id}>
-                <td>{labelOf(PROGRAM_LABELS, item.program)}</td>
+                {!program && <td>{labelOf(PROGRAM_LABELS, item.program)}</td>}
                 <td>{promotionLabel(item)}</td>
                 <td>{item.is_finished ? 'Finalizada' : 'En curso'}</td>
                 <td className="overflow-visible text-right">
