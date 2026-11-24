@@ -209,7 +209,7 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
         {saved && !dirty && <div className="alert-success">Cambios guardados.</div>}
         <div className="flex flex-wrap items-center justify-end gap-3">
           <p className="mr-auto text-sm text-gray-500" aria-live="polite">
-            {pending.length > 0 ? `Cambios sin guardar: ${pending.join(', ')}.` : 'Sin cambios por guardar.'}
+            {pending.length > 0 ? `Cambios sin guardar: ${pending.join(', ')}.` : (saved ? '' : 'Sin cambios por guardar.')}
           </p>
           <button type="button" className="btn-secondary" onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_DETAIL(promotionId)))} disabled={saving}>
             Volver

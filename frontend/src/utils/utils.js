@@ -50,9 +50,10 @@ export function todayISO() {
 export const normalizeText = (text) => String(text ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
 // Etiqueta de una promoción. Usa `label` del backend si existe (p. ej. "Jul 2026 – Jun 2027").
+// Los espacios entre mes y año son no separables, para que "Ene 2026" no se parta en dos líneas.
 export function promotionLabel(promotion) {
   if (!promotion) return '—';
-  if (promotion.label) return promotion.label;
+  if (promotion.label) return promotion.label.replace(/([A-Za-zÁÉÍÓÚáéíóú]{3}) (\d{4})/g, '$1\u00a0$2');
   return `${promotion.year} - ${promotion.period === 1 ? 'Primer periodo' : 'Segundo periodo'}`;
 }
 

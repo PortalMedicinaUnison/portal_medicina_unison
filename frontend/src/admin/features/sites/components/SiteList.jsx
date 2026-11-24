@@ -132,7 +132,7 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
           className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por sede, institución o jefe de enseñanza"
+          placeholder="Buscar sede, institución o jefe"
           aria-label="Buscar por sede, institución o jefe de enseñanza"
         />
         <select

@@ -23,7 +23,12 @@ function TemplateControls({ requirement, busy, onUpload, onRemove, onDownload })
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
       <span className="text-gray-600">
-        Formato: {requirement.has_template ? <strong className="font-medium text-gray-800">{requirement.template_filename}</strong> : 'sin formato'}
+        Formato: {requirement.has_template
+          ? <strong className="font-medium text-gray-800">{requirement.template_filename}</strong>
+          : (/formato/i.test(requirement.description ?? '')
+            // Las indicaciones piden descargar un formato que todavía no se subió.
+            ? <strong className="font-medium text-amber-700">falta subirlo (las indicaciones lo mencionan)</strong>
+            : 'sin formato')}
       </span>
       {requirement.has_template && (
         <button type="button" className="btn-tertiary text-xs" onClick={() => onDownload(requirement)}>Descargar</button>

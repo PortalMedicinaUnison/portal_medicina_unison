@@ -53,6 +53,12 @@ function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
 
   return (
     <div className="info-container">
+      {Number(socialService.status) === SOCIAL_SERVICE_STATUS.FINISHED && (
+        <div className="mb-8 rounded-md border border-green-200 bg-green-50 p-4 text-sm text-green-900" role="status">
+          <p className="font-semibold">Liberaste tu servicio social.</p>
+          <p className="mt-1">Tus documentos quedan solo para consulta.</p>
+        </div>
+      )}
       {hasLeft && (
         <RecordExitNotice
           record={socialService}

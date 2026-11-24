@@ -52,6 +52,12 @@ function InternshipDetail({ internship, fetching, fetchError, refetch }) {
 
   return (
     <div className="info-container">
+      {Number(internship.status) === INTERNSHIP_STATUS.FINISHED && (
+        <div className="mb-8 rounded-md border border-green-200 bg-green-50 p-4 text-sm text-green-900" role="status">
+          <p className="font-semibold">Acreditaste el internado.</p>
+          <p className="mt-1">Cuando la coordinación te asigne al servicio social, en tu inicio verás qué sigue. Tus documentos quedan solo para consulta.</p>
+        </div>
+      )}
       {hasLeft && (
         <RecordExitNotice
           record={internship}

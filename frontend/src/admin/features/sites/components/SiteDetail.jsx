@@ -185,7 +185,7 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
       <div className="info-actions mt-16">
         <button 
           type="button" 
-          className='btn-tertiary'
+          className='btn-tertiary text-red-600'
           onClick={handleDeleteButton}
           disabled={deleting}
         >

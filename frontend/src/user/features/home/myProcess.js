@@ -61,7 +61,11 @@ export function describeStep(steps, application) {
     };
   }
   if (status === APPLICATION_STATUS.DECLINED) {
-    return { tone: 'closed', text: `Declinaste tu asignación a la promoción ${promotion}.`, action: { label: 'Ver detalle', to: steps.declinedPath } };
+    return {
+      tone: 'closed',
+      text: `Declinaste tu asignación a la promoción ${promotion}. Si fue un error o quieres participar en otra promoción, comunícate con la coordinación.`,
+      action: { label: 'Ver detalle', to: steps.declinedPath },
+    };
   }
 
   const record = application[steps.record];

@@ -194,7 +194,7 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
             onClick={handleDeleteButton}
             disabled={deleting}
           >
-            {deleting ? 'Desactivando...' : 'Desactivar usuario'}
+            {deleting ? 'Desactivando...' : 'Desactivar cuenta'}
           </button>
         )}
       </div>
