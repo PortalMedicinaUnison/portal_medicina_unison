@@ -4,10 +4,13 @@ import { getAllPromotionsRequest } from '../../../../services/promotionService';
 import { getErrorMessage } from '../../../../utils/errors';
 
 const byNewest = (a, b) => (b.year - a.year) || (b.period - a.period);
+// Última promoción en uso por programa durante la sesión, para que Inscripciones y Resultados del
+// acto abran la misma al navegar por el menú.
+const storageKey = (program) => `pmu.promotion.${program}`;
 
 /**
  * Promociones del programa y la elegida, que viaja en la URL (?promotion_id=) para poder
- * compartir o recargar la vista. Por defecto, la más reciente sin finalizar.
+ * compartir o recargar la vista. Sin ella, la última en uso en la sesión o la más reciente sin finalizar.
  */
 export default function usePromotionPicker(program) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -26,11 +29,18 @@ export default function usePromotionPicker(program) {
   }, [program]);
 
   const requested = Number(searchParams.get('promotion_id')) || null;
+  const remembered = Number(sessionStorage.getItem(storageKey(program))) || null;
   const promotionId = useMemo(() => {
-    if (requested && promotions.some((p) => p.promotion_id === requested)) return requested;
+    const exists = (id) => id && promotions.some((p) => p.promotion_id === id);
+    if (exists(requested)) return requested;
+    if (exists(remembered)) return remembered;
     const open = promotions.find((p) => !p.is_finished);
     return (open ?? promotions[0])?.promotion_id ?? null;
-  }, [requested, promotions]);
+  }, [requested, remembered, promotions]);
+
+  useEffect(() => {
+    if (promotionId) sessionStorage.setItem(storageKey(program), String(promotionId));
+  }, [program, promotionId]);
 
   const promotion = promotions.find((p) => p.promotion_id === promotionId) ?? null;
 

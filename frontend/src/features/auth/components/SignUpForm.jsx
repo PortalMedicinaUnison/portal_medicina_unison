@@ -90,8 +90,9 @@ function SignUpForm() {
   return (
     <form onSubmit={handleSubmit}>
       <div className="mb-4">
-          <label className="form-label">Correo:</label>
+          <label className="form-label" htmlFor="signup-email">Correo:</label>
           <input
+            id="signup-email"
             name="email"
             type="email"
             value={formData.email}
@@ -104,8 +105,9 @@ function SignUpForm() {
         </div>
 
         <div className="mb-4">
-          <label className="form-label">Confirmar correo:</label>
+          <label className="form-label" htmlFor="signup-confirm-email">Confirmar correo:</label>
           <input
+            id="signup-confirm-email"
             name="confirmEmail"
             type="email"
             value={formData.confirmEmail}
@@ -119,8 +121,9 @@ function SignUpForm() {
 
         <div className="mb-4">
           <div className="relative">
-            <label className="form-label">Contraseña:</label>
+            <label className="form-label" htmlFor="signup-password">Contraseña:</label>
             <input
+              id="signup-password"
               name="password"
               type={showPassword ? "text" : "password"}
               value={formData.password}
@@ -142,8 +145,9 @@ function SignUpForm() {
 
         <div className="mb-6">
           <div className="relative">
-            <label className="form-label">Confirmar contraseña:</label>
+            <label className="form-label" htmlFor="signup-confirm-password">Confirmar contraseña:</label>
             <input
+              id="signup-confirm-password"
               name="confirmPassword"
               type={showPassword ? "text" : "password"}
               value={formData.confirmPassword}
@@ -165,8 +169,9 @@ function SignUpForm() {
 
       <div className="grid grid-cols-2 gap-x-4 gap-y-4">
         <div className="mb-4">
-          <label className="form-label">Nombre(s):</label>
+          <label className="form-label" htmlFor="signup-first-name">Nombre(s):</label>
           <input
+            id="signup-first-name"
             name="firstName"
             type="text"
             value={formData.firstName}
@@ -179,8 +184,9 @@ function SignUpForm() {
         </div>
 
         <div className="mb-4">
-          <label className="form-label">Apellido paterno:</label>
+          <label className="form-label" htmlFor="signup-last-name">Apellido paterno:</label>
           <input
+            id="signup-last-name"
             name="lastName"
             type="text"
             value={formData.lastName}
@@ -193,8 +199,9 @@ function SignUpForm() {
         </div>
 
         <div className="mb-4">
-          <label className="form-label">Apellido materno:</label>
+          <label className="form-label" htmlFor="signup-second-last-name">Apellido materno:</label>
           <input
+            id="signup-second-last-name"
             name="secondLastName"
             type="text"
             value={formData.secondLastName || ''}
@@ -207,8 +214,9 @@ function SignUpForm() {
         </div>
 
         <div className="mb-4">
-          <label className="form-label">Expediente:</label>
+          <label className="form-label" htmlFor="signup-academic-id">Expediente:</label>
           <input
+            id="signup-academic-id"
             name="academicId"
             type="text"
             value={formData.academicId}

@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '../../auth/hooks/useAuth';
 import useDeleteUser from '../hooks/useDeleteUser';
 import useInternshipByAcademic from '../../../user/features/internships/hooks/useInternshipByAcademic';
-import { INTERNSHIP_STATUS_LABELS, ROLE_LABELS, labelOf } from '../../../utils/constants';
+import useSocialServiceByAcademic from '../../../user/features/social-service/hooks/useSocialServiceByAcademic';
+import { INTERNSHIP_STATUS_LABELS, ROLE_LABELS, SOCIAL_SERVICE_STATUS_LABELS, labelOf } from '../../../utils/constants';
 import LoadingSpinner from '../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../utils/ui/DataLoadError';
 import Modal from '../../../utils/ui/Modal';
@@ -25,6 +26,11 @@ function Profile({ user, fetching, fetchError, refetch }) {
     loading: fetchingInternship,
     error: internshipError,
   } = useInternshipByAcademic(isStudent ? user.academic_id : null);
+  const {
+    socialService,
+    loading: fetchingSocialService,
+    error: socialServiceError,
+  } = useSocialServiceByAcademic(isStudent ? user.academic_id : null);
 
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
@@ -98,13 +104,22 @@ function Profile({ user, fetching, fetchError, refetch }) {
 
   const fullName = [user.first_name, user.last_name, user.second_last_name].filter(Boolean).join(' ');
 
-  const getInternshipText = () => {
-    if (fetchingInternship) return 'Cargando...';
-    if (internshipError) return 'No se pudo consultar el internado.';
-    if (!internship) return 'Sin internado asignado';
-    const status = labelOf(INTERNSHIP_STATUS_LABELS, internship.status);
-    return internship.site?.name ? `${status} · ${internship.site.name}` : status;
+  // "Estatus · sede" del internado o del servicio social del estudiante.
+  const recordText = (record, { fetching, error, labels, none, failed }) => {
+    if (fetching) return 'Cargando...';
+    if (error) return failed;
+    if (!record) return none;
+    const status = labelOf(labels, record.status);
+    return record.site?.name ? `${status} · ${record.site.name}` : status;
   };
+  const internshipText = recordText(internship, {
+    fetching: fetchingInternship, error: internshipError, labels: INTERNSHIP_STATUS_LABELS,
+    none: 'Sin internado asignado', failed: 'No se pudo consultar el internado.',
+  });
+  const socialServiceText = recordText(socialService, {
+    fetching: fetchingSocialService, error: socialServiceError, labels: SOCIAL_SERVICE_STATUS_LABELS,
+    none: 'Sin servicio social asignado', failed: 'No se pudo consultar el servicio social.',
+  });
 
   return (
     <div className="info-container">
@@ -139,7 +154,13 @@ function Profile({ user, fetching, fetchError, refetch }) {
           {isStudent && (
             <div className="item-row">
               <dt className="item-header">Internado</dt>
-              <dd className="item-text">{getInternshipText()}</dd>
+              <dd className="item-text">{internshipText}</dd>
+            </div>
+          )}
+          {isStudent && (
+            <div className="item-row">
+              <dt className="item-header">Servicio social</dt>
+              <dd className="item-text">{socialServiceText}</dd>
             </div>
           )}
         </dl>

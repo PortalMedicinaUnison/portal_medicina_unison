@@ -19,7 +19,7 @@ export const SONORA_MUNICIPALITIES = [
 // Deben coincidir con los IntEnum de backend/app/models. Úsalos en lugar de mapas locales.
 
 export const APPLICATION_STATUS = { PENDING: 1, ACCEPTED: 2, DECLINED: 3 };
-export const APPLICATION_STATUS_LABELS = { 1: 'Pendiente', 2: 'Aceptada', 3: 'Declinada' };
+export const APPLICATION_STATUS_LABELS = { 1: 'Por aceptar', 2: 'Aceptada', 3: 'Declinada' };
 
 export const INTERNSHIP_STATUS = { ACTIVE: 1, SUSPENDED: 2, FINISHED: 3, WITHDRAWN: 4, DISMISSED: 5 };
 export const INTERNSHIP_STATUS_LABELS = { 1: 'Activo', 2: 'Suspendido', 3: 'Finalizado', 4: 'Renuncia', 5: 'Baja' };

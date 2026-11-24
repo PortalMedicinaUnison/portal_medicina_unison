@@ -6,6 +6,7 @@ import useCreateReport from '../hooks/useCreateReport';
 import useUpdateReport from '../hooks/useUpdateReport';
 import useGetSites from '../hooks/useGetSites';
 import useInternshipByAcademic from '../../internships/hooks/useInternshipByAcademic';
+import useSocialServiceByAcademic from '../../social-service/hooks/useSocialServiceByAcademic';
 import { REPORT_TYPES, REPORT_TYPE_LABELS } from '../../../../utils/constants';
 import { cleanFormData, todayISO } from '../../../../utils/utils';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
@@ -52,10 +53,12 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
   const { createReport, loading: creating, success: created, error: createError, reset: resetCreate } = useCreateReport();
   const { updateReport, loading: updating, error: updateError, reset: resetUpdate } = useUpdateReport();
   const { sites, loading: fetchingSites, error: sitesError, refetch: refetchSites } = useGetSites();
-  // Solo al crear: se preselecciona la sede del internado del estudiante.
+  // Solo al crear: se preselecciona la sede (o plaza) del programa que el estudiante tiene en curso.
   const { internship } = useInternshipByAcademic(isEdit ? null : user?.academic_id);
+  const { socialService } = useSocialServiceByAcademic(isEdit ? null : user?.academic_id);
 
-  const [formData, setFormData] = useState(INITIAL_FORM);
+  // Al crear, la fecha del reporte parte de hoy (se puede cambiar a un día anterior).
+  const [formData, setFormData] = useState(() => (isEdit ? INITIAL_FORM : { ...INITIAL_FORM, dateReport: todayISO() }));
   const [createdId, setCreatedId] = useState(null);
   const [validationError, setValidationError] = useState('');
 
@@ -64,12 +67,13 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
   const resetSave = isEdit ? resetUpdate : resetCreate;
   const isOtherType = Number(formData.reportType) === REPORT_TYPES.OTHER;
 
-  // Sede del internado del estudiante, si existe en el catálogo.
+  // Sede del servicio social o del internado en curso (activo o suspendido), si existe en el catálogo.
   const defaultSiteId = useMemo(() => {
-    const siteId = internship?.site?.site_id ?? internship?.site_id;
+    const inCourse = (record) => record && [1, 2].includes(Number(record.status)) && (record.site?.site_id ?? record.site_id);
+    const siteId = inCourse(socialService) || inCourse(internship);
     if (isEdit || !siteId || !sites.some((site) => site.site_id === siteId)) return '';
     return String(siteId);
-  }, [isEdit, internship, sites]);
+  }, [isEdit, internship, socialService, sites]);
 
   // En edición se muestra la sede actual del reporte aunque no venga en el catálogo.
   const siteOptions = useMemo(() => {
@@ -143,7 +147,7 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
     const response = await createReport(payload);
     if (response?.data?.report_id) {
       setCreatedId(response.data.report_id);
-      setFormData({ ...INITIAL_FORM, siteId: defaultSiteId });
+      setFormData({ ...INITIAL_FORM, siteId: defaultSiteId, dateReport: todayISO() });
     }
   };
 
@@ -154,7 +158,7 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
     if (report) setFormData(toFormData(report));
   }, [report]);
 
-  // Creación: se preselecciona la sede del internado si el estudiante aún no eligió una.
+  // Creación: se preselecciona la sede en curso si el estudiante aún no eligió una.
   useEffect(() => {
     if (!defaultSiteId) return;
     setFormData((prev) => (prev.siteId ? prev : { ...prev, siteId: defaultSiteId }));

@@ -71,8 +71,9 @@ function LoginForm() {
       )}
 
       <div className="mb-6">
-        <label className="form-label">Email:</label>
+        <label className="form-label" htmlFor="login-email">Correo:</label>
         <input
+          id="login-email"
           name="email"
           type="email"
           value={formData.email}
@@ -85,8 +86,9 @@ function LoginForm() {
       </div>
 
       <div className="mb-1">
-        <label className="form-label">Contraseña:</label>
+        <label className="form-label" htmlFor="login-password">Contraseña:</label>
           <input
+            id="login-password"
             name="password"
             type="password"
             value={formData.password}
