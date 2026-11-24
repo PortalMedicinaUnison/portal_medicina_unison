@@ -8,55 +8,14 @@ import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
 import {
-  deleteInscriptionRequest, deleteProgramRecordRequest, getInscriptionRequest, updateInscriptionRequest,
+  deleteInscriptionRequest, deleteProgramRecordRequest, getInscriptionRequest,
 } from '../../../../services/inscriptionService';
 import { getErrorMessage } from '../../../../utils/errors';
 import { formatDateTime, formatFullName, promotionLabel } from '../../../../utils/utils';
 import { INSCRIPTION_PROGRAMS, inscriptionStatus } from '../programs';
 import DocumentsStatus from '../components/DocumentsStatus';
-import RecordManagement from '../components/RecordManagement';
+import InscriptionManagement from '../components/InscriptionManagement';
 
-
-function AverageEditor({ config, application, onSaved }) {
-  const [value, setValue] = useState(application.average != null ? String(application.average) : '');
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const current = application.average != null ? String(application.average) : '';
-
-  const handleSave = async () => {
-    const text = value.trim().replace(',', '.');
-    const number = text === '' ? null : Number(text);
-    if (number != null && !(Number.isFinite(number) && number >= 0 && number <= 100)) {
-      setError('El promedio debe estar entre 0 y 100.');
-      return;
-    }
-    setSaving(true);
-    setError(null);
-    try {
-      await updateInscriptionRequest(config.program, application.application_id, { average: number });
-      await onSaved?.();
-    } catch (err) {
-      setError(getErrorMessage(err, 'No se pudo guardar el promedio.'));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <div>
-      <div className="flex flex-wrap items-center gap-3">
-        <input type="text" inputMode="decimal" className="form-input w-28 grow-0" value={value} placeholder="—"
-          onChange={(e) => { setValue(e.target.value); setError(null); }} aria-label="Promedio general" />
-        <button type="button" className="btn-secondary text-sm disabled:opacity-50" onClick={handleSave}
-          disabled={saving || value.trim().replace(',', '.') === current}>
-          {saving ? 'Guardando...' : 'Guardar promedio'}
-        </button>
-      </div>
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
-      <p className="mt-1 text-xs text-gray-500">De 0 a 100 con dos decimales; ordena la elección de {config.placeLabel.toLowerCase()} en el acto.</p>
-    </div>
-  );
-}
 
 /**
  * Ficha completa de una inscripción: datos de la asignación, sede o plaza y estatus del
@@ -131,29 +90,17 @@ function InscriptionDetailPage({ program }) {
                   <dd className="item-text">{promotionLabel(application.promotion)}{application.promotion?.is_finished ? ' (finalizada)' : ''}</dd>
                 </div>
                 <div className="item-row"><dt className="item-header">Estatus</dt><dd className="item-text">{inscriptionStatus(application, config).label}</dd></div>
-                <div className="item-row">
-                  <dt className="item-header">Promedio general</dt>
-                  <dd className="item-text">
-                    <AverageEditor key={application.average ?? 'none'} config={config} application={application} onSaved={load} />
-                  </dd>
-                </div>
                 <div className="item-row"><dt className="item-header">Documentos de inscripción</dt><dd className="item-text"><DocumentsStatus progress={application.inscription_progress} /></dd></div>
                 <div className="item-row"><dt className="item-header">Asignado</dt><dd className="item-text">{formatDateTime(application.created_at)}</dd></div>
               </dl>
             </div>
 
-            {record && (
-              <div className="mt-12">
-                <h3 className="mb-4 text-lg font-semibold text-gray-900">Administrar {config.recordName}</h3>
-                <RecordManagement config={config} application={application} onChange={load} />
-              </div>
-            )}
-            {!record && (
-              <p className="mt-8 text-sm text-gray-600">
-                El {config.recordName} se crea cuando el alumno acepta su asignación; entonces podrás registrar
-                su {config.placeLabel.toLowerCase()}.
-              </p>
-            )}
+            <div className="mt-12">
+              <h3 className="mb-4 text-lg font-semibold text-gray-900">
+                {record ? `Administrar ${config.recordName}` : 'Administrar asignación'}
+              </h3>
+              <InscriptionManagement config={config} application={application} onSaved={load} />
+            </div>
 
             <div className="mt-12">
               <h3 className="mb-4 text-lg font-semibold text-gray-900">Documentos</h3>
