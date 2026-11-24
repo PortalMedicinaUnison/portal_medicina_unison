@@ -1,7 +1,7 @@
 from enum import IntEnum
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import ForeignKey, Index, Integer, String, UniqueConstraint, text
+from sqlalchemy import ForeignKey, Index, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import BaseModel
@@ -18,15 +18,6 @@ class SocialServiceStatusEnum(IntEnum):
     ACTIVE = 1
     SUSPENDED = 2
     FINISHED = 3  # liberado
-
-
-class SocialServiceDocumentTypeEnum(IntEnum):
-    ASSIGNMENT_LETTER = 1        # Carta (oficio) de asignación de plaza
-    FIRST_REPORT = 2             # Primer informe
-    SECOND_REPORT = 3            # Segundo informe
-    THIRD_REPORT = 4             # Tercer informe
-    FINAL_REPORT = 5             # Informe final
-    COMPLETION_CERTIFICATE = 6   # Constancia de terminación (liberación)
 
 
 # ----------------------  SOCIAL SERVICE APPLICATION  ----------------------
@@ -86,7 +77,6 @@ class SocialService(BaseModel):
 
     application: Mapped["SocialServiceApplication"] = relationship(lazy="joined")
     site: Mapped[Optional["Site"]] = relationship(lazy="joined")
-    documents: Mapped[List["SocialServiceDocument"]] = relationship(back_populates="social_service")
 
     @property
     def academic_id(self) -> str:
@@ -99,34 +89,3 @@ class SocialService(BaseModel):
     def __repr__(self):
         return f"<SocialService(social_service_id={self.social_service_id}, site_id={self.site_id}, status={self.status.name})>"
 
-
-# ----------------------  SOCIAL SERVICE DOCUMENT  ----------------------
-
-class SocialServiceDocument(BaseModel):
-    """Documento PDF del servicio social. Solo puede haber uno activo por tipo."""
-    __tablename__ = "social_service_documents"
-    __table_args__ = (
-        Index(
-            "uq_active_ss_doc_per_type",
-            "social_service_id", "document_type",
-            unique=True,
-            sqlite_where=text("is_active = 1"),
-            postgresql_where=text("is_active"),
-        ),
-    )
-
-    document_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    social_service_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("social_services.social_service_id"), nullable=False
-    )
-    document_type: Mapped[SocialServiceDocumentTypeEnum] = mapped_column(
-        IntEnumType(SocialServiceDocumentTypeEnum), nullable=False
-    )
-    path: Mapped[str] = mapped_column(String(1024), nullable=False)
-    media_type: Mapped[str] = mapped_column(String(100), nullable=False, default="application/pdf")
-    original_filename: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-
-    social_service: Mapped["SocialService"] = relationship(back_populates="documents")
-
-    def __repr__(self):
-        return f"<SocialServiceDocument(social_service_id={self.social_service_id}, document_type={self.document_type.name})>"

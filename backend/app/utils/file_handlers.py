@@ -1,4 +1,4 @@
-"""Guardado y lectura de archivos subidos (documentos PDF del internado y fotos de perfil)."""
+"""Guardado y lectura de archivos subidos (documentos PDF, formatos descargables y fotos de perfil)."""
 from pathlib import Path, PurePosixPath
 from typing import BinaryIO, Optional, Tuple
 from uuid import uuid4
@@ -11,6 +11,18 @@ from core.settings import settings
 PDF_SIGNATURE = b"%PDF-"
 CHUNK_SIZE = 1024 * 1024
 IMAGE_MEDIA_TYPES = {".jpg": "image/jpeg", ".png": "image/png", ".webp": "image/webp"}
+
+# Formatos descargables: extensión → (firma del contenido, tipo MIME).
+_ZIP_SIGNATURE = b"PK\x03\x04"           # .docx, .xlsx y .odt son archivos ZIP
+_OLE_SIGNATURE = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"  # .doc y .xls (Office 97-2003)
+TEMPLATE_FORMATS = {
+    ".pdf": (PDF_SIGNATURE, "application/pdf"),
+    ".docx": (_ZIP_SIGNATURE, "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
+    ".xlsx": (_ZIP_SIGNATURE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+    ".odt": (_ZIP_SIGNATURE, "application/vnd.oasis.opendocument.text"),
+    ".doc": (_OLE_SIGNATURE, "application/msword"),
+    ".xls": (_OLE_SIGNATURE, "application/vnd.ms-excel"),
+}
 
 
 def _clean_filename(filename: Optional[str]) -> Optional[str]:
@@ -51,6 +63,24 @@ def save_pdf_upload(file: UploadFile, subdir: str) -> Tuple[str, Optional[str]]:
     relative = PurePosixPath(subdir) / f"{uuid4().hex}.pdf"
     path = _write_upload(file.file, header, relative, settings.max_upload_bytes, settings.MAX_UPLOAD_MB)
     return path, _clean_filename(file.filename)
+
+
+def save_template_upload(file: UploadFile, subdir: str) -> Tuple[str, Optional[str], str]:
+    """
+    Guarda un formato descargable (PDF, Word, Excel u OpenDocument). La extensión del nombre
+    debe coincidir con el contenido. Devuelve (ruta relativa, nombre original, tipo MIME).
+    """
+    original_name = _clean_filename(file.filename)
+    extension = PurePosixPath(original_name or "").suffix.lower()
+    if extension not in TEMPLATE_FORMATS:
+        raise bad_request("El formato debe ser PDF, Word (.docx, .doc), Excel (.xlsx, .xls) u OpenDocument (.odt).")
+    signature, media_type = TEMPLATE_FORMATS[extension]
+    header = file.file.read(len(signature))
+    if header != signature:
+        raise bad_request("El contenido del archivo no corresponde a su extensión.")
+    relative = PurePosixPath(subdir) / f"{uuid4().hex}{extension}"
+    path = _write_upload(file.file, header, relative, settings.max_upload_bytes, settings.MAX_UPLOAD_MB)
+    return path, original_name, media_type
 
 
 def _image_extension(header: bytes) -> Optional[str]:

@@ -3,8 +3,9 @@ from typing import Optional
 from pydantic import BaseModel
 
 from models.internship import ApplicationStatusEnum
-from models.social_service import SocialServiceDocumentTypeEnum, SocialServiceStatusEnum
+from models.social_service import SocialServiceStatusEnum
 from schemas.common import AcademicId, ORMModel, UTCDateTime
+from schemas.document import InscriptionProgress
 from schemas.promotion import PromotionOutput
 from schemas.site import SiteBasicOutput
 from schemas.user import UserBasicOutput
@@ -27,6 +28,8 @@ class SocialServiceApplicationOutput(ORMModel):
     promotion: PromotionOutput
     student: Optional[UserBasicOutput] = None
     social_service_id: Optional[int] = None
+    # Se calcula al listar o consultar asignaciones (no en las anidadas dentro del servicio social).
+    inscription_progress: Optional[InscriptionProgress] = None
 
 
 # ---------------------- SOCIAL SERVICE ----------------------
@@ -47,14 +50,3 @@ class SocialServiceOutput(ORMModel):
     updated_at: UTCDateTime
     application: SocialServiceApplicationOutput
     site: Optional[SiteBasicOutput] = None
-
-
-# ---------------------- SOCIAL SERVICE DOCUMENT ----------------------
-
-class SocialServiceDocumentOutput(ORMModel):
-    document_id: int
-    social_service_id: int
-    document_type: SocialServiceDocumentTypeEnum
-    media_type: str
-    original_filename: Optional[str] = None
-    created_at: UTCDateTime

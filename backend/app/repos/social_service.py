@@ -1,10 +1,7 @@
 from typing import List, Optional
 
 from models.internship import ApplicationStatusEnum
-from models.social_service import (
-    SocialService, SocialServiceApplication, SocialServiceDocument,
-    SocialServiceDocumentTypeEnum, SocialServiceStatusEnum,
-)
+from models.social_service import SocialService, SocialServiceApplication, SocialServiceStatusEnum
 from .base import BaseRepo
 
 
@@ -85,29 +82,3 @@ class SocialServiceRepo(BaseRepo[SocialService]):
 
     def count_by_site(self, site_id: int) -> int:
         return self.query().filter(SocialService.site_id == site_id).count()
-
-
-class SocialServiceDocumentRepo(BaseRepo[SocialServiceDocument]):
-    model = SocialServiceDocument
-
-    def list(self, social_service_id: int) -> List[SocialServiceDocument]:
-        return (
-            self.query()
-            .filter(SocialServiceDocument.social_service_id == social_service_id)
-            .order_by(SocialServiceDocument.document_type, SocialServiceDocument.created_at.desc())
-            .all()
-        )
-
-    def get_for_social_service(self, social_service_id: int, document_id: int) -> Optional[SocialServiceDocument]:
-        return self.query().filter(
-            SocialServiceDocument.social_service_id == social_service_id,
-            SocialServiceDocument.document_id == document_id,
-        ).first()
-
-    def get_active_by_type(
-        self, social_service_id: int, document_type: SocialServiceDocumentTypeEnum,
-    ) -> Optional[SocialServiceDocument]:
-        return self.query().filter(
-            SocialServiceDocument.social_service_id == social_service_id,
-            SocialServiceDocument.document_type == document_type,
-        ).first()

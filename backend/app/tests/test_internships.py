@@ -1,4 +1,4 @@
-from tests.conftest import PDF_BYTES, auth
+from tests.conftest import auth
 
 
 def _assign(client, admin, catalog, academic_id="222000001"):
@@ -104,41 +104,3 @@ def test_cannot_assign_student_with_internship_in_progress(client, admin, studen
         "promotion_id": other["promotion_id"], "academic_id": student.academic_id})
     assert response.status_code == 409
 
-
-def test_documents(client, admin, student, other_student, catalog):
-    internship = _accepted_internship(client, admin, student, catalog)
-    base = f"/internships/{internship['internship_id']}/documents"
-    headers = auth(student)
-
-    not_pdf = client.post(base, headers=headers, data={"document_type": "1"},
-                          files={"file": ("foto.pdf", b"GIF89a....", "application/pdf")})
-    assert not_pdf.status_code == 400
-    too_big = client.post(base, headers=headers, data={"document_type": "1"},
-                          files={"file": ("big.pdf", PDF_BYTES + b"0" * (1024 * 1024 + 1), "application/pdf")})
-    assert too_big.status_code == 413
-
-    uploaded = client.post(base, headers=headers, data={"document_type": "3"},
-                           files={"file": ("../../kardex.pdf", PDF_BYTES, "text/html")})
-    assert uploaded.status_code == 201, uploaded.text
-    document = uploaded.json()
-    assert document["media_type"] == "application/pdf" and document["original_filename"] == "kardex.pdf"
-    duplicate = client.post(base, headers=headers, data={"document_type": "3"},
-                            files={"file": ("k2.pdf", PDF_BYTES, "application/pdf")})
-    assert duplicate.status_code == 409
-
-    file_url = f"{base}/{document['document_id']}/file"
-    viewed = client.get(file_url, headers=headers)
-    assert viewed.status_code == 200 and viewed.content == PDF_BYTES
-    assert viewed.headers["content-type"] == "application/pdf"
-    assert viewed.headers["content-disposition"].startswith("inline")
-    downloaded = client.get(file_url, params={"download": True}, headers=auth(admin))
-    assert downloaded.headers["content-disposition"].startswith("attachment")
-
-    assert client.get(base, headers=auth(other_student)).status_code == 404
-    assert client.get(file_url, headers=auth(other_student)).status_code == 404
-
-    assert client.delete(f"{base}/{document['document_id']}", headers=headers).status_code == 204
-    assert client.get(base, headers=headers).json() == []
-    replaced = client.post(base, headers=headers, data={"document_type": "3"},
-                           files={"file": ("k2.pdf", PDF_BYTES, "application/pdf")})
-    assert replaced.status_code == 201

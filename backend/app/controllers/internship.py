@@ -1,24 +1,18 @@
-from typing import List, Optional, Tuple
-from pathlib import Path
+from typing import List, Optional
 
-from fastapi import UploadFile
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from controllers import document_rules
 from core.errors import bad_request, conflict, not_found
-from models.internship import (
-    ApplicationStatusEnum, DocumentTypeEnum, Internship, InternshipApplication,
-    InternshipDocument, InternshipStatusEnum,
-)
+from models.document import DocumentStageEnum
+from models.internship import ApplicationStatusEnum, Internship, InternshipApplication, InternshipStatusEnum
 from models.promotion import ProgramEnum
 from models.user import User
-from repos.internship import InternshipApplicationRepo, InternshipDocumentRepo, InternshipRepo
+from repos.internship import InternshipApplicationRepo, InternshipRepo
 from repos.promotion import PromotionRepo, PromotionSiteDetailRepo
 from repos.site import SiteRepo
 from repos.user import UserRepo
 from schemas.internship import InternshipApplicationInput, InternshipUpdate
-from utils.file_handlers import resolve_upload, save_pdf_upload
-from core.settings import settings
 
 
 def _scope_academic_id(user: User, academic_id: Optional[str]) -> Optional[str]:
@@ -32,15 +26,23 @@ def list_applications(
     db: Session, user: User,
     promotion_id: Optional[int], academic_id: Optional[str], status: Optional[ApplicationStatusEnum],
 ) -> List[InternshipApplication]:
-    return InternshipApplicationRepo(db).list(
+    applications = InternshipApplicationRepo(db).list(
         promotion_id=promotion_id, academic_id=_scope_academic_id(user, academic_id), status=status,
     )
+    return document_rules.attach_inscription_progress(db, ProgramEnum.INTERNSHIP, applications)
 
 
 def get_application(db: Session, user: User, application_id: int) -> InternshipApplication:
     application = InternshipApplicationRepo(db).get(application_id)
     if application is None or (not user.is_staff and application.academic_id != user.academic_id):
         raise not_found("Asignación no encontrada.")
+    return application
+
+
+def get_application_detail(db: Session, user: User, application_id: int) -> InternshipApplication:
+    """Como get_application, con el avance del expediente de inscripción."""
+    application = get_application(db, user, application_id)
+    document_rules.attach_inscription_progress(db, ProgramEnum.INTERNSHIP, [application])
     return application
 
 
@@ -134,11 +136,26 @@ def get_internship(db: Session, user: User, internship_id: int) -> Internship:
 
 
 def update_internship(db: Session, user: User, internship_id: int, data: InternshipUpdate) -> Internship:
-    """El administrador asigna la sede (respetando el cupo de la promoción) o cambia el estatus."""
+    """
+    La coordinación registra la sede que eligió el estudiante (respetando el cupo de la promoción)
+    o cambia el estatus. Registrar la primera sede exige el expediente de inscripción completo y
+    finalizar el internado, los documentos obligatorios de las etapas durante y término aprobados.
+    """
     internship = get_internship(db, user, internship_id)
     payload = data.model_dump(exclude_unset=True)
     target_site = payload.get("site_id", internship.site_id)
     target_status = payload.get("status", internship.status)
+
+    if internship.site_id is None and target_site is not None:
+        document_rules.ensure_stages_complete(
+            db, ProgramEnum.INTERNSHIP, internship.application_id, [DocumentStageEnum.INSCRIPTION],
+            "Antes de registrar la sede, el expediente de inscripción debe estar completo.",
+        )
+    if target_status == InternshipStatusEnum.FINISHED and internship.status != InternshipStatusEnum.FINISHED:
+        document_rules.ensure_stages_complete(
+            db, ProgramEnum.INTERNSHIP, internship.application_id, document_rules.CLOSING_STAGES,
+            "Para finalizar el internado deben estar aprobados los documentos obligatorios del internado.",
+        )
     takes_seat = target_site is not None and target_status != InternshipStatusEnum.FINISHED
     seat_changed = target_site != internship.site_id or (
         internship.status == InternshipStatusEnum.FINISHED and target_status != InternshipStatusEnum.FINISHED
@@ -163,51 +180,3 @@ def delete_internship(db: Session, user: User, internship_id: int) -> None:
     internship.application.status = ApplicationStatusEnum.PENDING
     db.commit()
 
-
-# ---------------------- INTERNSHIP DOCUMENT ----------------------
-
-def list_documents(db: Session, user: User, internship_id: int) -> List[InternshipDocument]:
-    get_internship(db, user, internship_id)
-    return InternshipDocumentRepo(db).list(internship_id)
-
-
-def get_document(db: Session, user: User, internship_id: int, document_id: int) -> InternshipDocument:
-    get_internship(db, user, internship_id)
-    document = InternshipDocumentRepo(db).get_for_internship(internship_id, document_id)
-    if document is None:
-        raise not_found("Documento no encontrado.")
-    return document
-
-
-def upload_document(
-    db: Session, user: User, internship_id: int, document_type: DocumentTypeEnum, file: UploadFile,
-) -> InternshipDocument:
-    get_internship(db, user, internship_id)
-    repo = InternshipDocumentRepo(db)
-    if repo.get_active_by_type(internship_id, document_type):
-        raise conflict("Ya hay un documento de este tipo; elimínalo para subir uno nuevo.")
-
-    relative_path, original_name = save_pdf_upload(file, f"internship-documents/{internship_id}")
-    document = InternshipDocument(
-        internship_id=internship_id,
-        document_type=document_type,
-        path=relative_path,
-        media_type="application/pdf",
-        original_filename=original_name,
-    )
-    try:
-        return repo.add(document)
-    except IntegrityError:
-        db.rollback()
-        (settings.UPLOAD_DIR / relative_path).unlink(missing_ok=True)
-        raise conflict("Ya hay un documento de este tipo; elimínalo para subir uno nuevo.")
-
-
-def get_document_file(db: Session, user: User, internship_id: int, document_id: int) -> Tuple[Path, InternshipDocument]:
-    document = get_document(db, user, internship_id, document_id)
-    return resolve_upload(document.path), document
-
-
-def delete_document(db: Session, user: User, internship_id: int, document_id: int) -> None:
-    document = get_document(db, user, internship_id, document_id)
-    InternshipDocumentRepo(db).soft_delete(document)
