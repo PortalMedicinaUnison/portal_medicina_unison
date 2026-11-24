@@ -186,8 +186,13 @@ def update_internship(db: Session, user: User, internship_id: int, data: Interns
 
 
 def delete_internship(db: Session, user: User, internship_id: int) -> None:
-    """Elimina el internado (p. ej. si se aceptó por error) y regresa la asignación a pendiente."""
+    """
+    Elimina el internado (p. ej. si se aceptó por error) y regresa la asignación a pendiente. Solo si
+    está en curso: uno finalizado (acreditado) o con renuncia o baja es historial; se corrige su estatus.
+    """
     internship = get_internship(db, user, internship_id)
+    if internship.status not in INTERNSHIP_IN_COURSE:
+        raise conflict("Este internado ya terminó (finalizado, renuncia o baja) y no se puede eliminar; si fue un error, cambia su estatus.")
     internship.is_active = False
     internship.application.status = ApplicationStatusEnum.PENDING
     db.commit()

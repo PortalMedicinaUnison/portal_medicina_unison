@@ -200,8 +200,13 @@ def update_social_service(db: Session, user: User, social_service_id: int, data:
 
 
 def delete_social_service(db: Session, user: User, social_service_id: int) -> None:
-    """Elimina el servicio social (p. ej. si se aceptó por error) y regresa la asignación a pendiente."""
+    """
+    Elimina el servicio social (p. ej. si se aceptó por error) y regresa la asignación a pendiente. Solo
+    si está en curso: uno liberado o con renuncia o baja es historial; se corrige su estatus.
+    """
     service = get_social_service(db, user, social_service_id)
+    if service.status not in SOCIAL_SERVICE_IN_COURSE:
+        raise conflict("Este servicio social ya terminó (liberado, renuncia o baja) y no se puede eliminar; si fue un error, cambia su estatus.")
     service.is_active = False
     service.application.status = ApplicationStatusEnum.PENDING
     db.commit()

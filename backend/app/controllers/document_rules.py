@@ -37,11 +37,14 @@ def attach_inscription_progress(db: Session, program: ProgramEnum, applications:
     repo = ApplicationDocumentRepo(db)
     approved = repo.requirement_ids_with_status(program, ids, APPROVED)
     submitted = repo.requirement_ids_with_status(program, ids, SUBMITTED)
+    rejected = repo.requirement_ids_with_status(program, ids, (ReviewStatusEnum.REJECTED,))
     for application in applications:
+        sent = required_ids & submitted.get(application.application_id, set())
         application.inscription_progress = InscriptionProgress(
             required=len(required_ids),
-            submitted=len(required_ids & submitted.get(application.application_id, set())),
+            submitted=len(sent),
             approved=len(required_ids & approved.get(application.application_id, set())),
+            rejected=len((required_ids & rejected.get(application.application_id, set())) - sent),
         )
     return applications
 

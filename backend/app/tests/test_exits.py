@@ -149,3 +149,13 @@ def test_reports_link_only_the_record_in_course(client, admin, student, catalog)
     })
     assert report.status_code == 201, report.text
     assert report.json()["internship_id"] is None
+
+
+def test_finished_or_exited_records_cannot_be_deleted(client, admin, student, catalog):
+    internship = _in_site(client, admin, student, catalog)
+    url = f"/internships/{internship['internship_id']}"
+    _patch(client, admin, internship["internship_id"], status=WITHDRAWN, exit_date=TODAY, exit_reason="Renuncia")
+    blocked = client.delete(url, headers=auth(admin))
+    assert blocked.status_code == 409 and "no se puede eliminar" in blocked.json()["detail"]
+    _patch(client, admin, internship["internship_id"], status=1)
+    assert client.delete(url, headers=auth(admin)).status_code == 204  # en curso (aceptado por error): sí
