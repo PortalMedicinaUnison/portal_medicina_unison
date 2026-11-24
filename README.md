@@ -53,6 +53,21 @@ Frontend: `VITE_API_URL` (por defecto `http://localhost:8000`); se puede definir
 
 ## Desarrollo local
 
+### Forma rápida (macOS / Linux / Git Bash)
+
+En dos terminales, desde la raíz del repositorio:
+
+```bash
+./dev-backend.sh          # API en http://localhost:8000 (docs en /docs)
+./dev-frontend.sh         # app en http://localhost:5173
+```
+
+- `dev-backend.sh` crea el entorno virtual e instala dependencias la primera vez (y cuando cambian los requirements), crea `backend/.env` con una `SECRET_KEY` aleatoria si no existe, aplica las migraciones y arranca con recarga automática. `./dev-backend.sh --seed` carga además los datos de ejemplo; `PORT=9000 ./dev-backend.sh` cambia el puerto.
+- Si `DATABASE_URL` apunta a una base de datos de la versión anterior (sin migraciones), el script se detiene sin tocarla: respáldala y bórrala, o usa otro archivo.
+- `dev-frontend.sh` instala dependencias con `npm ci` cuando hace falta y arranca Vite. Si el backend usa otro puerto: `VITE_API_URL=http://localhost:9000 ./dev-frontend.sh`.
+
+Paso a paso, sin los scripts:
+
 ### Backend
 
 ```bash
