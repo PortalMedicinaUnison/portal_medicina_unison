@@ -1,0 +1,37 @@
+# PRODUCCIÓN (servidor de la universidad).
+#   docker compose -f docker-compose.prod.yml up -d --build
+# nginx (contenedor frontend) sirve la app en el puerto 80 y reenvía /api al backend,
+# así que no hace falta CORS. Pon delante el HTTPS de la universidad (ver README).
+services:
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    env_file:
+      # Solo en el servidor, nunca en git: SECRET_KEY (32+ caracteres), ENVIRONMENT=prod, etc.
+      - ./backend/.env
+    environment:
+      - ENVIRONMENT=prod
+      - DATABASE_URL=sqlite:////backend/data/portal.db
+      - UPLOAD_DIR=/backend/uploads
+    volumes:
+      - portal_data:/backend/data
+      - portal_uploads:/backend/uploads
+    expose:
+      - "8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      target: prod
+      args:
+        VITE_API_URL: /api
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  portal_data:
+  portal_uploads:

@@ -15,6 +15,9 @@ env/
 test/
 *.ipynb
 *.sh
+# Scripts para levantar el proyecto en desarrollo (sí se versionan)
+!/dev-backend.sh
+!/dev-frontend.sh
 
 # Editor directories and files
 .vscode/*
