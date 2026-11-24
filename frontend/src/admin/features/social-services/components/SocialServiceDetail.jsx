@@ -263,7 +263,7 @@ function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
 
       <div className="mt-16">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Documentos</h3>
-        <ExpedientePanel program={PROGRAMS.SOCIAL_SERVICE} applicationId={socialService.application_id} mode="admin" />
+        <ExpedientePanel program={PROGRAMS.SOCIAL_SERVICE} applicationId={socialService.application_id} mode="admin" started />
       </div>
 
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>

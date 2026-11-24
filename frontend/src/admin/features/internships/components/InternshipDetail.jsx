@@ -264,7 +264,7 @@ function InternshipDetail({ internship, fetching, fetchError, refetch }) {
 
       <div className="mt-16">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Documentos</h3>
-        <ExpedientePanel program={PROGRAMS.INTERNSHIP} applicationId={internship.application_id} mode="admin" />
+        <ExpedientePanel program={PROGRAMS.INTERNSHIP} applicationId={internship.application_id} mode="admin" started />
       </div>
 
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>

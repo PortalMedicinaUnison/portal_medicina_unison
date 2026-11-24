@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { getRequirementTemplateRequest } from '../../../../services/documentService';
 import {
-  DOCUMENT_STAGES, DOCUMENT_STAGE_LABELS_BY_PROGRAM, PROGRAMS, PROGRAM_LABELS,
+  DOCUMENT_PROVIDERS, DOCUMENT_STAGES, DOCUMENT_STAGE_LABELS_BY_PROGRAM, PROGRAMS, PROGRAM_LABELS,
 } from '../../../../utils/constants';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
@@ -144,6 +144,9 @@ function RequirementCatalog() {
                         <span className={`ml-2 text-xs font-normal ${requirement.is_required ? 'text-indigo-700' : 'text-gray-500'}`}>
                           {requirement.is_required ? 'Obligatorio' : 'Opcional'}
                         </span>
+                        {Number(requirement.provided_by) === DOCUMENT_PROVIDERS.COORDINATION && (
+                          <span className="ml-2 text-xs font-normal text-amber-700">Lo sube la coordinación</span>
+                        )}
                         {requirement.allows_multiple && <span className="ml-2 text-xs font-normal text-gray-500">Varios archivos</span>}
                         {requirement.validity_months && (
                           <span className="ml-2 text-xs font-normal text-gray-500">Máx. {requirement.validity_months} {requirement.validity_months === 1 ? 'mes' : 'meses'}</span>

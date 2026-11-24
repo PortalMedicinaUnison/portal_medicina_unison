@@ -4,7 +4,7 @@ import {
   getRequirementTemplateRequest,
 } from '../../../services/documentService';
 import {
-  DOCUMENT_STAGES, DOCUMENT_STAGE_LABELS_BY_PROGRAM, REVIEW_STATUS,
+  DOCUMENT_PROVIDERS, DOCUMENT_STAGES, DOCUMENT_STAGE_LABELS_BY_PROGRAM, REVIEW_STATUS,
 } from '../../../utils/constants';
 import LoadingSpinner from '../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../utils/ui/DataLoadError';
@@ -32,9 +32,9 @@ const groupByRequirement = (docs) => Object.values(docs.reduce((groups, doc) => 
  * Props:
  * - program: 1 internado | 2 servicio social
  * - applicationId
- * - mode: 'student' | 'admin' (la coordinación revisa, sube por el alumno y elimina)
+ * - mode: 'student' | 'admin' (la coordinación revisa los del alumno y sube solo los que emite ella)
  * - stages: etapas a mostrar (por defecto todas)
- * - started: (alumno) ya aceptó; habilita las etapas "durante" y "término"
+ * - started: ya aceptó la asignación; habilita las etapas "durante" y "término"
  * - closed: (alumno) expediente cerrado: solo consulta
  * - onChange: se llama después de subir, eliminar o revisar (p. ej. para refrescar el avance)
  */
@@ -57,7 +57,12 @@ function ExpedientePanel({ program, applicationId, mode = 'student', stages = AL
   const activeIds = new Set(requirements.map((r) => r.requirement_id));
   const docsFor = (requirementId) => documents.filter((doc) => doc.requirement_id === requirementId);
   const retiredDocs = documents.filter((doc) => !activeIds.has(doc.requirement_id));
-  const canUploadStage = (stage) => isAdmin || (!closed && (stage === DOCUMENT_STAGES.INSCRIPTION || started));
+  const stageOpen = (stage) => stage === DOCUMENT_STAGES.INSCRIPTION || started;
+  const isCoordinationDoc = (requirement) => Number(requirement.provided_by) === DOCUMENT_PROVIDERS.COORDINATION;
+  // El alumno sube los suyos (etapa abierta y expediente sin cerrar); la coordinación, solo los que emite ella.
+  const canUpload = (requirement) => (isAdmin
+    ? isCoordinationDoc(requirement) && stageOpen(Number(requirement.stage))
+    : !isCoordinationDoc(requirement) && !closed && stageOpen(Number(requirement.stage)));
 
 // ---------------------- HANDLERS ----------------------
 
@@ -124,7 +129,8 @@ function ExpedientePanel({ program, applicationId, mode = 'student', stages = AL
         if (stageRequirements.length === 0) return null;
         const required = stageRequirements.filter((r) => r.is_required);
         const done = required.filter((r) => docsFor(r.requirement_id).some(isApproved)).length;
-        const open = canUploadStage(stage);
+        const waitingForAcceptance = !isAdmin && !closed && !stageOpen(stage)
+          && stageRequirements.some((r) => !isCoordinationDoc(r));
         return (
           <section key={stage} className="space-y-3" aria-labelledby={`stage-${applicationId}-${stage}`}>
             <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -137,7 +143,7 @@ function ExpedientePanel({ program, applicationId, mode = 'student', stages = AL
                 </span>
               )}
             </div>
-            {!isAdmin && !open && !closed && (
+            {waitingForAcceptance && (
               <p className="text-xs text-gray-500">Podrás subir estos documentos cuando aceptes tu asignación.</p>
             )}
             <div className="space-y-3">
@@ -147,7 +153,7 @@ function ExpedientePanel({ program, applicationId, mode = 'student', stages = AL
                   requirement={requirement}
                   documents={docsFor(requirement.requirement_id)}
                   isAdmin={isAdmin}
-                  canUpload={open}
+                  canUpload={canUpload(requirement)}
                   busyKey={busyKey}
                   onUpload={handleUpload}
                   onDownloadTemplate={handleDownloadTemplate}

@@ -155,6 +155,7 @@ function ApplicationDetail({ application, fetching, fetchError, refetch, applica
           program={PROGRAMS.INTERNSHIP}
           applicationId={application.application_id}
           mode="admin"
+          started={application.internship_id != null}
           onChange={refetch}
         />
       </div>

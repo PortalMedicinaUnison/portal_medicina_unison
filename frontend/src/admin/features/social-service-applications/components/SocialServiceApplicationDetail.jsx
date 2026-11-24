@@ -152,6 +152,7 @@ function SocialServiceApplicationDetail({ application, fetching, fetchError, ref
           program={PROGRAMS.SOCIAL_SERVICE}
           applicationId={application.application_id}
           mode="admin"
+          started={application.social_service_id != null}
           onChange={refetch}
         />
       </div>

@@ -58,5 +58,9 @@ export const DOCUMENT_STAGE_LABELS_BY_PROGRAM = {
   2: { 1: 'Inscripción', 2: 'Durante el servicio social', 3: 'Liberación' },
 };
 
+// Quién sube el documento: el alumno (lo revisa la coordinación) o la coordinación (queda aprobado).
+export const DOCUMENT_PROVIDERS = { STUDENT: 1, COORDINATION: 2 };
+export const DOCUMENT_PROVIDER_LABELS = { 1: 'El alumno', 2: 'La coordinación' };
+
 export const REVIEW_STATUS = { PENDING: 1, APPROVED: 2, REJECTED: 3 };
 export const REVIEW_STATUS_LABELS = { 1: 'En revisión', 2: 'Aprobado', 3: 'Con observaciones' };

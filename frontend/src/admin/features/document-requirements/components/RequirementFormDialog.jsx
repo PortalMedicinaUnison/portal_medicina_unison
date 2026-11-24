@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import Modal from '../../../../utils/ui/Modal';
-import { DOCUMENT_STAGE_LABELS_BY_PROGRAM, PROGRAM_LABELS, labelOf } from '../../../../utils/constants';
+import {
+  DOCUMENT_PROVIDERS, DOCUMENT_PROVIDER_LABELS, DOCUMENT_STAGE_LABELS_BY_PROGRAM, PROGRAM_LABELS, labelOf,
+} from '../../../../utils/constants';
 
 const toForm = (requirement, stage) => ({
   stage: String(requirement?.stage ?? stage ?? 1),
   name: requirement?.name ?? '',
   description: requirement?.description ?? '',
   isRequired: requirement?.is_required ?? true,
+  providedBy: String(requirement?.provided_by ?? DOCUMENT_PROVIDERS.STUDENT),
   allowsMultiple: requirement?.allows_multiple ?? false,
   validityMonths: requirement?.validity_months != null ? String(requirement.validity_months) : '',
   sortOrder: String(requirement?.sort_order ?? 0),
@@ -45,6 +48,7 @@ function RequirementFormDialog({ open, program, requirement, defaultStage, onClo
       name,
       description: form.description.trim() || null,
       is_required: form.isRequired,
+      provided_by: Number(form.providedBy),
       allows_multiple: form.allowsMultiple,
       validity_months: validity ? Number(validity) : null,
       sort_order: Number(form.sortOrder) || 0,
@@ -59,6 +63,15 @@ function RequirementFormDialog({ open, program, requirement, defaultStage, onClo
           <select id="req-stage" name="stage" className="form-input_full" value={form.stage} onChange={handleChange} disabled={saving}>
             {Object.entries(stageLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
+        </div>
+        <div>
+          <label className="form-label" htmlFor="req-provider">Quién lo sube</label>
+          <select id="req-provider" name="providedBy" className="form-input_full" value={form.providedBy} onChange={handleChange} disabled={saving}>
+            {Object.entries(DOCUMENT_PROVIDER_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select>
+          <p className="mt-1 text-xs text-gray-500">
+            Los del alumno los revisa la coordinación. Los de la coordinación (p. ej. la constancia que emite la sede) quedan aprobados al subirlos.
+          </p>
         </div>
         <div>
           <label className="form-label" htmlFor="req-name">Nombre</label>

@@ -1,10 +1,10 @@
 import { useRef } from 'react';
-import { REVIEW_STATUS } from '../../../utils/constants';
+import { DOCUMENT_PROVIDERS, REVIEW_STATUS } from '../../../utils/constants';
 import { formatDateTime } from '../../../utils/utils';
 import ReviewStatusBadge from './ReviewStatusBadge';
 
 
-function FileRow({ doc, busy, canDelete, isAdmin, onView, onDownload, onDelete, onApprove, onObserve, onBackToReview }) {
+function FileRow({ doc, busy, canDelete, canReview, onView, onDownload, onDelete, onApprove, onObserve, onBackToReview }) {
   const status = Number(doc.review_status);
   return (
     <li className="flex flex-col gap-2 rounded-md bg-gray-50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
@@ -26,17 +26,17 @@ function FileRow({ doc, busy, canDelete, isAdmin, onView, onDownload, onDelete, 
         <ReviewStatusBadge status={status} />
         <button type="button" className="btn-tertiary text-xs" onClick={() => onView(doc)}>Ver</button>
         <button type="button" className="btn-tertiary text-xs" onClick={() => onDownload(doc)}>Descargar</button>
-        {isAdmin && status !== REVIEW_STATUS.APPROVED && (
+        {canReview && status !== REVIEW_STATUS.APPROVED && (
           <button type="button" className="btn-tertiary text-xs text-green-700" onClick={() => onApprove(doc)} disabled={busy}>
             Aprobar
           </button>
         )}
-        {isAdmin && status !== REVIEW_STATUS.REJECTED && (
+        {canReview && status !== REVIEW_STATUS.REJECTED && (
           <button type="button" className="btn-tertiary text-xs text-red-700" onClick={() => onObserve(doc)} disabled={busy}>
             Observaciones
           </button>
         )}
-        {isAdmin && status !== REVIEW_STATUS.PENDING && (
+        {canReview && status !== REVIEW_STATUS.PENDING && (
           <button type="button" className="btn-tertiary text-xs" onClick={() => onBackToReview(doc)} disabled={busy}>
             Regresar a revisión
           </button>
@@ -52,14 +52,16 @@ function FileRow({ doc, busy, canDelete, isAdmin, onView, onDownload, onDelete, 
 }
 
 /**
- * Un documento del catálogo con sus archivos. `canUpload` dice si la etapa está abierta para
- * quien mira; las reglas finas (aprobados, cerrados) también las aplica el backend.
+ * Un documento del catálogo con sus archivos. `canUpload` dice si quien mira puede subirlo ahora
+ * (el alumno los suyos con la etapa abierta; la coordinación, solo los que emite ella). Las reglas
+ * también las aplica el backend.
  */
 function RequirementCard({
   requirement, documents, isAdmin, canUpload, busyKey,
   onUpload, onDownloadTemplate, ...fileActions
 }) {
   const inputRef = useRef(null);
+  const byCoordination = Number(requirement.provided_by) === DOCUMENT_PROVIDERS.COORDINATION;
   const approved = documents.some((doc) => Number(doc.review_status) === REVIEW_STATUS.APPROVED);
   const uploading = busyKey === `req-${requirement.requirement_id}`;
   const lockedForStudent = !isAdmin && !requirement.allows_multiple && approved;
@@ -85,6 +87,9 @@ function RequirementCard({
             </span>
           </p>
           {requirement.description && <p className="text-xs text-gray-600">{requirement.description}</p>}
+          {byCoordination && (
+            <p className="text-xs text-gray-500">Lo sube la coordinación.</p>
+          )}
           {(requirement.validity_months || requirement.allows_multiple) && (
             <p className="text-xs text-gray-500">
               {requirement.validity_months && `Antigüedad máxima: ${requirement.validity_months} ${requirement.validity_months === 1 ? 'mes' : 'meses'}. `}
@@ -122,16 +127,20 @@ function RequirementCard({
       </div>
 
       {documents.length === 0 ? (
-        <p className="text-xs italic text-gray-500">Aún no hay archivo.</p>
+        <p className="text-xs italic text-gray-500">
+          {byCoordination && !isAdmin ? 'La coordinación aún no lo sube.' : 'Aún no hay archivo.'}
+        </p>
       ) : (
         <ul className="space-y-2">
           {documents.map((doc) => (
             <FileRow
               key={doc.document_id}
               doc={doc}
-              isAdmin={isAdmin}
               busy={busyKey === `doc-${doc.document_id}`}
-              canDelete={isAdmin || (canUpload && Number(doc.review_status) !== REVIEW_STATUS.APPROVED)}
+              canReview={isAdmin && !byCoordination}
+              canDelete={isAdmin
+                ? byCoordination
+                : (canUpload && Number(doc.review_status) !== REVIEW_STATUS.APPROVED)}
               {...fileActions}
             />
           ))}
