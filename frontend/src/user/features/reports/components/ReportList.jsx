@@ -118,7 +118,8 @@ function ReportList({ reports, fetching, fetchError, refetch }) {
           className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar"
+          placeholder="Buscar por descripción, tipo o sede"
+          aria-label="Buscar por descripción, tipo o sede"
         />
         <select
           className="btn-tertiary--light"

@@ -117,9 +117,10 @@ function SurveyForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Título</dt>
+              <dt className="item-header"><label htmlFor="survey-title">Título</label></dt>
               <dd className="item-text">
                 <input
+                  id="survey-title"
                   name="title"
                   type="text"
                   value={formData.title}
@@ -132,9 +133,10 @@ function SurveyForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">URL</dt>
+              <dt className="item-header"><label htmlFor="survey-url">URL</label></dt>
               <dd className="item-text">
                 <input
+                  id="survey-url"
                   name="url"
                   type="url"
                   value={formData.url}
@@ -147,9 +149,10 @@ function SurveyForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Descripción</dt>
+              <dt className="item-header"><label htmlFor="survey-description">Descripción</label></dt>
               <dd className="item-text">
                 <textarea
+                  id="survey-description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
@@ -161,9 +164,10 @@ function SurveyForm() {
               </dd>
             </div>
             <div className="item-row">
-                <dt className="item-header">Fecha de vencimiento</dt>
+                <dt className="item-header"><label htmlFor="survey-expiration-date">Fecha de vencimiento</label></dt>
                 <dd className="item-text">
                   <input
+                    id="survey-expiration-date"
                     name="expirationDate"
                     type="date"
                     value={formData.expirationDate}
@@ -176,9 +180,10 @@ function SurveyForm() {
                 </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">¿Obligatoria?</dt>
+              <dt className="item-header"><label htmlFor="survey-mandatory">¿Obligatoria?</label></dt>
               <dd className="item-text">
                 <input
+                  id="survey-mandatory"
                   name="mandatory"
                   type="checkbox"
                   checked={formData.mandatory}
@@ -189,9 +194,10 @@ function SurveyForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Visible</dt>
+              <dt className="item-header"><label htmlFor="survey-is-visible">Visible</label></dt>
               <dd className="item-text">
                 <input
+                  id="survey-is-visible"
                   name="isVisible"
                   type="checkbox"
                   checked={formData.isVisible}

@@ -168,7 +168,7 @@ function PlazaResultsPage({ program }) {
                 <table className="table">
                   <thead>
                     <tr>
-                      <th className="w-12">#</th>
+                      <th className="w-16 !px-2">#</th>
                       <th className="w-1/4 text-left">Alumno</th>
                       <th className="w-32">Promedio</th>
                       <th className="w-40">Documentos</th>
@@ -185,7 +185,7 @@ function PlazaResultsPage({ program }) {
                       const blocked = !a.inscription_progress?.complete && !saved(a);
                       return (
                         <tr key={a.application_id}>
-                          <td>{index + 1}</td>
+                          <td className="!px-2">{index + 1}</td>
                           <td className="text-left">
                             <Link to={config.detailPath(a.application_id)} className="hover:underline">{formatFullName(a.student) || a.academic_id}</Link>
                             <span className="block font-mono text-xs text-gray-500">{a.academic_id}</span>

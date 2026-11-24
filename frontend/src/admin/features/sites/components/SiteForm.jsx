@@ -141,9 +141,10 @@ function SiteForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razón social *</dt>
+              <dt className="item-header"><label htmlFor="site-name">Razón social *</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-name"
                   name="name"
                   type="text"
                   value={formData.name}
@@ -158,9 +159,10 @@ function SiteForm() {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Institución *</dt>
+              <dt className="item-header"><label htmlFor="site-institution-id">Institución *</label></dt>
               <dd className="item-text">
                 <select
+                  id="site-institution-id"
                   name="institutionId"
                   value={formData.institutionId}
                   onChange={handleChange}
@@ -186,9 +188,10 @@ function SiteForm() {
             />
 
             <div className="item-row">
-              <dt className="item-header">Dirección *</dt>
+              <dt className="item-header"><label htmlFor="site-address">Dirección *</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-address"
                   name="address"
                   type="text"
                   value={formData.address}
@@ -203,9 +206,10 @@ function SiteForm() {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Ciudad *</dt>
+              <dt className="item-header"><label htmlFor="site-city">Ciudad *</label></dt>
               <dd className="item-text">
                 <select
+                  id="site-city"
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
@@ -223,9 +227,10 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza *</dt>
+              <dt className="item-header"><label htmlFor="site-teaching-head-name">Jefe de enseñanza *</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-teaching-head-name"
                   name="teachingHeadName"
                   type="text"
                   value={formData.teachingHeadName}
@@ -239,9 +244,10 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza (correo)</dt>
+              <dt className="item-header"><label htmlFor="site-teaching-head-email">Jefe de enseñanza (correo)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-teaching-head-email"
                   name="teachingHeadEmail"
                   type="text"
                   value={formData.teachingHeadEmail}
@@ -254,9 +260,10 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza (teléfono)</dt>
+              <dt className="item-header"><label htmlFor="site-teaching-head-phone">Jefe de enseñanza (teléfono)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-teaching-head-phone"
                   name="teachingHeadPhone"
                   type="text"
                   value={formData.teachingHeadPhone}
@@ -269,9 +276,10 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza</dt>
+              <dt className="item-header"><label htmlFor="site-teaching-deputy-name">Subjefe de enseñanza</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-teaching-deputy-name"
                   name="teachingDeputyName"
                   type="text"
                   value={formData.teachingDeputyName}
@@ -284,9 +292,10 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza (correo)</dt>
+              <dt className="item-header"><label htmlFor="site-teaching-deputy-email">Subjefe de enseñanza (correo)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-teaching-deputy-email"
                   name="teachingDeputyEmail"
                   type="text"
                   value={formData.teachingDeputyEmail}
@@ -299,9 +308,10 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza (teléfono)</dt>
+              <dt className="item-header"><label htmlFor="site-teaching-deputy-phone">Subjefe de enseñanza (teléfono)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-teaching-deputy-phone"
                   name="teachingDeputyPhone"
                   type="text"
                   value={formData.teachingDeputyPhone}

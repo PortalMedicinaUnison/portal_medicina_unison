@@ -135,9 +135,10 @@ return (
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Título</dt>
+              <dt className="item-header"><label htmlFor="announcement-edit-title">Título</label></dt>
               <dd className="item-text">
                 <input
+                  id="announcement-edit-title"
                   name="title"
                   type="text"
                   value={formData.title}
@@ -150,9 +151,10 @@ return (
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Contenido</dt>
+              <dt className="item-header"><label htmlFor="announcement-edit-description">Contenido</label></dt>
               <dd className="item-text">
                 <textarea
+                  id="announcement-edit-description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
@@ -165,9 +167,10 @@ return (
               </dd>
             </div>
             <div className="item-row">
-                <dt className="item-header">Ambito</dt>
+                <dt className="item-header"><label htmlFor="announcement-edit-type">Ámbito</label></dt>
                 <dd className="item-text">
                   <select
+                    id="announcement-edit-type"
                     name="announcementType"
                     value={formData.announcementType}
                     onChange={handleChange}
@@ -183,9 +186,10 @@ return (
                 </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Visible</dt>
+              <dt className="item-header"><label htmlFor="announcement-edit-is-visible">Visible</label></dt>
               <dd className="item-text">
                 <input
+                  id="announcement-edit-is-visible"
                   name="isVisible"
                   type="checkbox"
                   checked={formData.isVisible}

@@ -150,9 +150,10 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Título</dt>
+              <dt className="item-header"><label htmlFor="survey-edit-title">Título</label></dt>
               <dd className="item-text">
                 <input
+                  id="survey-edit-title"
                   name="title"
                   type="text"
                   value={formData.title}
@@ -165,9 +166,10 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">URL</dt>
+              <dt className="item-header"><label htmlFor="survey-edit-url">URL</label></dt>
               <dd className="item-text">
                 <input
+                  id="survey-edit-url"
                   name="url"
                   type="url"
                   value={formData.url}
@@ -180,9 +182,10 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Descripción</dt>
+              <dt className="item-header"><label htmlFor="survey-edit-description">Descripción</label></dt>
               <dd className="item-text">
                 <textarea
+                  id="survey-edit-description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
@@ -194,9 +197,10 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
               </dd>
             </div>
             <div className="item-row">
-                <dt className="item-header">Fecha de vencimiento</dt>
+                <dt className="item-header"><label htmlFor="survey-edit-expiration-date">Fecha de vencimiento</label></dt>
                 <dd className="item-text">
                   <input
+                    id="survey-edit-expiration-date"
                     name="expirationDate"
                     type="date"
                     value={formData.expirationDate}
@@ -209,9 +213,10 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
                 </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">¿Obligatoria?</dt>
+              <dt className="item-header"><label htmlFor="survey-edit-mandatory">¿Obligatoria?</label></dt>
               <dd className="item-text">
                 <input
+                  id="survey-edit-mandatory"
                   name="mandatory"
                   type="checkbox"
                   checked={formData.mandatory}
@@ -222,9 +227,10 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Visible</dt>
+              <dt className="item-header"><label htmlFor="survey-edit-is-visible">Visible</label></dt>
               <dd className="item-text">
                 <input
+                  id="survey-edit-is-visible"
                   name="isVisible"
                   type="checkbox"
                   checked={formData.isVisible}

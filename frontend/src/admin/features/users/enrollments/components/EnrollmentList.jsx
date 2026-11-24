@@ -102,6 +102,7 @@ function EnrollmentList({ enrollments, fetching, fetchError, refetch }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por expediente"
+          aria-label="Buscar por expediente"
         />
         <select
           className="btn-tertiary--light"

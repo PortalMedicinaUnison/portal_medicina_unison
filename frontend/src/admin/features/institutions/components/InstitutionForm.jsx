@@ -98,9 +98,10 @@ function InstitutionForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razón social *</dt>
+              <dt className="item-header"><label htmlFor="institution-name">Razón social *</label></dt>
               <dd className="item-text">
                 <input
+                  id="institution-name"
                   name="name"
                   type="text"
                   value={formData.name}

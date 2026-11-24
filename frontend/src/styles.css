@@ -10,11 +10,6 @@ body {
 }
 
 @layer components {
-    .show-on-sm { @apply 
-        hidden 
-        sm:block;
-    }
-
     .color-primary { 
         background-color: #24398a; 
     }

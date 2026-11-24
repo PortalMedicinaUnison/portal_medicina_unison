@@ -139,9 +139,10 @@ return (
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Nombre *</dt>
+              <dt className="item-header"><label htmlFor="profile-first-name">Nombre *</label></dt>
               <dd className="item-text">
                 <input
+                  id="profile-first-name"
                   name="firstName"
                   type="text"
                   value={formData.firstName}
@@ -155,9 +156,10 @@ return (
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Apellido Paterno *</dt>
+              <dt className="item-header"><label htmlFor="profile-last-name">Apellido Paterno *</label></dt>
               <dd className="item-text">
                 <input
+                  id="profile-last-name"
                   name="lastName"
                   type="text"
                   value={formData.lastName}
@@ -171,9 +173,10 @@ return (
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Apellido Materno</dt>
+              <dt className="item-header"><label htmlFor="profile-second-last-name">Apellido Materno</label></dt>
               <dd className="item-text">
                 <input
+                  id="profile-second-last-name"
                   name="secondLastName"
                   type="text"
                   value={formData.secondLastName}
@@ -186,9 +189,10 @@ return (
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Correo Electrónico *</dt>
+              <dt className="item-header"><label htmlFor="profile-email">Correo Electrónico *</label></dt>
               <dd className="item-text">
                 <input
+                  id="profile-email"
                   name="email"
                   type="email"
                   value={formData.email}
@@ -200,9 +204,10 @@ return (
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Teléfono</dt>
+              <dt className="item-header"><label htmlFor="profile-phone-number">Teléfono</label></dt>
               <dd className="item-text">
                 <input
+                  id="profile-phone-number"
                   name="phoneNumber"
                   type="tel"
                   inputMode="numeric"

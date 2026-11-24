@@ -133,6 +133,7 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por razón social, institución o jefe"
+          aria-label="Buscar por razón social, institución o jefe"
         />
         <select
           className="btn-tertiary--light"
@@ -199,11 +200,11 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
             ) : (
               filtered.map((item) => (
               <tr key={item.site_id}>
-                <td className="text-left">{item.name}</td>
-                <td className="text-left">{item.institution?.name ?? '—'}</td>
-                <td>{item.city}</td>
-                <td title={siteProgramsLabel(item)}>{siteProgramsLabel(item)}</td>
-                <td className="text-left">{item.teaching_head_name}</td>
+                <td className="!whitespace-normal text-left">{item.name}</td>
+                <td className="!whitespace-normal text-left">{item.institution?.name ?? '—'}</td>
+                <td className="!whitespace-normal">{item.city}</td>
+                <td className="!whitespace-normal">{siteProgramsLabel(item)}</td>
+                <td className="!whitespace-normal text-left">{item.teaching_head_name}</td>
                 <td className="relative overflow-visible text-right">
                   <DropdownMenu
                     actions={[

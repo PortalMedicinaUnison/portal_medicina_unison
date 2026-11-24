@@ -13,7 +13,7 @@ function StudentSidebar({ toggleSidebar, openToggleButton }) {
 
                 <div className="sidebar-header">
                         <Link to={ROUTES.HOME} className="ms-5 md:me-15">
-                            <img src="/unison-letters.svg" className="h-8 me-3" alt="unison logo" />
+                            <img src="/unison-letters.svg" className="h-8 me-3" alt="Universidad de Sonora" />
                         </Link>
                         <button
                             type="button"

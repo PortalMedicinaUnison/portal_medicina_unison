@@ -14,7 +14,7 @@ function Navbar({ toggleSidebar, openToggleButton }) {
     <nav className="top-0 w-full border-b lg:px-2 ">
       <div className="flex items-center justify-between">
         <div className="flex">
-          <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
+          <button type="button" className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar} aria-label="Mostrar el menú">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="sidebar-item-icon"

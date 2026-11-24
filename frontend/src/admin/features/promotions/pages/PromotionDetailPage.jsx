@@ -20,22 +20,20 @@ function PromotionPage() {
   const inscriptions = promotion && INSCRIPTION_PROGRAMS[promotion.program];
 
   const actions = (
-    <span className="show-on-sm">
-      <span className="flex flex-wrap gap-3">
-        {inscriptions && (
-          <Link to={`${inscriptions.listPath}?promotion_id=${promotion.promotion_id}`} className="btn-secondary">
-            Ver inscripciones
-          </Link>
-        )}
-        <button
-          type="button"
-          className="btn-primary"
-          onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_EDIT(promotionId)))}
-          disabled={fetching || Boolean(fetchError)}
-        >
-          Editar fechas y cupos
-        </button>
-      </span>
+    <span className="flex flex-wrap gap-3">
+      {inscriptions && (
+        <Link to={`${inscriptions.listPath}?promotion_id=${promotion.promotion_id}`} className="btn-secondary">
+          Ver inscripciones
+        </Link>
+      )}
+      <button
+        type="button"
+        className="btn-primary"
+        onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_EDIT(promotionId)))}
+        disabled={fetching || Boolean(fetchError)}
+      >
+        Editar fechas y cupos
+      </button>
     </span>
   );
 

@@ -17,9 +17,9 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
 
                 <div className="sidebar-header">
                         <Link to={ADMIN_HOME} className="ms-5 md:me-15">
-                            <img src="../../unison-letters.svg" className="h-8 me-3" alt="unison logo" />
+                            <img src="/unison-letters.svg" className="h-8 me-3" alt="Universidad de Sonora" />
                         </Link>
-                        <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
+                        <button type="button" className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar} aria-label="Ocultar el menú">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="sidebar-item-icon"

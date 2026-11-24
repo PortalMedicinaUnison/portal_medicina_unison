@@ -248,9 +248,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Fecha *</dt>
+              <dt className="item-header"><label htmlFor="report-date-report">Fecha *</label></dt>
               <dd className="item-text">
                 <input
+                  id="report-date-report"
                   name="dateReport"
                   type="date"
                   value={formData.dateReport}
@@ -263,9 +264,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Tipo de reporte *</dt>
+              <dt className="item-header"><label htmlFor="report-report-type">Tipo de reporte *</label></dt>
               <dd className="item-text">
                 <select
+                  id="report-report-type"
                   name="reportType"
                   value={formData.reportType}
                   onChange={handleChange}
@@ -284,9 +286,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
             </div>
             {isOtherType && (
               <div className="item-row">
-                <dt className="item-header">Especifica el tipo *</dt>
+                <dt className="item-header"><label htmlFor="report-other-type">Especifica el tipo *</label></dt>
                 <dd className="item-text">
                   <input
+                    id="report-other-type"
                     name="otherType"
                     type="text"
                     value={formData.otherType}
@@ -301,9 +304,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
               </div>
             )}
             <div className="item-row">
-              <dt className="item-header">Sede *</dt>
+              <dt className="item-header"><label htmlFor="report-site-id">Sede *</label></dt>
               <dd className="item-text">
                 <select
+                  id="report-site-id"
                   name="siteId"
                   value={formData.siteId}
                   onChange={handleChange}
@@ -331,9 +335,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Descripción *</dt>
+              <dt className="item-header"><label htmlFor="report-description">Descripción *</label></dt>
               <dd className="item-text">
                 <textarea
+                  id="report-description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
@@ -346,9 +351,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Evidencia (opcional)</dt>
+              <dt className="item-header"><label htmlFor="report-evidence-url">Evidencia (opcional)</label></dt>
               <dd className="item-text">
                 <input
+                  id="report-evidence-url"
                   name="evidenceUrl"
                   type="url"
                   value={formData.evidenceUrl}
@@ -364,9 +370,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">¿Deseas que el reporte sea anónimo?</dt>
+              <dt className="item-header"><label htmlFor="report-anonymity">¿Deseas que el reporte sea anónimo?</label></dt>
               <dd className="item-text">
                 <input
+                  id="report-anonymity"
                   name="anonymity"
                   type="checkbox"
                   checked={formData.anonymity}

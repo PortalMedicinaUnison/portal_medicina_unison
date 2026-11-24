@@ -173,9 +173,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razón social *</dt>
+              <dt className="item-header"><label htmlFor="site-edit-name">Razón social *</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-name"
                   name="name"
                   type="text"
                   value={formData.name}
@@ -189,9 +190,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Institución *</dt>
+              <dt className="item-header"><label htmlFor="site-edit-institution-id">Institución *</label></dt>
               <dd className="item-text">
                 <select
+                  id="site-edit-institution-id"
                   name="institutionId"
                   value={formData.institutionId}
                   onChange={handleChange}
@@ -217,9 +219,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
             />
 
             <div className="item-row">
-              <dt className="item-header">Dirección *</dt>
+              <dt className="item-header"><label htmlFor="site-edit-address">Dirección *</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-address"
                   name="address"
                   type="text"
                   value={formData.address}
@@ -233,9 +236,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Ciudad *</dt>
+              <dt className="item-header"><label htmlFor="site-edit-city">Ciudad *</label></dt>
               <dd className="item-text">
                 <select
+                  id="site-edit-city"
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
@@ -253,9 +257,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza *</dt>
+              <dt className="item-header"><label htmlFor="site-edit-teaching-head-name">Jefe de enseñanza *</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-teaching-head-name"
                   name="teachingHeadName"
                   type="text"
                   value={formData.teachingHeadName}
@@ -268,9 +273,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza (correo)</dt>
+              <dt className="item-header"><label htmlFor="site-edit-teaching-head-email">Jefe de enseñanza (correo)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-teaching-head-email"
                   name="teachingHeadEmail"
                   type="text"
                   value={formData.teachingHeadEmail}
@@ -282,9 +288,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza (teléfono)</dt>
+              <dt className="item-header"><label htmlFor="site-edit-teaching-head-phone">Jefe de enseñanza (teléfono)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-teaching-head-phone"
                   name="teachingHeadPhone"
                   type="text"
                   value={formData.teachingHeadPhone}
@@ -296,9 +303,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza</dt>
+              <dt className="item-header"><label htmlFor="site-edit-teaching-deputy-name">Subjefe de enseñanza</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-teaching-deputy-name"
                   name="teachingDeputyName"
                   type="text"
                   value={formData.teachingDeputyName}
@@ -310,9 +318,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza (correo)</dt>
+              <dt className="item-header"><label htmlFor="site-edit-teaching-deputy-email">Subjefe de enseñanza (correo)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-teaching-deputy-email"
                   name="teachingDeputyEmail"
                   type="text"
                   value={formData.teachingDeputyEmail}
@@ -324,9 +333,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza (teléfono)</dt>
+              <dt className="item-header"><label htmlFor="site-edit-teaching-deputy-phone">Subjefe de enseñanza (teléfono)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-teaching-deputy-phone"
                   name="teachingDeputyPhone"
                   type="text"
                   value={formData.teachingDeputyPhone}

@@ -107,6 +107,7 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por título o descripción"
+          aria-label="Buscar por título o descripción"
         />
          <select
           className="btn-tertiary--light"

@@ -128,6 +128,7 @@ function UserList({ users, fetching, fetchError, refetch }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por nombre o expediente"
+          aria-label="Buscar por nombre o expediente"
         />
         <select
           className="form-input--sm"

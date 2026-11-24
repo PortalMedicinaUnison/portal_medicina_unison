@@ -113,9 +113,10 @@ function AnnouncementForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Título</dt>
+              <dt className="item-header"><label htmlFor="announcement-title">Título</label></dt>
               <dd className="item-text">
                 <input
+                  id="announcement-title"
                   name="title"
                   type="text"
                   value={formData.title}
@@ -128,9 +129,10 @@ function AnnouncementForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Contenido</dt>
+              <dt className="item-header"><label htmlFor="announcement-description">Contenido</label></dt>
               <dd className="item-text">
                 <textarea
+                  id="announcement-description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
@@ -143,9 +145,10 @@ function AnnouncementForm() {
               </dd>
             </div>
             <div className="item-row">
-                <dt className="item-header">Ambito</dt>
+                <dt className="item-header"><label htmlFor="announcement-type">Ámbito</label></dt>
                 <dd className="item-text">
                   <select
+                    id="announcement-type"
                     name="announcementType"
                     value={formData.announcementType}
                     onChange={handleChange}
@@ -161,9 +164,10 @@ function AnnouncementForm() {
                 </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Visible</dt>
+              <dt className="item-header"><label htmlFor="announcement-is-visible">Visible</label></dt>
               <dd className="item-text">
                 <input
+                  id="announcement-is-visible"
                   name="isVisible"
                   type="checkbox"
                   checked={formData.isVisible}
