@@ -1,4 +1,5 @@
-from tests.conftest import PASSWORD, auth
+from core.settings import settings
+from tests.conftest import JPEG_BYTES, PASSWORD, PNG_BYTES, auth
 
 
 def test_admin_lists_and_searches_users(client, admin, student, other_student):
@@ -50,7 +51,9 @@ def test_roles(client, admin, super_admin, student):
 def test_admin_deactivates_student(client, admin, student):
     assert client.delete(f"/users/{admin.user_id}", headers=auth(admin)).status_code == 400
     assert client.delete(f"/users/{student.user_id}", headers=auth(admin)).status_code == 204
-    assert client.get(f"/users/{student.user_id}", headers=auth(admin)).status_code == 404
+    # La coordinación sigue viendo la cuenta (desactivada) para poder reactivarla.
+    assert client.get(f"/users/{student.user_id}", headers=auth(admin)).json()["is_active"] is False
+    assert student.user_id not in {u["user_id"] for u in client.get("/users", headers=auth(admin)).json()}
 
 
 def test_enrollments(client, admin):
@@ -71,3 +74,53 @@ def test_enrollments(client, admin):
     enrollment_id = created.json()["enrollment_id"]
     assert client.delete(f"/enrollments/{enrollment_id}", headers=headers).status_code == 204
     assert client.post("/enrollments", json={"academic_id": "223456789"}, headers=headers).status_code == 201
+
+
+def test_profile_photo(client, admin, student, other_student):
+    headers = auth(student)
+    assert client.get("/users/me", headers=headers).json()["has_photo"] is False
+    not_image = client.put("/users/me/photo", headers=headers, files={"file": ("foto.png", b"%PDF-1.4 no", "image/png")})
+    assert not_image.status_code == 400
+    too_big = client.put("/users/me/photo", headers=headers,
+                         files={"file": ("big.png", PNG_BYTES + b"0" * (1024 * 1024), "image/png")})
+    assert too_big.status_code == 413
+
+    uploaded = client.put("/users/me/photo", headers=headers, files={"file": ("yo.png", PNG_BYTES, "image/png")})
+    assert uploaded.status_code == 200 and uploaded.json()["has_photo"] is True
+
+    own = client.get(f"/users/{student.user_id}/photo", headers=headers)
+    assert own.status_code == 200 and own.content == PNG_BYTES and own.headers["content-type"] == "image/png"
+    assert client.get(f"/users/{student.user_id}/photo", headers=auth(admin)).status_code == 200
+    assert client.get(f"/users/{student.user_id}/photo", headers=auth(other_student)).status_code == 404
+
+    # Reemplazar la foto borra el archivo anterior.
+    photos_dir = settings.UPLOAD_DIR / "profile-photos"
+    own_png = {p for p in photos_dir.iterdir() if p.suffix == ".png"}
+    replaced = client.put("/users/me/photo", headers=headers, files={"file": ("yo.jpg", JPEG_BYTES, "image/jpeg")})
+    assert replaced.status_code == 200
+    assert not any(p.exists() for p in own_png)
+    assert client.get(f"/users/{student.user_id}/photo", headers=headers).headers["content-type"] == "image/jpeg"
+
+    removed = client.delete("/users/me/photo", headers=headers)
+    assert removed.status_code == 200 and removed.json()["has_photo"] is False
+    assert client.get(f"/users/{student.user_id}/photo", headers=headers).status_code == 404
+
+
+def test_admin_reactivates_users(client, admin, super_admin, student, make_user):
+    headers = auth(admin)
+    assert client.delete(f"/users/{student.user_id}", headers=headers).status_code == 204
+    assert client.delete(f"/users/{student.user_id}", headers=headers).status_code == 409
+    assert student.user_id not in {u["user_id"] for u in client.get("/users", headers=headers).json()}
+    everyone = client.get("/users", params={"include_inactive": True}, headers=headers).json()
+    assert next(u for u in everyone if u["user_id"] == student.user_id)["is_active"] is False
+    assert client.get(f"/users/{student.user_id}", headers=headers).json()["is_active"] is False
+
+    reactivated = client.post(f"/users/{student.user_id}/reactivate", headers=headers)
+    assert reactivated.status_code == 200 and reactivated.json()["is_active"] is True
+    assert client.post(f"/users/{student.user_id}/reactivate", headers=headers).status_code == 409
+    assert client.post("/auth/login", json={"email": "alumno@unison.mx", "password": PASSWORD}).status_code == 200
+
+    other_admin = make_user("otro.admin@unison.mx", is_admin=True)
+    client.delete(f"/users/{other_admin.user_id}", headers=auth(super_admin))
+    assert client.post(f"/users/{other_admin.user_id}/reactivate", headers=headers).status_code == 403
+    assert client.post(f"/users/{other_admin.user_id}/reactivate", headers=auth(super_admin)).status_code == 200

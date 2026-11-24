@@ -3,7 +3,8 @@ import { getAllUsersRequest } from '../../../../services/userService'
 import { getErrorMessage } from '../../../../utils/errors';
 
 
-export default function useGetUsers () {
+// includeInactive: también trae las cuentas desactivadas (lista de administración).
+export default function useGetUsers ({ includeInactive = false } = {}) {
   const [users, setUsers]     = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
@@ -13,7 +14,7 @@ export default function useGetUsers () {
     setError(null);
     
     try {
-      const response = await getAllUsersRequest();
+      const response = await getAllUsersRequest(includeInactive ? { include_inactive: true } : {});
       setUsers(response.data);
     } catch (err) {
       setError(getErrorMessage(err, 'No se pudo cargar la información.'));
@@ -21,7 +22,7 @@ export default function useGetUsers () {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [includeInactive]);
     
   useEffect(() => {
     getUsers();

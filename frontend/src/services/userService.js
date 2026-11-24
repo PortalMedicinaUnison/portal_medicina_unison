@@ -15,9 +15,23 @@ export const changeMyPasswordRequest = (data) =>
 export const deactivateMeRequest = () =>
   api.delete(API_ENDPOINTS.USERS.ME);
 
+// Foto de perfil (JPEG, PNG o WebP de hasta 2 MB).
+export const uploadMyPhotoRequest = (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return api.put(API_ENDPOINTS.USERS.ME_PHOTO, formData);
+};
+
+export const deleteMyPhotoRequest = () =>
+  api.delete(API_ENDPOINTS.USERS.ME_PHOTO);
+
+// La foto requiere el token, así que se descarga como Blob (no sirve como src directo de <img>).
+export const getUserPhotoRequest = (id) =>
+  api.get(API_ENDPOINTS.USERS.PHOTO(id), { responseType: 'blob' });
+
 // ----------------- Administración de usuarios ----------------
 
-// params: { is_admin, academic_id, q }
+// params: { is_admin, academic_id, q, include_inactive }
 export const getAllUsersRequest = (params = {}) =>
   api.get(API_ENDPOINTS.USERS.LIST, { params });
 
@@ -32,6 +46,9 @@ export const setUserRoleRequest = (id, isAdmin) =>
 
 export const deleteUserRequest = (id) =>
   api.delete(API_ENDPOINTS.USERS.DETAIL(id));
+
+export const reactivateUserRequest = (id) =>
+  api.post(API_ENDPOINTS.USERS.REACTIVATE(id));
 
 // ----------------- Pre-registro (enrollments) ----------------
 

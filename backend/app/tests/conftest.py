@@ -13,6 +13,7 @@ os.environ["DATABASE_URL"] = "sqlite://"
 os.environ["UPLOAD_DIR"] = str(_TMP_DIR / "uploads")
 os.environ["ENVIRONMENT"] = "test"
 os.environ["MAX_UPLOAD_MB"] = "1"
+os.environ["MAX_PHOTO_MB"] = "1"
 
 import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
@@ -28,6 +29,8 @@ from models import Base, User, UserEnrollment  # noqa: E402
 
 PASSWORD = "Password1"
 PDF_BYTES = b"%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n"
+PNG_BYTES = b"\x89PNG\r\n\x1a\n" + b"\x00" * 64
+JPEG_BYTES = b"\xff\xd8\xff\xe0" + b"\x00" * 64
 
 
 @pytest.fixture()

@@ -18,12 +18,13 @@ for arg in "$@"; do
   esac
 done
 
+# Vite 8 requiere Node.js ^20.19 o >=22.12.
 if ! command -v npm >/dev/null 2>&1; then
-  echo "Se necesita Node.js 18 o superior (incluye npm): https://nodejs.org"
+  echo "Se necesita Node.js 22.12 o superior (incluye npm): https://nodejs.org"
   exit 1
 fi
-if ! node -e 'process.exit(Number(process.versions.node.split(".")[0]) >= 18 ? 0 : 1)'; then
-  echo "Se necesita Node.js 18 o superior (tienes $(node -v))."
+if ! node -e 'const [ma, mi] = process.versions.node.split(".").map(Number); process.exit((ma === 20 && mi >= 19) || (ma === 22 && mi >= 12) || ma > 22 ? 0 : 1)'; then
+  echo "Se necesita Node.js 20.19+ o 22.12+ (tienes $(node -v))."
   exit 1
 fi
 

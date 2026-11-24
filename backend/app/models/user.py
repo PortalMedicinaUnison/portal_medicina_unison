@@ -57,6 +57,10 @@ class User(BaseModel):
         return "student"
 
     @property
+    def has_photo(self) -> bool:
+        return bool(self.profile_photo)
+
+    @property
     def is_staff(self) -> bool:
         """Administrador o super administrador."""
         return self.is_admin or self.is_super_admin

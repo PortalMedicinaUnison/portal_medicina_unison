@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     # Archivos subidos (documentos de internado). Ruta absoluta recomendada en producción.
     UPLOAD_DIR: Path = BACKEND_DIR / "uploads"
     MAX_UPLOAD_MB: int = 10
+    MAX_PHOTO_MB: int = 2
 
     # CORS: en .env se escribe como JSON, p. ej. ORIGINS=["https://portal.unison.mx"]
     ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
@@ -67,6 +68,10 @@ class Settings(BaseSettings):
     @property
     def max_upload_bytes(self) -> int:
         return self.MAX_UPLOAD_MB * 1024 * 1024
+
+    @property
+    def max_photo_bytes(self) -> int:
+        return self.MAX_PHOTO_MB * 1024 * 1024
 
 
 settings = Settings()

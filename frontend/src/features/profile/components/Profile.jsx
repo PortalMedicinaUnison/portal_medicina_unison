@@ -9,6 +9,7 @@ import DataLoadError from '../../../utils/ui/DataLoadError';
 import Modal from '../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../utils/ui/ConfirmDialogContent';
 import ChangePasswordForm from './ChangePasswordForm';
+import UserAvatar from '../../../components/UserAvatar';
 
 
 // Perfil de la cuenta en sesión. También lo abren administradores (sin expediente ni internado).
@@ -108,15 +109,7 @@ function Profile({ user, fetching, fetchError, refetch }) {
   return (
     <div className="info-container">
       <div className="user-info-photo">
-        <img
-          src={user.profile_photo || "/default-avatar.png"}
-          alt="Foto de perfil"
-          className="user-profile-photo"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "/default-avatar.png";
-          }}
-        />
+        <UserAvatar user={user} className="user-profile-photo" />
       </div>
 
       <div className="item-container">

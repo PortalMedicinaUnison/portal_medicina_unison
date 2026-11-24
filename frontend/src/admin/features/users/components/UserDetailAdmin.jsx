@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import { useUser } from '../../../../contexts/UserContext';
 import useDeleteUser from '../hooks/useDeleteUser';
+import useReactivateUser from '../hooks/useReactivateUser';
+import UserAvatar from '../../../../components/UserAvatar';
 import UpdateUserAdmin from './UpdateUserAdmin';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
@@ -16,14 +18,17 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
   const navigate = useNavigate();
   const { user: currentUser, isSuperAdmin } = useUser();
   const { deleteUser, loading: deleting, success: deleted, error: deleteError, reset } = useDeleteUser();
+  const { reactivateUser, loading: reactivating, success: reactivated, error: reactivateError, reset: resetReactivate } = useReactivateUser();
 
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
 
   // El backend no permite desactivar la propia cuenta ni, sin ser super administrador, a otros administradores.
-  const canDeactivate = Boolean(
+  const hasPermission = Boolean(
     user && user.user_id !== currentUser?.user_id && (isSuperAdmin || user.role === 'student')
   );
+  const canDeactivate = hasPermission && user?.is_active;
+  const canReactivate = hasPermission && user && !user.is_active;
 
 // ---------------------- HANDLERS ----------------------
 
@@ -38,6 +43,11 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
   const handleCloseError = () => {
     setShowErrorDialog(false);
     reset();
+    resetReactivate();
+  };
+
+  const handleReactivate = () => {
+    if (userId) reactivateUser(userId);
   };
 
 // ---------------------- EFFECTS ----------------------
@@ -56,6 +66,17 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
       setShowErrorDialog(true);
     }
   }, [deleteError]);
+
+  useEffect(() => {
+    if (reactivated) {
+      resetReactivate();
+      refetch?.();
+    }
+  }, [reactivated, refetch, resetReactivate]);
+
+  useEffect(() => {
+    if (reactivateError) setShowErrorDialog(true);
+  }, [reactivateError]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -92,6 +113,12 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
   return (
     <div className="info-container">
       <div className="item-container">
+        <div className="flex items-center gap-4 mb-6">
+          <UserAvatar user={user} className="size-20 rounded-full ring-1 ring-gray-200" />
+          {!user.is_active && (
+            <span className="rounded-full bg-red-50 px-3 py-1 text-sm font-medium text-red-700">Cuenta desactivada</span>
+          )}
+        </div>
         <dl className="item-list">
           <div className="item-row">
             <dt className="item-header">Nombre completo</dt>
@@ -127,14 +154,24 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message={deleteError || 'Ocurrió un problema al desactivar el usuario.'}
+          message={deleteError || reactivateError || 'Ocurrió un problema al actualizar el usuario.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />
       </Modal>
 
       <div className="info-actions mt-16">
-        <UpdateUserAdmin user={user} onSuccess={refetch} />
+        {user.is_active && <UpdateUserAdmin user={user} onSuccess={refetch} />}
+        {canReactivate && (
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={handleReactivate}
+            disabled={reactivating}
+          >
+            {reactivating ? 'Reactivando...' : 'Reactivar cuenta'}
+          </button>
+        )}
         {canDeactivate && (
           <button
             type="button"
