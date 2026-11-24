@@ -11,7 +11,6 @@ import argparse
 import getpass
 import os
 import sys
-from datetime import date
 
 from core.security import hash_password
 from core.settings import settings
@@ -20,6 +19,7 @@ from models import (
     ApplicationStatusEnum, Institution, InternshipApplication, Promotion,
     PromotionSiteDetail, Site, User, UserEnrollment,
 )
+from utils.dates import local_today
 from utils.validation import validate_email, validate_password
 
 
@@ -83,7 +83,7 @@ def seed_demo(_args: argparse.Namespace) -> None:
                 institution_id=imss.institution_id, address="Calle 200 y Guerrero", city="Cajeme",
                 teaching_head_name="Dr. Luis Torres")),
         ]
-        promotion = get_or_create(Promotion, year=date.today().year, period=1, defaults=dict(is_finished=False))
+        promotion = get_or_create(Promotion, year=local_today().year, period=1, defaults=dict(is_finished=False))
         for site, capacity in zip(sites, (3, 2, 2)):
             get_or_create(PromotionSiteDetail, promotion_id=promotion.promotion_id, site_id=site.site_id,
                           defaults=dict(capacity=capacity))

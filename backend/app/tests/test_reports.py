@@ -36,6 +36,9 @@ def test_report_validation(client, student, catalog):
 
 
 def test_anonymous_reports_hide_identity_from_admins(client, admin, student, catalog):
+    application = client.post("/internship-applications", headers=auth(admin), json={
+        "promotion_id": catalog["promotion"]["promotion_id"], "academic_id": student.academic_id}).json()
+    internship = client.post(f"/internship-applications/{application['application_id']}/accept", headers=auth(student)).json()
     client.post("/reports", json=_report(catalog, anonymity=True), headers=auth(student))
     client.post("/reports", json=_report(catalog, report_type=3), headers=auth(student))
 
@@ -43,12 +46,17 @@ def test_anonymous_reports_hide_identity_from_admins(client, admin, student, cat
     anonymous = next(r for r in listing if r["anonymity"])
     named = next(r for r in listing if not r["anonymity"])
     assert anonymous["academic_id"] is None and anonymous["student"] is None
+    # El internado también identificaría al estudiante.
+    assert anonymous["internship_id"] is None
+    assert named["internship_id"] == internship["internship_id"]
     assert named["academic_id"] == "222000001" and named["student"]["email"] == "alumno@unison.mx"
     assert client.get(f"/reports/{anonymous['report_id']}", headers=auth(admin)).json()["academic_id"] is None
 
     # Filtrar por expediente no debe revelar los anónimos.
     filtered = client.get("/reports", params={"academic_id": "222000001"}, headers=auth(admin)).json()
     assert [r["report_id"] for r in filtered] == [named["report_id"]]
+    by_internship = client.get("/reports", params={"internship_id": internship["internship_id"]}, headers=auth(admin)).json()
+    assert [r["report_id"] for r in by_internship] == [named["report_id"]]
     # El propio estudiante sí ve sus datos.
     own = client.get(f"/reports/{anonymous['report_id']}", headers=auth(student)).json()
     assert own["academic_id"] == "222000001"

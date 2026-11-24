@@ -13,3 +13,4 @@ python-multipart==0.0.34
 anyio==4.16.0
 h11==0.16.0
 idna==3.20
+tzdata==2026.6

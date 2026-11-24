@@ -16,8 +16,10 @@ def to_output(report: Report, viewer: User) -> ReportOutput:
     """Si el reporte es anónimo, el personal administrativo no ve quién lo hizo."""
     output = ReportOutput.model_validate(report)
     if viewer.is_staff and report.anonymity:
+        # El internado también identifica al estudiante (GET /internships/{id}).
         output.academic_id = None
         output.student = None
+        output.internship_id = None
     return output
 
 
@@ -40,8 +42,8 @@ def list_reports(
         academic_id=scoped_academic_id, site_id=site_id, internship_id=internship_id,
         is_open=is_open, report_type=report_type,
     )
-    if user.is_staff and academic_id:
-        # Filtrar por estudiante no debe revelar a quién pertenecen los reportes anónimos.
+    if user.is_staff and (academic_id or internship_id is not None):
+        # Filtrar por estudiante o por internado no debe revelar a quién pertenecen los reportes anónimos.
         reports = [report for report in reports if not report.anonymity]
     return [to_output(report, user) for report in reports]
 

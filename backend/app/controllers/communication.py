@@ -1,4 +1,3 @@
-from datetime import date
 from typing import List, Optional
 
 from sqlalchemy.orm import Session
@@ -8,6 +7,7 @@ from models.communication import Announcement, AnnouncementTypeEnum, Survey
 from models.user import User
 from repos.communication import AnnouncementRepo, SurveyRepo
 from schemas.communication import AnnouncementInput, AnnouncementUpdate, SurveyInput, SurveyUpdate
+from utils.dates import local_today
 
 
 # ---------------------- ANNOUNCEMENT ----------------------
@@ -47,12 +47,12 @@ def list_surveys(db: Session, user: User, is_visible: Optional[bool], mandatory:
     """Los estudiantes solo ven encuestas visibles y vigentes."""
     if user.is_staff:
         return SurveyRepo(db).list(is_visible=is_visible, mandatory=mandatory)
-    return SurveyRepo(db).list(is_visible=True, mandatory=mandatory, not_expired_on=date.today())
+    return SurveyRepo(db).list(is_visible=True, mandatory=mandatory, not_expired_on=local_today())
 
 
 def get_survey(db: Session, user: User, survey_id: int) -> Survey:
     survey = SurveyRepo(db).get(survey_id)
-    if survey is None or (not user.is_staff and (not survey.is_visible or survey.expiration_date < date.today())):
+    if survey is None or (not user.is_staff and (not survey.is_visible or survey.expiration_date < local_today())):
         raise not_found("Encuesta no encontrada.")
     return survey
 

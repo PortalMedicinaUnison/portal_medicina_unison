@@ -8,6 +8,8 @@ from typing import Optional
 
 from pydantic import HttpUrl, TypeAdapter
 
+from utils.dates import local_today
+
 EMAIL_REGEX = re.compile(r"^[A-Za-z0-9_.+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+$")
 _http_url_adapter = TypeAdapter(HttpUrl)
 
@@ -62,19 +64,19 @@ def validate_period(period: int) -> int:
 
 
 def validate_year(year: int) -> int:
-    if year < 2000 or year > date.today().year + 5:
+    if year < 2000 or year > local_today().year + 5:
         raise ValueError("El año no es válido.")
     return year
 
 
 def validate_not_past(value: date) -> date:
-    if value < date.today():
+    if value < local_today():
         raise ValueError("La fecha no puede ser anterior a hoy.")
     return value
 
 
 def validate_not_future(value: date) -> date:
-    if value > date.today():
+    if value > local_today():
         raise ValueError("La fecha no puede ser posterior a hoy.")
     return value
 

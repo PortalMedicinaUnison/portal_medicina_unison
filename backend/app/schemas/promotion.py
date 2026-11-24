@@ -1,16 +1,16 @@
-from datetime import date
 from typing import Annotated
 
 from pydantic import AfterValidator, BaseModel, Field
 
 from schemas.common import ORMModel
 from schemas.site import SiteBasicOutput
+from utils.dates import local_today
 from utils.validation import validate_period, validate_year
 
 
 def _validate_new_year(year: int) -> int:
     validate_year(year)
-    if year < date.today().year:
+    if year < local_today().year:
         raise ValueError("El año de la promoción no puede ser anterior al actual.")
     return year
 
