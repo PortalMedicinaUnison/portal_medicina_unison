@@ -3,10 +3,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useCreatePromotion from '../hooks/useCreatePromotion';
 import { cleanFormData } from "../../../../utils/utils";
-import { PERIOD_LABELS } from '../../../../utils/constants';
+import { PERIOD_LABELS, PROGRAMS, PROGRAM_LABELS } from '../../../../utils/constants';
 
 
 const INITIAL_FORM = {
+  program: String(PROGRAMS.INTERNSHIP),
   year: '',
   period: '',
   isFinished: false,
@@ -42,6 +43,7 @@ function PromotionForm() {
     e.preventDefault();
 
     const cleanedData = cleanFormData({
+      program: Number(formData.program),
       year: Number(formData.year),
       period: Number(formData.period),
       isFinished: formData.isFinished,
@@ -59,6 +61,7 @@ function PromotionForm() {
     }
 
     const payload = {
+      program: cleanedData.program,
       year: cleanedData.year,
       period: cleanedData.period,
       is_finished: cleanedData.isFinished,
@@ -113,6 +116,23 @@ function PromotionForm() {
       <div className="info-container">
         <div className="item-container">
           <dl className="item-list">
+            <div className="item-row">
+              <dt className="item-header">Programa</dt>
+              <dd className="item-text">
+                <select
+                  name="program"
+                  value={formData.program}
+                  onChange={handleChange}
+                  className="form-input--half"
+                  disabled={saving}
+                  required
+                >
+                  {Object.entries(PROGRAM_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
+                </select>
+              </dd>
+            </div>
             <div className="item-row">
               <dt className="item-header">Año</dt>
               <dd className="item-text">

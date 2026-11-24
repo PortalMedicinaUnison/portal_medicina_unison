@@ -62,6 +62,24 @@ export const API_ENDPOINTS = {
     FILE: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}/file`,
   },
 
+  SOCIAL_SERVICE_APPLICATIONS: {
+    LIST: '/social-service-applications',
+    DETAIL: (id) => `/social-service-applications/${id}`,
+    ACCEPT: (id) => `/social-service-applications/${id}/accept`,
+    DECLINE: (id) => `/social-service-applications/${id}/decline`,
+  },
+
+  SOCIAL_SERVICES: {
+    LIST: '/social-services',
+    DETAIL: (id) => `/social-services/${id}`,
+  },
+
+  SOCIAL_SERVICE_DOCUMENTS: {
+    LIST: (socialServiceId) => `/social-services/${socialServiceId}/documents`,
+    DETAIL: (socialServiceId, docId) => `/social-services/${socialServiceId}/documents/${docId}`,
+    FILE: (socialServiceId, docId) => `/social-services/${socialServiceId}/documents/${docId}/file`,
+  },
+
   ANNOUNCEMENTS: {
     LIST: '/announcements',
     DETAIL: (id) => `/announcements/${id}`,

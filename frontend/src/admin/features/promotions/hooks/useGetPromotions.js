@@ -3,7 +3,8 @@ import { getAllPromotionsRequest } from '../../../../services/promotionService'
 import { getErrorMessage } from '../../../../utils/errors';
 
 
-export default function useGetPromotions () {
+// program: 1 internado, 2 servicio social; sin valor trae ambos.
+export default function useGetPromotions ({ program } = {}) {
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading]       = useState(false);
   const [error, setError]           = useState(null);
@@ -13,7 +14,7 @@ export default function useGetPromotions () {
     setError(null);
     
     try {
-      const response = await getAllPromotionsRequest();
+      const response = await getAllPromotionsRequest(program ? { program } : {});
       setPromotions(response.data);
     } catch (err) {
       setError(getErrorMessage(err, 'No se pudo cargar la información.'));
@@ -21,7 +22,7 @@ export default function useGetPromotions () {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [program]);
     
   useEffect(() => {
     getPromotions();

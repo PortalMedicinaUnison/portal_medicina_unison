@@ -5,7 +5,7 @@ import useUpdatePromotion from '../hooks/useUpdatePromotion';
 import useGetPsdsByProm from '../promotionDetailSite/hooks/useGetPsdsByProm';
 import PsdList from '../promotionDetailSite/components/PsdList';
 import { cleanFormData } from "../../../../utils/utils";
-import { PERIOD_LABELS } from '../../../../utils/constants';
+import { PERIOD_LABELS, PROGRAM_LABELS, labelOf } from '../../../../utils/constants';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 
@@ -145,6 +145,10 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
         <div className="info-container">
           <div className="item-container">
             <dl className="item-list">
+              <div className="item-row">
+                <dt className="item-header">Programa</dt>
+                <dd className="item-text">{labelOf(PROGRAM_LABELS, promotion.program)}</dd>
+              </div>
               <div className="item-row">
                 <dt className="item-header">Año</dt>
                 <dd className="item-text">
