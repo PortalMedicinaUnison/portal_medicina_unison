@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ROUTES, adminAbs } from '../../../../config';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
@@ -30,7 +31,7 @@ function PlazaResultsPage({ program }) {
   const config = INSCRIPTION_PROGRAMS[program];
   const { promotions, promotion, promotionId, selectPromotion, loading: loadingPromotions, error: promotionsError } = usePromotionPicker(program);
   const { inscriptions, loading, error, reload } = useInscriptions(program, promotionId);
-  const [psds, setPsds] = useState([]);
+  const [psds, setPsds] = useState(null);       // null mientras cargan
   const [psdsError, setPsdsError] = useState(null);
   const [edits, setEdits] = useState({});       // application_id → site_id ('' = sin sede)
   const [results, setResults] = useState({});   // application_id → { ok, detail }
@@ -51,6 +52,7 @@ function PlazaResultsPage({ program }) {
   useEffect(() => {
     setEdits({});
     setResults({});
+    setPsds(null);
     loadSeats();
   }, [loadSeats]);
 
@@ -70,7 +72,7 @@ function PlazaResultsPage({ program }) {
       const value = edits[a.application_id] ?? saved(a);
       if (value) used[value] = (used[value] ?? 0) + 1;
     });
-    return Object.fromEntries(psds.map((p) => [String(p.site_id), p.capacity - (used[String(p.site_id)] ?? 0)]));
+    return Object.fromEntries((psds ?? []).map((p) => [String(p.site_id), p.capacity - (used[String(p.site_id)] ?? 0)]));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, edits, psds]);
 
@@ -139,10 +141,13 @@ function PlazaResultsPage({ program }) {
             </div>
 
             {psdsError && <div className="alert-error">{psdsError}</div>}
-            {!psdsError && psds.length === 0 && (
-              <div className="alert-error">La promoción no tiene cupos por {config.placeLabel.toLowerCase()}; regístralos en Promociones.</div>
+            {!psdsError && psds?.length === 0 && (
+              <div className="alert-error">
+                La promoción no tiene cupos por {config.placeLabel.toLowerCase()}.{' '}
+                <Link to={adminAbs(ROUTES.ADMIN.PROMOTION_EDIT(promotion.promotion_id))} className="font-semibold underline">Capturar cupos</Link>
+              </div>
             )}
-            {psds.length > 0 && (
+            {psds?.length > 0 && (
               <div className="flex flex-wrap gap-2 text-xs">
                 {psds.map((p) => {
                   const left = remaining[String(p.site_id)];
@@ -165,7 +170,7 @@ function PlazaResultsPage({ program }) {
                     <tr>
                       <th className="w-12">#</th>
                       <th className="w-1/4 text-left">Alumno</th>
-                      <th className="w-28">Promedio</th>
+                      <th className="w-32">Promedio</th>
                       <th className="w-40">Documentos</th>
                       <th className="text-left">{config.placeLabel}</th>
                     </tr>
@@ -187,12 +192,12 @@ function PlazaResultsPage({ program }) {
                           </td>
                           <td>{formatAverage(a.average)}</td>
                           <td><DocumentsStatus progress={a.inscription_progress} /></td>
-                          <td className="whitespace-normal text-left">
+                          <td className="!whitespace-normal text-left">
                             <select className="form-input_full" value={value} disabled={saving || blocked}
                               aria-label={`${config.placeLabel} de ${formatFullName(a.student)}`}
                               onChange={(e) => handleChange(a, e.target.value)}>
                               <option value="">Sin {config.placeLabel.toLowerCase()}</option>
-                              {psds.map((p) => {
+                              {(psds ?? []).map((p) => {
                                 const id = String(p.site_id);
                                 const full = remaining[id] <= 0 && value !== id;
                                 return <option key={p.psd_id} value={id} disabled={full}>{p.site?.name}{full ? ' (sin cupo)' : ''}</option>;

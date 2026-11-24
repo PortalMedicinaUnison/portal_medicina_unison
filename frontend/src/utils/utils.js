@@ -46,7 +46,6 @@ export function todayISO() {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 }
 
-// "Nombre Apellido1 Apellido2" sin huecos ni "null" cuando falta algún apellido.
 // Texto sin acentos y en minúsculas, para búsquedas ("López" encuentra "lopez").
 export const normalizeText = (text) => String(text ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
@@ -57,6 +56,7 @@ export function promotionLabel(promotion) {
   return `${promotion.year} - ${promotion.period === 1 ? 'Primer periodo' : 'Segundo periodo'}`;
 }
 
+// "Nombre Apellido1 Apellido2" sin huecos ni "null" cuando falta algún apellido.
 export function formatFullName(person) {
   if (!person) return '';
   return [person.first_name, person.last_name, person.second_last_name].filter(Boolean).join(' ');

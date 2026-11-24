@@ -5,6 +5,7 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import { siteProgramsLabel } from '../sitePrograms';
 
 
 function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {    
@@ -90,6 +91,10 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
           <div className="item-row">
             <dt className="item-header">Institución</dt>
             <dd className="item-text">{site.institution?.name ?? '—'}</dd>
+          </div>
+          <div className="item-row">
+            <dt className="item-header">Ofrece cupos para</dt>
+            <dd className="item-text">{siteProgramsLabel(site)}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Ciudad</dt>

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { promotionLabel } from '../../../../utils/utils';
 import NoSocialServiceApplication from './NoSocialServiceApplication';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
@@ -29,7 +29,7 @@ function SocialServiceApplicationDeclined({ application, fetching, fetchError, r
 // ---------------------- RENDER ----------------------
 
   const { promotion } = application;
-  const promotionLabel = promotion ? `${promotion.year} - ${labelOf(PERIOD_LABELS, promotion.period)}` : '—';
+  const promotionName = promotionLabel(promotion);
   const fullName = [user?.first_name, user?.last_name, user?.second_last_name].filter(Boolean).join(' ');
 
   return (
@@ -40,7 +40,7 @@ function SocialServiceApplicationDeclined({ application, fetching, fetchError, r
         </p>
         <p>
           Confirmamos que has <b>declinado tu participación</b> en la promoción{' '}
-          <b>{promotionLabel}</b> del Servicio Social.
+          <b>{promotionName}</b> del Servicio Social.
         </p>
       </div>
 

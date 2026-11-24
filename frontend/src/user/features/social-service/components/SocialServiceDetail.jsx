@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
-import { PROGRAMS, SOCIAL_SERVICE_STATUS, SOCIAL_SERVICE_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { PROGRAMS, SOCIAL_SERVICE_STATUS, SOCIAL_SERVICE_STATUS_LABELS, labelOf } from '../../../../utils/constants';
+import { promotionLabel } from '../../../../utils/utils';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
@@ -54,7 +55,7 @@ function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
           <div className="item-row">
             <dt className="item-header">Promoción</dt>
             <dd className="item-text">
-              {promotion ? `${promotion.year} - ${labelOf(PERIOD_LABELS, promotion.period)}` : '—'}
+              {promotionLabel(promotion)}
             </dd>
           </div>
           <div className="item-row">

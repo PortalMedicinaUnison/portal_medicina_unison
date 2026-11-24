@@ -36,7 +36,6 @@ export const REPORT_TYPE_LABELS = {
 export const ANNOUNCEMENT_TYPES = { GENERAL: 1, INTERNSHIP: 2 };
 export const ANNOUNCEMENT_TYPE_LABELS = { 1: 'General', 2: 'Internado' };
 
-export const PERIOD_LABELS = { 1: 'Primer periodo', 2: 'Segundo periodo' };
 
 export const ROLE_LABELS = { student: 'Estudiante', admin: 'Administrador', super_admin: 'Super administrador' };
 

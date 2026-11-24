@@ -6,7 +6,7 @@ import { API_ENDPOINTS } from '../config/apiEndpoints';
 export const createSiteRequest = (siteData) =>
   api.post(API_ENDPOINTS.SITES.LIST, siteData);
 
-// params: { institution_id, city }
+// params: { institution_id, city, program } (program: 1 sedes de internado, 2 de servicio social)
 export const getAllSitesRequest = (params = {}) =>
   api.get(API_ENDPOINTS.SITES.LIST, { params });
 

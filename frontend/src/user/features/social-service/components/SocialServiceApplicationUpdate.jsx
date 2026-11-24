@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
-import { APPLICATION_STATUS_LABELS, PERIOD_LABELS, PROGRAMS, DOCUMENT_STAGES, labelOf } from '../../../../utils/constants';
+import { APPLICATION_STATUS_LABELS, PROGRAMS, DOCUMENT_STAGES, labelOf } from '../../../../utils/constants';
+import { promotionLabel } from '../../../../utils/utils';
 import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
 import useRespondSocialServiceApplication from '../hooks/useRespondSocialServiceApplication';
 import NoSocialServiceApplication from './NoSocialServiceApplication';
@@ -107,7 +108,7 @@ function SocialServiceApplicationUpdate({ application, fetching, fetchError, ref
   // Para aceptar hay que haber subido los obligatorios de inscripción (el backend también lo exige).
   const inscription = application.inscription_progress;
   const documentsReady = !inscription || inscription.all_submitted;
-  const promotionLabel = promotion ? `${promotion.year} - ${labelOf(PERIOD_LABELS, promotion.period)}` : '—';
+  const promotionName = promotionLabel(promotion);
   const fullName = [user?.first_name, user?.last_name, user?.second_last_name].filter(Boolean).join(' ');
 
   return (
@@ -116,7 +117,7 @@ function SocialServiceApplicationUpdate({ application, fetching, fetchError, ref
         <dl className="item-list">
           <div className="item-row">
             <dt className="item-header">Promoción</dt>
-            <dd className="item-text">{promotionLabel}</dd>
+            <dd className="item-text">{promotionName}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Estatus de la asignación</dt>
@@ -142,7 +143,7 @@ function SocialServiceApplicationUpdate({ application, fetching, fetchError, ref
       <div className="w-3/4">
         <p className="mb-4">
           Yo, <b>{fullName}</b>, como estudiante de la carrera de Medicina que acreditó el Internado Médico de
-          Pregrado y fue seleccionado(a) para realizar el Servicio Social en la promoción <b>{promotionLabel}</b>,
+          Pregrado y fue seleccionado(a) para realizar el Servicio Social en la promoción <b>{promotionName}</b>,
           declaro que he sido informado(a) sobre las condiciones, requisitos y obligaciones que implica la
           realización del Servicio Social como parte de mi formación profesional.
         </p>

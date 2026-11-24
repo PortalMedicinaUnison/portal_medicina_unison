@@ -6,6 +6,7 @@ import useGetInstitutions from "../../institutions/hooks/useGetInstitutions.js";
 import { cleanFormData } from "../../../../utils/utils";
 import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
 import { validateEmail } from "../../../../utils/validations.js";
+import SiteProgramsField from "./SiteProgramsField.jsx";
 
 
 const INITIAL_FORM = {
@@ -19,6 +20,8 @@ const INITIAL_FORM = {
   teachingDeputyName: '',
   teachingDeputyEmail: '',
   teachingDeputyPhone: '',
+  forInternship: true,
+  forSocialService: true,
 };
 
 function SiteForm() {
@@ -65,6 +68,9 @@ function SiteForm() {
     if (cleanedData.teachingDeputyEmail && !validateEmail(cleanedData.teachingDeputyEmail).valid) {
       errors.push('El correo del subjefe de enseñanza no es válido.');
     }
+    if (!cleanedData.forInternship && !cleanedData.forSocialService) {
+      errors.push('Marca si la sede ofrece cupos para el internado, el servicio social o ambos.');
+    }
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -81,6 +87,8 @@ function SiteForm() {
       teaching_deputy_name: cleanedData.teachingDeputyName,
       teaching_deputy_email: cleanedData.teachingDeputyEmail,
       teaching_deputy_phone: cleanedData.teachingDeputyPhone,
+      for_internship: cleanedData.forInternship,
+      for_social_service: cleanedData.forSocialService,
     };
     
     const response = await createSite(payload);
@@ -169,6 +177,13 @@ function SiteForm() {
                 </select>
               </dd>
             </div>
+
+            <SiteProgramsField
+              forInternship={formData.forInternship}
+              forSocialService={formData.forSocialService}
+              onChange={handleChange}
+              disabled={saving}
+            />
 
             <div className="item-row">
               <dt className="item-header">Dirección *</dt>
