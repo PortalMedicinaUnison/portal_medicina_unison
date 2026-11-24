@@ -6,6 +6,7 @@ import useDeleteUser from '../hooks/useDeleteUser';
 import useReactivateUser from '../hooks/useReactivateUser';
 import UserAvatar from '../../../../components/UserAvatar';
 import UpdateUserAdmin from './UpdateUserAdmin';
+import PasswordResetLinkDialog from './PasswordResetLinkDialog';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
@@ -28,6 +29,8 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
     user && user.user_id !== currentUser?.user_id && (isSuperAdmin || user.role === 'student')
   );
   const canDeactivate = hasPermission && user?.is_active;
+  // Mismas reglas en el backend; la propia contraseña se cambia desde el perfil.
+  const canResetPassword = hasPermission && user?.is_active;
   const canReactivate = hasPermission && user && !user.is_active;
 
 // ---------------------- HANDLERS ----------------------
@@ -136,6 +139,12 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
             <dt className="item-header">Rol</dt>
             <dd className="item-text">{labelOf(ROLE_LABELS, user.role)}</dd>
           </div>
+          <div className="item-row">
+            <dt className="item-header">Aviso de privacidad</dt>
+            <dd className="item-text">
+              {user.privacy_notice_accepted ? 'Aceptado (versión vigente)' : 'Pendiente de aceptar'}
+            </dd>
+          </div>
         </dl>
       </div>
 
@@ -162,6 +171,7 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
 
       <div className="info-actions mt-16">
         {user.is_active && <UpdateUserAdmin user={user} onSuccess={refetch} />}
+        {canResetPassword && <PasswordResetLinkDialog user={user} />}
         {canReactivate && (
           <button
             type="button"

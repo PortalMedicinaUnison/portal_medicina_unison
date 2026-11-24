@@ -4,6 +4,7 @@ from fastapi import APIRouter, status
 
 from controllers import promotion as controller
 from core.dependencies import AdminUser, CurrentUser, DbSession
+from models.promotion import ProgramEnum
 from schemas.promotion import (
     PromotionInput, PromotionOutput, PromotionSiteDetailInput, PromotionSiteDetailOutput,
     PromotionSiteDetailUpdate, PromotionUpdate,
@@ -16,10 +17,11 @@ promotion_router = APIRouter(prefix="/promotions", tags=["Promociones"])
 
 @promotion_router.get("", response_model=List[PromotionOutput])
 def list_promotions(
-    _user: CurrentUser, db: DbSession,
+    _user: CurrentUser, db: DbSession, program: Optional[ProgramEnum] = None,
     year: Optional[int] = None, period: Optional[int] = None, is_finished: Optional[bool] = None,
 ):
-    return controller.list_promotions(db, year=year, period=period, is_finished=is_finished)
+    """Filtros: `program` (1 internado, 2 servicio social), `year`, `period` e `is_finished`."""
+    return controller.list_promotions(db, program=program, year=year, period=period, is_finished=is_finished)
 
 
 @promotion_router.post("", response_model=PromotionOutput, status_code=status.HTTP_201_CREATED)

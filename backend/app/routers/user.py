@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse
 
 from controllers import user as controller
 from core.dependencies import AdminUser, CurrentUser, DbSession, SuperAdminUser
+from schemas.auth import PasswordResetLinkOutput, TokenResponse
 from schemas.user import (
     EnrollmentBulkInput, EnrollmentBulkResult, EnrollmentInput, EnrollmentOutput, EnrollmentUpdate,
     PasswordChangeInput, UserOutput, UserRoleUpdate, UserUpdate,
@@ -25,9 +26,16 @@ def update_me(data: UserUpdate, user: CurrentUser, db: DbSession):
     return controller.update_own_profile(db, user, data)
 
 
-@user_router.put("/me/password", status_code=status.HTTP_204_NO_CONTENT)
+@user_router.put("/me/password", response_model=TokenResponse)
 def change_my_password(data: PasswordChangeInput, user: CurrentUser, db: DbSession):
-    controller.change_password(db, user, data)
+    """Cambia la contraseña, cierra las demás sesiones y devuelve un token nuevo para esta."""
+    return controller.change_password(db, user, data)
+
+
+@user_router.post("/me/privacy-notice/accept", response_model=UserOutput)
+def accept_privacy_notice(user: CurrentUser, db: DbSession):
+    """Registra que el usuario aceptó la versión vigente del aviso de privacidad."""
+    return controller.accept_privacy_notice(db, user)
 
 
 @user_router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
@@ -81,6 +89,15 @@ def deactivate_user(user_id: int, admin: AdminUser, db: DbSession):
 @user_router.post("/{user_id}/reactivate", response_model=UserOutput)
 def reactivate_user(user_id: int, admin: AdminUser, db: DbSession):
     return controller.reactivate_user(db, admin, user_id)
+
+
+@user_router.post("/{user_id}/password-reset", response_model=PasswordResetLinkOutput, status_code=status.HTTP_201_CREATED)
+def create_password_reset_link(user_id: int, admin: AdminUser, db: DbSession):
+    """
+    Genera un enlace de un solo uso (vigencia: PASSWORD_RESET_HOURS) para que el usuario cree una
+    contraseña nueva. La coordinación se lo hace llegar; los enlaces anteriores dejan de servir.
+    """
+    return controller.create_password_reset_link(db, admin, user_id)
 
 
 @user_router.get("/{user_id}/photo", response_class=FileResponse)

@@ -1,6 +1,8 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, computed_field, model_validator
+
+from core.settings import settings
 
 from schemas.common import AcademicId, Email, OptionalStr, ORMModel, Password, Phone, RequiredStr, UTCDateTime
 
@@ -59,6 +61,13 @@ class UserOutput(ORMModel):
     is_active: bool
     created_at: UTCDateTime
     updated_at: UTCDateTime
+    privacy_notice_version: Optional[str] = None
+
+    @computed_field
+    @property
+    def privacy_notice_accepted(self) -> bool:
+        """Aceptó la versión vigente del aviso de privacidad."""
+        return self.privacy_notice_version == settings.PRIVACY_NOTICE_VERSION
 
 
 class UserUpdate(BaseModel):

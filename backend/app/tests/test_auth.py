@@ -5,7 +5,7 @@ from tests.conftest import PASSWORD, auth
 
 REGISTER = {
     "academic_id": "222111111", "first_name": "Ana", "last_name": "López",
-    "email": "Ana@Unison.mx", "password": "Password1",
+    "email": "Ana@Unison.mx", "password": "Password1", "accept_privacy_notice": True,
 }
 
 
@@ -29,6 +29,7 @@ def test_register_creates_student_and_marks_enrollment(client, admin):
     assert user["role"] == "student" and user["is_admin"] is False and user["is_super_admin"] is False
     assert user["email"] == "ana@unison.mx"
     assert "password" not in user
+    assert user["privacy_notice_accepted"] is True
 
     refreshed = client.get(f"/enrollments/{enrollment['enrollment_id']}", headers=auth(admin)).json()
     assert refreshed["is_enrolled"] is True
@@ -52,6 +53,16 @@ def test_register_validates_password_and_email_with_readable_message(client, adm
     missing = client.post("/auth/register", json={"academic_id": "222111111"})
     assert missing.status_code == 422
     assert "Nombre: es obligatorio." in missing.json()["detail"]
+
+
+def test_register_requires_accepting_the_privacy_notice(client, admin):
+    _enroll(client, admin)
+    message = "Debes aceptar el aviso de privacidad para crear tu cuenta."
+    missing = {key: value for key, value in REGISTER.items() if key != "accept_privacy_notice"}
+    for payload in (missing, {**REGISTER, "accept_privacy_notice": False}):
+        response = client.post("/auth/register", json=payload)
+        assert response.status_code == 422
+        assert response.json()["detail"] == message
 
 
 def test_login_and_me(client, student):

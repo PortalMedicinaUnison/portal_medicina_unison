@@ -116,6 +116,34 @@ function StudentSidebar({ toggleSidebar, openToggleButton }) {
                                 </span>
                             </Link>
                         </div>
+                        {/************************ SERVICIO SOCIAL ************************/}
+                        <div>
+                            <p className="sidebar-section-title border-t">
+                                Servicio social
+                            </p>
+                        </div>
+                        <div>
+                            <Link to={ROUTES.USER.SOCIAL_SERVICE_REDIRECT} className="sidebar-item-group group">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="sidebar-item-icon"
+                                    viewBox="-1 -1 23 23"
+                                    aria-hidden="true"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <path d="M3.5 18.5v-12a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12"/>
+                                    <path d="M1.5 18.5h18"/>
+                                    <path d="M10.5 7.5v5m-2.5-2.5h5"/>
+                                    <path d="M8.5 18.5v-3h4v3"/>
+                                </svg>
+                                <span className="sidebar-item-text">
+                                    Mi servicio social
+                                </span>
+                            </Link>
+                        </div>
                     </div>
                 </div>     
             </aside>

@@ -4,10 +4,14 @@ from typing import List, Optional, Tuple
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
+from controllers import auth as auth_controller
 from core.errors import bad_request, conflict, forbidden, not_found
-from core.security import hash_password, verify_password
+from core.security import verify_password
+from core.settings import settings
+from models.base import utcnow
 from models.user import User, UserEnrollment
 from repos.user import UserEnrollmentRepo, UserRepo
+from schemas.auth import PasswordResetLinkOutput, TokenResponse
 from schemas.user import (
     EnrollmentBulkResult, EnrollmentInput, EnrollmentUpdate,
     PasswordChangeInput, UserRoleUpdate, UserUpdate,
@@ -53,10 +57,22 @@ def update_user(db: Session, actor: User, user_id: int, data: UserUpdate) -> Use
     return _apply_profile_update(db, target, data)
 
 
-def change_password(db: Session, user: User, data: PasswordChangeInput) -> None:
+def change_password(db: Session, user: User, data: PasswordChangeInput) -> TokenResponse:
+    """Las demás sesiones se cierran; la actual sigue con el token que se devuelve."""
     if not verify_password(data.current_password, user.password):
         raise bad_request("La contraseña actual es incorrecta.")
-    UserRepo(db).update(user, {"password": hash_password(data.new_password)})
+    auth_controller.set_password(db, user, data.new_password)
+    return auth_controller.session_token(user)
+
+
+def create_password_reset_link(db: Session, actor: User, user_id: int) -> PasswordResetLinkOutput:
+    return auth_controller.create_reset_link(db, actor, get_user(db, user_id))
+
+
+def accept_privacy_notice(db: Session, user: User) -> User:
+    return UserRepo(db).update(user, {
+        "privacy_notice_version": settings.PRIVACY_NOTICE_VERSION, "privacy_accepted_at": utcnow(),
+    })
 
 
 def set_role(db: Session, actor: User, user_id: int, data: UserRoleUpdate) -> User:

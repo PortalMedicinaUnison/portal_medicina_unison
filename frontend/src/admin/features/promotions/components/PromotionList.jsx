@@ -7,7 +7,7 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
-import { PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { PERIOD_LABELS, PROGRAM_LABELS, labelOf } from '../../../../utils/constants';
 
 
 function PromotionList({ promotions, fetching, fetchError, refetch }) {
@@ -20,6 +20,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
 
 // ---------------------- FILTERS AND SEARCH ----------------------
  
+  const [programFilter, setProgramFilter] = useState('');
   const [yearFilter, setYearFilter] = useState('');
   const [periodFilter, setPeriodFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -33,12 +34,13 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
     if (!promotions) return [];
 
     return promotions.filter((item) => {
+      if (programFilter !== '' && String(item.program) !== programFilter) return false;
       if (statusFilter !== '' && item.is_finished !== (statusFilter === 'true')) return false;
       if (yearFilter !== '' && item.year.toString() !== yearFilter) return false;
       if (periodFilter !== '' && item.period.toString() !== periodFilter) return false;
       return true;
     });
-  }, [promotions, yearFilter, periodFilter, statusFilter]);
+  }, [promotions, programFilter, yearFilter, periodFilter, statusFilter]);
 
 // ---------------------- HANDLERS ----------------------
 
@@ -105,6 +107,17 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
       <div className="table-container-actions">
         <select
           className="btn-tertiary--light"
+          value={programFilter}
+          onChange={(e) => setProgramFilter(e.target.value)}
+          aria-label="Filtrar por programa"
+        >
+          <option value="">Programa</option>
+          {Object.entries(PROGRAM_LABELS).map(([value, label]) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
+        </select>
+        <select
+          className="btn-tertiary--light"
           value={yearFilter}
           onChange={(e) => setYearFilter(e.target.value)}
           aria-label="Filtrar por año"
@@ -141,17 +154,18 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
         <table className="table">
           <thead>
             <tr>
-              <th className='w-3/12'>Año</th>
+              <th className='w-3/12'>Programa</th>
+              <th className='w-2/12'>Año</th>
               <th className='w-3/12'>Periodo</th>
-              <th className='w-5/12'>Estatus</th>
+              <th className='w-3/12'>Estatus</th>
               <th className='w-1/12'></th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={4} className="text-center py-6">
-                {(yearFilter || periodFilter || statusFilter)
+                <td colSpan={5} className="text-center py-6">
+                {(programFilter || yearFilter || periodFilter || statusFilter)
                   ? 'No se encontraron promociones que coincidan con los filtros.' 
                   : 'No hay promociones disponibles.'
                   }
@@ -160,6 +174,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch }) {
             ) : (
               filtered.map((item) => (
               <tr key={item.promotion_id}>
+                <td>{labelOf(PROGRAM_LABELS, item.program)}</td>
                 <td>{item.year}</td>
                 <td>{labelOf(PERIOD_LABELS, item.period)}</td>
                 <td>{item.is_finished ? 'Finalizado' : 'No finalizado'}</td>

@@ -51,6 +51,7 @@ class ReportOutput(ORMModel):
     site_id: int
     site: SiteBasicOutput
     internship_id: Optional[int] = None
+    social_service_id: Optional[int] = None
     date_report: date
     report_type: ReportTypeEnum
     other_type: Optional[str] = None

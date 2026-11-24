@@ -44,3 +44,18 @@ export const PERIOD_LABELS = { 1: 'Primer periodo', 2: 'Segundo periodo' };
 export const ROLE_LABELS = { student: 'Estudiante', admin: 'Administrador', super_admin: 'Super administrador' };
 
 export const labelOf = (labels, value, fallback = 'Desconocido') => labels[Number(value)] ?? labels[value] ?? fallback;
+
+// Programas que acredita el estudiante: primero el internado y después el servicio social.
+export const PROGRAMS = { INTERNSHIP: 1, SOCIAL_SERVICE: 2 };
+export const PROGRAM_LABELS = { 1: 'Internado', 2: 'Servicio social' };
+
+export const SOCIAL_SERVICE_STATUS = { ACTIVE: 1, SUSPENDED: 2, FINISHED: 3 };
+export const SOCIAL_SERVICE_STATUS_LABELS = { 1: 'Activo', 2: 'Suspendido', 3: 'Liberado' };
+
+export const SOCIAL_SERVICE_DOCUMENT_TYPES = {
+  ASSIGNMENT_LETTER: 1, FIRST_REPORT: 2, SECOND_REPORT: 3, THIRD_REPORT: 4, FINAL_REPORT: 5, COMPLETION_CERTIFICATE: 6,
+};
+export const SOCIAL_SERVICE_DOCUMENT_TYPE_LABELS = {
+  1: 'Carta de asignación', 2: 'Primer informe', 3: 'Segundo informe', 4: 'Tercer informe',
+  5: 'Informe final', 6: 'Constancia de terminación',
+};

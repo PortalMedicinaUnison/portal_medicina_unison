@@ -5,6 +5,10 @@ export const API_ENDPOINTS = {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
     REFRESH: '/auth/refresh',
+    PASSWORD_RESET_OPTIONS: '/auth/password-reset/options',
+    PASSWORD_RESET_REQUEST: '/auth/password-reset/request',
+    PASSWORD_RESET_VERIFY: '/auth/password-reset/verify',
+    PASSWORD_RESET_CONFIRM: '/auth/password-reset/confirm',
   },
 
   USERS: {
@@ -12,9 +16,11 @@ export const API_ENDPOINTS = {
     ME: '/users/me',
     ME_PASSWORD: '/users/me/password',
     ME_PHOTO: '/users/me/photo',
+    ME_PRIVACY_NOTICE_ACCEPT: '/users/me/privacy-notice/accept',
     DETAIL: (id) => `/users/${id}`,
     ROLE: (id) => `/users/${id}/role`,
     REACTIVATE: (id) => `/users/${id}/reactivate`,
+    PASSWORD_RESET: (id) => `/users/${id}/password-reset`,
     PHOTO: (id) => `/users/${id}/photo`,
   },
 
@@ -60,6 +66,24 @@ export const API_ENDPOINTS = {
     LIST: (internshipId) => `/internships/${internshipId}/documents`,
     DETAIL: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}`,
     FILE: (internshipId, docId) => `/internships/${internshipId}/documents/${docId}/file`,
+  },
+
+  SOCIAL_SERVICE_APPLICATIONS: {
+    LIST: '/social-service-applications',
+    DETAIL: (id) => `/social-service-applications/${id}`,
+    ACCEPT: (id) => `/social-service-applications/${id}/accept`,
+    DECLINE: (id) => `/social-service-applications/${id}/decline`,
+  },
+
+  SOCIAL_SERVICES: {
+    LIST: '/social-services',
+    DETAIL: (id) => `/social-services/${id}`,
+  },
+
+  SOCIAL_SERVICE_DOCUMENTS: {
+    LIST: (socialServiceId) => `/social-services/${socialServiceId}/documents`,
+    DETAIL: (socialServiceId, docId) => `/social-services/${socialServiceId}/documents/${docId}`,
+    FILE: (socialServiceId, docId) => `/social-services/${socialServiceId}/documents/${docId}/file`,
   },
 
   ANNOUNCEMENTS: {

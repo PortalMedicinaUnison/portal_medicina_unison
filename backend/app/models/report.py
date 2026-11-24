@@ -31,6 +31,9 @@ class Report(BaseModel):
     academic_id: Mapped[str] = mapped_column(String(9), ForeignKey("users.academic_id"), nullable=False)
     site_id: Mapped[int] = mapped_column(Integer, ForeignKey("sites.site_id"), nullable=False)
     internship_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("internships.internship_id"), nullable=True)
+    social_service_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("social_services.social_service_id", name="fk_reports_social_service_id"), nullable=True
+    )
     date_report: Mapped[date] = mapped_column(Date, nullable=False)
     report_type: Mapped[ReportTypeEnum] = mapped_column(IntEnumType(ReportTypeEnum), nullable=False)
     other_type: Mapped[Optional[str]] = mapped_column(String(25), nullable=True)

@@ -35,7 +35,12 @@ def test_change_password(client, student):
     assert mismatch.status_code == 422 and mismatch.json()["detail"] == "Las contraseñas no coinciden."
     ok = client.put("/users/me/password", headers=headers, json={
         "current_password": PASSWORD, "new_password": "NuevaClave1", "confirm_password": "NuevaClave1"})
-    assert ok.status_code == 204
+    assert ok.status_code == 200
+    # Las demás sesiones se cierran; la actual sigue con el token nuevo.
+    assert client.get("/users/me", headers=headers).status_code == 401
+    new_headers = {"Authorization": f"Bearer {ok.json()['access_token']}"}
+    assert client.get("/users/me", headers=new_headers).status_code == 200
+    assert client.post("/auth/login", json={"email": "alumno@unison.mx", "password": PASSWORD}).status_code == 401
     assert client.post("/auth/login", json={"email": "alumno@unison.mx", "password": "NuevaClave1"}).status_code == 200
 
 

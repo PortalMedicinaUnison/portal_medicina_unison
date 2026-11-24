@@ -12,7 +12,11 @@ export const ROUTES = {
     AUTH: {
         LOGIN: '/login',
         SIGNUP: '/signup',
+        FORGOT_PASSWORD: '/forgot-password',
+        RESET_PASSWORD: '/reset-password',
     },
+
+    PRIVACY_NOTICE: '/privacy',
 
     USER: {
         PROFILE: '/profile',
@@ -29,7 +33,12 @@ export const ROUTES = {
         INTERNSHIP: '/my-internship',
         INTERNSHIP_APPLICATION_STATUS: '/my-internship/application',
         INTERNSHIP_APPLICATION_DECLINED: '/my-internship/declined',
-        INTERNSHIP_REDIRECT: '/my-internship/redirect',        
+        INTERNSHIP_REDIRECT: '/my-internship/redirect',
+
+        SOCIAL_SERVICE: '/my-social-service',
+        SOCIAL_SERVICE_APPLICATION_STATUS: '/my-social-service/application',
+        SOCIAL_SERVICE_APPLICATION_DECLINED: '/my-social-service/declined',
+        SOCIAL_SERVICE_REDIRECT: '/my-social-service/redirect',        
     },
 
     ADMIN: {
@@ -85,6 +94,13 @@ export const ROUTES = {
         INTERNSHIP_DOCUMENT_DETAIL: (internshipId, documentId) => `/internships/${internshipId}/documents/${documentId}`,
         INTERNSHIP_DOCUMENT_EDIT: (internshipId, documentId) => `/internships/${internshipId}/documents/${documentId}/edit`,
         INTERNSHIP_DOCUMENT_DELETE: (internshipId, documentId) => `/internships/${internshipId}/documents/${documentId}/delete`,
+
+        SOCIAL_SERVICE_LIST: '/social-services',
+        SOCIAL_SERVICE_DETAIL: (socialServiceId) => `/social-services/${socialServiceId}`,
+
+        SOCIAL_SERVICE_APPLICATION_LIST: '/social-service-applications',
+        SOCIAL_SERVICE_APPLICATION_CREATE: '/social-service-applications/create',
+        SOCIAL_SERVICE_APPLICATION_DETAIL: (applicationId) => `/social-service-applications/${applicationId}`,
 
         ANNOUNCEMENTS_LIST: '/announcements',
         ANNOUNCEMENT_CREATE: '/announcements/create',

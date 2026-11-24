@@ -10,6 +10,7 @@ from models.internship import (
     ApplicationStatusEnum, DocumentTypeEnum, Internship, InternshipApplication,
     InternshipDocument, InternshipStatusEnum,
 )
+from models.promotion import ProgramEnum
 from models.user import User
 from repos.internship import InternshipApplicationRepo, InternshipDocumentRepo, InternshipRepo
 from repos.promotion import PromotionRepo, PromotionSiteDetailRepo
@@ -51,6 +52,8 @@ def create_application(db: Session, data: InternshipApplicationInput) -> Interns
     promotion = PromotionRepo(db).get(data.promotion_id)
     if promotion is None:
         raise bad_request("La promoción seleccionada no existe.")
+    if promotion.program != ProgramEnum.INTERNSHIP:
+        raise bad_request("La promoción seleccionada no es de internado.")
     if promotion.is_finished:
         raise conflict("La promoción ya está finalizada.")
     current = [

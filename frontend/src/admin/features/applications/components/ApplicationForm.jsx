@@ -5,7 +5,7 @@ import useCreateApplication from '../hooks/useCreateApplication';
 import useGetPromotions from '../../promotions/hooks/useGetPromotions';
 import useGetUsers from '../../users/hooks/useGetUsers'
 import { cleanFormData } from "../../../../utils/utils";
-import { PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { PERIOD_LABELS, labelOf, PROGRAMS } from '../../../../utils/constants';
 
 
 const INITIAL_FORM = {
@@ -16,7 +16,8 @@ const INITIAL_FORM = {
 function ApplicationForm() {
   const navigate = useNavigate();
   const { createApplication, loading: saving, success: saved, error: saveError, reset } = useCreateApplication();
-  const { promotions, loading: fetchingPromotions, error: promotionsError } = useGetPromotions();
+  // Solo promociones de internado (las de servicio social tienen su propio formulario).
+  const { promotions, loading: fetchingPromotions, error: promotionsError } = useGetPromotions({ program: PROGRAMS.INTERNSHIP });
   const { users, loading: fetchingUsers, error: usersError } = useGetUsers();
 
   const [formData, setFormData] = useState(INITIAL_FORM);

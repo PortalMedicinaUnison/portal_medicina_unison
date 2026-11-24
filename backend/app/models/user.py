@@ -1,6 +1,7 @@
+from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, ForeignKey, Index, Integer, String
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import BaseModel
@@ -47,6 +48,11 @@ class User(BaseModel):
     profile_photo: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     is_super_admin: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    # Cambia al cambiar o restablecer la contraseña: invalida las sesiones (tokens) anteriores.
+    token_version: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    # Versión del aviso de privacidad aceptada y cuándo.
+    privacy_notice_version: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    privacy_accepted_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
 
     @property
     def role(self) -> str:
