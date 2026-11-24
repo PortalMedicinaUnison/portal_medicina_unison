@@ -22,17 +22,32 @@ frontend/
 
 ## Flujo principal
 
-El estudiante primero **acredita el internado** y después hace el **servicio social**. Ambos siguen el mismo flujo:
+El estudiante primero **acredita el internado** y después hace el **servicio social**. Ambos siguen el mismo flujo
+(*Internado* o *Servicio social* en el menú de la coordinación):
 
-1. La coordinación **pre-registra** los expedientes (uno por uno o importando un CSV).
-2. El estudiante **crea su cuenta** con su expediente pre-registrado.
-3. La coordinación crea la **promoción** del programa (internado o servicio social, con año y periodo) y define el **cupo de cada sede**.
-4. La coordinación **asigna** al estudiante a la promoción. El estudiante sube sus **documentos de inscripción** (PDF); con todos los obligatorios subidos puede **aceptar** (se crea su internado o servicio social). También puede **declinar**.
-5. La coordinación **revisa** cada documento (aprobado o con observaciones). Con los obligatorios de inscripción aprobados, **registra la sede** (plaza, en servicio social) que el estudiante eligió en el acto público, respetando el cupo.
-6. Durante el programa el estudiante sube los documentos de las etapas *durante* y *término* (en servicio social, *liberación*). Con los obligatorios aprobados, la coordinación marca el internado como **finalizado** (acreditado) o el servicio social como **liberado**.
-7. El estudiante levanta **reportes** de incidentes y consulta **avisos** y **encuestas**.
+1. La coordinación **pre-registra** los expedientes (uno por uno o importando un CSV) y el estudiante **crea su cuenta**
+   con el suyo.
+2. **Sedes:** cada sede indica si ofrece cupos para el internado, el servicio social o ambos.
+3. **Promoción:** basta la fecha de inicio (se propone el próximo inicio habitual libre: internado, 1 de enero o 1 de
+   julio; servicio social, 1 de febrero o 1 de agosto) y el término se propone a doce meses. Los **cupos** de todas las
+   sedes del programa se capturan en una sola tabla y se pueden copiar de otra promoción para revisarlos antes de guardar.
+4. **Inscripciones:** la coordinación asigna a varios alumnos a la vez, eligiéndolos de la lista de candidatos o pegando
+   sus expedientes con su promedio (p. ej. copiados de Excel). El alumno sube sus **documentos de inscripción** (PDF) y,
+   con todos los obligatorios subidos, **acepta** su asignación (o la **declina**).
+5. La coordinación **revisa** cada documento (aprobado o con observaciones). En **Resultados del acto** captura, en orden
+   de promedio, la sede (plaza, en servicio social) que eligió cada alumno en el acto público; se respeta el cupo y solo
+   eligen quienes tienen aprobados sus documentos de inscripción.
+6. Durante el programa el estudiante sube los documentos de las etapas *durante* y *término* (en servicio social,
+   *liberación*). Con los obligatorios aprobados, la coordinación marca el internado como **finalizado** (acreditado) o el
+   servicio social como **liberado**.
+7. **Renuncia o baja:** la coordinación las registra con su fecha y motivo. Liberan el lugar en la sede (queda vacante),
+   cierran los documentos del alumno y le permiten asignarse a una promoción posterior; en servicio social, la lista de
+   candidatos avisa si aún no se cumple el año que pide el artículo 55 de los *Lineamientos* tras una renuncia. Si se
+   registró por error, se puede regresar a *activo* mientras haya lugar.
+8. El estudiante levanta **reportes** de incidentes y consulta **avisos** y **encuestas**.
 
-Solo se puede asignar servicio social a quien ya tiene el internado finalizado (acreditado).
+Solo se puede asignar servicio social a quien ya tiene el internado finalizado (acreditado), y nadie puede tener dos
+internados (ni dos servicios sociales) en curso a la vez.
 
 ## Documentos requeridos
 
@@ -50,7 +65,7 @@ Solo se puede asignar servicio social a quien ya tiene el internado finalizado (
   del internado, que emite la sede) solo los sube ella y quedan aprobados. Fuera de eso, la coordinación solo sube los
   formatos descargables del catálogo.
 - El alumno no puede cambiar documentos aprobados ni modificar los de una asignación declinada, una promoción terminada o
-  un programa finalizado/liberado.
+  un programa finalizado/liberado o terminado por renuncia o baja.
 
 ## Contraseñas y aviso de privacidad
 
