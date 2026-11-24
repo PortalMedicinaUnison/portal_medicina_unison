@@ -57,7 +57,7 @@ function FileRow({ doc, busy, canDelete, canReview, onView, onDownload, onDelete
  * también las aplica el backend.
  */
 function RequirementCard({
-  requirement, documents, isAdmin, canUpload, busyKey,
+  requirement, documents, isAdmin, canUpload, busyKey, reviewLocked = false,
   onUpload, onDownloadTemplate, ...fileActions
 }) {
   const inputRef = useRef(null);
@@ -137,9 +137,9 @@ function RequirementCard({
               key={doc.document_id}
               doc={doc}
               busy={busyKey === `doc-${doc.document_id}`}
-              canReview={isAdmin && !byCoordination}
+              canReview={isAdmin && !byCoordination && !reviewLocked}
               canDelete={isAdmin
-                ? byCoordination
+                ? byCoordination && !reviewLocked
                 : (canUpload && Number(doc.review_status) !== REVIEW_STATUS.APPROVED)}
               {...fileActions}
             />
@@ -147,7 +147,7 @@ function RequirementCard({
         </ul>
       )}
       {lockedForStudent && canUpload && (
-        <p className="text-xs text-gray-500">Aprobado. Si necesitas cambiarlo, pide a la coordinación que lo regrese a revisión.</p>
+        <p className="text-xs text-gray-500">Aprobado. Si necesitas cambiarlo, pide a la coordinación que deshaga la revisión.</p>
       )}
     </div>
   );

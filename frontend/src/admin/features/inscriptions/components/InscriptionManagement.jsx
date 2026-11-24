@@ -145,8 +145,8 @@ function InscriptionManagement({ config, application, onSaved }) {
         </div>
 
         {record && (
-          <div className="item-row">
-            <dt className="item-header"><label htmlFor="record-site">{config.placeLabel}</label></dt>
+          <div className="item-row md:!items-start">
+            <dt className="item-header md:pt-2"><label htmlFor="record-site">{config.placeLabel}</label></dt>
             <dd className="item-text">
               <select id="record-site" className="form-input--half" value={form.site}
                 onChange={(e) => update('site', e.target.value)} disabled={saving || hasLeft}>
@@ -165,14 +165,20 @@ function InscriptionManagement({ config, application, onSaved }) {
               {hasLeft && currentSite && (
                 <p className="mt-2 text-sm text-gray-500">Su lugar quedó libre por la {Number(original.status) === 4 ? 'renuncia' : 'baja'}.</p>
               )}
+              {Number(original.status) === 3 && currentSite && (
+                <p className="mt-2 text-sm text-gray-500">
+                  El {config.recordName} ya {config.program === 2 ? 'se liberó' : 'finalizó'}: su lugar ya no cuenta en el cupo.
+                </p>
+              )}
               {psdsError && <p className="mt-2 text-sm text-red-600">{psdsError}</p>}
             </dd>
           </div>
         )}
 
         {record && (
-          <div className="item-row">
-            <dt className="item-header"><label htmlFor="record-status">Estatus</label></dt>
+          // La fila crece con la renuncia o baja: la etiqueta se queda arriba, junto a su selector.
+          <div className="item-row md:!items-start">
+            <dt className="item-header md:pt-2"><label htmlFor="record-status">Estatus</label></dt>
             <dd className="item-text">
               <select id="record-status" className="form-input--half" value={form.status}
                 onChange={(e) => update('status', e.target.value)} disabled={saving}>
@@ -211,7 +217,7 @@ function InscriptionManagement({ config, application, onSaved }) {
         {message && <div className={message.ok ? 'alert-success' : 'alert-error'}>{message.text}</div>}
         <div className="flex flex-wrap items-center justify-end gap-3">
           <p className="mr-auto text-sm text-gray-500" aria-live="polite">
-            {pending.length > 0 ? `Cambios sin guardar: ${pending.join(', ')}.` : 'Sin cambios por guardar.'}
+            {pending.length > 0 ? `Cambios sin guardar: ${pending.join(', ')}.` : (message?.ok ? '' : 'Sin cambios por guardar.')}
           </p>
           {dirty && (
             <button type="button" className="btn-secondary" onClick={handleDiscard} disabled={saving}>Descartar cambios</button>

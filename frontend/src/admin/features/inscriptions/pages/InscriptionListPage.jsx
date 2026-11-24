@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
@@ -21,6 +21,7 @@ const sortKey = (student) => normalizeText([student?.last_name, student?.second_
 function InscriptionListPage({ program }) {
   const config = INSCRIPTION_PROGRAMS[program];
   const navigate = useNavigate();
+  const location = useLocation();
   const { promotions, promotion, promotionId, selectPromotion, loading: loadingPromotions, error: promotionsError } = usePromotionPicker(program);
   const { inscriptions, loading, error, reload } = useInscriptions(program, promotionId);
 
@@ -78,6 +79,7 @@ function InscriptionListPage({ program }) {
   return (
     <Layout>
       <PageLayout title={`Inscripciones · ${config.name}`} actions={actions}>
+        {location.state?.notice && <div className="alert-success mb-6" role="status">{location.state.notice}</div>}
         {loadingPromotions && <LoadingSpinner />}
         {!loadingPromotions && promotionsError && <DataLoadError title="No se pudieron cargar las promociones" message={promotionsError} />}
         {!loadingPromotions && !promotionsError && promotions.length === 0 && (
@@ -137,7 +139,7 @@ function InscriptionListPage({ program }) {
             {!loading && error && <DataLoadError title="No se pudieron cargar las inscripciones" message={error} onRetry={reload} />}
             {!loading && !error && (
               <div className="table-container">
-                <p className="mb-2 text-xs text-gray-500">{rows.length} de {inscriptions.length} inscripciones</p>
+                <p className="mb-2 text-xs text-gray-500">{rows.length} de {inscriptions.length} {inscriptions.length === 1 ? 'inscripción' : 'inscripciones'}</p>
                 <table className="table">
                   <thead>
                     <tr>

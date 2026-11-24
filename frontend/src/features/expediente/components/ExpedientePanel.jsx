@@ -35,7 +35,8 @@ const groupByRequirement = (docs) => Object.values(docs.reduce((groups, doc) => 
  * - mode: 'student' | 'admin' (la coordinación revisa los del alumno y sube solo los que emite ella)
  * - stages: etapas a mostrar (por defecto todas)
  * - started: ya aceptó la asignación; habilita las etapas "durante" y "término"
- * - closed: (alumno) expediente cerrado: solo consulta
+ * - closed: expediente cerrado (programa terminado o promoción finalizada): solo consulta, también
+ *   para la coordinación (una corrección ya no tendría salida; primero se cambia el estatus)
  * - onChange: se llama después de subir, eliminar o revisar (p. ej. para refrescar el avance)
  */
 function ExpedientePanel({ program, applicationId, mode = 'student', stages = ALL_STAGES, started = false, closed = false, onChange }) {
@@ -47,6 +48,8 @@ function ExpedientePanel({ program, applicationId, mode = 'student', stages = AL
   const links = useFileLinks();
   const [toDelete, setToDelete] = useState(null);
   const [toObserve, setToObserve] = useState(null);
+  // Etapas abiertas o colapsadas a mano (stage → bool); al alumno se le colapsan las ya completas.
+  const [openStages, setOpenStages] = useState({});
 
   if (loading) return <LoadingSpinner />;
   if (error) {
@@ -61,7 +64,7 @@ function ExpedientePanel({ program, applicationId, mode = 'student', stages = AL
   const isCoordinationDoc = (requirement) => Number(requirement.provided_by) === DOCUMENT_PROVIDERS.COORDINATION;
   // El alumno sube los suyos (etapa abierta y expediente sin cerrar); la coordinación, solo los que emite ella.
   const canUpload = (requirement) => (isAdmin
-    ? isCoordinationDoc(requirement) && stageOpen(Number(requirement.stage))
+    ? isCoordinationDoc(requirement) && !closed && stageOpen(Number(requirement.stage))
     : !isCoordinationDoc(requirement) && !closed && stageOpen(Number(requirement.stage)));
 
 // ---------------------- HANDLERS ----------------------
@@ -115,6 +118,12 @@ function ExpedientePanel({ program, applicationId, mode = 'student', stages = AL
 
   return (
     <div className="space-y-8">
+      {isAdmin && closed && (
+        <p className="rounded-md border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700">
+          Expediente cerrado: solo consulta. Para revisar o cambiar documentos, primero regresa el estatus a &quot;En curso&quot;
+          (o reabre la promoción si ya está finalizada).
+        </p>
+      )}
       {shownError && (
         <div className="alert-error flex items-start justify-between gap-4" role="alert">
           <span>{shownError}</span>
@@ -133,24 +142,32 @@ function ExpedientePanel({ program, applicationId, mode = 'student', stages = AL
         const sent = required.filter((r) => docsFor(r.requirement_id).some((d) => Number(d.review_status) !== REVIEW_STATUS.REJECTED)).length;
         const waitingForAcceptance = !isAdmin && !closed && !stageOpen(stage)
           && stageRequirements.some((r) => !isCoordinationDoc(r));
+        const collapsible = !isAdmin && required.length > 0 && done === required.length;
+        const isOpen = openStages[stage] ?? !collapsible;
         return (
           <section key={stage} className="space-y-3" aria-labelledby={`stage-${applicationId}-${stage}`}>
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h4 id={`stage-${applicationId}-${stage}`} className="text-base font-semibold text-gray-900">
                 {stageLabels[stage]}
+                {collapsible && (
+                  <button type="button" className="ml-3 py-1 text-xs font-normal text-indigo-700 underline" aria-expanded={isOpen}
+                    onClick={() => setOpenStages((prev) => ({ ...prev, [stage]: !isOpen }))}>
+                    {isOpen ? 'Ocultar documentos' : 'Ver documentos'}
+                  </button>
+                )}
               </h4>
               {required.length > 0 && (
                 <span className={`text-xs ${done === required.length ? 'text-green-700' : 'text-gray-600'}`}>
                   {isAdmin || sent === done
-                    ? `${done} de ${required.length} obligatorios aprobados`
-                    : `${sent} de ${required.length} obligatorios subidos · ${done} aprobados`}
+                    ? `${done} de ${required.length} ${required.length === 1 ? 'obligatorio aprobado' : 'obligatorios aprobados'}`
+                    : `${sent} de ${required.length} ${required.length === 1 ? 'obligatorio subido' : 'obligatorios subidos'} · ${done} ${done === 1 ? 'aprobado' : 'aprobados'}`}
                 </span>
               )}
             </div>
             {waitingForAcceptance && (
               <p className="text-xs text-gray-500">Podrás subir estos documentos cuando aceptes tu asignación.</p>
             )}
-            <div className="space-y-3">
+            <div className={isOpen ? 'space-y-3' : 'hidden'}>
               {stageRequirements.map((requirement) => (
                 <RequirementCard
                   key={requirement.requirement_id}
@@ -158,6 +175,7 @@ function ExpedientePanel({ program, applicationId, mode = 'student', stages = AL
                   documents={docsFor(requirement.requirement_id)}
                   isAdmin={isAdmin}
                   canUpload={canUpload(requirement)}
+                  reviewLocked={closed}
                   busyKey={busyKey}
                   onUpload={handleUpload}
                   onDownloadTemplate={handleDownloadTemplate}

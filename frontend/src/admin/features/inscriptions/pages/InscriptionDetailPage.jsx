@@ -63,7 +63,8 @@ function InscriptionDetailPage({ program }) {
         await load();
       } else {
         await deleteInscriptionRequest(program, application.application_id);
-        navigate(listUrl, { replace: true });
+        const who = formatFullName(application.student) || application.academic_id;
+        navigate(listUrl, { replace: true, state: { notice: `Se eliminó la asignación de ${who}.` } });
       }
     } catch (err) {
       setActionError(getErrorMessage(err, 'No se pudo completar la acción.'));
@@ -104,7 +105,10 @@ function InscriptionDetailPage({ program }) {
 
             <div className="mt-12">
               <h3 className="mb-4 text-lg font-semibold text-gray-900">Documentos</h3>
-              <ExpedientePanel program={program} applicationId={application.application_id} mode="admin" started={Boolean(record)} onChange={load} />
+              <ExpedientePanel program={program} applicationId={application.application_id} mode="admin" started={Boolean(record)}
+                // Terminado (finalizado, liberado, renuncia o baja) o promoción finalizada: solo consulta.
+                closed={Boolean(application.promotion?.is_finished) || (Boolean(record) && [3, 4, 5].includes(Number(record.status)))}
+                onChange={load} />
             </div>
 
             {actionError && <div className="alert-error mt-8">{actionError}</div>}
