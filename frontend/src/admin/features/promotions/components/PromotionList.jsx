@@ -10,6 +10,7 @@ import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 import { PROGRAM_LABELS, labelOf } from '../../../../utils/constants';
 import { promotionLabel } from '../../../../utils/utils';
 import { INSCRIPTION_PROGRAMS } from '../../inscriptions/programs';
+import { promotionStatus } from '../promotionDates';
 
 
 // program: si la pantalla ya viene filtrada por programa (?program=), no se muestra ese filtro ni su columna.
@@ -139,7 +140,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch, program = nu
           aria-label="Filtrar por estado"
         >
           <option value="">Estatus</option>
-          <option value="false">En curso</option>
+          <option value="false">Sin finalizar</option>
           <option value="true">Finalizada</option>
         </select>
       </div>
@@ -169,7 +170,7 @@ function PromotionList({ promotions, fetching, fetchError, refetch, program = nu
               <tr key={item.promotion_id}>
                 {!program && <td>{labelOf(PROGRAM_LABELS, item.program)}</td>}
                 <td>{promotionLabel(item)}</td>
-                <td>{item.is_finished ? 'Finalizada' : 'En curso'}</td>
+                <td>{promotionStatus(item)}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[

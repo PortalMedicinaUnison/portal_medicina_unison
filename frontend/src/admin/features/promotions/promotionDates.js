@@ -19,6 +19,15 @@ const semester = (value) => {
 
 export const isISODate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(String(value ?? ''));
 
+// "Próxima", "En curso", "Terminó (sin finalizar)" o "Finalizada", según sus fechas y si ya se cerró.
+export function promotionStatus(promotion, today = todayISO()) {
+  if (!promotion) return '—';
+  if (promotion.is_finished) return 'Finalizada';
+  if (promotion.start_date && today < promotion.start_date) return 'Próxima';
+  if (promotion.end_date && today > promotion.end_date) return 'Terminó (sin finalizar)';
+  return 'En curso';
+}
+
 // Último día de un programa de doce meses que empieza en `start` (igual que el backend).
 export function oneYearAfter(start) {
   const [year, month, day] = parts(start);

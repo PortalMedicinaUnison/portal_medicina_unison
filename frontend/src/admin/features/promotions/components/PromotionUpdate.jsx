@@ -7,6 +7,8 @@ import SeatsTable from './SeatsTable';
 import { PROGRAM_LABELS, labelOf } from '../../../../utils/constants';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
+import Modal from '../../../../utils/ui/Modal';
+import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
 import { USUAL_START_HINT, datesLabel, isISODate, oneYearAfter } from '../promotionDates';
 
 const EMPTY_FORM = { startDate: '', endDate: '', isFinished: false };
@@ -25,6 +27,8 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
   const [endEdited, setEndEdited] = useState(false);
   const [validationError, setValidationError] = useState('');
   const [saved, setSaved] = useState(false);
+  const [savedCount, setSavedCount] = useState(0);
+  const [confirmFinish, setConfirmFinish] = useState(false);
   const justCreated = Boolean(location.state?.created);
 
   const original = useMemo(() => ({
@@ -79,7 +83,7 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
     touch();
   };
 
-  const handleSave = async () => {
+  const handleSave = async ({ confirmed = false } = {}) => {
     const errors = [];
     if (!isISODate(formData.startDate)) errors.push('La fecha de inicio es obligatoria.');
     if (!isISODate(formData.endDate)) errors.push('La fecha de término es obligatoria.');
@@ -91,6 +95,10 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
       setValidationError(errors.join(' | '));
       return;
     }
+    if (finishedChanged && formData.isFinished && !confirmed) {
+      setConfirmFinish(true);
+      return;
+    }
 
     const payload = {};
     if (datesChanged) Object.assign(payload, { start_date: formData.startDate, end_date: formData.endDate });
@@ -99,6 +107,7 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
     if (await updatePromotion(promotionId, payload)) {
       await Promise.all([refetch(), seats.afterSave()]);
       setSaved(true);
+      setSavedCount((n) => n + 1);
     }
   };
 
@@ -187,7 +196,7 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
           <h3 className="text-lg font-semibold text-gray-900">Cupos por sede</h3>
           <p className="text-sm text-gray-500">Captura los cupos de todas las sedes del programa.</p>
         </div>
-        <SeatsTable editor={seats} promotion={promotion} busy={saving} />
+        <SeatsTable editor={seats} promotion={promotion} busy={saving} savedCount={savedCount} />
       </section>
 
       <div className="mt-10 flex flex-col gap-3 border-t border-gray-200 pt-6">
@@ -208,12 +217,23 @@ function PromotionUpdate({ promotion, fetching, fetchError, refetch, promotionId
           {dirty && (
             <button type="button" className="btn-secondary" onClick={handleDiscard} disabled={saving}>Descartar cambios</button>
           )}
-          <button type="button" className="btn-primary disabled:cursor-not-allowed disabled:opacity-50" onClick={handleSave}
+          <button type="button" className="btn-primary disabled:cursor-not-allowed disabled:opacity-50" onClick={() => handleSave()}
             disabled={!dirty || saving || seats.loading}>
             {saving ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
       </div>
+
+      <Modal open={confirmFinish} onClose={() => setConfirmFinish(false)}>
+        <ConfirmDialogContent
+          title="Finalizar la promoción"
+          message="Al finalizarla, los alumnos de esta promoción ya no podrán subir ni cambiar sus documentos. ¿Guardar la promoción como finalizada?"
+          onConfirm={() => { setConfirmFinish(false); handleSave({ confirmed: true }); }}
+          onCancel={() => setConfirmFinish(false)}
+          primaryLabel="Finalizar promoción"
+          secondaryLabel="Cancelar"
+        />
+      </Modal>
     </div>
   );
 }

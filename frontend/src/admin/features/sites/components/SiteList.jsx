@@ -132,8 +132,8 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
           className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por razón social, institución o jefe"
-          aria-label="Buscar por razón social, institución o jefe"
+          placeholder="Buscar por sede, institución o jefe de enseñanza"
+          aria-label="Buscar por sede, institución o jefe de enseñanza"
         />
         <select
           className="btn-tertiary--light"
@@ -164,7 +164,7 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
           className="btn-tertiary--light"
           value={cityFilter}
           onChange={(e) => setCityFilter(e.target.value)}
-          aria-label="Filtrar por ciudad"
+          aria-label="Filtrar por municipio"
         >
           <option value="">Municipio</option>
           {SONORA_MUNICIPALITIES.map((city) => (
@@ -179,9 +179,9 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
         <table className="table">
           <thead>
             <tr>
-              <th className='w-3/12'>Razón social</th>
+              <th className='w-3/12'>Sede</th>
               <th className='w-2/12'>Institución</th>
-              <th className='w-2/12'>Ciudad</th>
+              <th className='w-2/12'>Municipio</th>
               <th className='w-2/12'>Programas</th>
               <th className='w-2/12'>Jefe de enseñanza</th>
               <th className='w-1/12'></th>

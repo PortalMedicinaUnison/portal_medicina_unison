@@ -24,25 +24,25 @@ function FileRow({ doc, busy, canDelete, canReview, onView, onDownload, onDelete
       </div>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <ReviewStatusBadge status={status} />
-        <button type="button" className="btn-tertiary text-xs" onClick={() => onView(doc)}>Ver</button>
-        <button type="button" className="btn-tertiary text-xs" onClick={() => onDownload(doc)}>Descargar</button>
+        <button type="button" className="btn-tertiary py-1.5 text-xs" onClick={() => onView(doc)}>Ver</button>
+        <button type="button" className="btn-tertiary py-1.5 text-xs" onClick={() => onDownload(doc)}>Descargar</button>
         {canReview && status !== REVIEW_STATUS.APPROVED && (
-          <button type="button" className="btn-tertiary text-xs text-green-700" onClick={() => onApprove(doc)} disabled={busy}>
+          <button type="button" className="btn-tertiary py-1.5 text-xs text-green-700" onClick={() => onApprove(doc)} disabled={busy}>
             Aprobar
           </button>
         )}
         {canReview && status !== REVIEW_STATUS.REJECTED && (
-          <button type="button" className="btn-tertiary text-xs text-red-700" onClick={() => onObserve(doc)} disabled={busy}>
-            Observaciones
+          <button type="button" className="btn-tertiary py-1.5 text-xs text-red-700" onClick={() => onObserve(doc)} disabled={busy}>
+            Pedir corrección
           </button>
         )}
         {canReview && status !== REVIEW_STATUS.PENDING && (
-          <button type="button" className="btn-tertiary text-xs" onClick={() => onBackToReview(doc)} disabled={busy}>
-            Regresar a revisión
+          <button type="button" className="btn-tertiary py-1.5 text-xs" onClick={() => onBackToReview(doc)} disabled={busy}>
+            Deshacer revisión
           </button>
         )}
         {canDelete && (
-          <button type="button" className="btn-tertiary text-xs text-red-600" onClick={() => onDelete(doc)} disabled={busy}>
+          <button type="button" className="btn-tertiary py-1.5 text-xs text-red-600" onClick={() => onDelete(doc)} disabled={busy}>
             Eliminar
           </button>
         )}

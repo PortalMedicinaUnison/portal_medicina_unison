@@ -407,7 +407,7 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
             className="btn-primary"
             disabled={saving}
           >
-            {saving ? 'Guardando...' : 'Guardar'}
+            {saving ? 'Guardando...' : (isEdit ? 'Guardar' : 'Enviar reporte')}
           </button>
         </div>
       </div>

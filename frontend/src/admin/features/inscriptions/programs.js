@@ -51,7 +51,7 @@ export function inscriptionStatus(application, config) {
   const record = application[config.recordKey];
   if (!record) return { key: 'accepted', label: 'Aceptada' };
   const recordStatus = Number(record.status);
-  const label = recordStatus === 1 ? 'En curso' : (config.recordStatusLabels[recordStatus] ?? 'Desconocido');
+  const label = config.recordStatusLabels[recordStatus] ?? 'Desconocido';
   return { key: `record-${recordStatus}`, label };
 }
 
@@ -59,9 +59,7 @@ export function statusFilterOptions(config) {
   return [
     { value: 'pending', label: 'Por aceptar' },
     { value: 'declined', label: 'Declinó' },
-    ...Object.entries(config.recordStatusLabels).map(([value, label]) => ({
-      value: `record-${value}`, label: Number(value) === 1 ? 'En curso' : label,
-    })),
+    ...Object.entries(config.recordStatusLabels).map(([value, label]) => ({ value: `record-${value}`, label })),
   ];
 }
 
@@ -82,10 +80,12 @@ export function parseStudentList(text) {
 
 export const formatAverage = (value) => (value == null ? '—' : Number(value).toFixed(2));
 
-// Documentos obligatorios de inscripción: 'none' (no se piden), 'missing', 'review' o 'complete'.
+// Documentos obligatorios de inscripción: 'none' (no se piden), 'missing', 'corrections' (alguno con
+// observaciones que el alumno debe corregir), 'review' (todos subidos, falta aprobar) o 'complete'.
 export function documentsState(progress) {
   if (!progress || progress.required === 0) return 'none';
   if (progress.complete) return 'complete';
   if (progress.all_submitted) return 'review';
+  if (progress.rejected > 0) return 'corrections';
   return 'missing';
 }

@@ -175,6 +175,7 @@ function SocialServiceApplicationUpdate({ application, fetching, fetchError, ref
           id="termsAccepted"
           name="termsAccepted"
           type="checkbox"
+          className="h-5 w-5 shrink-0"
           checked={formData.termsAccepted}
           onChange={handleChange}
           disabled={saving}

@@ -69,7 +69,7 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
     return (
       <DataLoadError
         title="404"
-        message="No encontramos información para este anuncio."
+        message="No encontramos información para este aviso."
         onRetry={refetch}
         retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
@@ -85,7 +85,7 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
       <div className="item-container">
         <dl className="item-list">
           <div className="item-row">
-            <dt className="item-header">Título del anuncio</dt>
+            <dt className="item-header">Título</dt>
             <dd className="item-text">{announcement.title}</dd>
           </div>
           <div className="item-row">
@@ -93,7 +93,7 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
             <dd className="item-text">{announcement.description}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Tipo de Anuncio</dt>
+            <dt className="item-header">Ámbito</dt>
             <dd className="item-text">{labelOf(ANNOUNCEMENT_TYPE_LABELS, announcement.announcement_type)}</dd>
           </div>
           <div className="item-row">

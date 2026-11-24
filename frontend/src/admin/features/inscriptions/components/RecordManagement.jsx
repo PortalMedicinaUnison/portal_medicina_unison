@@ -133,15 +133,18 @@ function RecordManagement({ config, application, onChange }) {
       <div className="item-row">
         <dt className="item-header"><label htmlFor="record-status">Estatus</label></dt>
         <dd className="item-text">
+          {/* Con renuncia o baja, el botón va después de la fecha y el motivo (que son obligatorios). */}
           <div className="flex flex-wrap items-center gap-3">
             <select id="record-status" className="form-input--half" value={statusValue}
               onChange={(e) => handleStatusChange(e.target.value)} disabled={saving != null}>
               {Object.entries(config.recordStatusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </select>
-            <button type="button" className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={handleSaveStatus} disabled={!statusChanged || saving != null}>
-              {saving === 'status' ? 'Guardando...' : 'Guardar estatus'}
-            </button>
+            {!exitSelected && (
+              <button type="button" className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleSaveStatus} disabled={!statusChanged || saving != null}>
+                {saving === 'status' ? 'Guardando...' : 'Guardar estatus'}
+              </button>
+            )}
           </div>
 
           {exitSelected && (
@@ -156,8 +159,15 @@ function RecordManagement({ config, application, onChange }) {
                 <textarea id="record-exit-reason" className="form-input_full" rows={3} maxLength={MAX_REASON} value={exitReason}
                   placeholder={Number(statusValue) === 4 ? 'Ej. Entregó el formato de renuncia firmado el…' : 'Causal de la baja y quién la notificó'}
                   onChange={(e) => { setExitReason(e.target.value); setMessage(null); }} disabled={saving != null} />
+                <p className="mt-1 text-xs text-gray-600">El alumno verá la fecha y este motivo en su portal.</p>
               </div>
               <p className="text-xs text-gray-700">{config.exitHints[Number(statusValue)]}</p>
+              <div>
+                <button type="button" className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={handleSaveStatus} disabled={!statusChanged || saving != null}>
+                  {saving === 'status' ? 'Guardando...' : `Registrar ${exitName}`}
+                </button>
+              </div>
             </div>
           )}
           {message?.field === 'status' && <p className={`mt-2 text-sm ${message.ok ? 'text-green-600' : 'text-red-600'}`}>{message.text}</p>}

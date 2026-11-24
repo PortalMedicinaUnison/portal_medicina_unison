@@ -9,7 +9,11 @@ function DocumentsStatus({ progress }) {
     <span className={state === 'review' ? 'text-amber-700' : 'text-gray-700'}
       title={`${progress.approved} de ${progress.required} obligatorios aprobados; ${progress.submitted} subidos`}>
       {progress.approved}/{progress.required} aprobados
-      <span className="block text-xs text-gray-500">{state === 'review' ? 'Por revisar' : 'Faltan por subir'}</span>
+      <span className={`block text-xs ${state === 'corrections' ? 'text-red-700' : 'text-gray-500'}`}>
+        {state === 'review' && 'Por revisar'}
+        {state === 'corrections' && `${progress.rejected} con observaciones`}
+        {state === 'missing' && 'Faltan por subir'}
+      </span>
     </span>
   );
 }

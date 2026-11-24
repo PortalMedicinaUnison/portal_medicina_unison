@@ -11,6 +11,7 @@ function SurveyCardPage() {
     <Layout>
       <PageLayout
         pretitle=''
+        title="Encuestas"
       >
         <SurveyCard
           surveys={surveys}

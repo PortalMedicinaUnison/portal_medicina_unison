@@ -85,7 +85,7 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
       <div className="item-container">
         <dl className="item-list">
           <div className="item-row">
-            <dt className="item-header">Nombre del sitio</dt>
+            <dt className="item-header">Nombre de la sede</dt>
             <dd className="item-text">{site.name}</dd>
           </div>
           <div className="item-row">
@@ -97,7 +97,7 @@ function SiteDetail({ site, fetching, fetchError, refetch, siteId }) {
             <dd className="item-text">{siteProgramsLabel(site)}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Ciudad</dt>
+            <dt className="item-header">Municipio</dt>
             <dd className="item-text">{site.city}</dd>
           </div>
           <div className="item-row">

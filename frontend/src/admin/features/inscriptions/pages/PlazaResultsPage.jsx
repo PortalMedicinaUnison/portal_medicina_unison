@@ -63,6 +63,7 @@ function PlazaResultsPage({ program }) {
     [inscriptions],
   );
   const saved = (a) => (record(a)?.site_id != null ? String(record(a).site_id) : '');
+  const withoutAverage = rows.filter((a) => a.average == null).length;
   const choice = (a) => edits[a.application_id] ?? saved(a);
 
   // Cupo restante por sede según lo que se ve en la tabla (incluye lo que aún no se guarda).
@@ -140,6 +141,13 @@ function PlazaResultsPage({ program }) {
               </p>
             </div>
 
+            {!loading && withoutAverage > 0 && (
+              <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900" role="status">
+                {withoutAverage === 1 ? '1 alumno no tiene' : `${withoutAverage} alumnos no tienen`} promedio y el orden del acto depende de él.{' '}
+                <Link to={`${config.listPath}?promotion_id=${promotion.promotion_id}`} className="font-semibold underline">Captúralo en Inscripciones</Link>
+                {' '}(en la ficha de cada alumno o pegando la lista con promedios en &quot;Asignar alumnos&quot;).
+              </div>
+            )}
             {psdsError && <div className="alert-error">{psdsError}</div>}
             {!psdsError && psds?.length === 0 && (
               <div className="alert-error">

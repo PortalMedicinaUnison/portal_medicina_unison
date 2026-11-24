@@ -59,7 +59,7 @@ body {
         pr-2
         pl-2
         text-gray-900
-        placeholder:text-gray-400
+        placeholder:text-gray-500
         focus:outline-none
         text-sm/6
         border
@@ -93,6 +93,7 @@ body {
     .form-checkbox { @apply 
         form-input
         focus:ring-0
+        h-5 w-5
     }
 
     .form-label-preline { @apply 
@@ -222,7 +223,7 @@ body {
     }
 
     .sidebar-section-title { @apply 
-        text-gray-400
+        text-gray-500
         text-xs
         px-1
         py-2

@@ -162,12 +162,14 @@ function InscriptionDetailPage({ program }) {
 
             {actionError && <div className="alert-error mt-8">{actionError}</div>}
             <div className="info-actions mt-16">
-              {record ? (
-                <button type="button" className="btn-tertiary" onClick={() => setConfirm('record')} disabled={working}>
+              {/* Solo se elimina lo que está en curso (p. ej. aceptado por error); lo terminado es historial. */}
+              {record && [1, 2].includes(Number(record.status)) && (
+                <button type="button" className="btn-tertiary text-red-600" onClick={() => setConfirm('record')} disabled={working}>
                   Eliminar {config.recordName}
                 </button>
-              ) : (
-                <button type="button" className="btn-tertiary" onClick={() => setConfirm('application')} disabled={working}>
+              )}
+              {!record && (
+                <button type="button" className="btn-tertiary text-red-600" onClick={() => setConfirm('application')} disabled={working}>
                   Eliminar asignación
                 </button>
               )}

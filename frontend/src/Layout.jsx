@@ -53,9 +53,10 @@ function Layout({ children }) {
       {/* Drawer móvil */}
       <aside
         className={[
-          "fixed inset-y-0 left-0 z-40 w-56 shadow-lg md:hidden",
+          "fixed inset-y-0 left-0 z-40 w-56 md:hidden",
           "transition-transform duration-200 ease-in-out",
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          // La sombra solo con el menú abierto: cerrado, asomaba como una franja gris en el borde.
+          isSidebarOpen ? "translate-x-0 shadow-lg" : "-translate-x-full"
         ].join(' ')}
         role="dialog"
         aria-modal="true"

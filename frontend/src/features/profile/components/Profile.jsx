@@ -203,7 +203,7 @@ function Profile({ user, fetching, fetchError, refetch }) {
         {!user.is_super_admin && (
           <button
             type="button"
-            className='btn-tertiary'
+            className='btn-tertiary text-red-600'
             onClick={handleDeleteButton}
             disabled={deleting}
           >

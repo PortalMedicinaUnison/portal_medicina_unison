@@ -118,6 +118,7 @@ function InscriptionListPage({ program }) {
                 <select id="inscriptions-documents" className="form-input" value={documents} onChange={(e) => setDocuments(e.target.value)}>
                   <option value="">Todos</option>
                   <option value="missing">Faltan por subir</option>
+                  <option value="corrections">Con observaciones</option>
                   <option value="review">Por revisar</option>
                   <option value="complete">Completos</option>
                 </select>

@@ -57,10 +57,10 @@ function SiteForm() {
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.name) errors.push('La razón social es requerida.');
+    if (!cleanedData.name) errors.push('El nombre de la sede es obligatorio.');
     if (!cleanedData.institutionId) errors.push('La institución es requerida.');
     if (!cleanedData.address) errors.push('La dirección es requerida.');
-    if (!cleanedData.city) errors.push('La ciudad es requerida.');
+    if (!cleanedData.city) errors.push('El municipio es obligatorio.');
     if (!cleanedData.teachingHeadName) errors.push('El nombre del jefe de enseñanza es requerido.');
     if (cleanedData.teachingHeadEmail && !validateEmail(cleanedData.teachingHeadEmail).valid) {
       errors.push('El correo del jefe de enseñanza no es válido.');
@@ -141,7 +141,7 @@ function SiteForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header"><label htmlFor="site-name">Razón social *</label></dt>
+              <dt className="item-header"><label htmlFor="site-name">Nombre de la sede *</label></dt>
               <dd className="item-text">
                 <input
                   id="site-name"
@@ -206,7 +206,7 @@ function SiteForm() {
             </div>
 
             <div className="item-row">
-              <dt className="item-header"><label htmlFor="site-city">Ciudad *</label></dt>
+              <dt className="item-header"><label htmlFor="site-city">Municipio *</label></dt>
               <dd className="item-text">
                 <select
                   id="site-city"

@@ -47,7 +47,7 @@ function AnnouncementForm() {
     const errors = [];
     if (!cleanedData.title) errors.push('El título es requerido.');
     if (!cleanedData.description) errors.push('La descripción es requerida.');
-    if (cleanedData.announcementType === 0) errors.push('Seleccione un tipo de anuncio válido.');
+    if (cleanedData.announcementType === 0) errors.push('Selecciona el ámbito del aviso.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -88,7 +88,7 @@ function AnnouncementForm() {
     <form className="component-container" onSubmit={handleSubmit}>
       {saved && (
         <div className="alert-success">
-          Anuncio registrado exitosamente.{' '}
+          Aviso registrado exitosamente.{' '}
           {createdId && (
             <Link
               to={adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DETAIL(createdId))}
@@ -122,7 +122,7 @@ function AnnouncementForm() {
                   value={formData.title}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="Título del anuncio"
+                  placeholder="Título del aviso"
                   disabled={saving}
                   required
                 />
@@ -138,7 +138,7 @@ function AnnouncementForm() {
                   onChange={handleChange}
                   rows="4"
                   className="form-input--half"
-                  placeholder="Descripción del anuncio"
+                  placeholder="Contenido del aviso"
                   disabled={saving}
                   required
                 />

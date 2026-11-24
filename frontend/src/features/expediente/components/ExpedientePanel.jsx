@@ -129,6 +129,8 @@ function ExpedientePanel({ program, applicationId, mode = 'student', stages = AL
         if (stageRequirements.length === 0) return null;
         const required = stageRequirements.filter((r) => r.is_required);
         const done = required.filter((r) => docsFor(r.requirement_id).some(isApproved)).length;
+        // Para el alumno cuenta también lo que ya subió (en revisión): es lo que necesita para avanzar.
+        const sent = required.filter((r) => docsFor(r.requirement_id).some((d) => Number(d.review_status) !== REVIEW_STATUS.REJECTED)).length;
         const waitingForAcceptance = !isAdmin && !closed && !stageOpen(stage)
           && stageRequirements.some((r) => !isCoordinationDoc(r));
         return (
@@ -139,7 +141,9 @@ function ExpedientePanel({ program, applicationId, mode = 'student', stages = AL
               </h4>
               {required.length > 0 && (
                 <span className={`text-xs ${done === required.length ? 'text-green-700' : 'text-gray-600'}`}>
-                  {done} de {required.length} obligatorios aprobados
+                  {isAdmin || sent === done
+                    ? `${done} de ${required.length} obligatorios aprobados`
+                    : `${sent} de ${required.length} obligatorios subidos · ${done} aprobados`}
                 </span>
               )}
             </div>

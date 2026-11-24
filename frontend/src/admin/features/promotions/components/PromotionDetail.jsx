@@ -4,6 +4,7 @@ import useDeletePromotion from '../hooks/useDeletePromotion';
 import PsdListReadOnly from '../promotionDetailSite/components/PsdListReadOnly';
 import { PROGRAM_LABELS, labelOf } from '../../../../utils/constants';
 import { formatDate } from '../../../../utils/utils';
+import { promotionStatus } from '../promotionDates';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
@@ -100,7 +101,7 @@ function PromotionDetail({ promotion, fetching, fetchError, refetch, promotionId
           </div>
           <div className="item-row">
             <dt className="item-header">Estatus</dt>
-            <dd className="item-text">{promotion.is_finished ? 'Finalizada' : 'En curso'}</dd>
+            <dd className="item-text">{promotionStatus(promotion)}</dd>
           </div>
         </dl>
       </div>

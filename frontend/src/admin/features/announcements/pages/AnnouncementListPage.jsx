@@ -23,7 +23,7 @@ function AnnouncementListPage() {
   return (
     <Layout>
       <PageLayout 
-        title="Lista de anuncios"
+        title="Avisos"
         actions={actions}
       >
         <AnnouncementList

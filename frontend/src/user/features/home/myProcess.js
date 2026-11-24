@@ -40,6 +40,13 @@ export function describeStep(steps, application) {
   const progress = application.inscription_progress;
 
   if (status === APPLICATION_STATUS.PENDING) {
+    if (progress?.rejected > 0) {
+      return {
+        tone: 'todo',
+        text: `La coordinación pidió corregir ${progress.rejected === 1 ? 'un documento' : `${progress.rejected} documentos`} de tu inscripción. Revisa sus observaciones y sube la versión corregida.`,
+        action: { label: 'Corregir mis documentos', to: steps.applicationPath },
+      };
+    }
     if (progress && progress.required > 0 && !progress.all_submitted) {
       return {
         tone: 'todo',
@@ -72,6 +79,13 @@ export function describeStep(steps, application) {
   }
   if (recordStatus === 2) {
     return { tone: 'wait', text: `Tu ${steps.name.toLowerCase()} está suspendido. Si tienes dudas, acude a la coordinación.`, action };
+  }
+  if (!record.site && progress?.rejected > 0) {
+    return {
+      tone: 'todo',
+      text: `La coordinación pidió corregir ${progress.rejected === 1 ? 'un documento' : `${progress.rejected} documentos`} de tu inscripción. Revisa sus observaciones y sube la versión corregida.`,
+      action: { label: 'Corregir mis documentos', to: steps.recordPath },
+    };
   }
   if (!record.site) {
     return {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import { getErrorMessage } from '../../../../utils/errors';
@@ -15,13 +15,16 @@ const OF_PROGRAM = { [PROGRAMS.INTERNSHIP]: 'el internado', [PROGRAMS.SOCIAL_SER
  * "Copiar" la rellena con los cupos de otra promoción para revisarlos. El estado vive en
  * useSeatsEditor y se guarda con el botón de la página, junto con los datos de la promoción.
  */
-function SeatsTable({ editor, promotion, busy }) {
+function SeatsTable({ editor, promotion, busy, savedCount = 0 }) {
   const { program } = editor;
   const [search, setSearch] = useState('');
   const [onlyWithSeats, setOnlyWithSeats] = useState(false);
   const [copyFrom, setCopyFrom] = useState('');
   const [copying, setCopying] = useState(false);
   const [notice, setNotice] = useState(null);   // { ok, text }
+
+  // Tras guardar ya no aplica el aviso de "revísalos y guarda".
+  useEffect(() => { setNotice(null); }, [savedCount]);
 
   // Por defecto se copia de la promoción anterior a esta (o de la más reciente).
   const defaultSource = useMemo(
