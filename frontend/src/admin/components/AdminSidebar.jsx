@@ -106,6 +106,23 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </Link>
                         </div>
                         <div>
+                            <Link to={adminAbs(ROUTES.ADMIN.DOCUMENT_REQUIREMENTS)} className="sidebar-item-group group">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="sidebar-item-icon"
+                                    width="32"
+                                    height="32"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path fill="currentColor" d="M8 17h8v-1.5H8zm0-3.5h8V12H8zM6.3 21q-.75 0-1.275-.525T4.5 19.2V4.8q0-.75.525-1.275T6.3 3h7.45l5.75 5.75V19.2q0 .75-.525 1.275T17.7 21zm6.7-11.5V4.5H6.3q-.1 0-.2.1t-.1.2v14.4q0 .1.1.2t.2.1h11.4q.1 0 .2-.1t.1-.2V9.5z"/>
+                                </svg>
+                                <span className="sidebar-item-text">
+                                    Documentos requeridos
+                                </span>
+                            </Link>
+                        </div>
+                        <div>
                             <SidebarCollapse
                                 title="Internados"
                                 links={[

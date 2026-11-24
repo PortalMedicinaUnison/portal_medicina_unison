@@ -41,25 +41,3 @@ export const updateInternshipRequest = (id, data) =>
 
 export const deleteInternshipRequest = (id) =>
   api.delete(API_ENDPOINTS.INTERNSHIPS.DETAIL(id));
-
-// ----------------- Documentos del internado ----------------
-
-// formData: FormData con `document_type` y `file` (PDF).
-export const createInternshipDocumentRequest = (internshipId, formData) =>
-  api.post(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.LIST(internshipId), formData);
-
-export const getDocumentsByInternshipRequest = (internshipId) =>
-  api.get(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.LIST(internshipId));
-
-export const getInternshipDocumentByIdRequest = (internshipId, docId) =>
-  api.get(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.DETAIL(internshipId, docId));
-
-export const deleteInternshipDocumentRequest = (internshipId, docId) =>
-  api.delete(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.DETAIL(internshipId, docId));
-
-// El archivo requiere el token, así que se descarga como Blob (no sirve un enlace directo).
-export const getInternshipDocumentFileRequest = (internshipId, docId, { download = false } = {}) =>
-  api.get(API_ENDPOINTS.INTERNSHIP_DOCUMENTS.FILE(internshipId, docId), {
-    params: { download },
-    responseType: 'blob',
-  });

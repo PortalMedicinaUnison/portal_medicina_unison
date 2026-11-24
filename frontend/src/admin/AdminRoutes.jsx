@@ -49,6 +49,7 @@ import SocialServiceApplicationDetailPage from '../admin/features/social-service
 
 import SocialServiceListPage from '../admin/features/social-services/pages/SocialServiceListPage.jsx';
 import SocialServiceDetailPage from '../admin/features/social-services/pages/SocialServiceDetailPage.jsx';
+import DocumentRequirementListPage from './features/document-requirements/pages/DocumentRequirementListPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 
 
@@ -118,6 +119,8 @@ function AdminRoutes() {
         {/* Social services */}
         <Route path="social-services" element={<SocialServiceListPage />} />
         <Route path="social-services/:socialServiceId" element={<SocialServiceDetailPage />} />
+
+        <Route path="document-requirements" element={<DocumentRequirementListPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

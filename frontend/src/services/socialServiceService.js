@@ -42,22 +42,3 @@ export const updateSocialServiceRequest = (id, data) =>
 
 export const deleteSocialServiceRequest = (id) =>
   api.delete(API_ENDPOINTS.SOCIAL_SERVICES.DETAIL(id));
-
-// ----------------- Documentos del servicio social ----------------
-
-// formData: FormData con `document_type` y `file` (PDF).
-export const createSocialServiceDocumentRequest = (socialServiceId, formData) =>
-  api.post(API_ENDPOINTS.SOCIAL_SERVICE_DOCUMENTS.LIST(socialServiceId), formData);
-
-export const getDocumentsBySocialServiceRequest = (socialServiceId) =>
-  api.get(API_ENDPOINTS.SOCIAL_SERVICE_DOCUMENTS.LIST(socialServiceId));
-
-export const deleteSocialServiceDocumentRequest = (socialServiceId, docId) =>
-  api.delete(API_ENDPOINTS.SOCIAL_SERVICE_DOCUMENTS.DETAIL(socialServiceId, docId));
-
-// El archivo requiere el token, así que se descarga como Blob (no sirve un enlace directo).
-export const getSocialServiceDocumentFileRequest = (socialServiceId, docId, { download = false } = {}) =>
-  api.get(API_ENDPOINTS.SOCIAL_SERVICE_DOCUMENTS.FILE(socialServiceId, docId), {
-    params: { download },
-    responseType: 'blob',
-  });

@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
-import { APPLICATION_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { APPLICATION_STATUS_LABELS, PERIOD_LABELS, PROGRAMS, DOCUMENT_STAGES, labelOf } from '../../../../utils/constants';
+import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
 import useRespondApplication from '../hooks/useRespondApplication';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
@@ -129,6 +130,19 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
             <dd className="item-text">{labelOf(APPLICATION_STATUS_LABELS, application.status)}</dd>
           </div>
         </dl>
+      </div>
+
+      <div className="w-full lg:w-3/4 mb-12">
+        <h3 className="text-lg font-semibold text-gray-900">Documentos de inscripción</h3>
+        <p className="mt-1 mb-4 text-sm text-gray-600">
+          Sube tus documentos en PDF. La coordinación los revisa; tu sede se registra cuando todos los obligatorios estén aprobados.
+        </p>
+        <ExpedientePanel
+          program={PROGRAMS.INTERNSHIP}
+          applicationId={application.application_id}
+          stages={[DOCUMENT_STAGES.INSCRIPTION]}
+          closed={Boolean(promotion?.is_finished)}
+        />
       </div>
 
       <div className="w-3/4">

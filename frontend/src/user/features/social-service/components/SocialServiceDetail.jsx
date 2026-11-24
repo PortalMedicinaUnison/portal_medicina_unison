@@ -1,9 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
-import { SOCIAL_SERVICE_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { PROGRAMS, SOCIAL_SERVICE_STATUS, SOCIAL_SERVICE_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
-import SocialServiceDocumentList from '../documents/components/SocialServiceDocumentList';
+import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
 
 
 function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
@@ -73,8 +73,13 @@ function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
       </div>
 
       <div className="mt-12">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Documentos</h3>
-        <SocialServiceDocumentList socialServiceId={socialService.social_service_id} />
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Mis documentos</h3>
+        <ExpedientePanel
+          program={PROGRAMS.SOCIAL_SERVICE}
+          applicationId={socialService.application_id}
+          started
+          closed={Number(socialService.status) === SOCIAL_SERVICE_STATUS.FINISHED || Boolean(promotion?.is_finished)}
+        />
       </div>
     </div>
   );

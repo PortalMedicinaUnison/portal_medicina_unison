@@ -6,7 +6,8 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
-import { APPLICATION_STATUS, APPLICATION_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { APPLICATION_STATUS, APPLICATION_STATUS_LABELS, PERIOD_LABELS, PROGRAMS, labelOf } from '../../../../utils/constants';
+import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
 import { formatDateTime, formatFullName } from '../../../../utils/utils';
 
 
@@ -132,7 +133,27 @@ function SocialServiceApplicationDetail({ application, fetching, fetchError, ref
               </dd>
             </div>
           )}
+          {application.inscription_progress && (
+            <div className="item-row">
+              <dt className="item-header">Documentos de inscripción</dt>
+              <dd className="item-text">
+                {application.inscription_progress.complete
+                  ? <span className="text-green-700">Completo</span>
+                  : `${application.inscription_progress.approved} de ${application.inscription_progress.required} obligatorios aprobados`}
+              </dd>
+            </div>
+          )}
         </dl>
+      </div>
+
+      <div className="mt-12">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Documentos</h3>
+        <ExpedientePanel
+          program={PROGRAMS.SOCIAL_SERVICE}
+          applicationId={application.application_id}
+          mode="admin"
+          onChange={refetch}
+        />
       </div>
 
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>

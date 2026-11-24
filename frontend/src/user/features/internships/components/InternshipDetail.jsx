@@ -1,9 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
-import { INTERNSHIP_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { INTERNSHIP_STATUS, INTERNSHIP_STATUS_LABELS, PERIOD_LABELS, PROGRAMS, labelOf } from '../../../../utils/constants';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
-import DocumentList from '../documents/components/DocumentList';
+import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
 
 
 function InternshipDetail({ internship, fetching, fetchError, refetch }) {
@@ -72,8 +72,13 @@ function InternshipDetail({ internship, fetching, fetchError, refetch }) {
       </div>
 
       <div className="mt-12">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Documentos</h3>
-        <DocumentList internshipId={internship.internship_id} />
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Mis documentos</h3>
+        <ExpedientePanel
+          program={PROGRAMS.INTERNSHIP}
+          applicationId={internship.application_id}
+          started
+          closed={Number(internship.status) === INTERNSHIP_STATUS.FINISHED || Boolean(promotion?.is_finished)}
+        />
       </div>
     </div>
   );
