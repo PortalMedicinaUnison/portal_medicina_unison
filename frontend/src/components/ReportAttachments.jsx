@@ -5,6 +5,8 @@ import {
 import { getErrorMessage } from '../utils/errors';
 import { formatDateTime } from '../utils/utils';
 import useFileLinks from '../features/expediente/hooks/useFileLinks';
+import Modal from '../utils/ui/Modal';
+import ConfirmDialogContent from '../utils/ui/ConfirmDialogContent';
 import { EVIDENCE_ACCEPT, MAX_EVIDENCE_FILES, formatFileSize, getEvidenceError } from '../features/expediente/fileRules';
 
 const kindOf = (attachment) => (attachment.media_type === 'application/pdf' ? 'PDF' : 'Imagen');
@@ -19,6 +21,7 @@ function ReportAttachments({ report, canEdit = false, onChange }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [attachments, setAttachments] = useState(report.attachments ?? []);
+  const [toRemove, setToRemove] = useState(null);   // se confirma antes de quitar
   useEffect(() => { setAttachments(report.attachments ?? []); }, [report.attachments]);
   const canAdd = canEdit && attachments.length < MAX_EVIDENCE_FILES;
 
@@ -54,7 +57,9 @@ function ReportAttachments({ report, canEdit = false, onChange }) {
     }
   };
 
-  const handleRemove = async (attachment) => {
+  const handleRemove = async () => {
+    const attachment = toRemove;
+    setToRemove(null);
     setBusy(true);
     setError(null);
     try {
@@ -96,7 +101,7 @@ function ReportAttachments({ report, canEdit = false, onChange }) {
                   Descargar
                 </button>
                 {canEdit && (
-                  <button type="button" className="btn-tertiary py-1.5 text-xs text-red-600" onClick={() => handleRemove(attachment)} disabled={busy}>
+                  <button type="button" className="btn-tertiary py-1.5 text-xs text-red-600" onClick={() => setToRemove(attachment)} disabled={busy}>
                     Quitar
                   </button>
                 )}
@@ -106,6 +111,17 @@ function ReportAttachments({ report, canEdit = false, onChange }) {
         </ul>
       )}
       {shownError && <div className="alert-error">{shownError}</div>}
+      <Modal open={Boolean(toRemove)} onClose={() => setToRemove(null)}>
+        <ConfirmDialogContent
+          title="Quitar evidencia"
+          message={`¿Quitar "${toRemove?.original_filename}" del reporte? No se puede deshacer.`}
+          onConfirm={handleRemove}
+          onCancel={() => setToRemove(null)}
+          primaryLabel="Quitar"
+          secondaryLabel="Cancelar"
+          danger
+        />
+      </Modal>
       {canAdd && (
         <div className="flex flex-wrap items-center gap-3">
           <input ref={inputRef} type="file" multiple accept={EVIDENCE_ACCEPT} className="hidden" onChange={handleFiles}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
 import { useUser } from '../../../../contexts/UserContext';
@@ -65,6 +65,7 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
   const [createdId, setCreatedId] = useState(null);
   // Archivos de evidencia elegidos al crear: se adjuntan en cuanto se envía el reporte.
   const [evidenceFiles, setEvidenceFiles] = useState([]);
+  const filesRef = useRef(null);
   const [attaching, setAttaching] = useState(false);
   const [attachWarning, setAttachWarning] = useState(null);
   const [validationError, setValidationError] = useState('');
@@ -396,7 +397,7 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header"><label htmlFor="report-evidence-url">Evidencia (opcional)</label></dt>
+              <dt className="item-header"><label htmlFor="report-evidence-url">Enlace de evidencia (opcional)</label></dt>
               <dd className="item-text">
                 <input
                   id="report-evidence-url"
@@ -418,9 +419,16 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
               <div className="item-row">
                 <dt className="item-header"><label htmlFor="report-evidence-files">Archivos de evidencia (opcional)</label></dt>
                 <dd className="item-text">
-                  <input id="report-evidence-files" type="file" multiple accept={EVIDENCE_ACCEPT} onChange={handleEvidenceFiles}
-                    disabled={saving || attaching || evidenceFiles.length >= MAX_EVIDENCE_FILES}
-                    className="block text-sm file:mr-3 file:rounded-md file:border file:border-gray-300 file:bg-white file:px-3 file:py-1.5 file:text-sm" />
+                  {/* Selector propio (en español y con el estilo del portal) en lugar del control del navegador. */}
+                  <input id="report-evidence-files" ref={filesRef} type="file" multiple accept={EVIDENCE_ACCEPT} onChange={handleEvidenceFiles}
+                    disabled={saving || attaching || evidenceFiles.length >= MAX_EVIDENCE_FILES} className="hidden" />
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button type="button" className="btn-secondary" onClick={() => filesRef.current?.click()}
+                      disabled={saving || attaching || evidenceFiles.length >= MAX_EVIDENCE_FILES}>
+                      Elegir archivos
+                    </button>
+                    {evidenceFiles.length === 0 && <span className="text-sm text-gray-500">Ningún archivo elegido</span>}
+                  </div>
                   <p className="mt-1 text-xs text-gray-500">
                     PDF o imágenes JPG, PNG o WebP; hasta {MAX_EVIDENCE_FILES} archivos. Si el reporte es anónimo, revisa que no muestren tu nombre.
                   </p>
