@@ -1,28 +1,33 @@
-
+# Entorno de DESARROLLO: API con recarga automática y servidor de Vite.
+#   docker compose up --build
+# Frontend: http://localhost:5173 · API: http://localhost:8000/docs
+# SECRET_KEY y el resto de la configuración se leen de backend/.env (ver README).
 services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
-    container_name: backend_service
+    # En desarrollo el código se monta desde el host; se ejecuta como root para poder escribir en él.
+    user: root
+    command: sh -c "alembic upgrade head && cd app && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       - "8000:8000"
     volumes:
       - ./backend:/backend
-      - ./project.db:/backend/project.db  # Volumen para persistir SQLite
     environment:
-      - DATABASE_URL=sqlite:///backend/project.db  # Ruta de la base de datos (ajustada)
+      - DATABASE_URL=sqlite:////backend/data/portal.db
+      - UPLOAD_DIR=/backend/uploads
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-    container_name: frontend_service
+      target: dev
     ports:
       - "5173:5173"
     volumes:
       - ./frontend:/frontend
+      # Conserva los node_modules del contenedor (los del host pueden ser de otro sistema operativo).
+      - /frontend/node_modules
     environment:
-      - VITE_API_URL=http://localhost:8000  # URL del backend
+      - VITE_API_URL=http://localhost:8000
     depends_on:
       - backend
