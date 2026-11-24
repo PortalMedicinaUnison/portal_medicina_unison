@@ -58,19 +58,18 @@ def create_application(db: Session, data: InternshipApplicationInput) -> Interns
         raise bad_request("La promoción seleccionada no es de internado.")
     if promotion.is_finished:
         raise conflict("La promoción ya está finalizada.")
-    current = [
-        app for app in repo.list(academic_id=data.academic_id, status=ApplicationStatusEnum.ACCEPTED)
-        if app.internship is not None and app.internship.status != InternshipStatusEnum.FINISHED
-    ]
-    if current:
+    internships = InternshipRepo(db).list(academic_id=data.academic_id)
+    if any(i.status == InternshipStatusEnum.FINISHED for i in internships):
+        raise conflict("El estudiante ya acreditó el internado.")
+    if any(i.status != InternshipStatusEnum.FINISHED for i in internships):
         raise conflict("El estudiante ya tiene un internado en curso.")
 
     existing = repo.get_by_promotion_student(data.promotion_id, data.academic_id, include_inactive=True)
     if existing and existing.is_active:
         raise conflict("El estudiante ya tiene una asignación en esta promoción.")
     if existing:
-        return repo.update(existing, {"status": ApplicationStatusEnum.PENDING, "is_active": True})
-    return repo.add(InternshipApplication(promotion_id=data.promotion_id, academic_id=data.academic_id))
+        return repo.update(existing, {"status": ApplicationStatusEnum.PENDING, "is_active": True, "average": data.average})
+    return repo.add(InternshipApplication(promotion_id=data.promotion_id, academic_id=data.academic_id, average=data.average))
 
 
 def _ensure_pending(application: InternshipApplication) -> None:

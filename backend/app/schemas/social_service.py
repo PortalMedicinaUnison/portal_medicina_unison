@@ -6,6 +6,7 @@ from models.internship import ApplicationStatusEnum
 from models.social_service import SocialServiceStatusEnum
 from schemas.common import AcademicId, ORMModel, UTCDateTime
 from schemas.document import InscriptionProgress
+from schemas.inscription import AverageField
 from schemas.promotion import PromotionOutput
 from schemas.site import SiteBasicOutput
 from schemas.user import UserBasicOutput
@@ -13,9 +14,17 @@ from schemas.user import UserBasicOutput
 
 # ---------------------- SOCIAL SERVICE APPLICATION ----------------------
 
-class SocialServiceApplicationInput(BaseModel):
+class SocialServiceApplicationInput(AverageField):
     promotion_id: int
     academic_id: AcademicId
+
+
+class SocialServiceSummary(ORMModel):
+    """Lo esencial del servicio social para mostrarlo junto a la asignación."""
+    social_service_id: int
+    status: SocialServiceStatusEnum
+    site_id: Optional[int] = None
+    site: Optional[SiteBasicOutput] = None
 
 
 class SocialServiceApplicationOutput(ORMModel):
@@ -27,7 +36,9 @@ class SocialServiceApplicationOutput(ORMModel):
     updated_at: UTCDateTime
     promotion: PromotionOutput
     student: Optional[UserBasicOutput] = None
+    average: Optional[float] = None
     social_service_id: Optional[int] = None
+    social_service: Optional[SocialServiceSummary] = None
     # Se calcula al listar o consultar asignaciones (no en las anidadas dentro del servicio social).
     inscription_progress: Optional[InscriptionProgress] = None
 

@@ -1,5 +1,7 @@
 from typing import List, Optional
 
+from sqlalchemy.orm import selectinload
+
 from models.internship import ApplicationStatusEnum
 from models.social_service import SocialService, SocialServiceApplication, SocialServiceStatusEnum
 from .base import BaseRepo
@@ -21,9 +23,11 @@ class SocialServiceApplicationRepo(BaseRepo[SocialServiceApplication]):
             query = query.filter(SocialServiceApplication.academic_id == academic_id)
         if status is not None:
             query = query.filter(SocialServiceApplication.status == status)
-        return query.order_by(
-            SocialServiceApplication.created_at.desc(), SocialServiceApplication.application_id.desc()
-        ).all()
+        return (
+            query.options(selectinload(SocialServiceApplication.social_service))
+            .order_by(SocialServiceApplication.created_at.desc(), SocialServiceApplication.application_id.desc())
+            .all()
+        )
 
     def get_by_promotion_student(
         self, promotion_id: int, academic_id: str, include_inactive: bool = False,

@@ -1,7 +1,7 @@
 from enum import IntEnum
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import ForeignKey, Index, Integer, String, UniqueConstraint
+from sqlalchemy import Float, ForeignKey, Index, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import BaseModel
@@ -44,6 +44,8 @@ class InternshipApplication(BaseModel):
     status: Mapped[ApplicationStatusEnum] = mapped_column(
         IntEnumType(ApplicationStatusEnum), nullable=False, default=ApplicationStatusEnum.PENDING
     )
+    # Promedio general (0-100, dos decimales): ordena la elección de plazas en el acto público.
+    average: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
 
     promotion: Mapped["Promotion"] = relationship(lazy="joined")
     student: Mapped["User"] = relationship(lazy="joined", viewonly=True)

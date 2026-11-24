@@ -70,19 +70,18 @@ def create_application(db: Session, data: SocialServiceApplicationInput) -> Soci
         raise conflict("La promoción ya está finalizada.")
     if not has_accredited_internship(db, data.academic_id):
         raise conflict("El estudiante debe acreditar el internado antes de asignarle servicio social.")
-    in_progress = [
-        service for service in SocialServiceRepo(db).list(academic_id=data.academic_id)
-        if service.status != SocialServiceStatusEnum.FINISHED
-    ]
-    if in_progress:
+    services = SocialServiceRepo(db).list(academic_id=data.academic_id)
+    if any(s.status == SocialServiceStatusEnum.FINISHED for s in services):
+        raise conflict("El estudiante ya liberó su servicio social.")
+    if any(s.status != SocialServiceStatusEnum.FINISHED for s in services):
         raise conflict("El estudiante ya tiene un servicio social en curso.")
 
     existing = repo.get_by_promotion_student(data.promotion_id, data.academic_id, include_inactive=True)
     if existing and existing.is_active:
         raise conflict("El estudiante ya tiene una asignación en esta promoción.")
     if existing:
-        return repo.update(existing, {"status": ApplicationStatusEnum.PENDING, "is_active": True})
-    return repo.add(SocialServiceApplication(promotion_id=data.promotion_id, academic_id=data.academic_id))
+        return repo.update(existing, {"status": ApplicationStatusEnum.PENDING, "is_active": True, "average": data.average})
+    return repo.add(SocialServiceApplication(promotion_id=data.promotion_id, academic_id=data.academic_id, average=data.average))
 
 
 def _ensure_pending(application: SocialServiceApplication) -> None:
