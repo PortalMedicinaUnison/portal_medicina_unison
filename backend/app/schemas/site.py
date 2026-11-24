@@ -75,9 +75,12 @@ class SiteUpdate(BaseModel):
 
 
 class SiteBasicOutput(ORMModel):
+    """Datos públicos de la sede (sin los datos del jefe ni del subjefe de enseñanza)."""
     site_id: int
     name: str
     city: str
+    address: Optional[str] = None
+    institution: Optional[InstitutionBasic] = None
 
 
 class SiteOutput(ORMModel):

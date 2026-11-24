@@ -104,3 +104,13 @@ def test_cannot_assign_student_with_internship_in_progress(client, admin, studen
         "promotion_id": other["promotion_id"], "academic_id": student.academic_id})
     assert response.status_code == 409
 
+
+
+def test_student_sees_the_site_details_without_the_teaching_staff(client, admin, student, catalog):
+    internship = _accepted_internship(client, admin, student, catalog)
+    client.patch(f"/internships/{internship['internship_id']}", headers=auth(admin), json={"site_id": catalog["site_a"]["site_id"]})
+    mine = client.get("/internships", headers=auth(student)).json()[0]["site"]
+    assert mine == {
+        "site_id": catalog["site_a"]["site_id"], "name": "Hospital A", "city": "Hermosillo", "address": "Calle 1",
+        "institution": {"institution_id": catalog["institution"]["institution_id"], "name": "IMSS"},
+    }
