@@ -1,8 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 
+const MENU_WIDTH = 144;    // w-36
+const ITEM_HEIGHT = 32;
+
+/**
+ * Menú de acciones de una fila. Se abre con posición fija junto al botón para que no lo recorte
+ * una tabla con desplazamiento horizontal (en móvil); se cierra al desplazar la página.
+ */
 function DropdownMenu({ icon, actions, hover = true, disabled = false }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState(null);
   const menuRef = useRef(null);
+  const buttonRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -24,6 +33,36 @@ function DropdownMenu({ icon, actions, hover = true, disabled = false }) {
     };
   }, []);
 
+  // Con el menú abierto, desplazar o cambiar el tamaño de la ventana lo cierra (su posición es fija).
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const close = (event) => {
+      if (menuRef.current && event.target instanceof Node && menuRef.current.contains(event.target)) return;
+      setIsOpen(false);
+    };
+    window.addEventListener('scroll', close, true);
+    window.addEventListener('resize', close);
+    return () => {
+      window.removeEventListener('scroll', close, true);
+      window.removeEventListener('resize', close);
+    };
+  }, [isOpen]);
+
+  const toggle = () => {
+    if (isOpen) {
+      setIsOpen(false);
+      return;
+    }
+    const rect = buttonRef.current.getBoundingClientRect();
+    const height = actions.length * ITEM_HEIGHT + 8;
+    const below = rect.bottom + 4 + height <= window.innerHeight;
+    setPosition({
+      top: below ? rect.bottom + 4 : Math.max(8, rect.top - height - 4),
+      left: Math.max(8, Math.min(rect.right - MENU_WIDTH, window.innerWidth - MENU_WIDTH - 8)),
+    });
+    setIsOpen(true);
+  };
+
   const handleActionClick = (actionCallback) => {
     actionCallback();
     setIsOpen(false);
@@ -41,21 +80,24 @@ function DropdownMenu({ icon, actions, hover = true, disabled = false }) {
   return (
     <div ref={menuRef} className="relative inline-block text-left">
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => setIsOpen(prev => !prev)}
+        onClick={toggle}
         disabled={disabled}
         aria-haspopup="menu"
         aria-expanded={isOpen}
         className={`p-2 rounded disabled:opacity-50 disabled:cursor-not-allowed ${hover ? 'hover:bg-gray-100' : ''}`}
         title="Acciones"
+        aria-label="Acciones"
       >
         {triggerIcon || <DefaultIcon />}
       </button>
 
-      {isOpen && (
+      {isOpen && position && (
         <div
           role="menu"
-          className="absolute right-0 z-20 mt-1 w-36 origin-top-right rounded-md border border-gray-200 bg-white py-1 shadow-lg"
+          style={{ top: position.top, left: position.left }}
+          className="fixed z-50 w-36 rounded-md border border-gray-200 bg-white py-1 shadow-lg"
         >
           {actions.map((action, index) => (
             <button

@@ -177,7 +177,7 @@ function PlazaResultsPage({ program }) {
                   </thead>
                   <tbody>
                     {rows.length === 0 && (
-                      <tr><td colSpan={5} className="py-6 text-center text-gray-500">Nadie ha aceptado su asignación en esta promoción todavía.</td></tr>
+                      <tr><td colSpan={5} className="!whitespace-normal py-6 text-center text-gray-500">Nadie ha aceptado su asignación en esta promoción todavía.</td></tr>
                     )}
                     {rows.map((a, index) => {
                       const value = choice(a);
