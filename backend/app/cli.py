@@ -16,8 +16,8 @@ from core.security import hash_password
 from core.settings import settings
 from db.database import SessionLocal
 from models import (
-    ApplicationStatusEnum, Institution, InternshipApplication, Promotion,
-    PromotionSiteDetail, Site, User, UserEnrollment,
+    ApplicationStatusEnum, Institution, Internship, InternshipApplication, InternshipStatusEnum,
+    ProgramEnum, Promotion, PromotionSiteDetail, Site, SocialServiceApplication, User, UserEnrollment,
 )
 from utils.dates import local_today
 from utils.validation import validate_email, validate_password
@@ -83,7 +83,9 @@ def seed_demo(_args: argparse.Namespace) -> None:
                 institution_id=imss.institution_id, address="Calle 200 y Guerrero", city="Cajeme",
                 teaching_head_name="Dr. Luis Torres")),
         ]
-        promotion = get_or_create(Promotion, year=local_today().year, period=1, defaults=dict(is_finished=False))
+        year = local_today().year
+        promotion = get_or_create(Promotion, program=ProgramEnum.INTERNSHIP, year=year, period=1,
+                                  defaults=dict(is_finished=False))
         for site, capacity in zip(sites, (3, 2, 2)):
             get_or_create(PromotionSiteDetail, promotion_id=promotion.promotion_id, site_id=site.site_id,
                           defaults=dict(capacity=capacity))
@@ -102,11 +104,42 @@ def seed_demo(_args: argparse.Namespace) -> None:
         db.flush()
         get_or_create(InternshipApplication, promotion_id=promotion.promotion_id, academic_id="222000001",
                       defaults=dict(status=ApplicationStatusEnum.PENDING))
+
+        # Servicio social: plazas en centros de salud y un egresado con el internado ya acreditado.
+        health = get_or_create(Institution, name="Servicios de Salud de Sonora")
+        clinics = [
+            get_or_create(Site, name="Centro de Salud Rural Ures", defaults=dict(
+                institution_id=health.institution_id, address="Calle Juárez s/n", city="Ures",
+                teaching_head_name="Dra. Rosa Valenzuela")),
+            get_or_create(Site, name="Centro de Salud Urbano Navojoa", defaults=dict(
+                institution_id=health.institution_id, address="Av. Pesqueira 401", city="Navojoa",
+                teaching_head_name="Dr. Martín Félix")),
+        ]
+        ss_promotion = get_or_create(Promotion, program=ProgramEnum.SOCIAL_SERVICE, year=year, period=1,
+                                     defaults=dict(is_finished=False))
+        for clinic in clinics:
+            get_or_create(PromotionSiteDetail, promotion_id=ss_promotion.promotion_id, site_id=clinic.site_id,
+                          defaults=dict(capacity=2))
+
+        past = get_or_create(Promotion, program=ProgramEnum.INTERNSHIP, year=year - 1, period=1,
+                             defaults=dict(is_finished=True))
+        db.query(UserEnrollment).filter_by(academic_id="222000002").first().is_enrolled = True
+        get_or_create(User, email="egresado@demo.unison.mx", defaults=dict(
+            academic_id="222000002", first_name="Egresado", last_name="Demo",
+            password=hash_password("Alumno1234")))
+        db.flush()
+        past_application = get_or_create(InternshipApplication, promotion_id=past.promotion_id, academic_id="222000002",
+                                         defaults=dict(status=ApplicationStatusEnum.ACCEPTED))
+        get_or_create(Internship, application_id=past_application.application_id,
+                      defaults=dict(site_id=sites[0].site_id, status=InternshipStatusEnum.FINISHED))
+        get_or_create(SocialServiceApplication, promotion_id=ss_promotion.promotion_id, academic_id="222000002",
+                      defaults=dict(status=ApplicationStatusEnum.PENDING))
         db.commit()
 
     print("Datos de ejemplo listos.")
     print("  Administrador: admin@demo.unison.mx / Admin1234")
-    print("  Estudiante:    alumno@demo.unison.mx / Alumno1234 (con una asignación pendiente)")
+    print("  Estudiante:    alumno@demo.unison.mx / Alumno1234 (asignación de internado pendiente)")
+    print("  Egresado:      egresado@demo.unison.mx / Alumno1234 (internado acreditado, servicio social pendiente)")
 
 
 def main() -> None:

@@ -6,6 +6,7 @@ from core.errors import bad_request, conflict, not_found
 from models.site import Institution, Site
 from repos.internship import InternshipRepo
 from repos.promotion import PromotionSiteDetailRepo
+from repos.social_service import SocialServiceRepo
 from repos.site import InstitutionRepo, SiteRepo
 from schemas.site import InstitutionInput, InstitutionUpdate, SiteInput, SiteUpdate
 
@@ -96,8 +97,8 @@ def update_site(db: Session, site_id: int, data: SiteUpdate) -> Site:
 
 def delete_site(db: Session, site_id: int) -> None:
     site = get_site(db, site_id)
-    if InternshipRepo(db).count_by_site(site_id):
-        raise conflict("La sede tiene internos asignados; reasígnalos antes de eliminarla.")
+    if InternshipRepo(db).count_by_site(site_id) or SocialServiceRepo(db).count_by_site(site_id):
+        raise conflict("La sede tiene estudiantes asignados; reasígnalos antes de eliminarla.")
     if PromotionSiteDetailRepo(db).list(site_id=site_id):
         raise conflict("La sede tiene cupos en alguna promoción; elimínalos antes de eliminarla.")
     SiteRepo(db).soft_delete(site)

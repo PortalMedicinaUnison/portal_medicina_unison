@@ -3,9 +3,10 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from core.errors import bad_request, conflict, not_found
-from models.promotion import Promotion, PromotionSiteDetail
+from models.promotion import ProgramEnum, Promotion, PromotionSiteDetail
 from repos.internship import InternshipApplicationRepo, InternshipRepo
 from repos.promotion import PromotionRepo, PromotionSiteDetailRepo
+from repos.social_service import SocialServiceApplicationRepo, SocialServiceRepo
 from repos.site import SiteRepo
 from schemas.promotion import (
     PromotionInput, PromotionSiteDetailInput, PromotionSiteDetailUpdate, PromotionUpdate,
@@ -14,8 +15,10 @@ from schemas.promotion import (
 
 # ---------------------- PROMOTION ----------------------
 
-def list_promotions(db: Session, year: Optional[int], period: Optional[int], is_finished: Optional[bool]) -> List[Promotion]:
-    return PromotionRepo(db).list(year=year, period=period, is_finished=is_finished)
+def list_promotions(
+    db: Session, program: Optional[ProgramEnum], year: Optional[int], period: Optional[int], is_finished: Optional[bool],
+) -> List[Promotion]:
+    return PromotionRepo(db).list(program=program, year=year, period=period, is_finished=is_finished)
 
 
 def get_promotion(db: Session, promotion_id: int) -> Promotion:
@@ -27,9 +30,11 @@ def get_promotion(db: Session, promotion_id: int) -> Promotion:
 
 def create_promotion(db: Session, data: PromotionInput) -> Promotion:
     repo = PromotionRepo(db)
-    existing = db.query(Promotion).filter(Promotion.year == data.year, Promotion.period == data.period).first()
+    existing = db.query(Promotion).filter(
+        Promotion.program == data.program, Promotion.year == data.year, Promotion.period == data.period,
+    ).first()
     if existing and existing.is_active:
-        raise conflict("Ya existe una promoción con ese año y periodo.")
+        raise conflict("Ya existe una promoción de ese programa con ese año y periodo.")
     if existing:
         return repo.update(existing, {**data.model_dump(), "is_active": True})
     return repo.add(Promotion(**data.model_dump()))
@@ -41,15 +46,21 @@ def update_promotion(db: Session, promotion_id: int, data: PromotionUpdate) -> P
     payload = data.model_dump(exclude_unset=True)
     year, period = payload.get("year", promotion.year), payload.get("period", promotion.period)
     if (year, period) != (promotion.year, promotion.period):
-        duplicate = db.query(Promotion).filter(Promotion.year == year, Promotion.period == period).first()
+        duplicate = db.query(Promotion).filter(
+            Promotion.program == promotion.program, Promotion.year == year, Promotion.period == period,
+        ).first()
         if duplicate:
-            raise conflict("Ya existe una promoción con ese año y periodo.")
+            raise conflict("Ya existe una promoción de ese programa con ese año y periodo.")
     return repo.update(promotion, payload)
 
 
 def delete_promotion(db: Session, promotion_id: int) -> None:
     promotion = get_promotion(db, promotion_id)
-    if InternshipApplicationRepo(db).count_by_promotion(promotion_id):
+    applications = (
+        SocialServiceApplicationRepo(db) if promotion.program == ProgramEnum.SOCIAL_SERVICE
+        else InternshipApplicationRepo(db)
+    )
+    if applications.count_by_promotion(promotion_id):
         raise conflict("La promoción tiene asignaciones de estudiantes; elimínalas primero.")
     for psd in PromotionSiteDetailRepo(db).list(promotion_id=promotion_id):
         psd.is_active = False
@@ -58,8 +69,15 @@ def delete_promotion(db: Session, promotion_id: int) -> None:
 
 # ---------------------- PROMOTION SITE DETAIL (cupos) ----------------------
 
+def occupied_seats(db: Session, promotion: Promotion, site_id: int) -> int:
+    """Lugares ocupados de una sede: internados o servicios sociales según el programa de la promoción."""
+    if promotion.program == ProgramEnum.SOCIAL_SERVICE:
+        return SocialServiceRepo(db).count_in_site(promotion.promotion_id, site_id)
+    return InternshipRepo(db).count_in_site(promotion.promotion_id, site_id)
+
+
 def _with_occupied(db: Session, psd: PromotionSiteDetail) -> PromotionSiteDetail:
-    psd.occupied = InternshipRepo(db).count_in_site(psd.promotion_id, psd.site_id)
+    psd.occupied = occupied_seats(db, psd.promotion, psd.site_id)
     return psd
 
 

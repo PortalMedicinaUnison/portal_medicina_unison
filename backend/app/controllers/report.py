@@ -7,6 +7,8 @@ from models.internship import InternshipStatusEnum
 from models.report import Report, ReportTypeEnum
 from models.user import User
 from repos.internship import InternshipRepo
+from repos.social_service import SocialServiceRepo
+from models.social_service import SocialServiceStatusEnum
 from repos.report import ReportRepo
 from repos.site import SiteRepo
 from schemas.report import OTHER_TYPE_REQUIRED, ReportInput, ReportOutput, ReportStatusUpdate, ReportUpdate
@@ -16,10 +18,11 @@ def to_output(report: Report, viewer: User) -> ReportOutput:
     """Si el reporte es anónimo, el personal administrativo no ve quién lo hizo."""
     output = ReportOutput.model_validate(report)
     if viewer.is_staff and report.anonymity:
-        # El internado también identifica al estudiante (GET /internships/{id}).
+        # El internado y el servicio social también identifican al estudiante.
         output.academic_id = None
         output.student = None
         output.internship_id = None
+        output.social_service_id = None
     return output
 
 
@@ -61,10 +64,15 @@ def create_report(db: Session, student: User, data: ReportInput) -> Report:
         internship for internship in InternshipRepo(db).list(academic_id=student.academic_id)
         if internship.status != InternshipStatusEnum.FINISHED
     ]
+    current_social_service = [
+        service for service in SocialServiceRepo(db).list(academic_id=student.academic_id)
+        if service.status != SocialServiceStatusEnum.FINISHED
+    ]
     report = Report(
         **data.model_dump(),
         academic_id=student.academic_id,
         internship_id=current[0].internship_id if current else None,
+        social_service_id=current_social_service[0].social_service_id if current_social_service else None,
     )
     return ReportRepo(db).add(report)
 

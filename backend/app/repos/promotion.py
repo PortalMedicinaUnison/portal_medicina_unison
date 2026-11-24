@@ -1,14 +1,19 @@
 from typing import List, Optional
 
-from models.promotion import Promotion, PromotionSiteDetail
+from models.promotion import ProgramEnum, Promotion, PromotionSiteDetail
 from .base import BaseRepo
 
 
 class PromotionRepo(BaseRepo[Promotion]):
     model = Promotion
 
-    def list(self, year: Optional[int] = None, period: Optional[int] = None, is_finished: Optional[bool] = None) -> List[Promotion]:
+    def list(
+        self, program: Optional[ProgramEnum] = None, year: Optional[int] = None,
+        period: Optional[int] = None, is_finished: Optional[bool] = None,
+    ) -> List[Promotion]:
         query = self.query()
+        if program is not None:
+            query = query.filter(Promotion.program == program)
         if year is not None:
             query = query.filter(Promotion.year == year)
         if period is not None:

@@ -2,6 +2,7 @@ from typing import Annotated
 
 from pydantic import AfterValidator, BaseModel, Field
 
+from models.promotion import ProgramEnum
 from schemas.common import ORMModel
 from schemas.site import SiteBasicOutput
 from utils.dates import local_today
@@ -24,6 +25,7 @@ Capacity = Annotated[int, Field(ge=1, le=1000)]
 # ---------------------- PROMOTIONS ----------------------
 
 class PromotionInput(BaseModel):
+    program: ProgramEnum = ProgramEnum.INTERNSHIP
     year: NewYear
     period: Period
     is_finished: bool = False
@@ -37,6 +39,7 @@ class PromotionUpdate(BaseModel):
 
 class PromotionOutput(ORMModel):
     promotion_id: int
+    program: ProgramEnum
     year: int
     period: int
     is_finished: bool
