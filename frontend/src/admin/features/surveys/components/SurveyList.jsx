@@ -7,6 +7,7 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import { formatDate } from '../../../../utils/utils';
 
 
 function SurveyList({ surveys, fetching, fetchError, refetch }) {
@@ -31,12 +32,12 @@ function SurveyList({ surveys, fetching, fetchError, refetch }) {
       if (statusFilter !== '' && item.is_visible !== (statusFilter === 'true')) return false;
       if (!searchQuery) return true;
 
-      const title = String(item.title).toLowerCase();
-      const url = String(item.url).toLowerCase();
-      const description = String(item.description).toLowerCase();
+      const title = String(item.title ?? '').toLowerCase();
+      const url = String(item.url ?? '').toLowerCase();
+      const description = String(item.description ?? '').toLowerCase();
       return title.includes(searchQuery) || url.includes(searchQuery) || description.includes(searchQuery);
     });
-  }, [surveys, searchQuery, mandatoryStatus]);
+  }, [surveys, searchQuery, mandatoryStatus, statusFilter]);
 
 // ---------------------- HANDLERS ----------------------
 
@@ -87,7 +88,7 @@ function SurveyList({ surveys, fetching, fetchError, refetch }) {
   if (fetchError) {
     return (
       <DataLoadError
-        title="No se pudo cargar el anuncio"
+        title="No se pudieron cargar las encuestas"
         message="Intenta recargar la página."
         details={fetchError}
         onRetry={refetch}
@@ -112,11 +113,21 @@ function SurveyList({ surveys, fetching, fetchError, refetch }) {
           className="btn-tertiary--light"
           value={mandatoryStatus}
           onChange={(e) => setMandatoryStatus(e.target.value)}
-          aria-label="Filtrar por estado"
+          aria-label="Filtrar por obligatoriedad"
         >
           <option value="">Obligatoriedad</option>
           <option value="true">Obligatoria</option>
           <option value="false">Opcional</option>
+        </select>
+        <select
+          className="btn-tertiary--light"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          aria-label="Filtrar por visibilidad"
+        >
+          <option value="">Visibilidad</option>
+          <option value="true">Visible</option>
+          <option value="false">Oculta</option>
         </select>
       </div>
 
@@ -124,19 +135,21 @@ function SurveyList({ surveys, fetching, fetchError, refetch }) {
         <table className="table">
           <thead>
             <tr>
-              <th className='w-2/12'>Título</th>
-              <th className='w-2/12'>Enlace</th>
-              <th className='w-3/12'>Descripción</th>
-              <th className='w-2/12'>Fecha de vencimiento</th>
-              <th className='w-2/12'>Obligatoriedad</th>
+              {/* Sin ancho fijo: las 6 columnas de datos se reparten el espacio restante. */}
+              <th>Título</th>
+              <th>Enlace</th>
+              <th>Descripción</th>
+              <th>Vencimiento</th>
+              <th>Obligatoriedad</th>
+              <th>Visibilidad</th>
               <th className='w-1/12'></th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-6">
-                {search || mandatoryStatus 
+                <td colSpan={7} className="text-center py-6">
+                {search || mandatoryStatus || statusFilter
                   ? 'No se encontraron encuestas que coincidan con los filtros.' 
                   : 'No hay encuestas disponibles.'
                   }
@@ -147,10 +160,10 @@ function SurveyList({ surveys, fetching, fetchError, refetch }) {
               <tr key={item.survey_id}>
                 <td className="text-left">{item.title}</td>
                 <td className="text-left">{item.url}</td>
-                <td className="text-left">{item.description}</td>
-                <td>{item.expiration_date}</td>
+                <td className="text-left">{item.description || '—'}</td>
+                <td>{formatDate(item.expiration_date)}</td>
                 <td>{item.mandatory ? 'Obligatoria' : 'Opcional'}</td>
-                <td>{item.is_visible ? 'Activo' : 'Inactivo'}</td>
+                <td>{item.is_visible ? 'Visible' : 'Oculta'}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[
@@ -183,7 +196,7 @@ function SurveyList({ surveys, fetching, fetchError, refetch }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar la encuesta"
+          message={deleteError || 'Ocurrió un problema al eliminar la encuesta.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />

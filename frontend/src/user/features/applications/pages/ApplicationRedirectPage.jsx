@@ -2,12 +2,18 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
 import { ROUTES } from '../../../../config';
+import { APPLICATION_STATUS } from '../../../../utils/constants';
 import { useUser } from '../../../../contexts/UserContext';
 import useApplicationByAcademic from '../hooks/useApplicationByAcademic';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 
-const STATUS = { PENDING: 1, ACCEPTED: 2, DECLINED: 3 };
+// Vista a la que se manda al estudiante según el estado de su asignación más reciente.
+const ROUTE_BY_STATUS = {
+  [APPLICATION_STATUS.PENDING]: ROUTES.USER.INTERNSHIP_APPLICATION_STATUS,
+  [APPLICATION_STATUS.ACCEPTED]: ROUTES.USER.INTERNSHIP,
+  [APPLICATION_STATUS.DECLINED]: ROUTES.USER.INTERNSHIP_APPLICATION_DECLINED,
+};
 
 function ApplicationRedirectPage() {
   const { user } = useUser();
@@ -17,63 +23,50 @@ function ApplicationRedirectPage() {
   const { application, loading: fetching, error: fetchError, refetch } =
     useApplicationByAcademic(academicId);
 
-  if (fetching) return <LoadingSpinner />;
+  const target = application ? ROUTE_BY_STATUS[Number(application.status)] : null;
+  if (!fetching && !fetchError && target) {
+    return <Navigate replace to={target} />;
+  }
 
-  if (fetchError) {
-    return (
-      <Layout>
-        <PageLayout title="Mi Internado">
-          <DataLoadError
-            title="No se pudo cargar la información de tu internado"
-            message="Intenta recargar o vuelve más tarde."
-            details={String(fetchError)}
-            onRetry={refetch}
-            onSecondary={() => navigate(-1)}
-            secondaryLabel="Volver"
-          />
-        </PageLayout>
-      </Layout>
+  let content;
+  if (fetching) {
+    content = <LoadingSpinner />;
+  } else if (fetchError) {
+    content = (
+      <DataLoadError
+        title="No se pudo cargar la información de tu internado"
+        message={fetchError}
+        onRetry={refetch}
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
     );
-  }
-
-  if (!application) {
-    return (
-      <Layout>
-        <PageLayout title="Mi Internado">
-          <DataLoadError
-            title="Internado no encontrado"
-            message="No encontramos información sobre tu internado. Contacta a tu administrador para verificar tu estado."
-            onRetry={refetch}
-            retryLabel="Recargar"
-            onSecondary={() => navigate(-1)}
-            secondaryLabel="Volver"
-          />
-        </PageLayout>
-      </Layout>
+  } else if (!application) {
+    content = (
+      <DataLoadError
+        title="Aún no tienes una asignación"
+        message="Cuando la coordinación te asigne a una promoción del internado podrás aceptarla o declinarla desde aquí."
+        onRetry={refetch}
+        retryLabel="Recargar"
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
     );
-  }
-
-  const status = application?.status != null ? Number(application.status) : null;
-
-  if (status === STATUS.PENDING) {
-    return <Navigate replace to={ROUTES.USER.INTERNSHIP_APPLICATION_STATUS} />;
-  }
-  if (status === STATUS.ACCEPTED) {
-    return <Navigate replace to={ROUTES.USER.INTERNSHIP} />;
-  }
-  if (status === STATUS.DECLINED) {
-    return <Navigate replace to={ROUTES.USER.INTERNSHIP_APPLICATION_DECLINED} />;
+  } else {
+    content = (
+      <DataLoadError
+        title="Estado desconocido"
+        message="Tu asignación tiene un estado no reconocido. Contacta a la coordinación del internado."
+        onSecondary={() => navigate(-1)}
+        secondaryLabel="Volver"
+      />
+    );
   }
 
   return (
     <Layout>
-      <PageLayout title="Mi Internado">
-        <DataLoadError
-          title="Estado desconocido"
-          message="Tu solicitud tiene un estado no reconocido. Contacta al administrador."
-          onSecondary={() => navigate(-1)}
-          secondaryLabel="Volver"
-        />
+      <PageLayout title="Mi internado">
+        {content}
       </PageLayout>
     </Layout>
   );

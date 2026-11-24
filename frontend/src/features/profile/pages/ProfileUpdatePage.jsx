@@ -1,31 +1,28 @@
 import Layout from '../../../Layout';
 import PageLayout from '../../../components/PageLayout';
 import { useUser } from '../../../contexts/UserContext';
-import ProfileUpdate from '../components/ProfileUpdate'
+import ProfileUpdate from '../components/ProfileUpdate';
 
 
 function ProfileUpdatePage() {
   const { user, loading: fetching, error: fetchError, reload } = useUser();
-  
-  const userId = user?.user_id;
-  
+
   const pageTitle = fetching
   ? 'Cargando...'
   : user
     ? 'Editar perfil'
     : ' ';
-  
-  return ( 
+
+  return (
     <Layout>
-      <PageLayout 
+      <PageLayout
         title={pageTitle}
       >
         <ProfileUpdate
           user={user}
           fetching={fetching}
           fetchError={fetchError}
-          reload={reload}
-          userId={userId}
+          refetch={reload}
         />
       </PageLayout>
     </Layout>

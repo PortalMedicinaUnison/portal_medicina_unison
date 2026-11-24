@@ -44,3 +44,13 @@ export function validatePassword(password) {
 export const isValidCity = (city) => {
   return SONORA_MUNICIPALITIES.includes(city);
 };
+// URL absoluta http(s). Se usa para validar enlaces (evidencias, encuestas) y para decidir si se enlazan.
+export function isHttpUrl(value) {
+  if (!value) return false;
+  try {
+    const { protocol } = new URL(String(value).trim());
+    return protocol === 'http:' || protocol === 'https:';
+  } catch {
+    return false;
+  }
+}

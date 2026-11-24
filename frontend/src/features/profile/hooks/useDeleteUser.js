@@ -19,7 +19,7 @@ export default function useDeleteUser() {
       await deactivateMeRequest();
       setSuccess(true);
     } catch (err) {
-      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
+      setError(getErrorMessage(err, 'No se pudo desactivar la cuenta.'));
       setSuccess(false);
     } finally {
       setLoading(false);

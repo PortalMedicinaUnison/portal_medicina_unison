@@ -1,35 +1,29 @@
+import { useParams } from 'react-router-dom';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
+import useInternship from '../hooks/useInternship';
 import InternshipDetail from '../components/InternshipDetail';
-import { useUser } from '../../../../contexts/UserContext';
-import useInternshipByAcademic from '../hooks/useInternshipByAcademic'
 
 
 function InternshipDetailPage() {
-  const { user } = useUser();
-  const academicId = user?.academic_id;
+  const { internshipId } = useParams();
+  const { internship, loading: fetching, error: fetchError, refetch } = useInternship(internshipId);
 
-  const { internship, loading: fetching, error: fetchError, refetch } = useInternshipByAcademic(academicId);
-  const internshipId = internship?.internship_id ?? null;
+  const student = internship?.application?.student;
+  const pageTitle = fetching && !internship
+    ? 'Cargando...'
+    : internship
+      ? `Internado de ${student ? `${student.first_name} ${student.last_name}` : internship.academic_id}`
+      : ' ';
 
-  const pageTitle = fetching
-  ? 'Cargando...'
-  : internship
-    ? 'Mi internado'
-    : ' ';
-
-  return ( 
+  return (
     <Layout>
-      <PageLayout 
-        title={pageTitle}
-      >
+      <PageLayout title={pageTitle}>
         <InternshipDetail
           internship={internship}
           fetching={fetching}
           fetchError={fetchError}
           refetch={refetch}
-          internshipId={internshipId}
-          user={user}
         />
       </PageLayout>
     </Layout>

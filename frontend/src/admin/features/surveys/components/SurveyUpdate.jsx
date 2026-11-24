@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useUpdateSurvey from '../hooks/useUpdateSurvey';
-import { cleanFormData } from "../../../../utils/utils";
+import { cleanFormData, todayISO } from "../../../../utils/utils";
+import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../utils/ui/DataLoadError';
 
 
 const INITIAL_FORM = {
@@ -32,7 +34,7 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
 
     if (validationError) return setValidationError('');
     if (saveError) return reset();
-            
+
   }, [validationError, saveError, reset]);
 
   const handleSubmit = async (e) => {
@@ -44,17 +46,19 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
     }
 
     const cleanedData = cleanFormData(formData);
+    // Una encuesta ya vencida puede editarse sin tocar su fecha: solo se valida y se envía
+    // `expiration_date` si cambió (el backend rechaza fechas anteriores a hoy).
+    const dateChanged = cleanedData.expirationDate !== (survey?.expiration_date ?? '');
 
     // ---------------------- VALIDATIONS ----------------------
+    // Las fechas 'YYYY-MM-DD' se comparan como texto: `new Date('YYYY-MM-DD')` es medianoche UTC
+    // y rechazaría el día de hoy. El backend acepta hoy o una fecha posterior.
     const errors = [];
     if (!cleanedData.title) errors.push('El título es obligatorio.');
     if (!cleanedData.url) errors.push('La URL de la encuesta es obligatoria.');
-    if (!cleanedData.description) errors.push('La descripción es obligatoria.');
-    if (!cleanedData.expirationDate) errors.push('La fecha de expiración es obligatoria.');
-    if (new Date(cleanedData.expirationDate) <= new Date()) errors.push('La fecha de expiración debe ser una fecha futura.');
-    if (cleanedData.mandatory === undefined || cleanedData.mandatory === null) {
-        errors.push('Debe indicar si la encuesta es obligatoria o no.');
-      }            
+    else if (!/^https?:\/\//i.test(cleanedData.url)) errors.push('La URL debe empezar con http:// o https://.');
+    if (!cleanedData.expirationDate) errors.push('La fecha de vencimiento es obligatoria.');
+    else if (dateChanged && cleanedData.expirationDate < todayISO()) errors.push('La fecha de vencimiento no puede ser anterior a hoy.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -64,11 +68,11 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
       title: cleanedData.title,
       url: cleanedData.url,
       description: cleanedData.description,
-      expiration_date: cleanedData.expirationDate,
       mandatory: cleanedData.mandatory,
       is_visible: cleanedData.isVisible,
     };
-    
+    if (dateChanged) payload.expiration_date = cleanedData.expirationDate;
+
     await updateSurvey(surveyId, payload);
   };
 
@@ -80,17 +84,18 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
         title: survey.title || '',
         url: survey.url || '',
         description: survey.description || '',
-        expirationDate: survey.expirationDate ? survey.expirationDate.split('T')[0] : '',
+        expirationDate: survey.expiration_date || '',
         mandatory: survey.mandatory ?? false,
+        isVisible: survey.is_visible ?? true,
       });
     }
-  }, [announcement]);
+  }, [survey]);
 
   useEffect(() => {
     if (saved) {
       navigate(adminAbs(ROUTES.ADMIN.SURVEY_DETAIL(surveyId)));
     }
-  }, [saved, navigate]);
+  }, [saved, navigate, surveyId]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -121,8 +126,14 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
       />
     );
   }
-    
+
 // ---------------------- RENDER ----------------------
+
+  // Si la encuesta ya venció, su fecha original sigue siendo válida mientras no se cambie.
+  const today = todayISO();
+  const minExpirationDate = survey.expiration_date && survey.expiration_date < today
+    ? survey.expiration_date
+    : today;
 
   return (
     <form className="component-container" onSubmit={handleSubmit}>
@@ -177,9 +188,8 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
                   onChange={handleChange}
                   rows="2"
                   className="form-input--half"
-                  placeholder="Descripción de la encuesta"
+                  placeholder="Descripción de la encuesta (opcional)"
                   disabled={saving}
-                  required
                 />
               </dd>
             </div>
@@ -192,6 +202,7 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
                     value={formData.expirationDate}
                     onChange={handleChange}
                     className="form-input--half"
+                    min={minExpirationDate}
                     disabled={saving}
                     required
                   />
@@ -227,16 +238,16 @@ function SurveyUpdate({ survey, fetching, fetchError, refetch, surveyId }) {
         </div>
 
         <div className="button-group">
-          <button 
-            type="button" 
-            className="btn-secondary" 
+          <button
+            type="button"
+            className="btn-secondary"
             onClick={() => navigate(adminAbs(ROUTES.ADMIN.SURVEY_LIST))}
             disabled={saving}
           >
             Cancelar
           </button>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn-primary"
             disabled={saving}
           >

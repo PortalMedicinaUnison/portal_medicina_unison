@@ -3,6 +3,7 @@ import { deleteUserRequest } from '../../../../services/userService';
 import { getErrorMessage } from '../../../../utils/errors';
 
 
+// El backend no borra al usuario: lo desactiva (ya no puede iniciar sesión).
 export default function useDeleteUser() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
@@ -18,7 +19,7 @@ export default function useDeleteUser() {
       await deleteUserRequest(id);
       setSuccess(true);
     } catch (err) {
-      setError(getErrorMessage(err, 'No se pudo eliminar el registro.'));
+      setError(getErrorMessage(err, 'No se pudo desactivar el usuario.'));
       setSuccess(false);
     } finally {
       setLoading(false);

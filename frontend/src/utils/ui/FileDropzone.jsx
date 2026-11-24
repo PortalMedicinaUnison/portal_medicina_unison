@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useId, useState } from 'react';
 
 const FileDropzone = ({ 
   onFileSelect,
@@ -10,6 +10,8 @@ const FileDropzone = ({
 }) => {
 
   const [error, setError] = useState('');
+  // id único: permite varias zonas de carga en la misma página.
+  const inputId = useId();
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -41,9 +43,8 @@ const FileDropzone = ({
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
-      if (validateFile(file)) {
-        onFileSelect?.(file);
-      }
+      // Si el archivo no es válido se avisa con null para que el formulario no conserve el anterior.
+      onFileSelect?.(validateFile(file) ? file : null);
     }
   };
 
@@ -53,17 +54,17 @@ const FileDropzone = ({
     const files = e.target.files;
     if (files.length > 0) {
       const file = files[0];
-      if (validateFile(file)) {
-        onFileSelect?.(file);
-      }
+      onFileSelect?.(validateFile(file) ? file : null);
     }
+    // Permite volver a elegir el mismo archivo (si no, el navegador no dispara onChange).
+    e.target.value = '';
   };
 
   return (
     <div className="flex items-center justify-center w-full">
       <label
-        htmlFor="dropzone-file"
-        className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-200 border-dashed rounded-lg cursor-pointer bg-blue-10 hover:bg-blue-50"
+        htmlFor={inputId}
+        className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-200 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-blue-50"
           
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -92,7 +93,7 @@ const FileDropzone = ({
         </div>
         
         <input
-          id="dropzone-file"
+          id={inputId}
           type="file"
           className="hidden"
           accept={acceptedFormats}

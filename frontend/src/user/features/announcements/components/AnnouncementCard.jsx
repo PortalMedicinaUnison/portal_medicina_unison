@@ -1,35 +1,19 @@
-import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ANNOUNCEMENT_TYPES, ANNOUNCEMENT_TYPE_LABELS, labelOf } from '../../../../utils/constants';
+import { formatDateTime } from '../../../../utils/utils';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 
 
+const TYPE_BADGE_COLORS = {
+  [ANNOUNCEMENT_TYPES.GENERAL]: 'bg-green-100 text-green-800',
+  [ANNOUNCEMENT_TYPES.INTERNSHIP]: 'bg-purple-100 text-purple-800',
+};
+
+const getTypeBadgeColor = (type) => TYPE_BADGE_COLORS[Number(type)] || 'bg-gray-100 text-gray-800';
+
 function AnnouncementCard({ announcements, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
-
-// ---------------------- FILTERS AND SEARCH ----------------------
-
-  const ANNOUNCEMENT_TYPES = {
-    1: 'General',
-    2: 'Internado'
-  };
-
-  const getAnnouncementTypeName = (typeEnum) => {
-    return ANNOUNCEMENT_TYPES[typeEnum] || 'Desconocido';
-  };
-
-  const getTypeBadgeColor = (typeEnum) => {
-    const colors = {
-      1: 'bg-green-100 text-green-800',
-      2: 'bg-purple-100 text-purple-800'
-    };
-    return colors[typeEnum] || 'bg-gray-100 text-gray-800';
-  };
-
-  const filtered = useMemo(() => {
-    if (!announcements) return [];
-    return announcements.filter((item) => item.is_visible === true);
-  }, [announcements]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -39,8 +23,7 @@ function AnnouncementCard({ announcements, fetching, fetchError, refetch }) {
     return (
       <DataLoadError
         title="No se pudo cargar la información"
-        message="Intenta recargar la página."
-        details={fetchError}
+        message={fetchError}
         onRetry={refetch}
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
@@ -51,23 +34,23 @@ function AnnouncementCard({ announcements, fetching, fetchError, refetch }) {
 // ---------------------- RENDER ----------------------
   return (
     <div className="flex-1 space-y-6">
-      {filtered.length === 0 ? (
+      {!announcements || announcements.length === 0 ? (
           <div className="card">
             <h3 className="card-title">
-              No hay anuncios disponibles
+              No hay avisos disponibles
             </h3>
             <p className="card-message">
-              Actualmente no hay anuncios para mostrar.
+              Actualmente no hay avisos para mostrar.
             </p>
           </div>
       ) : (
-        filtered.map((item) => (
+        announcements.map((item) => (
           <div key={item.announcement_id} className="card">
-            
+
             {/* Header */}
             <div className="card-header">
               <span className={`card-badge ${getTypeBadgeColor(item.announcement_type)}`}>
-                {getAnnouncementTypeName(item.announcement_type)}
+                {labelOf(ANNOUNCEMENT_TYPE_LABELS, item.announcement_type)}
               </span>
             </div>
 
@@ -76,31 +59,22 @@ function AnnouncementCard({ announcements, fetching, fetchError, refetch }) {
               {item.title}
             </h3>
 
-            {/* Message/Description */}
-            <p className="card-message">
-              {item.message || item.description}
+            {/* Description */}
+            <p className="card-message whitespace-pre-line">
+              {item.description}
             </p>
-
-            {/* Details */}
-            {item.details && (
-              <div className="card-details">
-                {item.details}
-              </div>
-            )}
 
             {/* Footer Info */}
             <div className="card-footer">
               <span>
-                {item.created_at
-                  ? new Date(item.created_at).toLocaleDateString('es-MX')
-                  : 'Sin fecha'}
+                {formatDateTime(item.created_at)}
               </span>
-            </div>          
+            </div>
           </div>
         ))
       )}
     </div>
   );
 }
-    
+
 export default AnnouncementCard;

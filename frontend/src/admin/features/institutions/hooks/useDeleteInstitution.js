@@ -3,7 +3,7 @@ import { deleteInstitutionRequest } from '../../../../services/siteService';
 import { getErrorMessage } from '../../../../utils/errors';
 
 
-export default function useDeleteApplication() {
+export default function useDeleteInstitution() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);

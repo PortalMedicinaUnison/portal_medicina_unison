@@ -5,7 +5,8 @@ import { getErrorMessage } from '../../../../utils/errors';
 
 export default function useApplicationByAcademic(id) {
   const [application, setApplication] = useState(null);
-  const [loading, setLoading]         = useState(false);
+  // Con un id se empieza cargando: así no se muestra "no encontrado" antes de la primera petición.
+  const [loading, setLoading]         = useState(Boolean(id));
   const [error, setError]             = useState(null);
 
   const getApplication = useCallback(async (id) => {
@@ -18,7 +19,7 @@ export default function useApplicationByAcademic(id) {
       const response = await getAllInternshipApplicationsRequest();
       setApplication(response.data[0] ?? null);
     } catch (err) {
-      setError(getErrorMessage(err, 'No se pudo cargar la información.'));
+      setError(getErrorMessage(err, 'No se pudo cargar tu asignación.'));
       setApplication(null);
     } finally {
       setLoading(false);

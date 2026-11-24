@@ -1,35 +1,13 @@
-import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatDate } from '../../../../utils/utils';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
+import { isHttpUrl } from '../../../../utils/validations';
+
 
 
 function SurveyCard({ surveys, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
-
-// ---------------------- FILTERS AND SEARCH ----------------------
-
-  const ANNOUNCEMENT_TYPES = {
-    1: 'General',
-    2: 'Internado'
-  };
-
-  const getAnnouncementTypeName = (typeEnum) => {
-    return ANNOUNCEMENT_TYPES[typeEnum] || 'Desconocido';
-  };
-
-  const getTypeBadgeColor = (typeEnum) => {
-    const colors = {
-      1: 'bg-green-100 text-green-800',
-      2: 'bg-purple-100 text-purple-800'
-    };
-    return colors[typeEnum] || 'bg-gray-100 text-gray-800';
-  };
-
-  const filtered = useMemo(() => {
-    if (!surveys) return [];
-    return surveys.filter((item) => item.is_visible === true);
-  }, [surveys]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -39,8 +17,7 @@ function SurveyCard({ surveys, fetching, fetchError, refetch }) {
     return (
       <DataLoadError
         title="No se pudo cargar la información"
-        message="Intenta recargar la página."
-        details={fetchError}
+        message={fetchError}
         onRetry={refetch}
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
@@ -51,56 +28,61 @@ function SurveyCard({ surveys, fetching, fetchError, refetch }) {
 // ---------------------- RENDER ----------------------
   return (
     <div className="flex-1 space-y-6">
-      {filtered.length === 0 ? (
+      {!surveys || surveys.length === 0 ? (
           <div className="card">
             <h3 className="card-title">
               No hay encuestas disponibles
             </h3>
             <p className="card-message">
-              Actualmente no hay encuestas para mostrar.
+              Actualmente no hay encuestas para responder.
             </p>
           </div>
       ) : (
-        filtered.map((item) => (
-          <div key={item.announcement_id} className="card">
-            
+        surveys.map((item) => (
+          <div key={item.survey_id} className="card">
+
             {/* Header */}
-            <div className="card-header">
-              <span className={`card-badge ${getTypeBadgeColor(item.announcement_type)}`}>
-                {getAnnouncementTypeName(item.announcement_type)}
-              </span>
-            </div>
+            {item.mandatory && (
+              <div className="card-header">
+                <span className="card-badge bg-red-100 text-red-800">
+                  Obligatoria
+                </span>
+              </div>
+            )}
 
             {/* Title */}
             <h3 className="card-title">
               {item.title}
             </h3>
 
-            {/* Message/Description */}
-            <p className="card-message">
-              {item.message || item.description}
-            </p>
-
-            {/* Details */}
-            {item.details && (
-              <div className="card-details">
-                {item.details}
-              </div>
+            {/* Description */}
+            {item.description && (
+              <p className="card-message whitespace-pre-line">
+                {item.description}
+              </p>
             )}
 
             {/* Footer Info */}
-            <div className="card-footer">
+            <div className="card-footer items-center gap-4">
               <span>
-                {item.created_at
-                  ? new Date(item.created_at).toLocaleDateString('es-MX')
-                  : 'Sin fecha'}
+                Disponible hasta el {formatDate(item.expiration_date)}
               </span>
-            </div>          
+              {isHttpUrl(item.url) && (
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary"
+                >
+                  Responder encuesta
+                </a>
+              )}
+            </div>
           </div>
         ))
       )}
     </div>
   );
 }
-    
+
 export default SurveyCard;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useDeleteInternship from '../hooks/useDeleteInternship';
 import DropdownMenu from '../../../../utils/ui/DropdownMenu';
@@ -7,63 +7,54 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import { INTERNSHIP_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { formatFullName } from '../../../../utils/utils';
+
 
 
 function InternshipList({ internships, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
-  const { deleteInternship, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteInternship();
-  
+  const { deleteInternship, loading: deleting, success: deleted, error: deleteError, reset } = useDeleteInternship();
+
   const [item, setItem] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
 
 // ---------------------- FILTERS AND SEARCH ----------------------
- 
+
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
-  
-  const INTERNSHIP_STATUS = {
-    1: 'Pendiente',
-    2: 'Aceptado',
-    3: 'Rechazado',
-    4: 'Suspendido',
-    5: 'Finalizado'
-  };
-
-  const getStatusName = (statusEnum) => {
-    return INTERNSHIP_STATUS[statusEnum] || 'Desconocido';
-  };
 
   const searchQuery = search.trim().toLowerCase();
   const filtered = useMemo(() => {
     if (!internships) return [];
     return internships.filter((item) => {
+      if (statusFilter !== '' && item.status !== Number(statusFilter)) return false;
       if (!searchQuery) return true;
 
-      const studentId = String(item.student_id).toLowerCase();
-      return studentId.includes(searchQuery);
+      const academicId = String(item.academic_id ?? '').toLowerCase();
+      const studentName = formatFullName(item.application?.student).toLowerCase();
+      return academicId.includes(searchQuery) || studentName.includes(searchQuery);
     });
-  }, [internships, searchQuery, statusFilter, typeFilter]);
+  }, [internships, searchQuery, statusFilter]);
 
 // ---------------------- HANDLERS ----------------------
 
   const handleViewButton = (id) => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_DETAIL(id)));
-  const handleEditButton = (id) => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_EDIT(id)));
   const handleDeleteButton = (id) => {
-    setItem(id)
+    setItem(id);
     setShowConfirmDelete(true);
   };
 
   const handleConfirmDelete = async () => {
-    if (item == null) return
+    if (item == null) return;
     await deleteInternship(item);
   };
 
   const handleCloseConfirm = () => {
     setShowConfirmDelete(false);
     setItem(null);
-  }
+  };
 
   const handleCloseError = () => {
     setShowErrorDialog(false);
@@ -95,9 +86,8 @@ function InternshipList({ internships, fetching, fetchError, refetch }) {
   if (fetchError) {
     return (
       <DataLoadError
-        title="No se pudo cargar la información"
-        message="Intenta recargar la página."
-        details={fetchError}
+        title="No se pudo cargar la lista de internados"
+        message={fetchError}
         onRetry={refetch}
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
@@ -114,50 +104,72 @@ function InternshipList({ internships, fetching, fetchError, refetch }) {
           className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por expediente"
+          placeholder="Buscar por expediente o nombre"
         />
+        <select
+          className="btn-tertiary--light"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          aria-label="Filtrar por estatus"
+        >
+          <option value="">Estatus</option>
+          {Object.entries(INTERNSHIP_STATUS_LABELS).map(([value, label]) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
+        </select>
       </div>
 
       <div className="table-container-body">
         <table className="table">
           <thead>
             <tr>
-              <th className='w-3/12'>Expediente</th>
-              <th className='w-4/12'>Sede</th>
+              <th className='w-2/12'>Expediente</th>
+              <th className='w-3/12'>Alumno</th>
+              <th className='w-3/12'>Sede</th>
               <th className='w-2/12'>Promoción</th>
-              <th className='w-2/12'>Estatus</th>
+              <th className='w-1/12'>Estatus</th>
               <th className='w-1/12'></th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={5} className="text-center py-6">
-                {search
-                  ? 'No se encontraron avisos que coincidan con los filtros.' 
-                  : 'No hay avisos disponibles.'
+                <td colSpan={6} className="text-center py-6">
+                {search || statusFilter
+                  ? 'No se encontraron internados que coincidan con los filtros.'
+                  : 'No hay internados registrados.'
                   }
                 </td>
               </tr>
             ) : (
-              filtered.map((item) => (
-              <tr key={item.internship_id}>
-                <td>{item.application.academic_id}</td>
-                <td>{item.site ? item.site.name : 'No asignada'}</td>
-                <td>{item.application.promotion.year} - {item.application.promotion.period}</td>
-                <td>{getStatusName(item.status)}</td>
-                <td className="overflow-visible text-right">
-                  <DropdownMenu
-                    actions={[
-                      { label: 'Ver', onClick: () => handleViewButton(item.internship_id) },
-                      { label: 'Editar', onClick: () => handleEditButton(item.internship_id) },
-                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.internship_id), className: 'text-red-600' },
-                    ]}
-                    disabled={deleting}
-                  />
-                </td>
-              </tr>
-              ))
+              filtered.map((item) => {
+                const promotion = item.application?.promotion;
+                return (
+                  <tr key={item.internship_id}>
+                    <td>{item.academic_id}</td>
+                    <td className="text-left">
+                      <Link
+                        to={adminAbs(ROUTES.ADMIN.INTERNSHIP_DETAIL(item.internship_id))}
+                        className="hover:underline"
+                      >
+                        {formatFullName(item.application?.student) || 'Sin datos del alumno'}
+                      </Link>
+                    </td>
+                    <td className="text-left">{item.site?.name ?? 'Sin sede'}</td>
+                    <td>{promotion ? `${promotion.year} - ${labelOf(PERIOD_LABELS, promotion.period)}` : '—'}</td>
+                    <td>{labelOf(INTERNSHIP_STATUS_LABELS, item.status)}</td>
+                    <td className="overflow-visible text-right">
+                      <DropdownMenu
+                        actions={[
+                          { label: 'Ver', onClick: () => handleViewButton(item.internship_id) },
+                          { label: 'Eliminar', onClick: () => handleDeleteButton(item.internship_id), className: 'text-red-600' },
+                        ]}
+                        disabled={deleting}
+                      />
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
@@ -166,7 +178,7 @@ function InternshipList({ internships, fetching, fetchError, refetch }) {
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>
         <ConfirmDialogContent
           title="Confirmar eliminación"
-          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar?"
+          message="Se dará de baja el internado y la asignación del alumno volverá a quedar pendiente. ¿Deseas continuar?"
           onConfirm={handleConfirmDelete}
           primaryLabel="Eliminar"
           secondaryLabel="Cancelar"
@@ -178,14 +190,14 @@ function InternshipList({ internships, fetching, fetchError, refetch }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro"
+          message={deleteError || 'Ocurrió un problema al eliminar el internado.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />
       </Modal>
-      
+
     </div>
   );
 }
-    
+
 export default InternshipList;

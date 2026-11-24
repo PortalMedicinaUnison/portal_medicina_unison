@@ -7,7 +7,7 @@ function InstitutionFormPage() {
   return ( 
     <Layout>
       <PageLayout 
-        title="Registrar nueva sede"
+        title="Registrar nueva institución"
       >
         <InstitutionForm/>
       </PageLayout>

@@ -440,6 +440,7 @@ body {
 
     .table-container-actions { @apply 
         flex 
+        flex-wrap
         justify-end
         items-end
         gap-4
@@ -469,7 +470,7 @@ body {
     }
 
     .table th, .table td { @apply 
-        px-6
+        px-2 md:px-6
         py-1
         truncate
         max-w-xs

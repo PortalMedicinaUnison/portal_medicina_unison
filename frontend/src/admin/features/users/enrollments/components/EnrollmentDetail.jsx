@@ -90,12 +90,15 @@ function EnrollmentDetail({ enrollment, fetching, fetchError, refetch, enrollmen
           </div>
           <div className="item-row">
             <dt className="item-header">Estatus</dt>
-            <dd className="item-text">{enrollment.is_enrolled ? 'Inscrito' : 'No inscrito'}</dd>
+            <dd className="item-text">{enrollment.is_enrolled ? 'Registrado' : 'Sin registrarse'}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Ultima fecha de actualización</dt>
-            <dd className="item-text">{formatDateTime(enrollment.updated_at)}
-            </dd>
+            <dt className="item-header">Fecha de pre-registro</dt>
+            <dd className="item-text">{formatDateTime(enrollment.created_at)}</dd>
+          </div>
+          <div className="item-row">
+            <dt className="item-header">Última actualización</dt>
+            <dd className="item-text">{formatDateTime(enrollment.updated_at)}</dd>
           </div>
         </dl>
       </div>
@@ -115,7 +118,7 @@ function EnrollmentDetail({ enrollment, fetching, fetchError, refetch, enrollmen
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro"
+          message={deleteError || 'Ocurrió un problema al eliminar el registro.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />

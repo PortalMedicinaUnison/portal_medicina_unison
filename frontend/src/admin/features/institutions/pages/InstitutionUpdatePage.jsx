@@ -12,7 +12,7 @@ function InstitutionUpdatePage() {
   const pageTitle = fetching
   ? 'Cargando...'
   : institution
-    ? '📢 Actualizar anuncio'
+    ? 'Actualizar institución'
     : ' ';
   
   return ( 

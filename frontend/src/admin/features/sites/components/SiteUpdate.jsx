@@ -5,6 +5,7 @@ import useUpdateSite from "../hooks/useUpdateSite.js";
 import useGetInstitutions from "../../institutions/hooks/useGetInstitutions.js";
 import { cleanFormData } from "../../../../utils/utils";
 import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
+import { validateEmail } from "../../../../utils/validations.js";
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 
@@ -46,16 +47,29 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const cleanedData = cleanFormData(formData);
+    if (!siteId) {
+      setValidationError('ID de sede no proporcionado.');
+      return;
+    }
+
+    const cleanedData = cleanFormData({
+      ...formData,
+      institutionId: Number(formData.institutionId),
+    });
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.name) errors.push('La razon social es requerida');
-    if (!cleanedData.institutionId) errors.push('La institución es requerida');
-    if (!cleanedData.address) errors.push('La dirección es requerida');
-    if (!cleanedData.city) errors.push('La ciudad es requerida');
-    if (!cleanedData.teachingHeadName) errors.push('El nombre del jefe de enseñanza es requerido');
-    if (!cleanedData.teachingDeputyName) errors.push('El nombre del subjefe de enseñanza es requerido');
+    if (!cleanedData.name) errors.push('La razón social es requerida.');
+    if (!cleanedData.institutionId) errors.push('La institución es requerida.');
+    if (!cleanedData.address) errors.push('La dirección es requerida.');
+    if (!cleanedData.city) errors.push('La ciudad es requerida.');
+    if (!cleanedData.teachingHeadName) errors.push('El nombre del jefe de enseñanza es requerido.');
+    if (cleanedData.teachingHeadEmail && !validateEmail(cleanedData.teachingHeadEmail).valid) {
+      errors.push('El correo del jefe de enseñanza no es válido.');
+    }
+    if (cleanedData.teachingDeputyEmail && !validateEmail(cleanedData.teachingDeputyEmail).valid) {
+      errors.push('El correo del subjefe de enseñanza no es válido.');
+    }
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -79,32 +93,32 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
 
 // ---------------------- EFFECTS ----------------------
 
-useEffect(() => {
-  if (site) {
-    setFormData({
-      name: site.name || '',
-      institutionId: site.institution_id || '',
-      address: site.address || '',
-      city: site.city || '',
-      teachingHeadName: site.teaching_head_name || '',
-      teachingHeadEmail: site.teaching_head_email || '',
-      teachingHeadPhone: site.teaching_head_phone || '',
-      teachingDeputyName: site.teaching_deputy_name || '',
-      teachingDeputyEmail: site.teaching_deputy_email || '',
-      teachingDeputyPhone: site.teaching_deputy_phone || '',
-    });
-  }
-}, [site]);
+  useEffect(() => {
+    if (site) {
+      setFormData({
+        name: site.name || '',
+        institutionId: site.institution_id || '',
+        address: site.address || '',
+        city: site.city || '',
+        teachingHeadName: site.teaching_head_name || '',
+        teachingHeadEmail: site.teaching_head_email || '',
+        teachingHeadPhone: site.teaching_head_phone || '',
+        teachingDeputyName: site.teaching_deputy_name || '',
+        teachingDeputyEmail: site.teaching_deputy_email || '',
+        teachingDeputyPhone: site.teaching_deputy_phone || '',
+      });
+    }
+  }, [site]);
 
-useEffect(() => {
-  if (saved) {
-    navigate(adminAbs(ROUTES.ADMIN.SITE_DETAIL(siteId)));
-  }
-}, [saved, navigate]);
+  useEffect(() => {
+    if (saved) {
+      navigate(adminAbs(ROUTES.ADMIN.SITE_DETAIL(siteId)));
+    }
+  }, [saved, navigate, siteId]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
-if (fetching) return <LoadingSpinner/>;
+  if (fetching) return <LoadingSpinner/>;
 
   if (fetchError) {
     return (
@@ -149,7 +163,7 @@ if (fetching) return <LoadingSpinner/>;
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razon social *</dt>
+              <dt className="item-header">Razón social *</dt>
               <dd className="item-text">
                 <input
                   name="name"
@@ -172,7 +186,7 @@ if (fetching) return <LoadingSpinner/>;
                   value={formData.institutionId}
                   onChange={handleChange}
                   className="form-input--half"
-                  disabled={fetchingInstitutions || saving || institutionsError}
+                  disabled={fetchingInstitutions || saving || Boolean(institutionsError)}
                   required
                 >
                   <option value="">Seleccionar institución</option>
@@ -193,7 +207,6 @@ if (fetching) return <LoadingSpinner/>;
                   type="text"
                   value={formData.address}
                   onChange={handleChange}
-                  rows="4"
                   className="form-input--half"
                   maxLength={255}
                   disabled={saving}
@@ -207,7 +220,6 @@ if (fetching) return <LoadingSpinner/>;
               <dd className="item-text">
                 <select
                   name="city"
-                  type="text"
                   value={formData.city}
                   onChange={handleChange}
                   className="form-input--half"
@@ -239,7 +251,7 @@ if (fetching) return <LoadingSpinner/>;
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de ensañanza (email)</dt>
+              <dt className="item-header">Jefe de enseñanza (correo)</dt>
               <dd className="item-text">
                 <input
                   name="teachingHeadEmail"
@@ -253,7 +265,7 @@ if (fetching) return <LoadingSpinner/>;
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de ensañanza (telefono)</dt>
+              <dt className="item-header">Jefe de enseñanza (teléfono)</dt>
               <dd className="item-text">
                 <input
                   name="teachingHeadPhone"
@@ -267,7 +279,7 @@ if (fetching) return <LoadingSpinner/>;
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza *</dt>
+              <dt className="item-header">Subjefe de enseñanza</dt>
               <dd className="item-text">
                 <input
                   name="teachingDeputyName"
@@ -277,12 +289,11 @@ if (fetching) return <LoadingSpinner/>;
                   className="form-input--half"
                   maxLength={100}
                   disabled={saving}
-                  required
                 />
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de ensañanza (email)</dt>
+              <dt className="item-header">Subjefe de enseñanza (correo)</dt>
               <dd className="item-text">
                 <input
                   name="teachingDeputyEmail"
@@ -296,7 +307,7 @@ if (fetching) return <LoadingSpinner/>;
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de ensañanza (telefono)</dt>
+              <dt className="item-header">Subjefe de enseñanza (teléfono)</dt>
               <dd className="item-text">
                 <input
                   name="teachingDeputyPhone"

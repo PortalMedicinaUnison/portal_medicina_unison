@@ -5,6 +5,7 @@ import useCreateApplication from '../hooks/useCreateApplication';
 import useGetPromotions from '../../promotions/hooks/useGetPromotions';
 import useGetUsers from '../../users/hooks/useGetUsers'
 import { cleanFormData } from "../../../../utils/utils";
+import { PERIOD_LABELS, labelOf } from '../../../../utils/constants';
 
 
 const INITIAL_FORM = {
@@ -21,6 +22,12 @@ function ApplicationForm() {
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [createdId, setCreatedId] = useState(null);
   const [validationError, setValidationError] = useState('');
+
+  // Solo se puede asignar a promociones que no han finalizado (el backend responde 409 si lo está).
+  const openPromotions = useMemo(
+    () => (promotions ?? []).filter((promotion) => !promotion.is_finished),
+    [promotions]
+  );
 
 // ---------------------- HANDLERS ----------------------
 
@@ -97,7 +104,7 @@ function ApplicationForm() {
     <form className="component-container" onSubmit={handleSubmit}>
       {saved && (
         <div className="alert-success">
-          Tu aplicación se registró exitosamente.{' '}
+          La aplicación se registró exitosamente.{' '}
           {createdId && (
             <Link
               to={adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_DETAIL(createdId))}
@@ -129,16 +136,22 @@ function ApplicationForm() {
                   value={formData.promotionId}
                   onChange={handleChange}
                   className="form-input--half"
-                  disabled={saving || fetchingPromotions || promotionsError}
+                  disabled={saving || fetchingPromotions || Boolean(promotionsError)}
                   required
                 >
-                  <option value="">Selecciona una promoción</option>
-                  {promotions && promotions.map(promotion => (
+                  <option value="">{fetchingPromotions ? 'Cargando promociones...' : 'Selecciona una promoción'}</option>
+                  {openPromotions.map(promotion => (
                     <option key={promotion.promotion_id} value={promotion.promotion_id}>
-                      {promotion.year} - {promotion.period}
+                      {promotion.year} - {labelOf(PERIOD_LABELS, promotion.period)}
                     </option>
                   ))}
                 </select>
+                {promotionsError && (
+                  <p className="text-sm text-red-600 mt-1">{promotionsError}</p>
+                )}
+                {!fetchingPromotions && !promotionsError && openPromotions.length === 0 && (
+                  <p className="text-sm text-gray-500 mt-1">No hay promociones abiertas para asignar.</p>
+                )}
               </dd>
             </div>
             <div className="item-row">

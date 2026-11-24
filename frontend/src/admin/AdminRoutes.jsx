@@ -41,6 +41,7 @@ import ReportListPage from '../admin/features/reports/pages/ReportListPage.jsx';
 import ReportDetailPage from '../admin/features/reports/pages/ReportDetailPage.jsx';
 
 import InternshipListPage from '../admin/features/internships/pages/InternshipListPage.jsx';
+import InternshipDetailPage from '../admin/features/internships/pages/InternshipDetailPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 
 
@@ -100,6 +101,7 @@ function AdminRoutes() {
 
         {/* Internships */}
         <Route path="internships" element={<InternshipListPage />} />
+        <Route path="internships/:internshipId" element={<InternshipDetailPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

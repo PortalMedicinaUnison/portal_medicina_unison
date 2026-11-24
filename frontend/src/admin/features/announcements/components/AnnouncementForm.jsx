@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useCreateAnnouncement from '../hooks/useCreateAnnouncement';
 import { cleanFormData } from "../../../../utils/utils";
+import { ANNOUNCEMENT_TYPE_LABELS } from '../../../../utils/constants';
 
 
 const INITIAL_FORM = {
@@ -153,8 +154,9 @@ function AnnouncementForm() {
                     required
                   >
                     <option value={0}>Seleccionar tipo</option>
-                    <option value={1}>General</option>
-                    <option value={2}>Internado</option>
+                    {Object.entries(ANNOUNCEMENT_TYPE_LABELS).map(([value, label]) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
                   </select>
                 </dd>
             </div>

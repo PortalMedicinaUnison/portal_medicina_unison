@@ -3,12 +3,12 @@ import { setUserRoleRequest, updateUserRequest } from '../../../../services/user
 import { getErrorMessage } from '../../../../utils/errors';
 
 
-export default function useUpdateUser() {
+export default function useUpdateUserAdmin() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updateUser = useCallback(async (id, formData) => {  
+  const updateUser = useCallback(async (id, formData) => {
     if (loading) return;
     setLoading(true);
     setError(null);

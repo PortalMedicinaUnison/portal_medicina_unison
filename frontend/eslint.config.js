@@ -5,7 +5,14 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default [
-  { ignores: ['dist'] },
+  {
+    ignores: [
+      'dist',
+      // Historia clínica: prototipo sin rutas ni persistencia; se retomará al final del proyecto.
+      // Quitar esta excepción al reactivarlo.
+      'src/user/features/medical_record/**',
+    ],
+  },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {

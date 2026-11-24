@@ -1,22 +1,23 @@
 import { useState, useCallback } from 'react';
-import { updateReportRequest } from '../../../../services/reportService';
-import { getErrorMessage } from '../../../../utils/errors';
+import { updatePsdRequest } from '../../../../../services/promotionService';
+import { getErrorMessage } from '../../../../../utils/errors';
 
 
-export default function useUpdateReport() {
+export default function useUpdatePsd() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updateReport = useCallback(async (id, formData) => {  
-    if (loading) return;
+  const updatePsd = useCallback(async (id, formData) => {
+    if (loading) return false;
     setLoading(true);
     setError(null);
     setSuccess(false);
 
     try {
-      await updateReportRequest(id, formData);
+      const response = await updatePsdRequest(id, formData);
       setSuccess(true);
+      return response;
     } catch (err) {
       setError(getErrorMessage(err, 'No se pudieron guardar los cambios.'));
       setSuccess(false);
@@ -31,5 +32,5 @@ export default function useUpdateReport() {
     setSuccess(false);
   }, []);
 
-  return { updateReport, loading, error, success, reset };
+  return { updatePsd, loading, error, success, reset };
 }

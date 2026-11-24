@@ -2,7 +2,7 @@ import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
 import InternshipDetail from '../components/InternshipDetail';
 import { useUser } from '../../../../contexts/UserContext';
-import useInternshipByAcademic from '../hooks/useInternshipByAcademic'
+import useInternshipByAcademic from '../hooks/useInternshipByAcademic';
 
 
 function InternshipDetailPage() {
@@ -10,26 +10,15 @@ function InternshipDetailPage() {
   const academicId = user?.academic_id;
 
   const { internship, loading: fetching, error: fetchError, refetch } = useInternshipByAcademic(academicId);
-  const internshipId = internship?.internship_id ?? null;
 
-  const pageTitle = fetching
-  ? 'Cargando...'
-  : internship
-    ? 'Mi internado'
-    : ' ';
-
-  return ( 
+  return (
     <Layout>
-      <PageLayout 
-        title={pageTitle}
-      >
+      <PageLayout title="Mi internado">
         <InternshipDetail
           internship={internship}
           fetching={fetching}
           fetchError={fetchError}
           refetch={refetch}
-          internshipId={internshipId}
-          user={user}
         />
       </PageLayout>
     </Layout>

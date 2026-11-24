@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useDeletePromotion from '../hooks/useDeletePromotion';
 import PsdListReadOnly from '../promotionDetailSite/components/PsdListReadOnly';
+import { PERIOD_LABELS, labelOf } from '../../../../utils/constants';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
@@ -90,18 +91,19 @@ function PromotionDetail({ promotion, fetching, fetchError, refetch, promotionId
           </div>
           <div className="item-row">
             <dt className="item-header">Periodo</dt>
-            <dd className="item-text">{promotion.period}</dd>
+            <dd className="item-text">{labelOf(PERIOD_LABELS, promotion.period)}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Estatus</dt>
-            <dd className="item-text">  {promotion?.is_finished ? 'Finalizado' : 'No finalizado'}</dd>
+            <dd className="item-text">{promotion.is_finished ? 'Finalizado' : 'No finalizado'}</dd>
           </div>
         </dl>
       </div>
 
-      <div className='mt-16'>
-          <PsdListReadOnly promotionId={Number(promotionId)}/>
-      </div>
+      <section className="mt-16 flex flex-col gap-4">
+        <h3 className="text-lg font-semibold text-gray-900">Cupos por sede</h3>
+        <PsdListReadOnly promotionId={Number(promotionId)}/>
+      </section>
 
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>
         <ConfirmDialogContent
@@ -118,7 +120,7 @@ function PromotionDetail({ promotion, fetching, fetchError, refetch, promotionId
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro"
+          message={deleteError || 'Ocurrió un problema al eliminar el registro.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />

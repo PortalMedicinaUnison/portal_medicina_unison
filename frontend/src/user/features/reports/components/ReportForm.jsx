@@ -1,118 +1,232 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../../../../config';
-import useCreateReport from '../hooks/useCreateReport';
-import useGetSites from '../../../../admin/features/sites/hooks/useGetSites';
-import { cleanFormData } from "../../../../utils/utils";
+import { ROUTES } from '../../../../config';
 import { useUser } from '../../../../contexts/UserContext';
+import useCreateReport from '../hooks/useCreateReport';
+import useUpdateReport from '../hooks/useUpdateReport';
+import useGetSites from '../hooks/useGetSites';
+import useInternshipByAcademic from '../../internships/hooks/useInternshipByAcademic';
+import { REPORT_TYPES, REPORT_TYPE_LABELS } from '../../../../utils/constants';
+import { cleanFormData, todayISO } from '../../../../utils/utils';
+import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
+import DataLoadError from '../../../../utils/ui/DataLoadError';
+import { isHttpUrl } from '../../../../utils/validations';
 
+
+// Límites del backend (schemas/report.py y models/report.py).
+const OTHER_TYPE_MAX_LENGTH = 25;
+const EVIDENCE_URL_MAX_LENGTH = 500;
 
 const INITIAL_FORM = {
   siteId: '',
-  internshipId: '',
   dateReport: '',
   reportType: '',
   otherType: '',
   description: '',
   evidenceUrl: '',
   anonymity: false,
-  isOpen: true,
 };
 
-function ReportForm() {
+// La evidencia es opcional; si se captura debe ser un enlace http(s), igual que en el backend.
+
+// Reporte del backend → estado del formulario (modo edición).
+const toFormData = (report) => ({
+  siteId: report.site_id != null ? String(report.site_id) : '',
+  dateReport: report.date_report ?? '',
+  reportType: report.report_type != null ? String(report.report_type) : '',
+  otherType: report.other_type ?? '',
+  description: report.description ?? '',
+  evidenceUrl: report.evidence_url ?? '',
+  anonymity: Boolean(report.anonymity),
+});
+
+/**
+ * Formulario de reporte del estudiante.
+ * - Sin `reportId`: crea un reporte nuevo.
+ * - Con `reportId`: edita `report` (solo mientras siga abierto).
+ */
+function ReportForm({ report = null, reportId = null, fetching = false, fetchError = null, refetch }) {
+  const isEdit = reportId != null;
   const navigate = useNavigate();
   const { user } = useUser();
-  const { createReport, loading: saving, success: saved, error: saveError, reset } = useCreateReport();
-  const { sites, loading: fetchingSites, error: sitesError } = useGetSites();
+  const { createReport, loading: creating, success: created, error: createError, reset: resetCreate } = useCreateReport();
+  const { updateReport, loading: updating, error: updateError, reset: resetUpdate } = useUpdateReport();
+  const { sites, loading: fetchingSites, error: sitesError, refetch: refetchSites } = useGetSites();
+  // Solo al crear: se preselecciona la sede del internado del estudiante.
+  const { internship } = useInternshipByAcademic(isEdit ? null : user?.academic_id);
 
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [createdId, setCreatedId] = useState(null);
   const [validationError, setValidationError] = useState('');
 
+  const saving = creating || updating;
+  const saveError = isEdit ? updateError : createError;
+  const resetSave = isEdit ? resetUpdate : resetCreate;
+  const isOtherType = Number(formData.reportType) === REPORT_TYPES.OTHER;
+
+  // Sede del internado del estudiante, si existe en el catálogo.
+  const defaultSiteId = useMemo(() => {
+    const siteId = internship?.site?.site_id ?? internship?.site_id;
+    if (isEdit || !siteId || !sites.some((site) => site.site_id === siteId)) return '';
+    return String(siteId);
+  }, [isEdit, internship, sites]);
+
+  // En edición se muestra la sede actual del reporte aunque no venga en el catálogo.
+  const siteOptions = useMemo(() => {
+    const currentSite = report?.site;
+    if (!currentSite || sites.some((site) => site.site_id === currentSite.site_id)) return sites;
+    return [currentSite, ...sites];
+  }, [sites, report]);
+
 // ---------------------- HANDLERS ----------------------
 
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => {
+    setFormData((prev) => {
       const next = { ...prev, [name]: type === 'checkbox' ? checked : value };
-      
-      // Limpiar otherType cuando se cambia de "Otro" a otra opción
-      if (name === 'reportType' && String(value) !== '7') next.otherType = '';
+      // "Especifica el tipo" solo aplica a «Otro».
+      if (name === 'reportType' && Number(value) !== REPORT_TYPES.OTHER) next.otherType = '';
       return next;
     });
 
-    if (validationError) return setValidationError('');
-    if (saveError) return reset();
-            
-  }, [validationError, saveError, reset]);
+    if (validationError) setValidationError('');
+    if (saveError) resetSave();
+  }, [validationError, saveError, resetSave]);
+
+  const handleCancel = () => {
+    navigate(isEdit ? ROUTES.USER.REPORT_DETAIL(reportId) : ROUTES.USER.REPORTS_LIST);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const cleanedData = cleanFormData({
-      ...formData,
-      academicId: user.academic_id,
-      internshipId: Number(user.internship_id),
-      siteId: Number(formData.siteId),
-      reportType: Number(formData.reportType),
-    });
+    const cleanedData = cleanFormData(formData);
+    const reportType = Number(cleanedData.reportType);
+    const isOther = reportType === REPORT_TYPES.OTHER;
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.dateReport) errors.push('La fecha es obligatoria');
-    if (!cleanedData.siteId) errors.push('La sede es obligatoria');
-    if (!cleanedData.reportType) errors.push('El tipo de reporte es obligatorio');
-    if (!cleanedData.description) errors.push('La descripción es obligatoria');
+    if (!cleanedData.dateReport) errors.push('La fecha es obligatoria.');
+    else if (cleanedData.dateReport > todayISO()) errors.push('La fecha no puede ser posterior a hoy.');
+    if (!REPORT_TYPE_LABELS[reportType]) errors.push('El tipo de reporte es obligatorio.');
+    if (isOther && !cleanedData.otherType) errors.push('Especifica el tipo de reporte.');
+    if (isOther && cleanedData.otherType.length > OTHER_TYPE_MAX_LENGTH) {
+      errors.push(`El tipo de reporte admite como máximo ${OTHER_TYPE_MAX_LENGTH} caracteres.`);
+    }
+    if (!cleanedData.siteId) errors.push('La sede es obligatoria.');
+    if (!cleanedData.description) errors.push('La descripción es obligatoria.');
+    if (cleanedData.evidenceUrl && !isHttpUrl(cleanedData.evidenceUrl)) {
+      errors.push('La evidencia debe ser un enlace que empiece con http:// o https://.');
+    }
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
 
+    // El expediente y el internado los toma el backend de la sesión: no se envían.
     const payload = {
-      academic_id: cleanedData.academicId,
-      internship_id: cleanedData.internshipId,
-      site_id: cleanedData.siteId,
+      site_id: Number(cleanedData.siteId),
       date_report: cleanedData.dateReport,
-      report_type: cleanedData.reportType,
-      other_type: Number(cleanedData.reportType) === 7 ? cleanedData.otherType : null,
+      report_type: reportType,
+      other_type: isOther ? cleanedData.otherType : null,
       description: cleanedData.description,
-      evidence_url: cleanedData.evidenceUrl,
+      evidence_url: cleanedData.evidenceUrl || null,
       anonymity: cleanedData.anonymity,
-      is_open: cleanedData.isOpen,
     };
-    
+
+    if (isEdit) {
+      const response = await updateReport(reportId, payload);
+      if (response) navigate(ROUTES.USER.REPORT_DETAIL(reportId));
+      return;
+    }
+
     const response = await createReport(payload);
-    if (response && response.data.report_id) {
+    if (response?.data?.report_id) {
       setCreatedId(response.data.report_id);
+      setFormData({ ...INITIAL_FORM, siteId: defaultSiteId });
     }
   };
 
 // ---------------------- EFFECTS ----------------------
 
+  // Edición: se carga el reporte en el formulario.
   useEffect(() => {
-    if (saved) {
-      setFormData(INITIAL_FORM);
+    if (report) setFormData(toFormData(report));
+  }, [report]);
 
-      const alertTimeout = setTimeout(() => {
-        reset();
-      }, 10000);
-      return () => clearTimeout(alertTimeout);
-    }
-  }, [saved, reset]);
+  // Creación: se preselecciona la sede del internado si el estudiante aún no eligió una.
+  useEffect(() => {
+    if (!defaultSiteId) return;
+    setFormData((prev) => (prev.siteId ? prev : { ...prev, siteId: defaultSiteId }));
+  }, [defaultSiteId]);
+
+  // El aviso de "reporte registrado" se oculta solo después de 10 segundos.
+  useEffect(() => {
+    if (!created) return;
+    const alertTimeout = setTimeout(resetCreate, 10000);
+    return () => clearTimeout(alertTimeout);
+  }, [created, resetCreate]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
-    
+  if (isEdit) {
+    if (fetching) return <LoadingSpinner />;
+
+    if (fetchError) {
+      return (
+        <DataLoadError
+          title="No se pudo cargar la información"
+          message={fetchError}
+          onRetry={refetch}
+          onSecondary={() => navigate(ROUTES.USER.REPORTS_LIST)}
+          secondaryLabel="Ir a mis reportes"
+        />
+      );
+    }
+
+    if (!report) {
+      return (
+        <DataLoadError
+          title="404"
+          message="No encontramos información de este reporte."
+          onRetry={refetch}
+          retryLabel="Recargar"
+          onSecondary={() => navigate(ROUTES.USER.REPORTS_LIST)}
+          secondaryLabel="Ir a mis reportes"
+        />
+      );
+    }
+
+    if (!report.is_open) {
+      return (
+        <div className="info-container">
+          <div className="alert-error">
+            El reporte está cerrado y ya no se puede editar.
+          </div>
+          <div className="button-group">
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => navigate(ROUTES.USER.REPORT_DETAIL(reportId))}
+            >
+              Ver reporte
+            </button>
+          </div>
+        </div>
+      );
+    }
+  }
+
 // ---------------------- RENDER ----------------------
 
   return (
     <form className="component-container" onSubmit={handleSubmit}>
-      {saved && (
+      {created && (
         <div className="alert-success">
           Reporte registrado exitosamente.{' '}
           {createdId && (
             <Link
-              to={adminAbs(ROUTES.ADMIN.REPORT_DETAIL(createdId))}
+              to={ROUTES.USER.REPORT_DETAIL(createdId)}
               className="font-bold underline"
             >
               Ver
@@ -134,53 +248,52 @@ function ReportForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Fecha</dt>
+              <dt className="item-header">Fecha *</dt>
               <dd className="item-text">
                 <input
                   name="dateReport"
                   type="date"
                   value={formData.dateReport}
                   onChange={handleChange}
+                  max={todayISO()}
                   className="form-input--half"
-                  placeholder="dd/mm/aaaa"
                   disabled={saving}
                   required
                 />
               </dd>
             </div>
             <div className="item-row">
-                <dt className="item-header">Motivo</dt>
-                <dd className="item-text">
-                  <select
-                    name="reportType"
-                    value={formData.reportType}
-                    onChange={handleChange}
-                    className="form-input--half"
-                    disabled={saving}
-                    required
-                  >
-                    <option value={0}>Seleccionar tipo</option>
-                    <option value={1}>Accidente</option>
-                    <option value={2}>Condiciones inseguras</option>
-                    <option value={3}>Acoso laboral</option>
-                    <option value={4}>Acoso sexual</option>
-                    <option value={5}>Discriminación</option>
-                    <option value={6}>Robo</option>
-                    <option value={7}>Otro</option>
-                  </select>
-                </dd>
+              <dt className="item-header">Tipo de reporte *</dt>
+              <dd className="item-text">
+                <select
+                  name="reportType"
+                  value={formData.reportType}
+                  onChange={handleChange}
+                  className="form-input--half"
+                  disabled={saving}
+                  required
+                >
+                  <option value="">Selecciona un tipo</option>
+                  {Object.entries(REPORT_TYPE_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </dd>
             </div>
-            {Number(formData.reportType) === 7 && (
+            {isOtherType && (
               <div className="item-row">
-                <dt className="item-header">Especificar motivo</dt>
+                <dt className="item-header">Especifica el tipo *</dt>
                 <dd className="item-text">
                   <input
                     name="otherType"
                     type="text"
                     value={formData.otherType}
                     onChange={handleChange}
+                    maxLength={OTHER_TYPE_MAX_LENGTH}
                     className="form-input--half"
-                    placeholder="Describe el motivo del reporte"
+                    placeholder={`Máximo ${OTHER_TYPE_MAX_LENGTH} caracteres`}
                     disabled={saving}
                     required
                   />
@@ -195,20 +308,30 @@ function ReportForm() {
                   value={formData.siteId}
                   onChange={handleChange}
                   className="form-input--half"
-                  disabled={fetchingSites || saving || sitesError}
+                  disabled={saving || fetchingSites}
                   required
                 >
-                  <option value="">Selecciona una sede</option>
-                  {sites.map(site => (
-                    <option key={site.site_id} value={site.site_id}>
-                      {site.name}
+                  <option value="">
+                    {fetchingSites ? 'Cargando sedes...' : 'Selecciona una sede'}
+                  </option>
+                  {siteOptions.map((site) => (
+                    <option key={site.site_id} value={String(site.site_id)}>
+                      {site.city ? `${site.name} (${site.city})` : site.name}
                     </option>
                   ))}
                 </select>
+                {sitesError && (
+                  <p className="mt-1 text-xs text-red-600">
+                    {sitesError}{' '}
+                    <button type="button" className="underline" onClick={refetchSites}>
+                      Reintentar
+                    </button>
+                  </p>
+                )}
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Descripción</dt>
+              <dt className="item-header">Descripción *</dt>
               <dd className="item-text">
                 <textarea
                   name="description"
@@ -223,22 +346,25 @@ function ReportForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Evidencia</dt>
+              <dt className="item-header">Evidencia (opcional)</dt>
               <dd className="item-text">
                 <input
                   name="evidenceUrl"
+                  type="url"
                   value={formData.evidenceUrl}
                   onChange={handleChange}
-                  rows="4"
+                  maxLength={EVIDENCE_URL_MAX_LENGTH}
                   className="form-input--half"
-                  placeholder="Adjunta un enlace a fotos, videos u otros documentos que sirvan de evidencia."
+                  placeholder="https://..."
                   disabled={saving}
-                  required
                 />
+                <p className="mt-1 text-xs text-gray-500">
+                  Enlace a fotos, videos u otros documentos que sirvan de evidencia.
+                </p>
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">¿Deseas que el reporte sea anonimo?</dt>
+              <dt className="item-header">¿Deseas que el reporte sea anónimo?</dt>
               <dd className="item-text">
                 <input
                   name="anonymity"
@@ -248,22 +374,25 @@ function ReportForm() {
                   className="form-checkbox"
                   disabled={saving}
                 />
+                <p className="mt-1 text-xs text-gray-500">
+                  Si lo marcas, la coordinación no verá tu nombre ni tu expediente en este reporte.
+                </p>
               </dd>
             </div>
           </dl>
         </div>
 
         <div className="button-group">
-          <button 
-            type="button" 
-            className="btn-secondary" 
-            onClick={() => navigate(adminAbs(ROUTES.HOME))}
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={handleCancel}
             disabled={saving}
           >
             Cancelar
           </button>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn-primary"
             disabled={saving}
           >

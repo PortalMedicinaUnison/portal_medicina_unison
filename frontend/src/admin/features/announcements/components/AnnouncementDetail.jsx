@@ -5,16 +5,8 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import { ANNOUNCEMENT_TYPE_LABELS, labelOf } from '../../../../utils/constants';
 
-
-const ANNOUNCEMENT_TYPES = {
-  1: 'General',
-  2: 'Internado'
-};
-
-const getAnnouncementTypeName = (typeEnum) => {
-  return ANNOUNCEMENT_TYPES[typeEnum] || 'Desconocido';
-};
 
 function AnnouncementDetail({ announcement, fetching, fetchError, refetch, announcementId }) {    
   const navigate = useNavigate();
@@ -102,7 +94,7 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
           </div>
           <div className="item-row">
             <dt className="item-header">Tipo de Anuncio</dt>
-            <dd className="item-text">{getAnnouncementTypeName(announcement.announcement_type)}</dd>
+            <dd className="item-text">{labelOf(ANNOUNCEMENT_TYPE_LABELS, announcement.announcement_type)}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Estatus</dt>
@@ -126,7 +118,7 @@ function AnnouncementDetail({ announcement, fetching, fetchError, refetch, annou
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro"
+          message={deleteError || 'Ocurrió un problema al eliminar el registro.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />

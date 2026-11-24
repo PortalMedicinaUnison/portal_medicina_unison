@@ -7,28 +7,21 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent';
+import { APPLICATION_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { formatFullName } from '../../../../utils/utils';
+
 
 
 function ApplicationList({ applications, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
-  const { deleteApplication, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteApplication();
-  
+  const { deleteApplication, loading: deleting, success: deleted, error: deleteError, reset } = useDeleteApplication();
+
   const [item, setItem] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
 
-  const STATUS_OPTIONS = {
-    1: 'Pendiente',
-    2: 'Aceptado',
-    3: 'Declinado'
-  };
-
-  const getStatusName = (statusEnum) => {
-    return STATUS_OPTIONS[statusEnum] || 'Desconocido';
-  };
-
 // ---------------------- FILTERS AND SEARCH ----------------------
- 
+
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
@@ -39,29 +32,29 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
       if (statusFilter !== '' && item.status !== Number(statusFilter)) return false;
       if (!searchQuery) return true;
 
-      const student = String(item.academic_id).toLowerCase();
-      return student.includes(searchQuery);
+      const academicId = String(item.academic_id ?? '').toLowerCase();
+      const studentName = formatFullName(item.student).toLowerCase();
+      return academicId.includes(searchQuery) || studentName.includes(searchQuery);
     });
   }, [applications, searchQuery, statusFilter]);
 
 // ---------------------- HANDLERS ----------------------
 
   const handleViewButton = (id) => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_DETAIL(id)));
-  const handleEditButton = (id) => navigate(adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_EDIT(id)));
   const handleDeleteButton = (id) => {
-    setItem(id)
+    setItem(id);
     setShowConfirmDelete(true);
   };
 
   const handleConfirmDelete = async () => {
-    if (item == null) return
+    if (item == null) return;
     await deleteApplication(item);
   };
 
   const handleCloseConfirm = () => {
     setShowConfirmDelete(false);
     setItem(null);
-  }
+  };
 
   const handleCloseError = () => {
     setShowErrorDialog(false);
@@ -94,8 +87,7 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
     return (
       <DataLoadError
         title="No se pudo cargar la lista de aplicaciones"
-        message="Intenta recargar la página."
-        details={fetchError}
+        message={fetchError}
         onRetry={refetch}
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
@@ -112,18 +104,18 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
           className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por expediente"
+          placeholder="Buscar por expediente o nombre"
         />
         <select
           className="btn-tertiary--light"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          aria-label="Filtrar por estado"
+          aria-label="Filtrar por estatus"
         >
           <option value="">Estatus</option>
-          <option value="true">Pendiente</option>
-          <option value="true">Aceptado</option>
-          <option value="false">Declinado</option>
+          {Object.entries(APPLICATION_STATUS_LABELS).map(([value, label]) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
         </select>
       </div>
 
@@ -131,18 +123,19 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
         <table className="table">
           <thead>
             <tr>
-              <th className='w-4/12'>Expediente</th>
+              <th className='w-2/12'>Expediente</th>
+              <th className='w-4/12'>Alumno</th>
               <th className='w-3/12'>Promoción</th>
-              <th className='w-4/12'>Estatus</th>
+              <th className='w-2/12'>Estatus</th>
               <th className='w-1/12'></th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={4} className="text-center py-6">
+                <td colSpan={5} className="text-center py-6">
                 {search || statusFilter
-                  ? 'No se encontraron aplicaciones que coincidan con los filtros.' 
+                  ? 'No se encontraron aplicaciones que coincidan con los filtros.'
                   : 'No hay aplicaciones disponibles.'
                   }
                 </td>
@@ -151,13 +144,13 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
               filtered.map((item) => (
               <tr key={item.application_id}>
                 <td>{item.academic_id}</td>
-                <td>{item.promotion_id}</td>
-                <td>{getStatusName(item.status)}</td>
+                <td className="text-left">{formatFullName(item.student) || 'Sin datos del alumno'}</td>
+                <td>{item.promotion ? `${item.promotion.year} - ${labelOf(PERIOD_LABELS, item.promotion.period)}` : '—'}</td>
+                <td>{labelOf(APPLICATION_STATUS_LABELS, item.status)}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[
                       { label: 'Ver', onClick: () => handleViewButton(item.application_id) },
-                      { label: 'Editar', onClick: () => handleEditButton(item.application_id) },
                       { label: 'Eliminar', onClick: () => handleDeleteButton(item.application_id), className: 'text-red-600' },
                     ]}
                     disabled={deleting}
@@ -173,7 +166,7 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>
         <ConfirmDialogContent
           title="Confirmar eliminación"
-          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar?"
+          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar la aplicación?"
           onConfirm={handleConfirmDelete}
           primaryLabel="Eliminar"
           secondaryLabel="Cancelar"
@@ -185,14 +178,14 @@ function ApplicationList({ applications, fetching, fetchError, refetch }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar la aplicación"
+          message={deleteError || 'Ocurrió un problema al eliminar la aplicación.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />
       </Modal>
-      
+
     </div>
   );
 }
-    
+
 export default ApplicationList;

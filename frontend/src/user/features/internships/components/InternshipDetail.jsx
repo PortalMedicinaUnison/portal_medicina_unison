@@ -1,34 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../../../config';
+import { INTERNSHIP_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
-import Modal from '../../../../utils/ui/Modal';
-import DocumentList from '../documents/components/DocumentList'
-import DocumentForm from '../documents/components/DocumentForm';
+import DocumentList from '../documents/components/DocumentList';
 
 
-function InternshipDetail({ internship, fetching, fetchError, refetch, internshipId }) {    
+function InternshipDetail({ internship, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
-  const [openModal, setOpenModal] = useState(false);
-  const [docsVersion, setDocsVersion] = useState(0);
-  
-  internshipId = Number(internshipId);
-
-  const INTERNSHIP_STATUS = {
-    1: 'Activo',
-    2: 'Suspendido',
-    3: 'Finalizado',
-  };
-
-  const getInternshipStatusName = (typeEnum) => {
-    return INTERNSHIP_STATUS[typeEnum] || 'Desconocido';
-  };
-
-// ---------------------- HANDLERS ----------------------
-
-
-// ---------------------- EFFECTS ----------------------
-    
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -37,30 +16,35 @@ function InternshipDetail({ internship, fetching, fetchError, refetch, internshi
   if (fetchError) {
     return (
       <DataLoadError
-        title="No se pudo cargar la información"
-        message="Intenta recargar o vuelve a la lista."
-        details={fetchError}
+        title="No se pudo cargar tu internado"
+        message={fetchError}
         onRetry={refetch}
-        onSecondary={() => navigate(-1)}
-        secondaryLabel="Volver"
-      />
-    );
-  }
-  
-  if (!internship) {
-    return (
-      <DataLoadError
-        title="404"
-        message="No encontramos información para esta promoción."
-        onRetry={refetch}
-        retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
       />
     );
   }
 
+  // Sin internado: todavía no acepta su asignación, la declinó o no tiene una.
+  if (!internship) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 min-h-[40vh] text-center">
+        <h3 className="text-xl font-semibold text-gray-900">Aún no tienes un internado</h3>
+        <p className="max-w-md text-gray-500">
+          Tu internado se crea cuando aceptas tu asignación a una promoción. Si todavía no respondes
+          a tu asignación o la declinaste, revisa su estado.
+        </p>
+        <Link to={ROUTES.USER.INTERNSHIP_REDIRECT} className="btn-primary">
+          Revisar mi asignación
+        </Link>
+      </div>
+    );
+  }
+
 // ---------------------- RENDER ----------------------
+
+  const promotion = internship.application?.promotion;
+  const { site } = internship;
 
   return (
     <div className="info-container">
@@ -69,50 +53,29 @@ function InternshipDetail({ internship, fetching, fetchError, refetch, internshi
           <div className="item-row">
             <dt className="item-header">Promoción</dt>
             <dd className="item-text">
-              {internship.application.promotion.year} - {internship.application.promotion.period}
+              {promotion ? `${promotion.year} - ${labelOf(PERIOD_LABELS, promotion.period)}` : '—'}
             </dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Sede</dt>
-            <dd className="item-text">{internship?.site?.name ?? 'Sin asignar'}</dd>
+            <dt className="item-header">Estatus</dt>
+            <dd className="item-text">{labelOf(INTERNSHIP_STATUS_LABELS, internship.status)}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Estatus</dt>
-            <dd className="item-text">{getInternshipStatusName(internship?.status)}</dd>
+            <dt className="item-header">Sede</dt>
+            <dd className="item-text">
+              {site
+                ? `${site.name} (${site.city})`
+                : <span className="italic text-gray-500">Pendiente de asignación de sede</span>}
+            </dd>
           </div>
         </dl>
       </div>
 
-      <div className="info-actions mt-16">
-        <button 
-          type="button" 
-          className='btn-tertiary'
-          onClick={() => setOpenModal(true)}
-        >
-          Subir documento
-        </button>
+      <div className="mt-12">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Documentos</h3>
+        <DocumentList internshipId={internship.internship_id} />
       </div>
-
-      <div className='mt-8'>
-        <DocumentList internshipId={internshipId} version={docsVersion} />
-      </div>
-
-      <Modal
-        open={openModal}
-        title="Subir documento"
-        onClose={() => setOpenModal(false)}
-      >
-        <DocumentForm 
-          internshipId={internshipId}
-          onClose={() => setOpenModal(false)}
-          onSuccess={() => {
-            setOpenModal(false);
-            setDocsVersion(v => v + 1);
-          }}
-        />
-      </Modal>
-
-    </div>        
+    </div>
   );
 }
 

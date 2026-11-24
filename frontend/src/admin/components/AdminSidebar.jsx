@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../../config';
+import { ADMIN_HOME, ROUTES, adminAbs } from '../../config';
 import SidebarCollapse from '../../utils/ui/CollapseMenu';
 
 
@@ -13,7 +13,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
             >
 
                 <div className="sidebar-header">
-                        <Link to={ROUTES.HOME} className="ms-5 md:me-15">
+                        <Link to={ADMIN_HOME} className="ms-5 md:me-15">
                             <img src="../../unison-letters.svg" className="h-8 me-3" alt="unison logo" />
                         </Link>
                         <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
@@ -41,7 +41,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </p>
                         </div>
                         <div>
-                            <NavLink to={ROUTES.HOME} className="sidebar-item-group group">
+                            <NavLink to={ADMIN_HOME} end className="sidebar-item-group group">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sidebar-item-icon"
@@ -64,7 +64,7 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             <SidebarCollapse
                                 title="Alumnos"
                                 links={[
-                                    { label: 'Lista de alumnos', to: adminAbs(ROUTES.ADMIN.USER_LIST), className: 'sidebar-item-link' },
+                                    { label: 'Usuarios', to: adminAbs(ROUTES.ADMIN.USER_LIST), className: 'sidebar-item-link' },
                                     { label: 'Pre-registro', to: adminAbs(ROUTES.ADMIN.USER_ENROLLMENT_LIST), className: 'sidebar-item-link' },
                                 ]}
                                 icon={

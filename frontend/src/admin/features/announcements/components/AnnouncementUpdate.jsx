@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useUpdateAnnouncement from '../hooks/useUpdateAnnouncement'
 import { cleanFormData } from "../../../../utils/utils";
+import { ANNOUNCEMENT_TYPE_LABELS } from '../../../../utils/constants';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 
@@ -75,8 +76,8 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
       setFormData({
         title: announcement.title || '',
         description: announcement.description || '',
-        announcementType: announcement.announcementType ?? 0,
-        isVisible: announcement.isVisible ?? true,
+        announcementType: announcement.announcement_type ?? 0,
+        isVisible: announcement.is_visible ?? true,
       });
     }
   }, [announcement]);
@@ -85,7 +86,7 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
     if (saved) {
       navigate(adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DETAIL(announcementId)));
     }
-  }, [saved, navigate]);
+  }, [saved, navigate, announcementId]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -175,8 +176,9 @@ return (
                     required
                   >
                     <option value={0}>Seleccione un tipo</option>
-                    <option value={1}>General</option>
-                    <option value={2}>Internado</option>
+                    {Object.entries(ANNOUNCEMENT_TYPE_LABELS).map(([value, label]) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
                   </select>
                 </dd>
             </div>

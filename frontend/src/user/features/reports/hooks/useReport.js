@@ -5,7 +5,8 @@ import { getErrorMessage } from '../../../../utils/errors';
 
 export default function useReport(id) {
   const [report, setReport]   = useState(null);
-  const [loading, setLoading] = useState(false);
+  // Con id arranca cargando: así no se muestra el estado "no encontrado" antes de la primera petición.
+  const [loading, setLoading] = useState(Boolean(id));
   const [error, setError]     = useState(null);
 
   const getReport = useCallback(async (id) => {

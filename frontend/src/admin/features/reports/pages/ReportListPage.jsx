@@ -1,31 +1,16 @@
-import { useNavigate } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../../../../config';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
 import useGetReports from '../hooks/useGetReports';
 import ReportList from '../components/ReportList';
 
 
+// Los reportes los crean los alumnos; la administración solo los gestiona.
 function ReportListPage() {
-  const navigate = useNavigate();
   const { reports, loading: fetching, error: fetchError, refetch } = useGetReports();
-    
-  const actions = (
-    <button
-      type="button"
-      className="btn-primary"
-      onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_CREATE))}
-    >
-      Crear
-    </button>
-  );
-    
+
   return (
     <Layout>
-      <PageLayout 
-        title="Lista de reportes"
-        actions={actions}
-      >
+      <PageLayout title="Lista de reportes">
         <ReportList
           reports={reports}
           fetching={fetching}

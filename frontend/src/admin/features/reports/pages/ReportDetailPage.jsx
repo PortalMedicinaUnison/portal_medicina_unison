@@ -1,45 +1,27 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { ROUTES, adminAbs } from "../../../../config";
+import { useParams } from "react-router-dom";
 import useReport from '../hooks/useReport';
 import Layout from "../../../../Layout";
 import PageLayout from '../../../../components/PageLayout';
 import ReportDetail from "../components/ReportDetail";
 
 
+// La administración no edita reportes: solo los consulta, los cierra/reabre o los elimina.
 function ReportPage() {
-  const navigate = useNavigate();
   const { reportId } = useParams();
   const { report, loading: fetching, error: fetchError, refetch } = useReport(reportId);
 
-  const pageTitle = fetching
+  const pageTitle = fetching && !report
   ? 'Cargando...'
-  : 'Reporte'
-
-  const actions = (
-    <span className="show-on-sm">
-      <button
-        type="button"
-        className="btn-primary"
-        onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_EDIT(reportId)))}
-        disabled={fetching || fetchError}
-      >
-        Editar
-      </button>
-    </span>
-  );
+  : 'Reporte';
 
   return (
     <Layout>
-      <PageLayout 
-        title={pageTitle}
-        actions={actions}
-      >
+      <PageLayout title={pageTitle}>
         <ReportDetail
           report={report}
           fetching={fetching}
           fetchError={fetchError}
           refetch={refetch}
-          reportId={reportId}
         />
       </PageLayout>
     </Layout>

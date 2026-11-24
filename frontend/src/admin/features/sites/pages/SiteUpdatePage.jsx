@@ -12,7 +12,7 @@ function SiteUpdatePage() {
   const pageTitle = fetching
   ? 'Cargando...'
   : site
-    ? 'Actualizar anuncio'
+    ? 'Actualizar sede'
     : ' ';
   
   return ( 

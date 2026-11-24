@@ -1,12 +1,16 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../config';
-import useUserUpdate from '../hooks/useUserUpdate'
+import { useUser } from '../../../contexts/UserContext';
+import useUserUpdate from '../hooks/useUserUpdate';
 import { cleanFormData } from "../../../utils/utils";
+import { validateEmail } from '../../../utils/validations';
 import LoadingSpinner from '../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../utils/ui/DataLoadError';
 
+
+// Límite de los nombres en el backend (schemas/user.py).
+const NAME_MAX_LENGTH = 50;
 
 const INITIAL_FORM = {
   firstName: '',
@@ -14,15 +18,12 @@ const INITIAL_FORM = {
   secondLastName: '',
   email: '',
   phoneNumber: '',
-  password: '',
-  profile_photo: '',
-  is_admin: false,
-  is_super_admin: false,
 };
 
-function ProfileUpdate({ user, fetching, fetchError, relead, userId }) {
+function ProfileUpdate({ user, fetching, fetchError, refetch }) {
   const navigate = useNavigate();
-  const { updateUser, loading: saving, error: saveError, success: saved, reset } = useUserUpdate();
+  const { reload } = useUser();
+  const { updateUser, loading: saving, error: saveError, reset } = useUserUpdate();
 
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [validationError, setValidationError] = useState('');
@@ -30,24 +31,15 @@ function ProfileUpdate({ user, fetching, fetchError, relead, userId }) {
 // ---------------------- HANDLERS ----------------------
 
   const handleChange = useCallback((e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    const { name, value } = e.target;
+    setFormData(prevData => ({ ...prevData, [name]: value }));
 
-    if (validationError) return setValidationError('');
-    if (saveError) return reset();
-            
+    if (validationError) setValidationError('');
+    if (saveError) reset();
   }, [validationError, saveError, reset]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!userId) {
-      setValidationError('ID de usuario no proporcionado.');
-      return;
-    }
 
     const cleanedData = cleanFormData(formData);
 
@@ -56,6 +48,13 @@ function ProfileUpdate({ user, fetching, fetchError, relead, userId }) {
     if (!cleanedData.firstName) errors.push('El nombre es obligatorio.');
     if (!cleanedData.lastName) errors.push('El apellido paterno es obligatorio.');
     if (!cleanedData.email) errors.push('El correo electrónico es obligatorio.');
+    else {
+      const emailCheck = validateEmail(cleanedData.email);
+      if (!emailCheck.valid) errors.push(emailCheck.error);
+    }
+    if (cleanedData.phoneNumber && !/^\d{10}$/.test(cleanedData.phoneNumber)) {
+      errors.push('El teléfono debe tener 10 dígitos.');
+    }
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -64,12 +63,17 @@ function ProfileUpdate({ user, fetching, fetchError, relead, userId }) {
     const payload = {
       first_name: cleanedData.firstName,
       last_name: cleanedData.lastName,
-      second_last_name: cleanedData.secondLastName,
+      second_last_name: cleanedData.secondLastName || null,
       email: cleanedData.email,
-      phone_number: cleanedData.phoneNumber,
+      phone_number: cleanedData.phoneNumber || null,
     };
-    
-    await updateUser(userId, payload);
+
+    const saved = await updateUser(payload);
+    if (!saved) return;
+
+    // El contexto guarda los datos de la sesión (perfil, barra superior): se vuelven a pedir.
+    await reload();
+    navigate(ROUTES.USER.PROFILE);
   };
 
 // ---------------------- EFFECTS ----------------------
@@ -82,18 +86,9 @@ function ProfileUpdate({ user, fetching, fetchError, relead, userId }) {
         secondLastName: user.second_last_name || '',
         email: user.email || '',
         phoneNumber: user.phone_number || '',
-        profile_photo: user.profile_photo || '',
-        is_admin: user.is_admin || false,
-        is_super_admin: user.is_super_admin || false,
       });
     }
   }, [user]);
-
-  useEffect(() => {
-    if (saved) {
-      navigate(ROUTES.USER.PROFILE);
-    }
-  }, [saved, navigate]);
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
@@ -103,28 +98,27 @@ function ProfileUpdate({ user, fetching, fetchError, relead, userId }) {
     return (
       <DataLoadError
         title="No se pudo cargar la información"
-        message="Intenta recargar o vuelve a la lista."
-        details={fetchError}
-        onRetry={relead}
+        message={fetchError}
+        onRetry={refetch}
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
       />
     );
   }
-  
+
   if (!user) {
     return (
       <DataLoadError
         title="404"
         message="No encontramos información."
-        onRetry={relead}
+        onRetry={refetch}
         retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
         secondaryLabel="Volver"
       />
     );
   }
-    
+
 // ---------------------- RENDER ----------------------
 
 return (
@@ -140,20 +134,15 @@ return (
 
       <div className="info-container">
         <div className="user-info-photo">
-          <img 
-            src={user?.profile_photo || "/default-avatar.png"} 
-            alt="Foto de perfil" 
+          <img
+            src={user.profile_photo || "/default-avatar.png"}
+            alt="Foto de perfil"
             className="user-profile-photo"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = "/default-avatar.png";
             }}
           />
-
-          <div class="info-actions">
-            <p className='item-link'>Cambiar foto</p>
-            <p className='item-text'>Esto ayudará a tu administrador a identificarte</p>
-          </div>
         </div>
 
         <div className="item-container">
@@ -166,6 +155,7 @@ return (
                   type="text"
                   value={formData.firstName}
                   onChange={handleChange}
+                  maxLength={NAME_MAX_LENGTH}
                   className="form-input--half"
                   disabled={saving}
                   required
@@ -181,6 +171,7 @@ return (
                   type="text"
                   value={formData.lastName}
                   onChange={handleChange}
+                  maxLength={NAME_MAX_LENGTH}
                   className="form-input--half"
                   disabled={saving}
                   required
@@ -196,6 +187,7 @@ return (
                   type="text"
                   value={formData.secondLastName}
                   onChange={handleChange}
+                  maxLength={NAME_MAX_LENGTH}
                   className="form-input--half"
                   disabled={saving}
                 />
@@ -203,7 +195,7 @@ return (
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Correo Electrónico</dt>
+              <dt className="item-header">Correo Electrónico *</dt>
               <dd className="item-text">
                 <input
                   name="email"
@@ -221,10 +213,13 @@ return (
               <dd className="item-text">
                 <input
                   name="phoneNumber"
-                  type="text"
+                  type="tel"
+                  inputMode="numeric"
                   value={formData.phoneNumber}
                   onChange={handleChange}
+                  maxLength={10}
                   className="form-input--half"
+                  placeholder="10 dígitos"
                   disabled={saving}
                 />
               </dd>
@@ -233,16 +228,16 @@ return (
         </div>
 
         <div className="button-group">
-          <button 
-            type="button" 
-            className="btn-secondary" 
+          <button
+            type="button"
+            className="btn-secondary"
             onClick={() => navigate(ROUTES.USER.PROFILE)}
             disabled={saving}
           >
             Cancelar
           </button>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn-primary"
             disabled={saving}
           >

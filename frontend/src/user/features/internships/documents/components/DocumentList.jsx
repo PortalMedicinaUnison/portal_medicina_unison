@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
 import useDeleteDocument from '../hooks/useDeleteDocument';
-import useGetDocumentsByInternship from '../hooks/useGetDocumentsByInternship'
+import useGetDocumentsByInternship from '../hooks/useGetDocumentsByInternship';
 import useDocumentLinks from '../hooks/useDocumentsLinks';
+import DocumentForm from './DocumentForm';
+import { DOCUMENT_TYPES, DOCUMENT_TYPE_LABELS, labelOf } from '../../../../../utils/constants';
+import { formatDateTime } from '../../../../../utils/utils';
 import DropdownMenu from '../../../../../utils/ui/DropdownMenu';
 import LoadingSpinner from '../../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../../utils/ui/DataLoadError';
@@ -10,62 +12,82 @@ import Modal from '../../../../../utils/ui/Modal';
 import ConfirmDialogContent from '../../../../../utils/ui/ConfirmDialogContent';
 
 
-function DocumentList({ internshipId, version = 0 }) {
-  const navigate = useNavigate();
-  const { documents, loading: fetching, error: fetchError, refetch } = useGetDocumentsByInternship(internshipId);
-  const { deleteDocument, loading: deleting, success: deleted,  error: deleteError, reset } = useDeleteDocument();
-  const { openView, openDownload } = useDocumentLinks(internshipId);
+const ALL_DOCUMENT_TYPES = Object.values(DOCUMENT_TYPES);
 
-  
-  const [item, setItem] = useState(null);
+const fileNameOf = (doc) => doc.original_filename || `documento_${doc.document_id}.pdf`;
+
+function DocumentList({ internshipId }) {
+  const { documents, loading: fetching, error: fetchError, refetch } = useGetDocumentsByInternship(internshipId);
+  const { deleteDocument, loading: deleting, success: deleted, error: deleteError, reset } = useDeleteDocument();
+  const { openView, openDownload, error: fileError, clearError: clearFileError } = useDocumentLinks(internshipId);
+
+  const [item, setItem] = useState(null); // documento a eliminar
+  const [showUpload, setShowUpload] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [notice, setNotice] = useState('');
 
-   
-  const DOCUMENT_TYPES = {
-    1: 'Bitacora',
-    2: 'Kardex',
-    3: 'Certificado',
-    4: 'Carta de finalización',
-  };
-
-  const getDocumentTypeName = (typeEnum) => {
-    return DOCUMENT_TYPES[typeEnum] || 'Desconocido';
-  };
+  // Tipos que ya tienen un documento activo (solo se permite uno por tipo).
+  const usedTypes = useMemo(() => documents.map((doc) => Number(doc.document_type)), [documents]);
+  const missingTypes = ALL_DOCUMENT_TYPES.filter((type) => !usedTypes.includes(type));
 
 // ---------------------- HANDLERS ----------------------
 
-  const handleDeleteButton = (id) => {
-    setItem(id)
+  const handleUploadButton = () => {
+    setNotice('');
+    clearFileError();
+    setShowUpload(true);
+  };
+
+  const handleCloseUpload = () => setShowUpload(false);
+
+  const handleUploaded = () => {
+    setShowUpload(false);
+    setNotice('Documento subido correctamente.');
+    refetch();
+  };
+
+  const handleView = (doc) => {
+    setNotice('');
+    openView(doc);
+  };
+
+  const handleDownload = (doc) => {
+    setNotice('');
+    openDownload(doc);
+  };
+
+  const handleDeleteButton = (doc) => {
+    setNotice('');
+    clearFileError();
+    setItem(doc);
     setShowConfirmDelete(true);
   };
 
   const handleConfirmDelete = async () => {
-    if (item == null) return
-    await deleteDocument(internshipId, item);
+    if (item == null) return;
+    await deleteDocument(internshipId, item.document_id);
   };
 
   const handleCloseConfirm = () => {
     setShowConfirmDelete(false);
     setItem(null);
-  }
+  };
 
   const handleCloseError = () => {
     setShowErrorDialog(false);
+    setItem(null);
     reset();
   };
 
 // ---------------------- EFFECTS ----------------------
 
   useEffect(() => {
-    if (internshipId) refetch(internshipId);
-  }, [version, internshipId, refetch]);
-
-  useEffect(() => {
     if (deleted) {
       setShowConfirmDelete(false);
       setItem(null);
-      refetch(internshipId);
+      setNotice('Documento eliminado. Ya puedes subir otro de ese tipo.');
+      refetch();
       reset();
     }
   }, [deleted, refetch, reset]);
@@ -79,58 +101,87 @@ function DocumentList({ internshipId, version = 0 }) {
 
 // ---------------------- LOADING & ERROR STATES ----------------------
 
-  if (fetching) return <LoadingSpinner />;
+  // Al recargar después de subir o eliminar se mantiene la tabla en lugar de volver al spinner.
+  if (fetching && documents.length === 0) return <LoadingSpinner />;
 
   if (fetchError) {
     return (
       <DataLoadError
-        title="No se pudo cargar la información"
-        message="Intenta recargar la página."
-        details={fetchError}
-        onRetry={() => refetch(internshipId)}
-        onSecondary={() => navigate(-1)}
-        secondaryLabel="Volver"
+        title="No se pudieron cargar tus documentos"
+        message={fetchError}
+        onRetry={refetch}
       />
     );
   }
 
 // ---------------------- RENDER ----------------------
   return (
-    <div className="table-container lg:w-1/2">
+    <div className="table-container lg:w-3/4">
+      <div className="table-container-actions">
+        <p className="mr-auto text-gray-500">
+          {missingTypes.length > 0
+            ? `Pendientes: ${missingTypes.map((type) => DOCUMENT_TYPE_LABELS[type]).join(', ')}.`
+            : 'Ya subiste todos los documentos.'}
+        </p>
+        <button
+          type="button"
+          className="btn-primary disabled:opacity-50"
+          onClick={handleUploadButton}
+          disabled={missingTypes.length === 0 || fetching}
+        >
+          Subir documento
+        </button>
+      </div>
+
+      {notice && <div className="alert-success">{notice}</div>}
+
+      {fileError && (
+        <div className="alert-error">
+          <strong className="font-bold">Error: </strong>
+          <span className="block sm:inline">{fileError}</span>
+        </div>
+      )}
+
       <div className="table-container-body">
         <table className="table">
           <thead>
             <tr>
-              <th className='w-3/12'>Documento</th>
-              <th className='w-2/12'>Consultar</th>
+              <th className='w-3/12 text-left'>Documento</th>
+              <th className='w-5/12 text-left'>Archivo</th>
+              <th className='w-3/12'>Fecha de carga</th>
               <th className='w-1/12'></th>
             </tr>
           </thead>
           <tbody>
-            {!documents || documents.length === 0 ? (
+            {documents.length === 0 ? (
               <tr>
-                <td colSpan={3} className="text-center py-6">
-                  No hay documentos disponibles.
+                <td colSpan={4} className="text-center py-6">
+                  Aún no has subido documentos.
                 </td>
               </tr>
             ) : (
-              documents.map((item) => (
-              <tr key={item.document_id}>
-                <td className="text-left">{getDocumentTypeName(item.document_type)}</td>
-                <td>
+              documents.map((doc) => (
+              <tr key={doc.document_id}>
+                <td className="text-left">{labelOf(DOCUMENT_TYPE_LABELS, doc.document_type)}</td>
+                <td className="text-left">
                   <button
-                    onClick={() => openView(item.document_id)}
+                    type="button"
+                    className="attachment-link truncate max-w-full"
+                    title={`Ver ${fileNameOf(doc)}`}
+                    onClick={() => handleView(doc)}
                   >
-                    📄
+                    {fileNameOf(doc)}
                   </button>
                 </td>
+                <td>{formatDateTime(doc.created_at)}</td>
                 <td className="overflow-visible text-right">
                   <DropdownMenu
                     actions={[
-                      { label: 'Descargar', onClick: () => openDownload(item.document_id) },
-                      { label: 'Eliminar', onClick: () => handleDeleteButton(item.document_id), className: 'text-red-600' },
+                      { label: 'Ver', onClick: () => handleView(doc) },
+                      { label: 'Descargar', onClick: () => handleDownload(doc) },
+                      { label: 'Eliminar', onClick: () => handleDeleteButton(doc), className: 'text-red-600' },
                     ]}
-                    disabled={deleting}
+                    disabled={deleting || fetching}
                   />
                 </td>
               </tr>
@@ -140,12 +191,25 @@ function DocumentList({ internshipId, version = 0 }) {
         </table>
       </div>
 
+      <Modal open={showUpload} title="Subir documento" onClose={handleCloseUpload}>
+        <DocumentForm
+          internshipId={internshipId}
+          usedTypes={usedTypes}
+          onCancel={handleCloseUpload}
+          onSuccess={handleUploaded}
+        />
+      </Modal>
+
       <Modal open={showConfirmDelete} onClose={handleCloseConfirm}>
         <ConfirmDialogContent
           title="Confirmar eliminación"
-          message="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar?"
+          message={
+            item
+              ? `Se eliminará "${labelOf(DOCUMENT_TYPE_LABELS, item.document_type)}" (${fileNameOf(item)}). Después podrás subir otro documento de ese tipo. ¿Deseas continuar?`
+              : 'Esta acción no se puede deshacer. ¿Deseas continuar?'
+          }
           onConfirm={handleConfirmDelete}
-          primaryLabel="Eliminar"
+          primaryLabel={deleting ? 'Eliminando...' : 'Eliminar'}
           secondaryLabel="Cancelar"
           onCancel={handleCloseConfirm}
           danger
@@ -155,14 +219,14 @@ function DocumentList({ internshipId, version = 0 }) {
       <Modal open={showErrorDialog} onClose={handleCloseError}>
         <ConfirmDialogContent
           title="Ops... Ha ocurrido un error"
-          message="Ocurrió un problema al eliminar el registro"
+          message={deleteError || 'Ocurrió un problema al eliminar el documento.'}
           onConfirm={handleCloseError}
           primaryLabel="Aceptar"
         />
       </Modal>
-      
+
     </div>
   );
 }
-    
+
 export default DocumentList;

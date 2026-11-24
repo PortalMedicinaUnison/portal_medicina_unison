@@ -10,13 +10,10 @@ function ProfilePage() {
   const navigate = useNavigate();
   const { user, loading: fetching, error: fetchError, reload } = useUser();
 
-  const userId = user?.user_id;
-
   const pageTitle = fetching
   ? 'Cargando...'
   : user
-    ? `${user.first_name} ${user.last_name} ${user.second_last_name ? user.second_last_name
-    : ''}`
+    ? [user.first_name, user.last_name, user.second_last_name].filter(Boolean).join(' ')
     : ' ';
 
   const actions = (
@@ -25,7 +22,7 @@ function ProfilePage() {
         type="button"
         className="btn-primary"
         onClick={() => navigate(ROUTES.USER.EDIT_PROFILE)}
-        disabled={fetching || fetchError}
+        disabled={fetching || Boolean(fetchError)}
       >
         Editar
       </button>
@@ -34,7 +31,7 @@ function ProfilePage() {
 
   return (
     <Layout>
-      <PageLayout 
+      <PageLayout
         title={pageTitle}
         actions={actions}
       >
@@ -42,8 +39,7 @@ function ProfilePage() {
           user={user}
           fetching={fetching}
           fetchError={fetchError}
-          reload={reload}
-          userId={userId}
+          refetch={reload}
         />
       </PageLayout>
     </Layout>

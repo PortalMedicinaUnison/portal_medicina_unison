@@ -4,8 +4,9 @@ import { getErrorMessage } from '../../../../utils/errors';
 
 
 export default function useGetReportsByStudent(id) {
-  const [reports, setReports]       = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [reports, setReports] = useState(null);
+  // Con id arranca cargando: así no se muestra la lista vacía antes de la primera petición.
+  const [loading, setLoading] = useState(Boolean(id));
   const [error, setError]     = useState(null);
 
   const getReportsByStudent = useCallback(async (id) => {
