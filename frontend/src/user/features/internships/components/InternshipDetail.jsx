@@ -1,10 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
-import { INTERNSHIP_STATUS, INTERNSHIP_STATUS_LABELS, PROGRAMS, labelOf } from '../../../../utils/constants';
+import { INTERNSHIP_STATUS, INTERNSHIP_STATUS_LABELS, PROGRAMS, isExitStatus, labelOf } from '../../../../utils/constants';
 import { promotionLabel } from '../../../../utils/utils';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
+import RecordExitNotice from '../../../../components/RecordExitNotice';
 
 
 function InternshipDetail({ internship, fetching, fetchError, refetch }) {
@@ -46,9 +47,17 @@ function InternshipDetail({ internship, fetching, fetchError, refetch }) {
 
   const promotion = internship.application?.promotion;
   const { site } = internship;
+  const hasLeft = isExitStatus(internship.status);
 
   return (
     <div className="info-container">
+      {hasLeft && (
+        <RecordExitNotice
+          record={internship}
+          programName="internado"
+          afterWithdrawal="Si vuelves a participar, la coordinación te asignará a una promoción posterior."
+        />
+      )}
       <div className="item-container">
         <dl className="item-list">
           <div className="item-row">
@@ -78,7 +87,7 @@ function InternshipDetail({ internship, fetching, fetchError, refetch }) {
           program={PROGRAMS.INTERNSHIP}
           applicationId={internship.application_id}
           started
-          closed={Number(internship.status) === INTERNSHIP_STATUS.FINISHED || Boolean(promotion?.is_finished)}
+          closed={Number(internship.status) === INTERNSHIP_STATUS.FINISHED || hasLeft || Boolean(promotion?.is_finished)}
         />
       </div>
     </div>

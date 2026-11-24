@@ -136,9 +136,9 @@ function InscriptionListPage({ program }) {
                 <table className="table">
                   <thead>
                     <tr>
-                      <th className="w-28">Expediente</th>
+                      <th className="w-32">Expediente</th>
                       <th className="text-left">Alumno</th>
-                      <th className="w-28">Promedio</th>
+                      <th className="w-32">Promedio</th>
                       <th className="w-32">Estatus</th>
                       <th className="w-40">Documentos</th>
                       <th>{config.placeLabel}</th>

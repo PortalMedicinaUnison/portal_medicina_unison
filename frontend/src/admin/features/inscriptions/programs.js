@@ -13,6 +13,11 @@ export const INSCRIPTION_PROGRAMS = {
     recordIdKey: 'internship_id',
     placeLabel: 'Sede',
     recordStatusLabels: INTERNSHIP_STATUS_LABELS,
+    // Qué implica registrar una renuncia (4) o una baja (5), según el formato y el manual del internado.
+    exitHints: {
+      4: 'Regístrala al recibir el formato de renuncia firmado. El lugar en la sede queda libre y el alumno podrá asignarse a una promoción posterior.',
+      5: 'Baja o cancelación por las causales del manual del internado. El lugar en la sede queda libre y el alumno ya no podrá modificar sus documentos.',
+    },
     listPath: adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_LIST),
     plazaResultsPath: adminAbs(ROUTES.ADMIN.INTERNSHIP_PLAZA_RESULTS),
     detailPath: (applicationId) => adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_DETAIL(applicationId)),
@@ -25,6 +30,13 @@ export const INSCRIPTION_PROGRAMS = {
     recordIdKey: 'social_service_id',
     placeLabel: 'Plaza',
     recordStatusLabels: SOCIAL_SERVICE_STATUS_LABELS,
+    // Lineamientos del servicio social: renuncia (art. 55) y baja o cancelación (sanciones).
+    exitHints: {
+      4: 'La plaza queda libre. Según el art. 55 de los lineamientos, podrá inscribirse a una nueva promoción un año después de su renuncia (salvo dictamen por enfermedad o fuerza mayor).',
+      5: 'Baja o cancelación por las causales de los lineamientos del servicio social. La plaza queda libre y el alumno ya no podrá modificar sus documentos.',
+    },
+    // La renuncia a servicio social espera un año para reinscribirse (art. 55).
+    waitAfterWithdrawal: true,
     listPath: adminAbs(ROUTES.ADMIN.SOCIAL_SERVICE_APPLICATION_LIST),
     plazaResultsPath: adminAbs(ROUTES.ADMIN.SOCIAL_SERVICE_PLAZA_RESULTS),
     detailPath: (applicationId) => adminAbs(ROUTES.ADMIN.SOCIAL_SERVICE_APPLICATION_DETAIL(applicationId)),

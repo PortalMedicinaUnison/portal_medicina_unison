@@ -1,10 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
-import { PROGRAMS, SOCIAL_SERVICE_STATUS, SOCIAL_SERVICE_STATUS_LABELS, labelOf } from '../../../../utils/constants';
+import { PROGRAMS, SOCIAL_SERVICE_STATUS, SOCIAL_SERVICE_STATUS_LABELS, isExitStatus, labelOf } from '../../../../utils/constants';
 import { promotionLabel } from '../../../../utils/utils';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
+import RecordExitNotice from '../../../../components/RecordExitNotice';
 
 
 function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
@@ -47,9 +48,17 @@ function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
 
   const promotion = socialService.application?.promotion;
   const { site } = socialService;
+  const hasLeft = isExitStatus(socialService.status);
 
   return (
     <div className="info-container">
+      {hasLeft && (
+        <RecordExitNotice
+          record={socialService}
+          programName="servicio social"
+          afterWithdrawal="Podrás inscribirte a una nueva promoción un año después de tu renuncia (art. 55 de los lineamientos), salvo dictamen por enfermedad o fuerza mayor."
+        />
+      )}
       <div className="item-container">
         <dl className="item-list">
           <div className="item-row">
@@ -79,7 +88,7 @@ function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
           program={PROGRAMS.SOCIAL_SERVICE}
           applicationId={socialService.application_id}
           started
-          closed={Number(socialService.status) === SOCIAL_SERVICE_STATUS.FINISHED || Boolean(promotion?.is_finished)}
+          closed={Number(socialService.status) === SOCIAL_SERVICE_STATUS.FINISHED || hasLeft || Boolean(promotion?.is_finished)}
         />
       </div>
     </div>

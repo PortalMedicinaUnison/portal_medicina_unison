@@ -145,7 +145,7 @@ function InscriptionDetailPage({ program }) {
             {record && (
               <div className="mt-12">
                 <h3 className="mb-4 text-lg font-semibold text-gray-900">Administrar {config.recordName}</h3>
-                <RecordManagement key={`${record.site_id}-${record.status}`} config={config} application={application} onChange={load} />
+                <RecordManagement config={config} application={application} onChange={load} />
               </div>
             )}
             {!record && (

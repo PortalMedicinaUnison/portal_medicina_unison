@@ -3,8 +3,27 @@ import Modal from '../../../../utils/ui/Modal';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import { bulkAssignRequest, getCandidatesRequest } from '../../../../services/inscriptionService';
 import { getErrorMessage } from '../../../../utils/errors';
-import { formatFullName, normalizeText, promotionLabel } from '../../../../utils/utils';
+import { formatDate, formatFullName, normalizeText, promotionLabel, todayISO } from '../../../../utils/utils';
 import { parseStudentList } from '../programs';
+
+// ¿Pasó menos de un año desde `isoDate`? (servicio social: espera tras la renuncia, art. 55)
+function lessThanAYearAgo(isoDate) {
+  if (!isoDate) return false;
+  const [year, month, day] = isoDate.split('-').map(Number);
+  const anniversary = `${year + 1}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  return todayISO() < anniversary;
+}
+
+function PreviousExit({ exit, config }) {
+  const withdrawal = exit.status === 4;
+  const waiting = withdrawal && config.waitAfterWithdrawal && lessThanAYearAgo(exit.exit_date);
+  return (
+    <span className={`block text-xs ${waiting ? 'text-amber-700' : 'text-gray-500'}`}>
+      {withdrawal ? 'Renunció' : 'Causó baja'} el {formatDate(exit.exit_date)} ({exit.promotion_label})
+      {waiting && ' · aún no cumple un año (art. 55)'}
+    </span>
+  );
+}
 
 
 /**
@@ -139,7 +158,10 @@ function AssignStudentsDialog({ config, promotion, onClose, onAssigned }) {
                       <li key={c.academic_id}>
                         <label className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50">
                           <input type="checkbox" checked={selected.has(c.academic_id)} onChange={() => toggle(c.academic_id)} />
-                          <span className="min-w-0 flex-1 truncate">{formatFullName(c)}</span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate">{formatFullName(c)}</span>
+                            {c.previous_exit && <PreviousExit exit={c.previous_exit} config={config} />}
+                          </span>
                           <span className="font-mono text-xs text-gray-500">{c.academic_id}</span>
                         </label>
                       </li>
