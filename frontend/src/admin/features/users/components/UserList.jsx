@@ -150,8 +150,8 @@ function UserList({ users, fetching, fetchError, refetch }) {
               <th className='w-2/12'>Expediente</th>
               <th className='w-3/12 hidden md:table-cell'>Correo</th>
               <th className='w-2/12'>Rol</th>
-              <th className='w-1/12'>Estado</th>
-              <th className='w-1/12'></th>
+              <th className='w-28'>Estado</th>
+              <th className='w-16'></th>
             </tr>
           </thead>
           <tbody>
