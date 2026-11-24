@@ -32,8 +32,8 @@ function InstitutionSiteList({ institutionId }) {
         <table className="table">
           <thead>
             <tr>
-              <th className='w-5/12'>Razón social</th>
-              <th className='w-3/12'>Ciudad</th>
+              <th className='w-5/12'>Sede</th>
+              <th className='w-3/12'>Municipio</th>
               <th className='w-4/12'>Jefe de enseñanza</th>
             </tr>
           </thead>

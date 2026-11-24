@@ -78,6 +78,14 @@ def validate_not_past(value: date) -> date:
 def validate_not_future(value: date) -> date:
     if value > local_today():
         raise ValueError("La fecha no puede ser posterior a hoy.")
+    if value.year < 2000:
+        raise ValueError("La fecha no es válida.")
+    return value
+
+
+def validate_not_future(value: date) -> date:
+    if value > local_today():
+        raise ValueError("La fecha no puede ser posterior a hoy.")
     return value
 
 

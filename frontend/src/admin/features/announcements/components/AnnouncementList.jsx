@@ -107,6 +107,7 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por título o descripción"
+          aria-label="Buscar por título o descripción"
         />
          <select
           className="btn-tertiary--light"
@@ -156,7 +157,7 @@ function AnnouncementList({ announcements, fetching, fetchError, refetch }) {
               filtered.map((item) => (
               <tr key={item.announcement_id}>
                 <td className="text-left">{item.title}</td>
-                <td className="text-left">{item.description}</td>
+                <td className="text-left" title={item.description}>{item.description}</td>
                 <td>{labelOf(ANNOUNCEMENT_TYPE_LABELS, item.announcement_type)}</td>
                 <td>{item.is_visible ? 'Activo' : 'Inactivo'}</td>
                 <td className="overflow-visible text-right">

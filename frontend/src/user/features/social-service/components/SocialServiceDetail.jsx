@@ -1,9 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
-import { PROGRAMS, SOCIAL_SERVICE_STATUS, SOCIAL_SERVICE_STATUS_LABELS, PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { PROGRAMS, SOCIAL_SERVICE_STATUS, SOCIAL_SERVICE_STATUS_LABELS, isExitStatus, labelOf } from '../../../../utils/constants';
+import { promotionLabel } from '../../../../utils/utils';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
+import RecordExitNotice from '../../../../components/RecordExitNotice';
+import SiteInfo from '../../../../components/SiteInfo';
 
 
 function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
@@ -46,15 +49,29 @@ function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
 
   const promotion = socialService.application?.promotion;
   const { site } = socialService;
+  const hasLeft = isExitStatus(socialService.status);
 
   return (
     <div className="info-container">
+      {Number(socialService.status) === SOCIAL_SERVICE_STATUS.FINISHED && (
+        <div className="mb-8 rounded-md border border-green-200 bg-green-50 p-4 text-sm text-green-900" role="status">
+          <p className="font-semibold">Liberaste tu servicio social.</p>
+          <p className="mt-1">Tus documentos quedan solo para consulta.</p>
+        </div>
+      )}
+      {hasLeft && (
+        <RecordExitNotice
+          record={socialService}
+          programName="servicio social"
+          afterWithdrawal="Podrás inscribirte a una nueva promoción un año después de tu renuncia (art. 55 de los lineamientos), salvo dictamen por enfermedad o fuerza mayor."
+        />
+      )}
       <div className="item-container">
         <dl className="item-list">
           <div className="item-row">
             <dt className="item-header">Promoción</dt>
             <dd className="item-text">
-              {promotion ? `${promotion.year} - ${labelOf(PERIOD_LABELS, promotion.period)}` : '—'}
+              {promotionLabel(promotion)}
             </dd>
           </div>
           <div className="item-row">
@@ -64,9 +81,7 @@ function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
           <div className="item-row">
             <dt className="item-header">Plaza</dt>
             <dd className="item-text">
-              {site
-                ? `${site.name} (${site.city})`
-                : <span className="italic text-gray-500">Pendiente de asignación de plaza</span>}
+              <SiteInfo site={site} emptyText="Pendiente de asignación de plaza" />
             </dd>
           </div>
         </dl>
@@ -78,7 +93,7 @@ function SocialServiceDetail({ socialService, fetching, fetchError, refetch }) {
           program={PROGRAMS.SOCIAL_SERVICE}
           applicationId={socialService.application_id}
           started
-          closed={Number(socialService.status) === SOCIAL_SERVICE_STATUS.FINISHED || Boolean(promotion?.is_finished)}
+          closed={Number(socialService.status) === SOCIAL_SERVICE_STATUS.FINISHED || hasLeft || Boolean(promotion?.is_finished)}
         />
       </div>
     </div>

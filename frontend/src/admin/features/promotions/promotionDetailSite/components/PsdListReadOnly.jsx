@@ -48,6 +48,16 @@ function PsdListReadOnly({ promotionId }) {
               ))
             )}
           </tbody>
+          {psds?.length > 0 && (
+            <tfoot>
+              <tr className="font-semibold">
+                <td className="text-left">Total</td>
+                <td>
+                  {psds.reduce((sum, psd) => sum + (psd.occupied ?? 0), 0)} / {psds.reduce((sum, psd) => sum + psd.capacity, 0)}
+                </td>
+              </tr>
+            </tfoot>
+          )}
         </table>
       </div>
     </div>

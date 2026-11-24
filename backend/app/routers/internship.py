@@ -7,11 +7,14 @@ from core.dependencies import AdminUser, CurrentUser, DbSession
 from models.internship import ApplicationStatusEnum, InternshipStatusEnum
 from models.promotion import ProgramEnum
 from routers.document import add_expediente_routes
+from routers.inscription import add_inscription_routes
 from schemas.internship import InternshipApplicationInput, InternshipApplicationOutput, InternshipOutput, InternshipUpdate
 
 # ----------------------  INTERNSHIP APPLICATION  ----------------------
 
 internship_application_router = APIRouter(prefix="/internship-applications", tags=["Asignaciones de internado"])
+# En bloque: /candidates, /bulk, /plaza-results y PATCH /{application_id} (antes de las rutas con id).
+add_inscription_routes(internship_application_router, ProgramEnum.INTERNSHIP, InternshipApplicationOutput)
 
 
 @internship_application_router.get("", response_model=List[InternshipApplicationOutput])

@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 
-from tests.conftest import auth
+from tests.conftest import PDF_BYTES, PNG_BYTES, auth
 
 
 def _report(catalog, **overrides):
@@ -80,3 +80,54 @@ def test_report_ownership_edit_and_status(client, admin, student, other_student,
     open_only = client.get("/reports", params={"is_open": True}, headers=auth(admin)).json()
     assert open_only == []
     assert client.delete(url, headers=auth(admin)).status_code == 204
+
+
+def _attach(client, user, report_id, content=PDF_BYTES, filename="evidencia.pdf", media_type="application/pdf"):
+    return client.post(f"/reports/{report_id}/attachments", headers=auth(user), files={"file": (filename, content, media_type)})
+
+
+def test_report_evidence_files(client, admin, student, other_student, catalog):
+    report_id = client.post("/reports", json=_report(catalog), headers=auth(student)).json()["report_id"]
+    pdf = _attach(client, student, report_id)
+    assert pdf.status_code == 201, pdf.text
+    assert pdf.json()["attachments"][0]["original_filename"] == "evidencia.pdf"
+    png = _attach(client, student, report_id, PNG_BYTES, "foto.png", "image/png")
+    assert [a["media_type"] for a in png.json()["attachments"]] == ["application/pdf", "image/png"]
+    assert _attach(client, student, report_id, b"GIF89a" + b"\x00" * 20, "x.gif", "image/gif").status_code == 400
+
+    # Solo el estudiante dueño adjunta; la coordinación ve y descarga.
+    assert _attach(client, other_student, report_id).status_code == 404
+    assert _attach(client, admin, report_id).status_code == 403
+    attachment_id = png.json()["attachments"][1]["attachment_id"]
+    file_url = f"/reports/{report_id}/attachments/{attachment_id}/file"
+    seen = client.get(file_url, headers=auth(admin))
+    assert seen.status_code == 200 and seen.headers["content-type"] == "image/png" and seen.content == PNG_BYTES
+    assert client.get(file_url, headers=auth(other_student)).status_code == 404
+
+    removed = client.delete(f"/reports/{report_id}/attachments/{attachment_id}", headers=auth(student))
+    assert removed.status_code == 200 and len(removed.json()["attachments"]) == 1
+    assert client.get(file_url, headers=auth(student)).status_code == 404
+    for _ in range(4):
+        assert _attach(client, student, report_id).status_code == 201
+    too_many = _attach(client, student, report_id)
+    assert too_many.status_code == 409 and "hasta 5" in too_many.json()["detail"]
+
+    # Con el reporte cerrado ya no se agregan ni se quitan.
+    client.patch(f"/reports/{report_id}/status", json={"is_open": False}, headers=auth(admin))
+    closed = client.get(f"/reports/{report_id}", headers=auth(student)).json()
+    assert _attach(client, student, report_id).status_code == 409
+    first = closed["attachments"][0]["attachment_id"]
+    assert client.delete(f"/reports/{report_id}/attachments/{first}", headers=auth(student)).status_code == 409
+
+
+def test_anonymous_report_evidence_hides_file_names(client, admin, student, catalog):
+    report_id = client.post("/reports", json=_report(catalog, anonymity=True), headers=auth(student)).json()["report_id"]
+    attached = _attach(client, student, report_id, PNG_BYTES, "foto de Juan Perez.png", "image/png").json()
+    attachment_id = attached["attachments"][0]["attachment_id"]
+    assert attached["attachments"][0]["original_filename"] == "foto de Juan Perez.png"  # el estudiante ve el suyo
+
+    seen = client.get(f"/reports/{report_id}", headers=auth(admin)).json()
+    assert seen["attachments"][0]["original_filename"] == "evidencia-1.png"
+    file = client.get(f"/reports/{report_id}/attachments/{attachment_id}/file", headers=auth(admin))
+    assert file.status_code == 200
+    assert "Juan" not in file.headers["content-disposition"] and "evidencia-1.png" in file.headers["content-disposition"]

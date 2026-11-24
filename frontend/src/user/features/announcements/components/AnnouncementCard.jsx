@@ -35,14 +35,7 @@ function AnnouncementCard({ announcements, fetching, fetchError, refetch }) {
   return (
     <div className="flex-1 space-y-6">
       {!announcements || announcements.length === 0 ? (
-          <div className="card">
-            <h3 className="card-title">
-              No hay avisos disponibles
-            </h3>
-            <p className="card-message">
-              Actualmente no hay avisos para mostrar.
-            </p>
-          </div>
+          <p className="text-sm text-gray-500">Por ahora no hay avisos de la coordinación.</p>
       ) : (
         announcements.map((item) => (
           <div key={item.announcement_id} className="card">

@@ -101,6 +101,7 @@ function InstitutionList({ institutions, fetching, fetchError, refetch }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por razón social"
+          aria-label="Buscar por razón social"
         />
       </div>
 

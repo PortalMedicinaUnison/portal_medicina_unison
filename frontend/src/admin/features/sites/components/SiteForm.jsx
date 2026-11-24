@@ -6,6 +6,7 @@ import useGetInstitutions from "../../institutions/hooks/useGetInstitutions.js";
 import { cleanFormData } from "../../../../utils/utils";
 import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
 import { validateEmail } from "../../../../utils/validations.js";
+import SiteProgramsField from "./SiteProgramsField.jsx";
 
 
 const INITIAL_FORM = {
@@ -19,6 +20,8 @@ const INITIAL_FORM = {
   teachingDeputyName: '',
   teachingDeputyEmail: '',
   teachingDeputyPhone: '',
+  forInternship: true,
+  forSocialService: true,
 };
 
 function SiteForm() {
@@ -54,16 +57,19 @@ function SiteForm() {
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.name) errors.push('La razón social es requerida.');
+    if (!cleanedData.name) errors.push('El nombre de la sede es obligatorio.');
     if (!cleanedData.institutionId) errors.push('La institución es requerida.');
     if (!cleanedData.address) errors.push('La dirección es requerida.');
-    if (!cleanedData.city) errors.push('La ciudad es requerida.');
+    if (!cleanedData.city) errors.push('El municipio es obligatorio.');
     if (!cleanedData.teachingHeadName) errors.push('El nombre del jefe de enseñanza es requerido.');
     if (cleanedData.teachingHeadEmail && !validateEmail(cleanedData.teachingHeadEmail).valid) {
       errors.push('El correo del jefe de enseñanza no es válido.');
     }
     if (cleanedData.teachingDeputyEmail && !validateEmail(cleanedData.teachingDeputyEmail).valid) {
       errors.push('El correo del subjefe de enseñanza no es válido.');
+    }
+    if (!cleanedData.forInternship && !cleanedData.forSocialService) {
+      errors.push('Marca si la sede ofrece cupos para el internado, el servicio social o ambos.');
     }
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
@@ -81,6 +87,8 @@ function SiteForm() {
       teaching_deputy_name: cleanedData.teachingDeputyName,
       teaching_deputy_email: cleanedData.teachingDeputyEmail,
       teaching_deputy_phone: cleanedData.teachingDeputyPhone,
+      for_internship: cleanedData.forInternship,
+      for_social_service: cleanedData.forSocialService,
     };
     
     const response = await createSite(payload);
@@ -133,9 +141,10 @@ function SiteForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razón social *</dt>
+              <dt className="item-header"><label htmlFor="site-name">Nombre de la sede *</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-name"
                   name="name"
                   type="text"
                   value={formData.name}
@@ -150,9 +159,10 @@ function SiteForm() {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Institución *</dt>
+              <dt className="item-header"><label htmlFor="site-institution-id">Institución *</label></dt>
               <dd className="item-text">
                 <select
+                  id="site-institution-id"
                   name="institutionId"
                   value={formData.institutionId}
                   onChange={handleChange}
@@ -170,10 +180,18 @@ function SiteForm() {
               </dd>
             </div>
 
+            <SiteProgramsField
+              forInternship={formData.forInternship}
+              forSocialService={formData.forSocialService}
+              onChange={handleChange}
+              disabled={saving}
+            />
+
             <div className="item-row">
-              <dt className="item-header">Dirección *</dt>
+              <dt className="item-header"><label htmlFor="site-address">Dirección *</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-address"
                   name="address"
                   type="text"
                   value={formData.address}
@@ -188,9 +206,10 @@ function SiteForm() {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Ciudad *</dt>
+              <dt className="item-header"><label htmlFor="site-city">Municipio *</label></dt>
               <dd className="item-text">
                 <select
+                  id="site-city"
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
@@ -208,9 +227,10 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza *</dt>
+              <dt className="item-header"><label htmlFor="site-teaching-head-name">Jefe de enseñanza *</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-teaching-head-name"
                   name="teachingHeadName"
                   type="text"
                   value={formData.teachingHeadName}
@@ -224,9 +244,10 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza (correo)</dt>
+              <dt className="item-header"><label htmlFor="site-teaching-head-email">Jefe de enseñanza (correo)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-teaching-head-email"
                   name="teachingHeadEmail"
                   type="text"
                   value={formData.teachingHeadEmail}
@@ -239,9 +260,10 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza (teléfono)</dt>
+              <dt className="item-header"><label htmlFor="site-teaching-head-phone">Jefe de enseñanza (teléfono)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-teaching-head-phone"
                   name="teachingHeadPhone"
                   type="text"
                   value={formData.teachingHeadPhone}
@@ -254,9 +276,10 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza</dt>
+              <dt className="item-header"><label htmlFor="site-teaching-deputy-name">Subjefe de enseñanza</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-teaching-deputy-name"
                   name="teachingDeputyName"
                   type="text"
                   value={formData.teachingDeputyName}
@@ -269,9 +292,10 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza (correo)</dt>
+              <dt className="item-header"><label htmlFor="site-teaching-deputy-email">Subjefe de enseñanza (correo)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-teaching-deputy-email"
                   name="teachingDeputyEmail"
                   type="text"
                   value={formData.teachingDeputyEmail}
@@ -284,9 +308,10 @@ function SiteForm() {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza (teléfono)</dt>
+              <dt className="item-header"><label htmlFor="site-teaching-deputy-phone">Subjefe de enseñanza (teléfono)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-teaching-deputy-phone"
                   name="teachingDeputyPhone"
                   type="text"
                   value={formData.teachingDeputyPhone}

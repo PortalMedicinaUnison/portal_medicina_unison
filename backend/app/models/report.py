@@ -1,8 +1,8 @@
 from datetime import date
 from enum import IntEnum
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import Boolean, Date, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Date, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import BaseModel
@@ -44,6 +44,29 @@ class Report(BaseModel):
 
     site: Mapped["Site"] = relationship(lazy="joined")
     student: Mapped["User"] = relationship(lazy="joined", viewonly=True)
+    attachments: Mapped[List["ReportAttachment"]] = relationship(
+        primaryjoin="and_(Report.report_id == ReportAttachment.report_id, ReportAttachment.is_active.is_(True))",
+        order_by="ReportAttachment.attachment_id", lazy="selectin", viewonly=True,
+    )
 
     def __repr__(self):
         return f"<Report(report_id={self.report_id}, report_type={self.report_type.name}, is_open={self.is_open})>"
+
+
+# ----------------------  REPORT ATTACHMENT  ----------------------
+
+class ReportAttachment(BaseModel):
+    """Archivo de evidencia de un reporte (PDF o imagen) que sube el estudiante mientras el reporte está abierto."""
+    __tablename__ = "report_attachments"
+    __table_args__ = (Index("ix_report_attachments_report_id", "report_id"),)
+
+    attachment_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    report_id: Mapped[int] = mapped_column(Integer, ForeignKey("reports.report_id"), nullable=False)
+    file_path: Mapped[str] = mapped_column(String(255), nullable=False)
+    original_filename: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    media_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    size: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    def __repr__(self):
+        return f"<ReportAttachment(attachment_id={self.attachment_id}, report_id={self.report_id})>"
+

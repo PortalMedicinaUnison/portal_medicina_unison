@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES, adminAbs } from '../../../../config';
 import { useUser } from '../../../../contexts/UserContext';
 import useDeleteUser from '../hooks/useDeleteUser';
 import useReactivateUser from '../hooks/useReactivateUser';
@@ -55,13 +54,17 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
 
 // ---------------------- EFFECTS ----------------------
 
+  // Tras desactivar se queda en la ficha (con "Reactivar cuenta" a la mano para deshacerlo): en la
+  // lista, que muestra solo cuentas activas, la cuenta parecería haber desaparecido.
+  const [notice, setNotice] = useState(null);
   useEffect(() => {
     if (deleted) {
       setShowConfirmDelete(false);
       reset();
-      navigate(adminAbs(ROUTES.ADMIN.USER_LIST), { replace: true });
+      setNotice('Cuenta desactivada: ya no puede iniciar sesión. Puedes deshacerlo con "Reactivar cuenta".');
+      refetch?.();
     }
-  }, [deleted, navigate, reset]);
+  }, [deleted, refetch, reset]);
 
   useEffect(() => {
     if (deleteError) {
@@ -73,6 +76,7 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
   useEffect(() => {
     if (reactivated) {
       resetReactivate();
+      setNotice('Cuenta reactivada: ya puede volver a iniciar sesión.');
       refetch?.();
     }
   }, [reactivated, refetch, resetReactivate]);
@@ -115,6 +119,7 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
 
   return (
     <div className="info-container">
+      {notice && <div className="alert-success mb-6" role="status">{notice}</div>}
       <div className="item-container">
         <div className="flex items-center gap-4 mb-6">
           <UserAvatar user={user} className="size-20 rounded-full ring-1 ring-gray-200" />
@@ -185,11 +190,11 @@ function UserDetailAdmin({ user, fetching, fetchError, refetch, userId }) {
         {canDeactivate && (
           <button
             type="button"
-            className='btn-tertiary'
+            className='btn-tertiary text-red-600'
             onClick={handleDeleteButton}
             disabled={deleting}
           >
-            {deleting ? 'Desactivando...' : 'Desactivar usuario'}
+            {deleting ? 'Desactivando...' : 'Desactivar cuenta'}
           </button>
         )}
       </div>

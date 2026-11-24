@@ -22,7 +22,7 @@ function PageLayout({ title, actions, pretitle = 'Ir atrás', children }) {
             )}
 
             {title && (
-              <h2 className="font-bold text-gray-900 text-3xl tracking-tight truncate">
+              <h2 className="font-bold text-gray-900 text-2xl sm:text-3xl tracking-tight break-words sm:truncate">
                 {title}
               </h2>
             )}

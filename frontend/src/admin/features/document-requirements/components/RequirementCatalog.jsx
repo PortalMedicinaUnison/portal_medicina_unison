@@ -1,8 +1,6 @@
 import { useRef, useState } from 'react';
 import { getRequirementTemplateRequest } from '../../../../services/documentService';
-import {
-  DOCUMENT_PROVIDERS, DOCUMENT_STAGES, DOCUMENT_STAGE_LABELS_BY_PROGRAM, PROGRAMS, PROGRAM_LABELS,
-} from '../../../../utils/constants';
+import { DOCUMENT_PROVIDERS, DOCUMENT_STAGES, DOCUMENT_STAGE_LABELS_BY_PROGRAM } from '../../../../utils/constants';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
@@ -25,7 +23,12 @@ function TemplateControls({ requirement, busy, onUpload, onRemove, onDownload })
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
       <span className="text-gray-600">
-        Formato: {requirement.has_template ? <strong className="font-medium text-gray-800">{requirement.template_filename}</strong> : 'sin formato'}
+        Formato: {requirement.has_template
+          ? <strong className="font-medium text-gray-800">{requirement.template_filename}</strong>
+          : (/formato/i.test(requirement.description ?? '')
+            // Las indicaciones piden descargar un formato que todavía no se subió.
+            ? <strong className="font-medium text-amber-700">falta subirlo (las indicaciones lo mencionan)</strong>
+            : 'sin formato')}
       </span>
       {requirement.has_template && (
         <button type="button" className="btn-tertiary text-xs" onClick={() => onDownload(requirement)}>Descargar</button>
@@ -42,8 +45,8 @@ function TemplateControls({ requirement, busy, onUpload, onRemove, onDownload })
   );
 }
 
-function RequirementCatalog() {
-  const [program, setProgram] = useState(PROGRAMS.INTERNSHIP);
+// Catálogo de un programa (lo elige el menú: ?program= en la URL de la página).
+function RequirementCatalog({ program }) {
   const {
     requirements, loading, error, reload, save, retire, uploadTemplate, removeTemplate,
     busyKey, actionError, setActionError, clearActionError,
@@ -90,30 +93,15 @@ function RequirementCatalog() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="inline-flex rounded-md ring-1 ring-gray-300" role="tablist" aria-label="Programa">
-          {[PROGRAMS.INTERNSHIP, PROGRAMS.SOCIAL_SERVICE].map((value) => (
-            <button
-              key={value}
-              type="button"
-              role="tab"
-              aria-selected={program === value}
-              className={`px-4 py-1.5 text-sm first:rounded-l-md last:rounded-r-md ${program === value ? 'bg-indigo-600 text-white' : 'bg-white text-gray-800 hover:bg-gray-50'}`}
-              onClick={() => { clearActionError(); setProgram(value); }}
-            >
-              {PROGRAM_LABELS[value]}
-            </button>
-          ))}
-        </div>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <p className="max-w-3xl text-sm text-gray-600">
+          Lo que se pide a los alumnos en cada etapa. Los obligatorios de inscripción deben estar aprobados para
+          registrar la plaza, y los de las etapas siguientes para finalizar el internado o liberar el servicio social.
+        </p>
         <button type="button" className="btn-primary" onClick={() => openForm(null, DOCUMENT_STAGES.INSCRIPTION)}>
           Agregar documento
         </button>
       </div>
-
-      <p className="text-sm text-gray-600">
-        Lo que se pide a los alumnos en cada etapa. Los obligatorios de inscripción deben estar aprobados para
-        registrar la plaza, y los de las etapas siguientes para finalizar el internado o liberar el servicio social.
-      </p>
 
       {shownError && (
         <div className="alert-error flex items-start justify-between gap-4" role="alert">

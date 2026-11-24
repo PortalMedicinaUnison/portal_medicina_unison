@@ -108,6 +108,7 @@ function SurveyList({ surveys, fetching, fetchError, refetch }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por título, url o descripción"
+          aria-label="Buscar por título, url o descripción"
         />
         <select
           className="btn-tertiary--light"

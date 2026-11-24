@@ -6,6 +6,7 @@ import useGetInstitutions from "../../institutions/hooks/useGetInstitutions.js";
 import { cleanFormData } from "../../../../utils/utils";
 import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
 import { validateEmail } from "../../../../utils/validations.js";
+import SiteProgramsField from "./SiteProgramsField.jsx";
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 
@@ -20,6 +21,8 @@ const INITIAL_FORM = {
   teachingDeputyName: '',
   teachingDeputyEmail: '',
   teachingDeputyPhone: '',
+  forInternship: true,
+  forSocialService: true,
 };
 
 function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
@@ -59,16 +62,19 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
 
     // ---------------------- VALIDATIONS ----------------------
     const errors = [];
-    if (!cleanedData.name) errors.push('La razón social es requerida.');
+    if (!cleanedData.name) errors.push('El nombre de la sede es obligatorio.');
     if (!cleanedData.institutionId) errors.push('La institución es requerida.');
     if (!cleanedData.address) errors.push('La dirección es requerida.');
-    if (!cleanedData.city) errors.push('La ciudad es requerida.');
+    if (!cleanedData.city) errors.push('El municipio es obligatorio.');
     if (!cleanedData.teachingHeadName) errors.push('El nombre del jefe de enseñanza es requerido.');
     if (cleanedData.teachingHeadEmail && !validateEmail(cleanedData.teachingHeadEmail).valid) {
       errors.push('El correo del jefe de enseñanza no es válido.');
     }
     if (cleanedData.teachingDeputyEmail && !validateEmail(cleanedData.teachingDeputyEmail).valid) {
       errors.push('El correo del subjefe de enseñanza no es válido.');
+    }
+    if (!cleanedData.forInternship && !cleanedData.forSocialService) {
+      errors.push('Marca si la sede ofrece cupos para el internado, el servicio social o ambos.');
     }
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
@@ -86,6 +92,8 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
       teaching_deputy_name: cleanedData.teachingDeputyName,
       teaching_deputy_email: cleanedData.teachingDeputyEmail,
       teaching_deputy_phone: cleanedData.teachingDeputyPhone,
+      for_internship: cleanedData.forInternship,
+      for_social_service: cleanedData.forSocialService,
     };
     
     await updateSite(siteId, payload);
@@ -106,6 +114,8 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
         teachingDeputyName: site.teaching_deputy_name || '',
         teachingDeputyEmail: site.teaching_deputy_email || '',
         teachingDeputyPhone: site.teaching_deputy_phone || '',
+        forInternship: site.for_internship ?? true,
+        forSocialService: site.for_social_service ?? true,
       });
     }
   }, [site]);
@@ -163,9 +173,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Razón social *</dt>
+              <dt className="item-header"><label htmlFor="site-edit-name">Nombre de la sede *</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-name"
                   name="name"
                   type="text"
                   value={formData.name}
@@ -179,9 +190,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Institución *</dt>
+              <dt className="item-header"><label htmlFor="site-edit-institution-id">Institución *</label></dt>
               <dd className="item-text">
                 <select
+                  id="site-edit-institution-id"
                   name="institutionId"
                   value={formData.institutionId}
                   onChange={handleChange}
@@ -199,10 +211,18 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
 
+            <SiteProgramsField
+              forInternship={formData.forInternship}
+              forSocialService={formData.forSocialService}
+              onChange={handleChange}
+              disabled={saving}
+            />
+
             <div className="item-row">
-              <dt className="item-header">Dirección *</dt>
+              <dt className="item-header"><label htmlFor="site-edit-address">Dirección *</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-address"
                   name="address"
                   type="text"
                   value={formData.address}
@@ -216,9 +236,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
             </div>
 
             <div className="item-row">
-              <dt className="item-header">Ciudad *</dt>
+              <dt className="item-header"><label htmlFor="site-edit-city">Municipio *</label></dt>
               <dd className="item-text">
                 <select
+                  id="site-edit-city"
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
@@ -236,9 +257,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza *</dt>
+              <dt className="item-header"><label htmlFor="site-edit-teaching-head-name">Jefe de enseñanza *</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-teaching-head-name"
                   name="teachingHeadName"
                   type="text"
                   value={formData.teachingHeadName}
@@ -251,9 +273,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza (correo)</dt>
+              <dt className="item-header"><label htmlFor="site-edit-teaching-head-email">Jefe de enseñanza (correo)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-teaching-head-email"
                   name="teachingHeadEmail"
                   type="text"
                   value={formData.teachingHeadEmail}
@@ -265,9 +288,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Jefe de enseñanza (teléfono)</dt>
+              <dt className="item-header"><label htmlFor="site-edit-teaching-head-phone">Jefe de enseñanza (teléfono)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-teaching-head-phone"
                   name="teachingHeadPhone"
                   type="text"
                   value={formData.teachingHeadPhone}
@@ -279,9 +303,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza</dt>
+              <dt className="item-header"><label htmlFor="site-edit-teaching-deputy-name">Subjefe de enseñanza</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-teaching-deputy-name"
                   name="teachingDeputyName"
                   type="text"
                   value={formData.teachingDeputyName}
@@ -293,9 +318,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza (correo)</dt>
+              <dt className="item-header"><label htmlFor="site-edit-teaching-deputy-email">Subjefe de enseñanza (correo)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-teaching-deputy-email"
                   name="teachingDeputyEmail"
                   type="text"
                   value={formData.teachingDeputyEmail}
@@ -307,9 +333,10 @@ function SiteUpdate({ site, fetching, fetchError, refetch, siteId }) {
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Subjefe de enseñanza (teléfono)</dt>
+              <dt className="item-header"><label htmlFor="site-edit-teaching-deputy-phone">Subjefe de enseñanza (teléfono)</label></dt>
               <dd className="item-text">
                 <input
+                  id="site-edit-teaching-deputy-phone"
                   name="teachingDeputyPhone"
                   type="text"
                   value={formData.teachingDeputyPhone}

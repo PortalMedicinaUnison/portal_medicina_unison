@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useDeletePromotion from '../hooks/useDeletePromotion';
 import PsdListReadOnly from '../promotionDetailSite/components/PsdListReadOnly';
-import { PERIOD_LABELS, PROGRAM_LABELS, labelOf } from '../../../../utils/constants';
+import { PROGRAM_LABELS, labelOf } from '../../../../utils/constants';
+import { formatDate } from '../../../../utils/utils';
+import { promotionStatus } from '../promotionDates';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import Modal from '../../../../utils/ui/Modal';
@@ -90,16 +92,16 @@ function PromotionDetail({ promotion, fetching, fetchError, refetch, promotionId
             <dd className="item-text">{labelOf(PROGRAM_LABELS, promotion.program)}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Año</dt>
-            <dd className="item-text">{promotion.year}</dd>
+            <dt className="item-header">Inicio</dt>
+            <dd className="item-text">{formatDate(promotion.start_date, { dateStyle: 'long' })}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Periodo</dt>
-            <dd className="item-text">{labelOf(PERIOD_LABELS, promotion.period)}</dd>
+            <dt className="item-header">Término</dt>
+            <dd className="item-text">{formatDate(promotion.end_date, { dateStyle: 'long' })}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Estatus</dt>
-            <dd className="item-text">{promotion.is_finished ? 'Finalizado' : 'No finalizado'}</dd>
+            <dd className="item-text">{promotionStatus(promotion)}</dd>
           </div>
         </dl>
       </div>
@@ -133,7 +135,7 @@ function PromotionDetail({ promotion, fetching, fetchError, refetch, promotionId
       <div className="info-actions mt-16">
         <button 
           type="button" 
-          className='btn-tertiary'
+          className='btn-tertiary text-red-600'
           onClick={handleDeleteButton}
           disabled={deleting}
         >

@@ -28,7 +28,7 @@ function SocialServiceApplicationUpdatePage() {
   return (
     <Layout>
       {/* Mientras carga se deja el título final para que no cambie al llegar los datos. */}
-      <PageLayout title={fetching || application ? 'Información importante' : 'Mi servicio social'}>
+      <PageLayout title={fetching || application ? 'Mi asignación · Servicio social' : 'Mi servicio social'}>
         <SocialServiceApplicationUpdate
           application={application}
           fetching={fetching}

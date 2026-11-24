@@ -1,11 +1,13 @@
+from datetime import date
 from typing import Optional
 
 from pydantic import BaseModel
 
 from models.internship import ApplicationStatusEnum
 from models.social_service import SocialServiceStatusEnum
-from schemas.common import AcademicId, ORMModel, UTCDateTime
+from schemas.common import AcademicId, NotFutureDate, OptionalStr, ORMModel, UTCDateTime
 from schemas.document import InscriptionProgress
+from schemas.inscription import AverageField
 from schemas.promotion import PromotionOutput
 from schemas.site import SiteBasicOutput
 from schemas.user import UserBasicOutput
@@ -13,9 +15,19 @@ from schemas.user import UserBasicOutput
 
 # ---------------------- SOCIAL SERVICE APPLICATION ----------------------
 
-class SocialServiceApplicationInput(BaseModel):
+class SocialServiceApplicationInput(AverageField):
     promotion_id: int
     academic_id: AcademicId
+
+
+class SocialServiceSummary(ORMModel):
+    """Lo esencial del servicio social para mostrarlo junto a la asignación."""
+    social_service_id: int
+    status: SocialServiceStatusEnum
+    site_id: Optional[int] = None
+    site: Optional[SiteBasicOutput] = None
+    exit_date: Optional[date] = None
+    exit_reason: Optional[str] = None
 
 
 class SocialServiceApplicationOutput(ORMModel):
@@ -27,7 +39,9 @@ class SocialServiceApplicationOutput(ORMModel):
     updated_at: UTCDateTime
     promotion: PromotionOutput
     student: Optional[UserBasicOutput] = None
+    average: Optional[float] = None
     social_service_id: Optional[int] = None
+    social_service: Optional[SocialServiceSummary] = None
     # Se calcula al listar o consultar asignaciones (no en las anidadas dentro del servicio social).
     inscription_progress: Optional[InscriptionProgress] = None
 
@@ -35,8 +49,11 @@ class SocialServiceApplicationOutput(ORMModel):
 # ---------------------- SOCIAL SERVICE ----------------------
 
 class SocialServiceUpdate(BaseModel):
+    """Renuncia (4) o baja (5): con `exit_date` (no posterior a hoy) y `exit_reason`."""
     site_id: Optional[int] = None
     status: SocialServiceStatusEnum = None
+    exit_date: NotFutureDate = None
+    exit_reason: OptionalStr(500) = None
 
 
 class SocialServiceOutput(ORMModel):
@@ -46,6 +63,8 @@ class SocialServiceOutput(ORMModel):
     promotion_id: int
     site_id: Optional[int] = None
     status: SocialServiceStatusEnum
+    exit_date: Optional[date] = None
+    exit_reason: Optional[str] = None
     created_at: UTCDateTime
     updated_at: UTCDateTime
     application: SocialServiceApplicationOutput

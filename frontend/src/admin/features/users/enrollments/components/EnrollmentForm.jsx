@@ -108,9 +108,10 @@ function EnrollmentForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Expediente del alumno</dt>
+              <dt className="item-header"><label htmlFor="enrollment-academic-id">Expediente del alumno</label></dt>
               <dd className="item-text">
                 <input
+                  id="enrollment-academic-id"
                   name="academicId"
                   type="text"
                   value={formData.academicId}

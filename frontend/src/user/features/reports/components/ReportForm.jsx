@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
 import { useUser } from '../../../../contexts/UserContext';
@@ -6,11 +6,15 @@ import useCreateReport from '../hooks/useCreateReport';
 import useUpdateReport from '../hooks/useUpdateReport';
 import useGetSites from '../hooks/useGetSites';
 import useInternshipByAcademic from '../../internships/hooks/useInternshipByAcademic';
+import useSocialServiceByAcademic from '../../social-service/hooks/useSocialServiceByAcademic';
 import { REPORT_TYPES, REPORT_TYPE_LABELS } from '../../../../utils/constants';
 import { cleanFormData, todayISO } from '../../../../utils/utils';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import { isHttpUrl } from '../../../../utils/validations';
+import { addReportAttachmentRequest } from '../../../../services/reportService';
+import { getErrorMessage } from '../../../../utils/errors';
+import { EVIDENCE_ACCEPT, MAX_EVIDENCE_FILES, formatFileSize, getEvidenceError } from '../../../../features/expediente/fileRules';
 
 
 // Límites del backend (schemas/report.py y models/report.py).
@@ -52,11 +56,18 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
   const { createReport, loading: creating, success: created, error: createError, reset: resetCreate } = useCreateReport();
   const { updateReport, loading: updating, error: updateError, reset: resetUpdate } = useUpdateReport();
   const { sites, loading: fetchingSites, error: sitesError, refetch: refetchSites } = useGetSites();
-  // Solo al crear: se preselecciona la sede del internado del estudiante.
+  // Solo al crear: se preselecciona la sede (o plaza) del programa que el estudiante tiene en curso.
   const { internship } = useInternshipByAcademic(isEdit ? null : user?.academic_id);
+  const { socialService } = useSocialServiceByAcademic(isEdit ? null : user?.academic_id);
 
-  const [formData, setFormData] = useState(INITIAL_FORM);
+  // Al crear, la fecha del reporte parte de hoy (se puede cambiar a un día anterior).
+  const [formData, setFormData] = useState(() => (isEdit ? INITIAL_FORM : { ...INITIAL_FORM, dateReport: todayISO() }));
   const [createdId, setCreatedId] = useState(null);
+  // Archivos de evidencia elegidos al crear: se adjuntan en cuanto se envía el reporte.
+  const [evidenceFiles, setEvidenceFiles] = useState([]);
+  const filesRef = useRef(null);
+  const [attaching, setAttaching] = useState(false);
+  const [attachWarning, setAttachWarning] = useState(null);
   const [validationError, setValidationError] = useState('');
 
   const saving = creating || updating;
@@ -64,12 +75,13 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
   const resetSave = isEdit ? resetUpdate : resetCreate;
   const isOtherType = Number(formData.reportType) === REPORT_TYPES.OTHER;
 
-  // Sede del internado del estudiante, si existe en el catálogo.
+  // Sede del servicio social o del internado en curso (activo o suspendido), si existe en el catálogo.
   const defaultSiteId = useMemo(() => {
-    const siteId = internship?.site?.site_id ?? internship?.site_id;
+    const inCourse = (record) => record && [1, 2].includes(Number(record.status)) && (record.site?.site_id ?? record.site_id);
+    const siteId = inCourse(socialService) || inCourse(internship);
     if (isEdit || !siteId || !sites.some((site) => site.site_id === siteId)) return '';
     return String(siteId);
-  }, [isEdit, internship, sites]);
+  }, [isEdit, internship, socialService, sites]);
 
   // En edición se muestra la sede actual del reporte aunque no venga en el catálogo.
   const siteOptions = useMemo(() => {
@@ -140,11 +152,43 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
       return;
     }
 
+    setAttachWarning(null);
     const response = await createReport(payload);
     if (response?.data?.report_id) {
-      setCreatedId(response.data.report_id);
-      setFormData({ ...INITIAL_FORM, siteId: defaultSiteId });
+      const newId = response.data.report_id;
+      const failed = [];
+      setAttaching(true);
+      for (const file of evidenceFiles) {
+        try {
+          await addReportAttachmentRequest(newId, file);
+        } catch (err) {
+          failed.push(`${file.name} (${getErrorMessage(err, 'no se pudo adjuntar')})`);
+        }
+      }
+      setAttaching(false);
+      if (failed.length) {
+        setAttachWarning(`El reporte se envió, pero no se adjuntó: ${failed.join('; ')}. Puedes adjuntarlo desde el detalle del reporte.`);
+      }
+      setCreatedId(newId);
+      setEvidenceFiles([]);
+      setFormData({ ...INITIAL_FORM, siteId: defaultSiteId, dateReport: todayISO() });
     }
+  };
+
+  const handleEvidenceFiles = (event) => {
+    const files = [...(event.target.files ?? [])];
+    event.target.value = '';
+    if (!files.length) return;
+    const all = [...evidenceFiles, ...files];
+    const problem = all.length > MAX_EVIDENCE_FILES
+      ? `Puedes adjuntar hasta ${MAX_EVIDENCE_FILES} archivos.`
+      : files.map(getEvidenceError).find(Boolean);
+    if (problem) {
+      setValidationError(problem);
+      return;
+    }
+    setValidationError('');
+    setEvidenceFiles(all);
   };
 
 // ---------------------- EFFECTS ----------------------
@@ -154,7 +198,7 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
     if (report) setFormData(toFormData(report));
   }, [report]);
 
-  // Creación: se preselecciona la sede del internado si el estudiante aún no eligió una.
+  // Creación: se preselecciona la sede en curso si el estudiante aún no eligió una.
   useEffect(() => {
     if (!defaultSiteId) return;
     setFormData((prev) => (prev.siteId ? prev : { ...prev, siteId: defaultSiteId }));
@@ -223,7 +267,7 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
     <form className="component-container" onSubmit={handleSubmit}>
       {created && (
         <div className="alert-success">
-          Reporte registrado exitosamente.{' '}
+          Reporte enviado. La coordinación lo revisará.{' '}
           {createdId && (
             <Link
               to={ROUTES.USER.REPORT_DETAIL(createdId)}
@@ -234,6 +278,8 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
           )}
         </div>
       )}
+
+      {attachWarning && <div className="alert-error">{attachWarning}</div>}
 
       {(validationError || saveError) && (
         <div className="alert-error">
@@ -248,9 +294,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Fecha *</dt>
+              <dt className="item-header"><label htmlFor="report-date-report">Fecha *</label></dt>
               <dd className="item-text">
                 <input
+                  id="report-date-report"
                   name="dateReport"
                   type="date"
                   value={formData.dateReport}
@@ -263,9 +310,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Tipo de reporte *</dt>
+              <dt className="item-header"><label htmlFor="report-report-type">Tipo de reporte *</label></dt>
               <dd className="item-text">
                 <select
+                  id="report-report-type"
                   name="reportType"
                   value={formData.reportType}
                   onChange={handleChange}
@@ -284,9 +332,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
             </div>
             {isOtherType && (
               <div className="item-row">
-                <dt className="item-header">Especifica el tipo *</dt>
+                <dt className="item-header"><label htmlFor="report-other-type">Especifica el tipo *</label></dt>
                 <dd className="item-text">
                   <input
+                    id="report-other-type"
                     name="otherType"
                     type="text"
                     value={formData.otherType}
@@ -301,9 +350,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
               </div>
             )}
             <div className="item-row">
-              <dt className="item-header">Sede *</dt>
+              <dt className="item-header"><label htmlFor="report-site-id">Sede *</label></dt>
               <dd className="item-text">
                 <select
+                  id="report-site-id"
                   name="siteId"
                   value={formData.siteId}
                   onChange={handleChange}
@@ -331,9 +381,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Descripción *</dt>
+              <dt className="item-header"><label htmlFor="report-description">Descripción *</label></dt>
               <dd className="item-text">
                 <textarea
+                  id="report-description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
@@ -346,9 +397,10 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Evidencia (opcional)</dt>
+              <dt className="item-header"><label htmlFor="report-evidence-url">Enlace de evidencia (opcional)</label></dt>
               <dd className="item-text">
                 <input
+                  id="report-evidence-url"
                   name="evidenceUrl"
                   type="url"
                   value={formData.evidenceUrl}
@@ -363,10 +415,44 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
                 </p>
               </dd>
             </div>
+            {!isEdit && (
+              <div className="item-row">
+                <dt className="item-header"><label htmlFor="report-evidence-files">Archivos de evidencia (opcional)</label></dt>
+                <dd className="item-text">
+                  {/* Selector propio (en español y con el estilo del portal) en lugar del control del navegador. */}
+                  <input id="report-evidence-files" ref={filesRef} type="file" multiple accept={EVIDENCE_ACCEPT} onChange={handleEvidenceFiles}
+                    disabled={saving || attaching || evidenceFiles.length >= MAX_EVIDENCE_FILES} className="hidden" />
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button type="button" className="btn-secondary" onClick={() => filesRef.current?.click()}
+                      disabled={saving || attaching || evidenceFiles.length >= MAX_EVIDENCE_FILES}>
+                      Elegir archivos
+                    </button>
+                    {evidenceFiles.length === 0 && <span className="text-sm text-gray-500">Ningún archivo elegido</span>}
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    PDF o imágenes JPG, PNG o WebP; hasta {MAX_EVIDENCE_FILES} archivos. Si el reporte es anónimo, revisa que no muestren tu nombre.
+                  </p>
+                  {evidenceFiles.length > 0 && (
+                    <ul className="mt-2 divide-y rounded-md border border-gray-200 text-sm">
+                      {evidenceFiles.map((file, index) => (
+                        <li key={`${file.name}-${index}`} className="flex items-center justify-between gap-3 px-3 py-1.5">
+                          <span className="min-w-0 truncate">{file.name} <span className="text-xs text-gray-500">· {formatFileSize(file.size)}</span></span>
+                          <button type="button" className="btn-tertiary py-1.5 text-xs text-red-600" disabled={saving || attaching}
+                            onClick={() => setEvidenceFiles((prev) => prev.filter((_, i) => i !== index))}>
+                            Quitar
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </dd>
+              </div>
+            )}
             <div className="item-row">
-              <dt className="item-header">¿Deseas que el reporte sea anónimo?</dt>
+              <dt className="item-header"><label htmlFor="report-anonymity">¿Deseas que el reporte sea anónimo?</label></dt>
               <dd className="item-text">
                 <input
+                  id="report-anonymity"
                   name="anonymity"
                   type="checkbox"
                   checked={formData.anonymity}
@@ -387,16 +473,16 @@ function ReportForm({ report = null, reportId = null, fetching = false, fetchErr
             type="button"
             className="btn-secondary"
             onClick={handleCancel}
-            disabled={saving}
+            disabled={saving || attaching}
           >
             Cancelar
           </button>
           <button
             type="submit"
             className="btn-primary"
-            disabled={saving}
+            disabled={saving || attaching}
           >
-            {saving ? 'Guardando...' : 'Guardar'}
+            {attaching ? 'Adjuntando archivos...' : saving ? 'Guardando...' : (isEdit ? 'Guardar' : 'Enviar reporte')}
           </button>
         </div>
       </div>

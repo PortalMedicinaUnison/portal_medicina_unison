@@ -19,10 +19,15 @@ export const SONORA_MUNICIPALITIES = [
 // Deben coincidir con los IntEnum de backend/app/models. Úsalos en lugar de mapas locales.
 
 export const APPLICATION_STATUS = { PENDING: 1, ACCEPTED: 2, DECLINED: 3 };
-export const APPLICATION_STATUS_LABELS = { 1: 'Pendiente', 2: 'Aceptada', 3: 'Declinada' };
+export const APPLICATION_STATUS_LABELS = { 1: 'Por aceptar', 2: 'Aceptada', 3: 'Declinada' };
 
-export const INTERNSHIP_STATUS = { ACTIVE: 1, SUSPENDED: 2, FINISHED: 3 };
-export const INTERNSHIP_STATUS_LABELS = { 1: 'Activo', 2: 'Suspendido', 3: 'Finalizado' };
+export const INTERNSHIP_STATUS = { ACTIVE: 1, SUSPENDED: 2, FINISHED: 3, WITHDRAWN: 4, DISMISSED: 5 };
+export const INTERNSHIP_STATUS_LABELS = { 1: 'En curso', 2: 'Suspendido', 3: 'Finalizado', 4: 'Renuncia', 5: 'Baja' };
+
+// Renuncia y baja (mismos valores en internado y servicio social): terminan sin acreditar,
+// liberan el lugar en la sede y cierran los documentos del alumno.
+export const EXIT_STATUSES = [4, 5];
+export const isExitStatus = (status) => EXIT_STATUSES.includes(Number(status));
 
 export const REPORT_TYPES = {
   ACCIDENT: 1, INSECURE_CONDITION: 2, WORK_HARASSMENT: 3, SEXUAL_HARASSMENT: 4,
@@ -36,7 +41,6 @@ export const REPORT_TYPE_LABELS = {
 export const ANNOUNCEMENT_TYPES = { GENERAL: 1, INTERNSHIP: 2 };
 export const ANNOUNCEMENT_TYPE_LABELS = { 1: 'General', 2: 'Internado' };
 
-export const PERIOD_LABELS = { 1: 'Primer periodo', 2: 'Segundo periodo' };
 
 export const ROLE_LABELS = { student: 'Estudiante', admin: 'Administrador', super_admin: 'Super administrador' };
 
@@ -46,8 +50,8 @@ export const labelOf = (labels, value, fallback = 'Desconocido') => labels[Numbe
 export const PROGRAMS = { INTERNSHIP: 1, SOCIAL_SERVICE: 2 };
 export const PROGRAM_LABELS = { 1: 'Internado', 2: 'Servicio social' };
 
-export const SOCIAL_SERVICE_STATUS = { ACTIVE: 1, SUSPENDED: 2, FINISHED: 3 };
-export const SOCIAL_SERVICE_STATUS_LABELS = { 1: 'Activo', 2: 'Suspendido', 3: 'Liberado' };
+export const SOCIAL_SERVICE_STATUS = { ACTIVE: 1, SUSPENDED: 2, FINISHED: 3, WITHDRAWN: 4, DISMISSED: 5 };
+export const SOCIAL_SERVICE_STATUS_LABELS = { 1: 'En curso', 2: 'Suspendido', 3: 'Liberado', 4: 'Renuncia', 5: 'Baja' };
 
 // Expediente: etapas del catálogo de documentos y revisión de cada archivo.
 export const DOCUMENT_STAGES = { INSCRIPTION: 1, IN_PROGRESS: 2, COMPLETION: 3 };

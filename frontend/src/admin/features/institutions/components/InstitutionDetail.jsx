@@ -119,7 +119,7 @@ function InstitutionDetail({ institution, fetching, fetchError, refetch, institu
       <div className="info-actions mt-16">
         <button 
           type="button" 
-          className='btn-tertiary'
+          className='btn-tertiary text-red-600'
           onClick={handleDeleteButton}
           disabled={deleting}
         >

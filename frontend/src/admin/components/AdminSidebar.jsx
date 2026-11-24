@@ -1,6 +1,9 @@
 import { Link, NavLink } from 'react-router-dom';
 import { ADMIN_HOME, ROUTES, adminAbs } from '../../config';
 import SidebarCollapse from '../../utils/ui/CollapseMenu';
+import { PROGRAMS } from '../../utils/constants';
+import { promotionListPath } from '../features/promotions/promotionPaths';
+import { documentRequirementsPath } from '../features/document-requirements/documentRequirementPaths';
 
 
 function Sidebar({ toggleSidebar, openToggleButton }) {
@@ -14,9 +17,9 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
 
                 <div className="sidebar-header">
                         <Link to={ADMIN_HOME} className="ms-5 md:me-15">
-                            <img src="../../unison-letters.svg" className="h-8 me-3" alt="unison logo" />
+                            <img src="/unison-letters.svg" className="h-8 me-3" alt="Universidad de Sonora" />
                         </Link>
-                        <button className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar}>
+                        <button type="button" className={`${openToggleButton ? 'block' : 'hidden'}`} onClick={toggleSidebar} aria-label="Ocultar el menú">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="sidebar-item-icon"
@@ -90,44 +93,13 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             </p>
                         </div>
                         <div>
-                            <Link to={adminAbs(ROUTES.ADMIN.PROMOTION_LIST)} className="sidebar-item-group group">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="sidebar-item-icon"
-                                    width="32" 
-                                    height="32" 
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path fill="currentColor" d="M1 17.577v-.863q0-.922.985-1.53q.984-.607 2.534-.607q.229 0 .49.022q.262.022.556.072q-.234.41-.342.84q-.107.431-.107.864v1.202zm6 0v-1.125q0-.604.351-1.105q.351-.5 1.036-.866q.684-.365 1.595-.548t2.01-.183q1.121 0 2.032.183t1.595.548t1.033.866t.348 1.105v1.125zm11.885 0v-1.196q0-.479-.105-.902t-.314-.808q.313-.05.562-.072t.472-.022q1.55 0 2.525.605T23 16.714v.863zM4.514 13.635q-.589 0-1.003-.418q-.415-.418-.415-1.005q0-.581.418-.993t1.005-.411q.581 0 1.002.411q.421.412.421.998q0 .57-.41.994q-.411.424-1.018.424m14.986 0q-.575 0-.999-.424t-.424-.994q0-.586.424-.998t1.003-.411q.596 0 1.008.411t.411.993q0 .587-.409 1.005q-.41.418-1.014.418M12.007 13q-.91 0-1.555-.64q-.644-.639-.644-1.552q0-.932.639-1.562q.64-.63 1.553-.63q.932 0 1.562.628t.63 1.557q0 .91-.628 1.555T12.007 13"/>
-                                </svg>                        
-                                <span className="sidebar-item-text">
-                                    Promociones
-                                </span>
-                            </Link>
-                        </div>
-                        <div>
-                            <Link to={adminAbs(ROUTES.ADMIN.DOCUMENT_REQUIREMENTS)} className="sidebar-item-group group">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="sidebar-item-icon"
-                                    width="32"
-                                    height="32"
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                >
-                                    <path fill="currentColor" d="M8 17h8v-1.5H8zm0-3.5h8V12H8zM6.3 21q-.75 0-1.275-.525T4.5 19.2V4.8q0-.75.525-1.275T6.3 3h7.45l5.75 5.75V19.2q0 .75-.525 1.275T17.7 21zm6.7-11.5V4.5H6.3q-.1 0-.2.1t-.1.2v14.4q0 .1.1.2t.2.1h11.4q.1 0 .2-.1t.1-.2V9.5z"/>
-                                </svg>
-                                <span className="sidebar-item-text">
-                                    Documentos requeridos
-                                </span>
-                            </Link>
-                        </div>
-                        <div>
                             <SidebarCollapse
-                                title="Internados"
+                                title="Internado"
                                 links={[
-                                    { label: 'Internados', to: adminAbs(ROUTES.ADMIN.INTERNSHIP_LIST), className: 'sidebar-item-link' },
-                                    { label: 'Aplicaciones', to: adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_LIST), className: 'sidebar-item-link' },
+                                    { label: 'Promociones', to: promotionListPath(PROGRAMS.INTERNSHIP), className: 'sidebar-item-link' },
+                                    { label: 'Documentos requeridos', to: documentRequirementsPath(PROGRAMS.INTERNSHIP), className: 'sidebar-item-link' },
+                                    { label: 'Inscripciones', to: adminAbs(ROUTES.ADMIN.INTERNSHIP_APPLICATION_LIST), className: 'sidebar-item-link' },
+                                    { label: 'Resultados del acto', to: adminAbs(ROUTES.ADMIN.INTERNSHIP_PLAZA_RESULTS), className: 'sidebar-item-link' },
                                 ]}
                                 icon={
                                     <svg
@@ -146,8 +118,10 @@ function Sidebar({ toggleSidebar, openToggleButton }) {
                             <SidebarCollapse
                                 title="Servicio social"
                                 links={[
-                                    { label: 'Servicios sociales', to: adminAbs(ROUTES.ADMIN.SOCIAL_SERVICE_LIST), className: 'sidebar-item-link' },
-                                    { label: 'Asignaciones', to: adminAbs(ROUTES.ADMIN.SOCIAL_SERVICE_APPLICATION_LIST), className: 'sidebar-item-link' },
+                                    { label: 'Promociones', to: promotionListPath(PROGRAMS.SOCIAL_SERVICE), className: 'sidebar-item-link' },
+                                    { label: 'Documentos requeridos', to: documentRequirementsPath(PROGRAMS.SOCIAL_SERVICE), className: 'sidebar-item-link' },
+                                    { label: 'Inscripciones', to: adminAbs(ROUTES.ADMIN.SOCIAL_SERVICE_APPLICATION_LIST), className: 'sidebar-item-link' },
+                                    { label: 'Resultados del acto', to: adminAbs(ROUTES.ADMIN.SOCIAL_SERVICE_PLAZA_RESULTS), className: 'sidebar-item-link' },
                                 ]}
                                 icon={
                                     <svg

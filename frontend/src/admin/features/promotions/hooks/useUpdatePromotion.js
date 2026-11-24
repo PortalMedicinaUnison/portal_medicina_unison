@@ -8,8 +8,9 @@ export default function useUpdatePromotion() {
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const updatePromotion = useCallback(async (id, formData) => {  
-    if (loading) return;
+  // Devuelve true si se guardó.
+  const updatePromotion = useCallback(async (id, formData) => {
+    if (loading) return false;
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -17,9 +18,11 @@ export default function useUpdatePromotion() {
     try {
       await updatePromotionRequest(id, formData);
       setSuccess(true);
+      return true;
     } catch (err) {
       setError(getErrorMessage(err, 'No se pudieron guardar los cambios.'));
       setSuccess(false);
+      return false;
     } finally {
       setLoading(false);
     }

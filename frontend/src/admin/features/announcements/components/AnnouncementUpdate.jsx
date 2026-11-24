@@ -40,7 +40,7 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
     e.preventDefault();
 
     if (!announcementId) {
-        setValidationError('ID de anuncio no proporcionado.');
+        setValidationError('ID de aviso no proporcionado.');
         return;
     }
 
@@ -53,7 +53,7 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
     const errors = [];
     if (!cleanedData.title) errors.push('El título es requerido.');
     if (!cleanedData.description) errors.push('La descripción es requerida.');
-    if (cleanedData.announcementType === 0) errors.push('Seleccione un tipo de anuncio válido.');
+    if (cleanedData.announcementType === 0) errors.push('Selecciona el ámbito del aviso.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -109,7 +109,7 @@ function AnnouncementUpdate({ announcement, fetching, fetchError, refetch, annou
     return (
       <DataLoadError
         title="404"
-        message="No encontramos información para este anuncio."
+        message="No encontramos información para este aviso."
         onRetry={refetch}
         retryLabel='Recargar'
         onSecondary={() => navigate(-1)}
@@ -135,39 +135,42 @@ return (
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Título</dt>
+              <dt className="item-header"><label htmlFor="announcement-edit-title">Título</label></dt>
               <dd className="item-text">
                 <input
+                  id="announcement-edit-title"
                   name="title"
                   type="text"
                   value={formData.title}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="Título del anuncio"
+                  placeholder="Título del aviso"
                   disabled={saving}
                   required
                 />
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Contenido</dt>
+              <dt className="item-header"><label htmlFor="announcement-edit-description">Contenido</label></dt>
               <dd className="item-text">
                 <textarea
+                  id="announcement-edit-description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   rows="4"
                   className="form-input--half"
-                  placeholder="Descripción del anuncio"
+                  placeholder="Contenido del aviso"
                   disabled={saving}
                   required
                 />
               </dd>
             </div>
             <div className="item-row">
-                <dt className="item-header">Ambito</dt>
+                <dt className="item-header"><label htmlFor="announcement-edit-type">Ámbito</label></dt>
                 <dd className="item-text">
                   <select
+                    id="announcement-edit-type"
                     name="announcementType"
                     value={formData.announcementType}
                     onChange={handleChange}
@@ -183,9 +186,10 @@ return (
                 </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Visible</dt>
+              <dt className="item-header"><label htmlFor="announcement-edit-is-visible">Visible</label></dt>
               <dd className="item-text">
                 <input
+                  id="announcement-edit-is-visible"
                   name="isVisible"
                   type="checkbox"
                   checked={formData.isVisible}

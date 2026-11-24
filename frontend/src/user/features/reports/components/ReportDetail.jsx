@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import ReportAttachments from '../../../../components/ReportAttachments';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
 import useDeleteReport from '../hooks/useDeleteReport';
@@ -43,7 +44,7 @@ function ReportDetail({ report, fetching, fetchError, refetch, reportId }) {
     if (deleted) {
       setShowConfirmDelete(false);
       reset();
-      navigate(ROUTES.USER.REPORTS_LIST, { replace: true });
+      navigate(ROUTES.USER.REPORTS_LIST, { replace: true, state: { notice: 'Reporte eliminado.' } });
     }
   }, [deleted, navigate, reset]);
 
@@ -97,11 +98,11 @@ function ReportDetail({ report, fetching, fetchError, refetch, reportId }) {
             <dd className="item-text">{report.is_open ? 'Abierto' : 'Cerrado'}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Fecha</dt>
+            <dt className="item-header">Fecha del incidente</dt>
             <dd className="item-text">{formatDate(report.date_report)}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Tipo de reporte</dt>
+            <dt className="item-header">Tipo</dt>
             <dd className="item-text">
               {isOther && report.other_type ? `${typeLabel}: ${report.other_type}` : typeLabel}
             </dd>
@@ -110,7 +111,7 @@ function ReportDetail({ report, fetching, fetchError, refetch, reportId }) {
             <dt className="item-header">Sede</dt>
             <dd className="item-text">
               {report.site
-                ? [report.site.name, report.site.city].filter(Boolean).join(', ')
+                ? `${report.site.name} (${report.site.city})`
                 : '—'}
             </dd>
           </div>
@@ -120,22 +121,23 @@ function ReportDetail({ report, fetching, fetchError, refetch, reportId }) {
           </div>
           <div className="item-row">
             <dt className="item-header">Evidencia</dt>
-            <dd className="item-text break-all">
-              {isHttpUrl(report.evidence_url) ? (
-                <a href={report.evidence_url} target="_blank" rel="noopener noreferrer">
-                  {report.evidence_url}
-                </a>
-              ) : (
-                report.evidence_url || '—'
+            <dd className="item-text">
+              {report.evidence_url && (
+                <p className="mb-3 break-all">
+                  {isHttpUrl(report.evidence_url)
+                    ? <a href={report.evidence_url} target="_blank" rel="noopener noreferrer">{report.evidence_url}</a>
+                    : report.evidence_url}
+                </p>
               )}
+              <ReportAttachments report={report} canEdit={report.is_open} />
             </dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Anónimo</dt>
+            <dt className="item-header">Reporte anónimo</dt>
             <dd className="item-text">{report.anonymity ? 'Sí' : 'No'}</dd>
           </div>
           <div className="item-row">
-            <dt className="item-header">Registrado</dt>
+            <dt className="item-header">Fecha de registro</dt>
             <dd className="item-text">{formatDateTime(report.created_at)}</dd>
           </div>
           <div className="item-row">
@@ -179,7 +181,7 @@ function ReportDetail({ report, fetching, fetchError, refetch, reportId }) {
           </button>
           <button
             type="button"
-            className="btn-tertiary"
+            className="btn-tertiary text-red-600"
             onClick={handleDeleteButton}
             disabled={deleting}
           >

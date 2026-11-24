@@ -84,6 +84,7 @@ export const ROUTES = {
         INTERNSHIP_DELETE: (internshipId) => `/internships/${internshipId}/delete`,
 
         INTERNSHIP_APPLICATION_LIST: '/internship-applications',
+        INTERNSHIP_PLAZA_RESULTS: '/internship-applications/act',
         INTERNSHIP_APPLICATION_CREATE: '/internship-applications/create',
         INTERNSHIP_APPLICATION_DETAIL: (applicationId) => `/internship-applications/${applicationId}`,
         INTERNSHIP_APPLICATION_EDIT: (applicationId) => `/internship-applications/${applicationId}/edit`,
@@ -94,6 +95,7 @@ export const ROUTES = {
         SOCIAL_SERVICE_DETAIL: (socialServiceId) => `/social-services/${socialServiceId}`,
 
         SOCIAL_SERVICE_APPLICATION_LIST: '/social-service-applications',
+        SOCIAL_SERVICE_PLAZA_RESULTS: '/social-service-applications/act',
         SOCIAL_SERVICE_APPLICATION_CREATE: '/social-service-applications/create',
         SOCIAL_SERVICE_APPLICATION_DETAIL: (applicationId) => `/social-service-applications/${applicationId}`,
 

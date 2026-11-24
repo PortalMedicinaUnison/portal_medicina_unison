@@ -8,7 +8,14 @@ import LoadingSpinner from '../../../../utils/ui/LoadingSpinner.jsx';
 import DataLoadError from '../../../../utils/ui/DataLoadError.jsx';
 import Modal from '../../../../utils/ui/Modal.jsx';
 import ConfirmDialogContent from '../../../../utils/ui/ConfirmDialogContent.jsx';
-import { SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
+import { PROGRAMS, PROGRAM_LABELS, SONORA_MUNICIPALITIES } from "../../../../utils/constants.js";
+import { normalizeText } from '../../../../utils/utils.js';
+import { siteProgramsLabel } from '../sitePrograms.js';
+
+const SERVES = {
+  [PROGRAMS.INTERNSHIP]: (site) => site.for_internship,
+  [PROGRAMS.SOCIAL_SERVICE]: (site) => site.for_social_service,
+};
 
 
 function SiteList({ sites, fetching, fetchError, refetch }) {
@@ -25,20 +32,22 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
   const [search, setSearch] = useState('');
   const [institutionFilter, setInstitutionFilter] = useState('');
   const [cityFilter, setCityFilter] = useState('');
+  const [programFilter, setProgramFilter] = useState('');
 
-  const searchQuery = search.trim().toLowerCase();
+  const searchQuery = normalizeText(search.trim());
   const filtered = useMemo(() => {
     return sites.filter((site) => {
       if (institutionFilter !== '' && site.institution_id !== Number(institutionFilter)) return false;
       if (cityFilter !== '' && site.city !== cityFilter) return false;
+      if (programFilter !== '' && !SERVES[programFilter](site)) return false;
       if (!searchQuery) return true;
-      
-      const name = String(site.name ?? '').toLowerCase();
-      const teachingHeadName = String(site.teaching_head_name ?? '').toLowerCase();
-      const institutionName = String(site.institution?.name ?? '').toLowerCase();
+
+      const name = normalizeText(site.name);
+      const teachingHeadName = normalizeText(site.teaching_head_name);
+      const institutionName = normalizeText(site.institution?.name);
       return name.includes(searchQuery) || teachingHeadName.includes(searchQuery) || institutionName.includes(searchQuery);
     });
-  }, [sites, searchQuery, institutionFilter, cityFilter]);
+  }, [sites, searchQuery, institutionFilter, cityFilter, programFilter]);
 
 // ---------------------- HANDLERS ----------------------
 
@@ -123,7 +132,8 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
           className="form-input--sm mr-auto"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por razón social, institución o jefe"
+          placeholder="Buscar sede, institución o jefe"
+          aria-label="Buscar por sede, institución o jefe de enseñanza"
         />
         <select
           className="btn-tertiary--light"
@@ -141,9 +151,20 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
         </select>
         <select
           className="btn-tertiary--light"
+          value={programFilter}
+          onChange={(e) => setProgramFilter(e.target.value)}
+          aria-label="Filtrar por programa"
+        >
+          <option value="">Programa</option>
+          {Object.entries(PROGRAM_LABELS).map(([value, label]) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
+        </select>
+        <select
+          className="btn-tertiary--light"
           value={cityFilter}
           onChange={(e) => setCityFilter(e.target.value)}
-          aria-label="Filtrar por ciudad"
+          aria-label="Filtrar por municipio"
         >
           <option value="">Municipio</option>
           {SONORA_MUNICIPALITIES.map((city) => (
@@ -158,18 +179,19 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
         <table className="table">
           <thead>
             <tr>
-              <th className='w-3/12'>Razón social</th>
-              <th className='w-3/12'>Institución</th>
-              <th className='w-2/12'>Ciudad</th>
-              <th className='w-3/12'>Jefe de enseñanza</th>
+              <th className='w-3/12'>Sede</th>
+              <th className='w-2/12'>Institución</th>
+              <th className='w-2/12'>Municipio</th>
+              <th className='w-2/12'>Programas</th>
+              <th className='w-2/12'>Jefe de enseñanza</th>
               <th className='w-1/12'></th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={5} className="text-center py-6">
-                {search || institutionFilter || cityFilter 
+                <td colSpan={6} className="text-center py-6">
+                {search || institutionFilter || cityFilter || programFilter 
                   ? 'No se encontraron sedes que coincidan con los filtros.' 
                   : 'No hay sedes disponibles.'
                   }
@@ -178,10 +200,11 @@ function SiteList({ sites, fetching, fetchError, refetch }) {
             ) : (
               filtered.map((item) => (
               <tr key={item.site_id}>
-                <td className="text-left">{item.name}</td>
-                <td className="text-left">{item.institution?.name ?? '—'}</td>
-                <td>{item.city}</td>
-                <td className="text-left">{item.teaching_head_name}</td>
+                <td className="!whitespace-normal text-left">{item.name}</td>
+                <td className="!whitespace-normal text-left">{item.institution?.name ?? '—'}</td>
+                <td className="!whitespace-normal">{item.city}</td>
+                <td className="!whitespace-normal">{siteProgramsLabel(item)}</td>
+                <td className="!whitespace-normal text-left">{item.teaching_head_name}</td>
                 <td className="relative overflow-visible text-right">
                   <DropdownMenu
                     actions={[

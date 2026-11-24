@@ -16,6 +16,7 @@ from core.security import hash_password
 from core.settings import settings
 from db.database import SessionLocal
 from models.base import utcnow
+from models.promotion import default_dates
 from models import (
     ApplicationStatusEnum, Institution, Internship, InternshipApplication, InternshipStatusEnum,
     ProgramEnum, Promotion, PromotionSiteDetail, Site, SocialServiceApplication, User, UserEnrollment,
@@ -76,17 +77,21 @@ def seed_demo(_args: argparse.Namespace) -> None:
         sites = [
             get_or_create(Site, name="Hospital General de Zona No. 2", defaults=dict(
                 institution_id=imss.institution_id, address="Blvd. Luis Encinas s/n", city="Hermosillo",
-                teaching_head_name="Dra. María Pérez")),
+                teaching_head_name="Dra. María Pérez", for_social_service=False)),
             get_or_create(Site, name="Hospital General del Estado", defaults=dict(
                 institution_id=isssteson.institution_id, address="Blvd. Luis Encinas y Reforma", city="Hermosillo",
-                teaching_head_name="Dr. Jorge Ruiz", teaching_deputy_name="Dra. Laura Gómez")),
+                teaching_head_name="Dr. Jorge Ruiz", teaching_deputy_name="Dra. Laura Gómez", for_social_service=False)),
             get_or_create(Site, name="Hospital General Regional No. 1", defaults=dict(
                 institution_id=imss.institution_id, address="Calle 200 y Guerrero", city="Cajeme",
-                teaching_head_name="Dr. Luis Torres")),
+                teaching_head_name="Dr. Luis Torres", for_social_service=False)),
         ]
+        def get_or_create_promotion(program, year, period, is_finished=False):
+            start, end = default_dates(program, year, period)
+            return get_or_create(Promotion, program=program, year=year, period=period,
+                                 defaults=dict(is_finished=is_finished, start_date=start, end_date=end))
+
         year = local_today().year
-        promotion = get_or_create(Promotion, program=ProgramEnum.INTERNSHIP, year=year, period=1,
-                                  defaults=dict(is_finished=False))
+        promotion = get_or_create_promotion(ProgramEnum.INTERNSHIP, year, 1)
         for site, capacity in zip(sites, (3, 2, 2)):
             get_or_create(PromotionSiteDetail, promotion_id=promotion.promotion_id, site_id=site.site_id,
                           defaults=dict(capacity=capacity))
@@ -112,19 +117,17 @@ def seed_demo(_args: argparse.Namespace) -> None:
         clinics = [
             get_or_create(Site, name="Centro de Salud Rural Ures", defaults=dict(
                 institution_id=health.institution_id, address="Calle Juárez s/n", city="Ures",
-                teaching_head_name="Dra. Rosa Valenzuela")),
+                teaching_head_name="Dra. Rosa Valenzuela", for_internship=False)),
             get_or_create(Site, name="Centro de Salud Urbano Navojoa", defaults=dict(
                 institution_id=health.institution_id, address="Av. Pesqueira 401", city="Navojoa",
-                teaching_head_name="Dr. Martín Félix")),
+                teaching_head_name="Dr. Martín Félix", for_internship=False)),
         ]
-        ss_promotion = get_or_create(Promotion, program=ProgramEnum.SOCIAL_SERVICE, year=year, period=1,
-                                     defaults=dict(is_finished=False))
+        ss_promotion = get_or_create_promotion(ProgramEnum.SOCIAL_SERVICE, year, 1)
         for clinic in clinics:
             get_or_create(PromotionSiteDetail, promotion_id=ss_promotion.promotion_id, site_id=clinic.site_id,
                           defaults=dict(capacity=2))
 
-        past = get_or_create(Promotion, program=ProgramEnum.INTERNSHIP, year=year - 1, period=1,
-                             defaults=dict(is_finished=True))
+        past = get_or_create_promotion(ProgramEnum.INTERNSHIP, year - 1, 1, is_finished=True)
         db.query(UserEnrollment).filter_by(academic_id="222000002").first().is_enrolled = True
         get_or_create(User, email="egresado@demo.unison.mx", defaults=dict(
             academic_id="222000002", first_name="Egresado", last_name="Demo",

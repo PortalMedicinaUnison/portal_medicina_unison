@@ -6,7 +6,7 @@ from .internship import InternshipApplication, Internship, ApplicationStatusEnum
 from .social_service import SocialServiceApplication, SocialService, SocialServiceStatusEnum
 from .document import DocumentRequirement, ApplicationDocument, DocumentProviderEnum, DocumentStageEnum, ReviewStatusEnum
 from .communication import Announcement, Survey, AnnouncementTypeEnum
-from .report import Report, ReportTypeEnum
+from .report import Report, ReportAttachment, ReportTypeEnum
 from .password_reset import PasswordResetToken
 
 # La historia clínica (models/medical_record.py) queda fuera por ahora:
@@ -21,6 +21,6 @@ __all__ = [
     "SocialServiceApplication", "SocialService", "SocialServiceStatusEnum",
     "DocumentRequirement", "ApplicationDocument", "DocumentProviderEnum", "DocumentStageEnum", "ReviewStatusEnum",
     "Announcement", "Survey", "AnnouncementTypeEnum",
-    "Report", "ReportTypeEnum",
+    "Report", "ReportAttachment", "ReportTypeEnum",
     "PasswordResetToken",
 ]

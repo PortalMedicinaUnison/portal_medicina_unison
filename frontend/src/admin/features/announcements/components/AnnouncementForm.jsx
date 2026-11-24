@@ -47,7 +47,7 @@ function AnnouncementForm() {
     const errors = [];
     if (!cleanedData.title) errors.push('El título es requerido.');
     if (!cleanedData.description) errors.push('La descripción es requerida.');
-    if (cleanedData.announcementType === 0) errors.push('Seleccione un tipo de anuncio válido.');
+    if (cleanedData.announcementType === 0) errors.push('Selecciona el ámbito del aviso.');
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
@@ -88,7 +88,7 @@ function AnnouncementForm() {
     <form className="component-container" onSubmit={handleSubmit}>
       {saved && (
         <div className="alert-success">
-          Anuncio registrado exitosamente.{' '}
+          Aviso registrado exitosamente.{' '}
           {createdId && (
             <Link
               to={adminAbs(ROUTES.ADMIN.ANNOUNCEMENT_DETAIL(createdId))}
@@ -113,39 +113,42 @@ function AnnouncementForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Título</dt>
+              <dt className="item-header"><label htmlFor="announcement-title">Título</label></dt>
               <dd className="item-text">
                 <input
+                  id="announcement-title"
                   name="title"
                   type="text"
                   value={formData.title}
                   onChange={handleChange}
                   className="form-input--half"
-                  placeholder="Título del anuncio"
+                  placeholder="Título del aviso"
                   disabled={saving}
                   required
                 />
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Contenido</dt>
+              <dt className="item-header"><label htmlFor="announcement-description">Contenido</label></dt>
               <dd className="item-text">
                 <textarea
+                  id="announcement-description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   rows="4"
                   className="form-input--half"
-                  placeholder="Descripción del anuncio"
+                  placeholder="Contenido del aviso"
                   disabled={saving}
                   required
                 />
               </dd>
             </div>
             <div className="item-row">
-                <dt className="item-header">Ambito</dt>
+                <dt className="item-header"><label htmlFor="announcement-type">Ámbito</label></dt>
                 <dd className="item-text">
                   <select
+                    id="announcement-type"
                     name="announcementType"
                     value={formData.announcementType}
                     onChange={handleChange}
@@ -161,9 +164,10 @@ function AnnouncementForm() {
                 </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Visible</dt>
+              <dt className="item-header"><label htmlFor="announcement-is-visible">Visible</label></dt>
               <dd className="item-text">
                 <input
+                  id="announcement-is-visible"
                   name="isVisible"
                   type="checkbox"
                   checked={formData.isVisible}

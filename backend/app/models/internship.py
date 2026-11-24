@@ -1,7 +1,8 @@
+from datetime import date
 from enum import IntEnum
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import ForeignKey, Index, Integer, String, UniqueConstraint
+from sqlalchemy import Date, Float, ForeignKey, Index, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import BaseModel
@@ -17,6 +18,13 @@ class InternshipStatusEnum(IntEnum):
     ACTIVE = 1
     SUSPENDED = 2
     FINISHED = 3
+    WITHDRAWN = 4  # renuncia
+    DISMISSED = 5  # baja (cancelación)
+
+
+# En curso: ocupan su lugar en la sede. Renuncia y baja terminan sin acreditar y liberan el lugar.
+INTERNSHIP_IN_COURSE = (InternshipStatusEnum.ACTIVE, InternshipStatusEnum.SUSPENDED)
+INTERNSHIP_EXITS = (InternshipStatusEnum.WITHDRAWN, InternshipStatusEnum.DISMISSED)
 
 
 class ApplicationStatusEnum(IntEnum):
@@ -44,6 +52,8 @@ class InternshipApplication(BaseModel):
     status: Mapped[ApplicationStatusEnum] = mapped_column(
         IntEnumType(ApplicationStatusEnum), nullable=False, default=ApplicationStatusEnum.PENDING
     )
+    # Promedio general (0-100, dos decimales): ordena la elección de plazas en el acto público.
+    average: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
 
     promotion: Mapped["Promotion"] = relationship(lazy="joined")
     student: Mapped["User"] = relationship(lazy="joined", viewonly=True)
@@ -79,6 +89,9 @@ class Internship(BaseModel):
     status: Mapped[InternshipStatusEnum] = mapped_column(
         IntEnumType(InternshipStatusEnum), nullable=False, default=InternshipStatusEnum.ACTIVE
     )
+    # Renuncia o baja: fecha en que se hizo efectiva y motivo.
+    exit_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    exit_reason: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
 
     application: Mapped["InternshipApplication"] = relationship(lazy="joined")
     site: Mapped[Optional["Site"]] = relationship(lazy="joined")

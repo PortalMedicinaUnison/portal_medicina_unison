@@ -4,6 +4,7 @@ from fastapi import APIRouter, status
 
 from controllers import site as controller
 from core.dependencies import AdminUser, CurrentUser, DbSession
+from models.promotion import ProgramEnum
 from schemas.site import InstitutionInput, InstitutionOutput, InstitutionUpdate, SiteInput, SiteOutput, SiteUpdate
 
 # ----------------------  SITE  ----------------------
@@ -12,8 +13,12 @@ site_router = APIRouter(prefix="/sites", tags=["Sedes"])
 
 
 @site_router.get("", response_model=List[SiteOutput])
-def list_sites(_user: CurrentUser, db: DbSession, institution_id: Optional[int] = None, city: Optional[str] = None):
-    return controller.list_sites(db, institution_id=institution_id, city=city)
+def list_sites(
+    _user: CurrentUser, db: DbSession, institution_id: Optional[int] = None, city: Optional[str] = None,
+    program: Optional[ProgramEnum] = None,
+):
+    """Filtros: `institution_id`, `city` y `program` (1 sedes de internado, 2 de servicio social)."""
+    return controller.list_sites(db, institution_id=institution_id, city=city, program=program)
 
 
 @site_router.post("", response_model=SiteOutput, status_code=status.HTTP_201_CREATED)

@@ -12,7 +12,7 @@ function AnnouncementUpdatePage() {
   const pageTitle = fetching
   ? 'Cargando...'
   : announcement
-    ? 'Actualizar anuncio'
+    ? 'Editar aviso'
     : ' ';
   
   return ( 

@@ -82,11 +82,13 @@ class DocumentReviewInput(BaseModel):
 class InscriptionProgress(BaseModel):
     """
     Avance de los documentos obligatorios de inscripción: `submitted` ya tienen un archivo en revisión
-    o aprobado (basta para aceptar la asignación); `approved`, uno aprobado (para registrar la plaza).
+    o aprobado (basta para aceptar la asignación); `approved`, uno aprobado (para registrar la plaza);
+    `rejected`, solo archivos con observaciones (el alumno debe subir el corregido).
     """
     required: int
     submitted: int
     approved: int
+    rejected: int = 0
 
     @computed_field
     @property

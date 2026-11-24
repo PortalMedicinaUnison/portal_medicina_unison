@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { PERIOD_LABELS, labelOf } from '../../../../utils/constants';
+import { promotionLabel } from '../../../../utils/utils';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 
@@ -49,7 +49,7 @@ function ApplicationDeclined({ application, fetching, fetchError, refetch, user 
         </p>
         <p>
           Confirmamos que has <b>declinado tu participación</b> en la promoción{' '}
-          <b>{promotion.year} - {labelOf(PERIOD_LABELS, promotion.period)}</b> del Internado Médico de Pregrado.
+          <b>{promotionLabel(promotion)}</b> del Internado Médico de Pregrado.
         </p>
       </div>
 

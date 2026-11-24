@@ -1,115 +1,96 @@
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ROUTES, adminAbs } from '../../../../config';
 import useCreatePromotion from '../hooks/useCreatePromotion';
-import { cleanFormData } from "../../../../utils/utils";
-import { PERIOD_LABELS, PROGRAMS, PROGRAM_LABELS } from '../../../../utils/constants';
+import useGetPromotions from '../hooks/useGetPromotions';
+import { PROGRAMS, PROGRAM_LABELS } from '../../../../utils/constants';
+import { promotionLabel } from '../../../../utils/utils';
+import { USUAL_START_HINT, datesLabel, isISODate, nextUsualStart, oneYearAfter, semesterTaken } from '../promotionDates';
+import { promotionListPath } from '../promotionPaths';
+import { programFromParams } from '../../../../utils/programParams';
 
+const MAX_YEARS_AHEAD = 5;  // como el backend
 
-const INITIAL_FORM = {
-  program: String(PROGRAMS.INTERNSHIP),
-  year: '',
-  period: '',
-  isFinished: false,
-};
-
+/**
+ * Alta de promoción: basta la fecha de inicio (se propone el próximo inicio habitual libre del
+ * programa) y el término se calcula a doce meses. Al guardar se pasa a capturar los cupos.
+ */
 function PromotionForm() {
   const navigate = useNavigate();
-  const { createPromotion, loading: saving, success: saved, error: saveError, reset } = useCreatePromotion();
+  const { createPromotion, loading: saving, error: saveError, reset } = useCreatePromotion();
+  const [searchParams] = useSearchParams();
+  const [program, setProgram] = useState(() => programFromParams(searchParams) ?? PROGRAMS.INTERNSHIP);
+  const { promotions, loading: loadingPromotions } = useGetPromotions({ program });
 
-  const [formData, setFormData] = useState(INITIAL_FORM);
-  const [createdId, setCreatedId] = useState(null);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [startEdited, setStartEdited] = useState(false);
+  const [endEdited, setEndEdited] = useState(false);
   const [validationError, setValidationError] = useState('');
 
-  // El backend exige al crear: año actual <= año <= año actual + 5.
-  const currentYear = new Date().getFullYear();
-  const maxYear = currentYear + 5;
+  // Propuesta inicial (y al cambiar de programa): el próximo inicio habitual sin promoción.
+  useEffect(() => {
+    if (loadingPromotions || startEdited) return;
+    const start = nextUsualStart(program, promotions);
+    setStartDate(start);
+    setEndDate(start ? oneYearAfter(start) : '');
+    setEndEdited(false);
+  }, [program, promotions, loadingPromotions, startEdited]);
 
-// ---------------------- HANDLERS ----------------------
+  const clearErrors = () => {
+    if (validationError) setValidationError('');
+    if (saveError) reset();
+  };
 
-  const handleChange = useCallback((e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+  const handleProgram = (e) => {
+    setProgram(Number(e.target.value));
+    setStartEdited(false);
+    clearErrors();
+  };
 
-    if (validationError) return setValidationError('');
-    if (saveError) return reset();
-            
-  }, [validationError, saveError, reset]);
+  const handleStart = (e) => {
+    const { value } = e.target;
+    setStartDate(value);
+    setStartEdited(true);
+    if (!endEdited && isISODate(value)) setEndDate(oneYearAfter(value));
+    clearErrors();
+  };
+
+  const handleEnd = (e) => {
+    setEndDate(e.target.value);
+    setEndEdited(true);
+    clearErrors();
+  };
+
+  const taken = semesterTaken(startDate, promotions);
+  const label = datesLabel(startDate, endDate);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const cleanedData = cleanFormData({
-      program: Number(formData.program),
-      year: Number(formData.year),
-      period: Number(formData.period),
-      isFinished: formData.isFinished,
-    });
-
-    // ---------------------- VALIDATIONS ----------------------
+    const thisYear = new Date().getFullYear();
     const errors = [];
-    if (!cleanedData.year) errors.push('El año es obligatorio.');
-    else if (cleanedData.year < currentYear) errors.push(`El año debe ser mayor o igual a ${currentYear}.`);
-    else if (cleanedData.year > maxYear) errors.push(`El año no puede ser mayor a ${maxYear}.`);
-    if (cleanedData.period !== 1 && cleanedData.period !== 2) errors.push('Selecciona un periodo válido.');
+    if (!isISODate(startDate)) errors.push('La fecha de inicio es obligatoria.');
+    else if (Number(startDate.slice(0, 4)) < thisYear) errors.push('La promoción no puede empezar antes del año actual.');
+    else if (Number(startDate.slice(0, 4)) > thisYear + MAX_YEARS_AHEAD) errors.push('La fecha de inicio no es válida.');
+    if (!isISODate(endDate)) errors.push('La fecha de término es obligatoria.');
+    else if (isISODate(startDate) && endDate <= startDate) errors.push('La fecha de término debe ser posterior a la de inicio.');
+    if (taken) errors.push(`Ya existe la promoción ${promotionLabel(taken)}: solo puede haber una que inicie en cada semestre.`);
     if (errors.length > 0) {
       setValidationError(errors.join(' | '));
       return;
     }
 
-    const payload = {
-      program: cleanedData.program,
-      year: cleanedData.year,
-      period: cleanedData.period,
-      is_finished: cleanedData.isFinished,
-    };
-    
-    const response = await createPromotion(payload);
-    if (response && response.data.promotion_id) {
-      setCreatedId(response.data.promotion_id);
-    }
+    const response = await createPromotion({ program, start_date: startDate, end_date: endDate });
+    const createdId = response?.data?.promotion_id;
+    if (createdId) navigate(adminAbs(ROUTES.ADMIN.PROMOTION_EDIT(createdId)), { state: { created: true } });
   };
-
-// ---------------------- EFFECTS ----------------------
-
-  useEffect(() => {
-    if (saved) {
-      setFormData(INITIAL_FORM);
-
-      const alertTimeout = setTimeout(() => {
-        reset();
-      }, 10000);
-      return () => clearTimeout(alertTimeout);
-    }
-  }, [saved, reset]);
-
-// ---------------------- RENDER ----------------------
 
   return (
     <form className="component-container" onSubmit={handleSubmit}>
-      {saved && (
-        <div className="alert-success">
-          Promoción registrada exitosamente.{' '}
-          {createdId && (
-            <Link
-              to={adminAbs(ROUTES.ADMIN.PROMOTION_DETAIL(createdId))}
-              className="font-bold underline"
-            >
-              Ver
-            </Link>
-          )}
-        </div>
-      )}
-
       {(validationError || saveError) && (
         <div className="alert-error">
           <strong className="font-bold">Error: </strong>
-            <span className="block sm:inline">
-              {validationError || saveError}
-            </span>
+          <span className="block sm:inline">{validationError || saveError}</span>
         </div>
       )}
 
@@ -117,77 +98,51 @@ function PromotionForm() {
         <div className="item-container">
           <dl className="item-list">
             <div className="item-row">
-              <dt className="item-header">Programa</dt>
+              <dt className="item-header"><label htmlFor="promotion-program">Programa</label></dt>
               <dd className="item-text">
-                <select
-                  name="program"
-                  value={formData.program}
-                  onChange={handleChange}
-                  className="form-input--half"
-                  disabled={saving}
-                  required
-                >
-                  {Object.entries(PROGRAM_LABELS).map(([value, label]) => (
-                    <option key={value} value={value}>{label}</option>
-                  ))}
+                <select id="promotion-program" value={program} onChange={handleProgram} className="form-input--half" disabled={saving}>
+                  {Object.entries(PROGRAM_LABELS).map(([value, text]) => <option key={value} value={value}>{text}</option>)}
                 </select>
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Año</dt>
+              <dt className="item-header"><label htmlFor="promotion-start">Fecha de inicio *</label></dt>
               <dd className="item-text">
-                <input
-                  name="year"
-                  type="number"
-                  value={formData.year}
-                  onChange={handleChange}
-                  className="form-input--half"
-                  placeholder={String(currentYear)}
-                  min={currentYear}
-                  max={maxYear}
-                  disabled={saving}
-                  required
-                />
+                <input id="promotion-start" type="date" value={startDate} onChange={handleStart}
+                  className="form-input--half" disabled={saving || loadingPromotions} required />
+                <p className="mt-1 text-xs text-gray-500">{USUAL_START_HINT[program]}</p>
               </dd>
             </div>
             <div className="item-row">
-              <dt className="item-header">Periodo</dt>
+              <dt className="item-header"><label htmlFor="promotion-end">Fecha de término *</label></dt>
               <dd className="item-text">
-                <select
-                  name="period"
-                  value={formData.period}
-                  onChange={handleChange}
-                  className="form-input--half"
-                  disabled={saving}
-                  required
-                >
-                  <option value="">Seleccionar periodo</option>
-                  {Object.entries(PERIOD_LABELS).map(([value, label]) => (
-                    <option key={value} value={value}>{label}</option>
-                  ))}
-                </select>
+                <input id="promotion-end" type="date" value={endDate} min={startDate || undefined} onChange={handleEnd}
+                  className="form-input--half" disabled={saving || loadingPromotions} required />
+                <p className="mt-1 text-xs text-gray-500">Se propone a doce meses del inicio; cámbiala si la promoción dura otro tiempo.</p>
+              </dd>
+            </div>
+            <div className="item-row">
+              <dt className="item-header">Promoción</dt>
+              <dd className="item-text">
+                <span className="font-medium">{label || '—'}</span>
+                {taken && (
+                  <span className="mt-1 block text-xs text-red-700">
+                    Ya existe la promoción {promotionLabel(taken)}; elige una fecha de otro semestre.
+                  </span>
+                )}
               </dd>
             </div>
             <div className="item-row mt-6">
-              <dd className="item-text">Para añadir una sede, primero crea la promoción y luego dirígete a editar esa promoción</dd>
+              <dd className="item-text text-gray-600">Al guardar podrás capturar los cupos por sede.</dd>
             </div>
           </dl>
         </div>
 
         <div className="button-group">
-          <button 
-            type="button" 
-            className="btn-secondary" 
-            onClick={() => navigate(adminAbs(ROUTES.ADMIN.PROMOTION_LIST))}
-            disabled={saving}
-          >
+          <button type="button" className="btn-secondary" onClick={() => navigate(promotionListPath(program))} disabled={saving}>
             Cancelar
           </button>
-          <button 
-            type="submit" 
-            className="btn-primary"
-            disabled={saving}
-          >
+          <button type="submit" className="btn-primary" disabled={saving || loadingPromotions}>
             {saving ? 'Guardando...' : 'Guardar'}
           </button>
         </div>

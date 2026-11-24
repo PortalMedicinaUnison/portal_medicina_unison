@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
-import { APPLICATION_STATUS_LABELS, PERIOD_LABELS, PROGRAMS, DOCUMENT_STAGES, labelOf } from '../../../../utils/constants';
+import { APPLICATION_STATUS_LABELS, PROGRAMS, DOCUMENT_STAGES, labelOf } from '../../../../utils/constants';
+import { promotionLabel } from '../../../../utils/utils';
 import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
 import useRespondApplication from '../hooks/useRespondApplication';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
@@ -117,7 +118,7 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
   // Para aceptar hay que haber subido los obligatorios de inscripción (el backend también lo exige).
   const inscription = application.inscription_progress;
   const documentsReady = !inscription || inscription.all_submitted;
-  const promotionLabel = `${promotion.year} - ${labelOf(PERIOD_LABELS, promotion.period)}`;
+  const promotionName = promotionLabel(promotion);
   const fullName = [user?.first_name, user?.last_name, user?.second_last_name].filter(Boolean).join(' ');
 
   return (
@@ -126,7 +127,7 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
         <dl className="item-list">
           <div className="item-row">
             <dt className="item-header">Promoción</dt>
-            <dd className="item-text">{promotionLabel}</dd>
+            <dd className="item-text">{promotionName}</dd>
           </div>
           <div className="item-row">
             <dt className="item-header">Estatus de la asignación</dt>
@@ -152,7 +153,7 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
       <div className="w-3/4">
         <p className="mb-4">
           Yo, <b>{fullName}</b>, como estudiante de la carrera de Medicina seleccionado(a) para hacer mi Internado
-          Médico de Pregrado en la promoción <b>{promotionLabel}</b>, declaro que he sido informado(a) sobre las
+          Médico de Pregrado en la promoción <b>{promotionName}</b>, declaro que he sido informado(a) sobre las
           condiciones, requisitos y obligaciones que implica la realización del Internado Médico de Pregrado como
           parte de mi formación académica.
         </p>
@@ -184,6 +185,7 @@ function ApplicationUpdate({ application, fetching, fetchError, refetch, applica
           id="termsAccepted"
           name="termsAccepted"
           type="checkbox"
+          className="h-5 w-5 shrink-0"
           checked={formData.termsAccepted}
           onChange={handleChange}
           disabled={saving}

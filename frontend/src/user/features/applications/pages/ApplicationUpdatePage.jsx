@@ -26,7 +26,7 @@ function ApplicationUpdatePage() {
 
   return (
     <Layout>
-      <PageLayout title={application ? 'Información importante' : 'Mi internado'}>
+      <PageLayout title={application ? 'Mi asignación · Internado' : 'Mi internado'}>
         <ApplicationUpdate
           application={application}
           fetching={fetching}

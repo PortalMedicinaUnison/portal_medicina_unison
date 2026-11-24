@@ -7,7 +7,7 @@ function AnnouncementFormPage() {
   return (
     <Layout>
       <PageLayout 
-        title="Registrar nuevo anuncio" 
+        title="Nuevo aviso" 
       >
         <AnnouncementForm/>
       </PageLayout>

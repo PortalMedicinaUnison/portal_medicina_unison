@@ -26,6 +26,28 @@ export function getTemplateError(file) {
   return '';
 }
 
+// Evidencias de reportes: PDF o imágenes JPEG, PNG o WebP; hasta MAX_EVIDENCE_FILES por reporte.
+export const MAX_EVIDENCE_FILES = 5;
+export const EVIDENCE_ACCEPT = '.pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp';
+const EVIDENCE_TYPES = /^(application\/pdf|image\/(jpeg|png|webp))$/;
+const EVIDENCE_EXTENSIONS = /\.(pdf|jpe?g|png|webp)$/i;
+
+export function getEvidenceError(file) {
+  if (!file) return 'Selecciona un archivo.';
+  if (!EVIDENCE_TYPES.test(file.type) && !EVIDENCE_EXTENSIONS.test(file.name)) {
+    return `"${file.name}" no es un PDF ni una imagen JPG, PNG o WebP.`;
+  }
+  if (file.size === 0) return `"${file.name}" está vacío.`;
+  if (file.size > MAX_FILE_BYTES) return `"${file.name}" supera el tamaño máximo de ${MAX_FILE_MB} MB.`;
+  return '';
+}
+
+export function formatFileSize(bytes) {
+  if (bytes == null) return '';
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export function pdfDownloadName(doc) {
   const name = doc.original_filename?.trim();
   if (!name) return `documento_${doc.document_id}.pdf`;

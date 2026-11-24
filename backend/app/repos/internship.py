@@ -1,6 +1,10 @@
 from typing import List, Optional
 
-from models.internship import ApplicationStatusEnum, Internship, InternshipApplication, InternshipStatusEnum
+from sqlalchemy.orm import selectinload
+
+from models.internship import (
+    INTERNSHIP_IN_COURSE, ApplicationStatusEnum, Internship, InternshipApplication, InternshipStatusEnum,
+)
 from .base import BaseRepo
 
 
@@ -20,7 +24,11 @@ class InternshipApplicationRepo(BaseRepo[InternshipApplication]):
             query = query.filter(InternshipApplication.academic_id == academic_id)
         if status is not None:
             query = query.filter(InternshipApplication.status == status)
-        return query.order_by(InternshipApplication.created_at.desc(), InternshipApplication.application_id.desc()).all()
+        return (
+            query.options(selectinload(InternshipApplication.internship))
+            .order_by(InternshipApplication.created_at.desc(), InternshipApplication.application_id.desc())
+            .all()
+        )
 
     def get_by_promotion_student(self, promotion_id: int, academic_id: str, include_inactive: bool = False) -> Optional[InternshipApplication]:
         query = self.session.query(InternshipApplication) if include_inactive else self.query()
@@ -69,7 +77,7 @@ class InternshipRepo(BaseRepo[Internship]):
         query = self._joined().filter(
             InternshipApplication.promotion_id == promotion_id,
             Internship.site_id == site_id,
-            Internship.status != InternshipStatusEnum.FINISHED,
+            Internship.status.in_(INTERNSHIP_IN_COURSE),
         )
         if exclude_internship_id is not None:
             query = query.filter(Internship.internship_id != exclude_internship_id)

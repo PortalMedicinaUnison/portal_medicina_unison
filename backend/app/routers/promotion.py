@@ -7,7 +7,7 @@ from core.dependencies import AdminUser, CurrentUser, DbSession
 from models.promotion import ProgramEnum
 from schemas.promotion import (
     PromotionInput, PromotionOutput, PromotionSiteDetailInput, PromotionSiteDetailOutput,
-    PromotionSiteDetailUpdate, PromotionUpdate,
+    PromotionSiteDetailUpdate, PromotionUpdate, SeatsInput,
 )
 
 # ----------------------  PROMOTION  ----------------------
@@ -26,6 +26,7 @@ def list_promotions(
 
 @promotion_router.post("", response_model=PromotionOutput, status_code=status.HTTP_201_CREATED)
 def create_promotion(data: PromotionInput, _admin: AdminUser, db: DbSession):
+    """Basta `start_date`: `end_date` se propone a doce meses y `year`/`period` se derivan de la fecha de inicio."""
     return controller.create_promotion(db, data)
 
 
@@ -36,12 +37,23 @@ def get_promotion(promotion_id: int, _user: CurrentUser, db: DbSession):
 
 @promotion_router.patch("/{promotion_id}", response_model=PromotionOutput)
 def update_promotion(promotion_id: int, data: PromotionUpdate, _admin: AdminUser, db: DbSession):
+    """Fechas, estatus y, opcionalmente, `seats` (cupos de varias sedes): se guarda todo o nada."""
     return controller.update_promotion(db, promotion_id, data)
 
 
 @promotion_router.delete("/{promotion_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_promotion(promotion_id: int, _admin: AdminUser, db: DbSession):
     controller.delete_promotion(db, promotion_id)
+
+
+@promotion_router.patch("/{promotion_id}/seats", response_model=List[PromotionSiteDetailOutput])
+def set_seats(promotion_id: int, data: SeatsInput, _admin: AdminUser, db: DbSession):
+    """
+    Cupos de varias sedes a la vez (`capacity` 0 = sin cupo); las sedes que no se envían no cambian.
+    Todo o nada: si una fila no es válida (sede que no ofrece el programa, cupo menor que los ya
+    asignados) no se guarda ninguna. Devuelve todos los cupos de la promoción.
+    """
+    return controller.set_seats(db, promotion_id, data)
 
 
 # ----------------------  PROMOTION SITE DETAIL (cupos por sede)  ----------------------

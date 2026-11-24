@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
 import Layout from '../../../../Layout';
 import PageLayout from '../../../../components/PageLayout';
@@ -9,6 +9,7 @@ import { useUser } from '../../../../contexts/UserContext';
 
 function ReportListPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useUser();
   const academicId = user?.academic_id;
 
@@ -30,6 +31,7 @@ function ReportListPage() {
         title="Mis reportes"
         actions={actions}
       >
+        {location.state?.notice && <div className="alert-success mb-6" role="status">{location.state.notice}</div>}
         <ReportList
           reports={reports}
           fetching={fetching}

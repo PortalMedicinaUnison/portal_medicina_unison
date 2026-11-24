@@ -27,7 +27,7 @@ function ObservationsDialog({ open, documentName, onClose, onSubmit, saving }) {
   };
 
   return (
-    <Modal open={open} onClose={handleClose} title="Observaciones">
+    <Modal open={open} onClose={handleClose} title="Pedir corrección">
       <form className="space-y-4" onSubmit={handleSubmit}>
         <p className="text-sm text-gray-700">
           {documentName ? <>Documento: <strong>{documentName}</strong>. </> : null}
@@ -46,7 +46,7 @@ function ObservationsDialog({ open, documentName, onClose, onSubmit, saving }) {
         <div className="flex flex-wrap justify-end gap-3">
           <button type="button" className="btn-secondary" onClick={handleClose} disabled={saving}>Cancelar</button>
           <button type="submit" className="btn-primary" disabled={saving}>
-            {saving ? 'Guardando...' : 'Guardar observaciones'}
+            {saving ? 'Enviando...' : 'Enviar observaciones'}
           </button>
         </div>
       </form>

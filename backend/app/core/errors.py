@@ -62,6 +62,10 @@ FIELD_LABELS = {
     "program": "Programa", "stage": "Etapa", "is_required": "Obligatorio", "allows_multiple": "Varios archivos",
     "validity_months": "Vigencia (meses)", "sort_order": "Orden", "requirement_id": "Documento",
     "review_status": "Revisión", "review_comment": "Observaciones",
+    "average": "Promedio", "students": "Alumnos", "application_id": "Inscripción",
+    "start_date": "Fecha de inicio", "end_date": "Fecha de término", "seats": "Cupos",
+    "exit_date": "Fecha de la renuncia o baja", "exit_reason": "Motivo",
+    "for_internship": "Sede de internado", "for_social_service": "Sede de servicio social",
 }
 
 ERROR_MESSAGES = {

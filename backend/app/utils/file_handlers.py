@@ -1,4 +1,4 @@
-"""Guardado y lectura de archivos subidos (documentos PDF, formatos descargables y fotos de perfil)."""
+"""Guardado y lectura de archivos subidos (documentos PDF, formatos, fotos de perfil y evidencias de reportes)."""
 from pathlib import Path, PurePosixPath
 from typing import BinaryIO, Optional, Tuple
 from uuid import uuid4
@@ -101,6 +101,24 @@ def save_image_upload(file: UploadFile, subdir: str) -> str:
         raise bad_request("La foto debe ser una imagen JPEG, PNG o WebP.")
     relative = PurePosixPath(subdir) / f"{uuid4().hex}{extension}"
     return _write_upload(file.file, header, relative, settings.max_photo_bytes, settings.MAX_PHOTO_MB)
+
+
+def save_evidence_upload(file: UploadFile, subdir: str) -> Tuple[str, Optional[str], str, int]:
+    """
+    Guarda una evidencia: PDF o imagen JPEG, PNG o WebP (comprobada por su contenido) dentro del
+    tamaño máximo. Devuelve (ruta relativa, nombre original, tipo MIME, tamaño en bytes).
+    """
+    header = file.file.read(12)
+    if header.startswith(PDF_SIGNATURE):
+        extension, media_type = ".pdf", "application/pdf"
+    else:
+        extension = _image_extension(header)
+        if extension is None:
+            raise bad_request("La evidencia debe ser un PDF o una imagen JPEG, PNG o WebP.")
+        media_type = IMAGE_MEDIA_TYPES[extension]
+    relative = PurePosixPath(subdir) / f"{uuid4().hex}{extension}"
+    path = _write_upload(file.file, header, relative, settings.max_upload_bytes, settings.MAX_UPLOAD_MB)
+    return path, _clean_filename(file.filename), media_type, resolve_upload(path).stat().st_size
 
 
 def image_media_type(relative_path: str) -> str:

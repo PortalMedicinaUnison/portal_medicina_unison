@@ -8,6 +8,7 @@ from models.internship import ApplicationStatusEnum
 from models.promotion import ProgramEnum
 from models.social_service import SocialServiceStatusEnum
 from routers.document import add_expediente_routes
+from routers.inscription import add_inscription_routes
 from schemas.social_service import (
     SocialServiceApplicationInput, SocialServiceApplicationOutput, SocialServiceOutput, SocialServiceUpdate,
 )
@@ -17,6 +18,8 @@ from schemas.social_service import (
 social_service_application_router = APIRouter(
     prefix="/social-service-applications", tags=["Asignaciones de servicio social"],
 )
+# En bloque: /candidates, /bulk, /plaza-results y PATCH /{application_id} (antes de las rutas con id).
+add_inscription_routes(social_service_application_router, ProgramEnum.SOCIAL_SERVICE, SocialServiceApplicationOutput)
 
 
 @social_service_application_router.get("", response_model=List[SocialServiceApplicationOutput])

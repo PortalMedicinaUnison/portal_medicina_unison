@@ -18,7 +18,7 @@ function SitePage() {
     : ' ';
 
   const siteActions = (
-    <span className="show-on-sm">
+    <span className="flex flex-wrap gap-3">
       <button
         type="button"
         className="btn-primary"

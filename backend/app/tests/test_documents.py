@@ -146,7 +146,7 @@ def test_student_builds_inscription_expediente(client, admin, student, other_stu
     assert client.get(file_url, params={"download": True}, headers=auth(admin)).headers["content-disposition"].startswith("attachment")
 
     progress = client.get(base, headers=auth(student)).json()["inscription_progress"]
-    assert progress == {"required": 1, "submitted": 1, "approved": 0, "all_submitted": True, "complete": False}
+    assert progress == {"required": 1, "submitted": 1, "approved": 0, "rejected": 0, "all_submitted": True, "complete": False}
 
     # Un requisito de un solo archivo: el nuevo reemplaza al anterior.
     replacement = _upload(client, student, app_id, ficha["requirement_id"], filename="ficha-v2.pdf").json()
@@ -163,7 +163,7 @@ def test_student_builds_inscription_expediente(client, admin, student, other_stu
     assert client.get(base, headers=auth(student)).json()["inscription_progress"]["complete"] is True
     listed = client.get("/internship-applications", headers=auth(admin)).json()
     assert listed[0]["inscription_progress"] == {
-        "required": 1, "submitted": 1, "approved": 1, "all_submitted": True, "complete": True,
+        "required": 1, "submitted": 1, "approved": 1, "rejected": 0, "all_submitted": True, "complete": True,
     }
 
 
@@ -285,7 +285,7 @@ def test_retired_requirement_keeps_uploaded_files(client, admin, student, catalo
     assert _upload(client, student, app_id, ficha["requirement_id"]).status_code == 400
     # Ya no cuenta para el avance de inscripción.
     progress = client.get(f"/internship-applications/{app_id}", headers=auth(student)).json()["inscription_progress"]
-    assert progress == {"required": 0, "submitted": 0, "approved": 0, "all_submitted": True, "complete": True}
+    assert progress == {"required": 0, "submitted": 0, "approved": 0, "rejected": 0, "all_submitted": True, "complete": True}
 
 
 # ---------------------- REGLAS AL AVANZAR ----------------------
@@ -365,3 +365,14 @@ def test_social_service_expediente_and_release(client, admin, student, ss_catalo
 @pytest.mark.parametrize("program", [INTERNSHIP, SOCIAL_SERVICE])
 def test_expediente_of_unknown_application(client, admin, program):
     assert client.get(f"{_base(program)}/9999/documents", headers=auth(admin)).status_code == 404
+
+
+def test_progress_counts_documents_waiting_for_correction(client, admin, student, catalog):
+    first = _requirement(client, admin, "Certificado de salud", is_required=True)
+    _requirement(client, admin, "Póliza", is_required=True)
+    application = _assign(client, admin, catalog, student)
+    document = _upload(client, student, application["application_id"], first["requirement_id"]).json()
+    _review(client, admin, application["application_id"], document["document_id"], 3, "Está vencido.")
+    progress = client.get(f"/internship-applications/{application['application_id']}", headers=auth(admin)).json()["inscription_progress"]
+    assert (progress["required"], progress["submitted"], progress["approved"], progress["rejected"]) == (2, 0, 0, 1)
+    assert progress["all_submitted"] is False

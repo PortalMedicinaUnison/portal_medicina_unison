@@ -1,9 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../../config';
-import { INTERNSHIP_STATUS, INTERNSHIP_STATUS_LABELS, PERIOD_LABELS, PROGRAMS, labelOf } from '../../../../utils/constants';
+import { INTERNSHIP_STATUS, INTERNSHIP_STATUS_LABELS, PROGRAMS, isExitStatus, labelOf } from '../../../../utils/constants';
+import { promotionLabel } from '../../../../utils/utils';
 import LoadingSpinner from '../../../../utils/ui/LoadingSpinner';
 import DataLoadError from '../../../../utils/ui/DataLoadError';
 import ExpedientePanel from '../../../../features/expediente/components/ExpedientePanel';
+import RecordExitNotice from '../../../../components/RecordExitNotice';
+import SiteInfo from '../../../../components/SiteInfo';
 
 
 function InternshipDetail({ internship, fetching, fetchError, refetch }) {
@@ -45,15 +48,29 @@ function InternshipDetail({ internship, fetching, fetchError, refetch }) {
 
   const promotion = internship.application?.promotion;
   const { site } = internship;
+  const hasLeft = isExitStatus(internship.status);
 
   return (
     <div className="info-container">
+      {Number(internship.status) === INTERNSHIP_STATUS.FINISHED && (
+        <div className="mb-8 rounded-md border border-green-200 bg-green-50 p-4 text-sm text-green-900" role="status">
+          <p className="font-semibold">Acreditaste el internado.</p>
+          <p className="mt-1">Cuando la coordinación te asigne al servicio social, en tu inicio verás qué sigue. Tus documentos quedan solo para consulta.</p>
+        </div>
+      )}
+      {hasLeft && (
+        <RecordExitNotice
+          record={internship}
+          programName="internado"
+          afterWithdrawal="Si vuelves a participar, la coordinación te asignará a una promoción posterior."
+        />
+      )}
       <div className="item-container">
         <dl className="item-list">
           <div className="item-row">
             <dt className="item-header">Promoción</dt>
             <dd className="item-text">
-              {promotion ? `${promotion.year} - ${labelOf(PERIOD_LABELS, promotion.period)}` : '—'}
+              {promotionLabel(promotion)}
             </dd>
           </div>
           <div className="item-row">
@@ -63,9 +80,7 @@ function InternshipDetail({ internship, fetching, fetchError, refetch }) {
           <div className="item-row">
             <dt className="item-header">Sede</dt>
             <dd className="item-text">
-              {site
-                ? `${site.name} (${site.city})`
-                : <span className="italic text-gray-500">Pendiente de asignación de sede</span>}
+              <SiteInfo site={site} emptyText="Pendiente de asignación de sede" />
             </dd>
           </div>
         </dl>
@@ -77,7 +92,7 @@ function InternshipDetail({ internship, fetching, fetchError, refetch }) {
           program={PROGRAMS.INTERNSHIP}
           applicationId={internship.application_id}
           started
-          closed={Number(internship.status) === INTERNSHIP_STATUS.FINISHED || Boolean(promotion?.is_finished)}
+          closed={Number(internship.status) === INTERNSHIP_STATUS.FINISHED || hasLeft || Boolean(promotion?.is_finished)}
         />
       </div>
     </div>

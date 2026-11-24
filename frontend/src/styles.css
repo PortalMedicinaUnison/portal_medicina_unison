@@ -10,11 +10,6 @@ body {
 }
 
 @layer components {
-    .show-on-sm { @apply 
-        hidden 
-        sm:block;
-    }
-
     .color-primary { 
         background-color: #24398a; 
     }
@@ -64,7 +59,7 @@ body {
         pr-2
         pl-2
         text-gray-900
-        placeholder:text-gray-400
+        placeholder:text-gray-500
         focus:outline-none
         text-sm/6
         border
@@ -98,6 +93,7 @@ body {
     .form-checkbox { @apply 
         form-input
         focus:ring-0
+        h-5 w-5
     }
 
     .form-label-preline { @apply 
@@ -227,7 +223,7 @@ body {
     }
 
     .sidebar-section-title { @apply 
-        text-gray-400
+        text-gray-500
         text-xs
         px-1
         py-2
@@ -436,6 +432,7 @@ body {
     .table-container { @apply 
         w-full min-w-0 max-w-full
         flex flex-col gap-4
+        overflow-x-auto
     }
 
     .table-container-actions { @apply 
@@ -447,7 +444,7 @@ body {
     }
 
     .table-container-body { @apply 
-        overflow-y-visible overflow-x-visible
+        overflow-x-auto
         text-sm text-gray-900
     }
 

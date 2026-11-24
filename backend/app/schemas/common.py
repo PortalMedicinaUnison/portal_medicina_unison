@@ -45,6 +45,7 @@ OptionalEmail = Annotated[Optional[str], BeforeValidator(_blank_to_none), AfterV
     lambda v: validation.validate_email(v) if v is not None else None
 )]
 HttpUrlStr = Annotated[str, AfterValidator(validation.validate_http_url)]
+NotFutureDate = Annotated[date, AfterValidator(validation.validate_not_future)]
 OptionalHttpUrlStr = Annotated[Optional[str], BeforeValidator(_blank_to_none), AfterValidator(
     lambda v: validation.validate_http_url(v) if v is not None else None
 )]
